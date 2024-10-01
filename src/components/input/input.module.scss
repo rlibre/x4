@@ -1,0 +1,40 @@
+.x4input {
+	input {
+		font: inherit;
+		
+		margin: 4px;
+		border: none;
+
+		&:focus {
+		}
+		
+
+		&::selection {
+			background-color: var( --color-90 );
+			color: white;
+		}
+		
+		&[type="text"] {
+			padding: 0 4px;
+		}
+
+		&[type=checkbox]:checked,
+		&[type=radio]:checked {
+			accent-color: var( --color-80 );
+		}
+
+		&[type=range] {
+			accent-color: var( --color-60 );
+		}
+
+		&::placeholder {
+			color: var( --color-gray-5 );
+			font-style: italic;
+		}
+
+		&:invalid {
+			color: var( --color-red-9 );
+		}
+	}
+}
+

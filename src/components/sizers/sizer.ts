@@ -1,0 +1,104 @@
+import { Component, ComponentEvents, ComponentProps, componentFromDOM } from '@core/component';
+import { Point } from '@core/core_tools.js';
+
+
+
+/**
+ * 
+ */
+
+//interface SizeChangeEvent extends ComponentEvent {
+//	size: number;
+//}
+//
+//interface CSizerEvents extends ComponentEvents {
+//	resize: SizeChangeEvent;
+//}
+
+
+export class CSizer extends Component<ComponentProps> {
+
+	private _type: string;
+	private _ref: Component;
+	private _delta: Point;
+
+	constructor( type: string, target?: Component ) {
+		super( {} );
+
+		this._type = type;
+		this.addClass( type );
+
+		this.addDOMEvent( "pointerdown", ( e: PointerEvent ) => {
+			this.setCapture( e.pointerId );
+			this._ref = target ?? componentFromDOM( this.dom.parentElement );
+
+			this._delta = {x:0,y:0};
+			const rc = this._ref.getBoundingRect();
+
+			if( this._type.includes("left") ) {
+				this._delta.x = e.pageX-rc.left;
+			}
+			else {
+				this._delta.x = e.pageX-(rc.left+rc.width);
+			}
+
+			if( this._type.includes("top") ) {
+				this._delta.y = e.pageY-rc.top;
+			}
+			else {
+				this._delta.y = e.pageY-(rc.top+rc.height);
+			}
+		});
+
+		this.addDOMEvent( "pointerup", ( e: PointerEvent ) => {
+			this.releaseCapture( e.pointerId );
+			this._ref = null;
+		});
+
+		this.addDOMEvent( "pointermove", ( e: PointerEvent ) => {
+			this._onMouseMove( e );
+		});
+	}
+
+	private _onMouseMove( e: PointerEvent ) {
+		if( !this._ref ) {
+			return;
+		}
+
+		const pt = { x: e.pageX-this._delta.x, y: e.pageY-this._delta.y };
+		const rc = this._ref.getBoundingRect( );
+
+		let nr: any = {};
+		let horz = true;
+
+		if( this._type.includes("top") ) {
+			nr.top = pt.y,
+			nr.height = (rc.top+rc.height)-pt.y;
+			horz = false;
+		}
+
+		if( this._type.includes("bottom") ) {
+			//nr.top = rc.top;
+			nr.height = (pt.y-rc.top);
+			horz = false;
+		}
+
+		if( this._type.includes("left") ) {
+			nr.left = pt.x;
+			nr.width = ((rc.left+rc.width)-pt.x);
+		}
+
+		if( this._type.includes("right") ) {
+			//nr.left = rc.left;
+			nr.width = (pt.x-rc.left);
+		}
+
+		this._ref.setStyle( nr );
+
+		const nrc = this._ref.getBoundingRect( );
+		//this.fire( "resize", { size: horz ? nrc.width : nrc.height })
+
+		e.preventDefault( );
+		e.stopPropagation( );
+	}
+}

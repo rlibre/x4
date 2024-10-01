@@ -1,0 +1,10 @@
+@use "../shared.scss";
+
+.x4hbox {
+	@extend .hbox;
+}
+
+.x4vbox {
+	@extend .vbox;
+}
+

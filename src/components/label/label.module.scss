@@ -1,0 +1,36 @@
+@use "../shared.scss";
+
+:root {
+	--label-background: transparent;
+	--label-color: rgb(73, 73, 73);
+	--label-icon-color: rgb(0 0 0 / 44%);
+}
+
+.x4label {
+	@extend .hbox;
+
+	color: var( --label-color );
+	background-color: var( --label-background );
+	text-align: left;
+	gap: 0.2em;
+
+	&.right {
+		text-align: right;
+	}
+
+	&.center {
+		text-align: center;
+	}
+	
+	#icon {
+		width: 1em;
+		margin: 0 0.1em;
+		color: var( --label-icon-color );
+
+		&:empty {
+			display: none;
+		}
+	}
+	
+}
+

@@ -1,0 +1,23 @@
+.x-popup {
+	background-color: var(--fill-color);
+	position: absolute;
+	border: 1px solid var(--border-color);
+	overflow: hidden;
+	z-index: 1000;
+	border-radius: var(--bradius);
+
+	&.popup-caption,
+	.popup-caption {
+		cursor: move;
+	}
+}
+
+.x-modal-mask {
+	background-color: rgba(0,0,0,0.5);
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+}
