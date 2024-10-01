@@ -18,13 +18,13 @@ export class Button extends Component<ButtonProps> {
 
 		this.setContent( [
 			new Icon( { id: "icon", iconId: this.props.icon } ),
-			new Label( { id: "label", text: this.props.label } ),
+			new Component( { id: "label", content: this.props.label } ),
 		] );
 		
 	}
 
 	setText( text: string | UnsafeHtml ) {
-		this.query( "#text" ).setContent( text );
+		this.query( "#label" ).setContent( text );
 	}
 
 	setIcon( icon: string ) {

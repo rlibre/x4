@@ -1,3 +1,6 @@
+@use "./components/themes.scss";
+
+
 * {
 	user-select: none;
 }
@@ -6,3 +9,6 @@ body {
 	font-family: montserrat;
 	font-size: 14px;
 }
+
+
+

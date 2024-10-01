@@ -5,7 +5,7 @@ import "./label.module.scss";
 import { UnsafeHtml } from '@core/core_tools.js';
 
 interface LabelProps extends ComponentProps {
-	text: string;
+	text: string | UnsafeHtml;
 	icon?: string;
 	labelFor?: string;
 }

@@ -1,14 +1,14 @@
 
+
 /**
- * check if a value is a string
- * @param val 
+ * @returns true if object is a string
  */
 export function isString(val: any): val is string {
 	return typeof val === 'string';
 }
 
 /**
- * 
+ * @returns true if object is a number
  */
 
 export function isNumber( v: any ): v is number {
@@ -16,25 +16,34 @@ export function isNumber( v: any ): v is number {
 }
 
 /**
- * check is a value is an array
- * @param val 
+ * @returns true if object is an array
  */
 export function isArray(val: any): val is any[] {
 	return val instanceof Array;
 }
 
 /**
- * 
+ * @returns true if object is a function
  */
 
 export function isFunction(val: any): val is Function {
 	return val instanceof Function;
 }
 
+/**
+ * generic constructor
+ */
+
+export type Constructor<P> = {
+	new(...params: any[]): P;
+};
 
 
 /**
- * 
+ * a way to explain that the given string may be unsafe but must be treated a sstring
+ * @example
+ * label.setText( unsafehtml`<b>Bold</b> text` );
+ * label.setText( new UnsafeHtml("<b>Bold</b> text`" ) );
  */
 
 export class UnsafeHtml extends String {
@@ -51,7 +60,7 @@ export function unsafeHtml( x: string ): UnsafeHtml {
 
 
 /**
- * 
+ * generic Rectangle 
  */
 
 export interface IRect {
@@ -60,6 +69,10 @@ export interface IRect {
     height: number;
     width: number;
 }
+
+/**
+ * 
+ */
 
 export class Rect implements IRect {
 	left: number;
@@ -95,7 +108,7 @@ export class Rect implements IRect {
 
 
 /**
- * 
+ * generic Point
  */
 
 export interface Point {

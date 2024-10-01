@@ -22,6 +22,7 @@ export interface ListboxItem {
 	iconId?: string;
 	data?: any;
 	cls?: string;
+	checked?: boolean;
 }
 
 /**
@@ -40,6 +41,7 @@ interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListboxItem[];
 	renderer?: ( item: ListboxItem ) => Component;
 	//header?: Header;
+	checkable?: true,
 }
 
 

@@ -15,48 +15,18 @@
 	flex-grow: 1;
 }
 
-:root {
-	--color-primary-a0: #ffffff;
-	--color-primary-a10: #e0eaf7;
-	--color-primary-a20: #c0d6ef;
-	--color-primary-a30: #a0c2e7;
-	--color-primary-a40: #7dafde;
-	--color-primary-a50: #569cd6;
-	--color-primary-a55: #{lighten(#477ba7,5%)};
-	--color-primary-a60: #477ba7;
-	--color-primary-a70: #375b7a;
-	--color-primary-a80: #283d51;
-	--color-primary-a90: #18212a;
-	--color-primary-a100: #000000;
+.fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 }
 
-:root {
-	// Backgrounds
-	--background-primary: var(--color-primary-a0); // Fond principal
-	--background-secondary: var(--color-primary-a10); // Fond secondaire
-
-	// Texts
-	--text-primary: var(--color-primary-a100); // Texte principal
-	--text-secondary: var(--color-primary-a90); // Texte secondaire
-
-	// disabled
-	--disabled-background: #ccc;
-	--disabled-color: white;
-	--disabled-color-dark: #aaa;
-
-	// accents
-	--accent-background: var(--color-primary-a60); 
-	--accent-background-hover: var(--color-primary-a55); 
-	--accent-background-focus: var(--color-primary-a70);
-	--accent-background-active: var(--color-primary-a80); 
-
-	--accent-color: var(--color-primary-a0); 
-	--accent-color-hover: var(--color-primary-a0); 
-	--accent-color-focus: var(--color-primary-a0);
-	--accent-color-active: var(--color-primary-a0); 
-
-	// Borders
-	--border: #e1e1e1; // Bordures
-	--border-hover: #c2c2c2; // Bordures au survol
+.rel-fit {
+	position: relative;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 }
-

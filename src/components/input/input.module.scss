@@ -1,40 +1,52 @@
-.x4input {
-	input {
-		font: inherit;
-		
-		margin: 4px;
-		border: none;
+:root {
+	--input-sel-background: var( --accent-background );
+	--input-sel-color: var( --accent-color );
+	--input-placeholder: var( --disabled-background );
+	--input-error: var( --alert-color );
+}
 
-		&:focus {
-		}
-		
+input.x4input {
+	font: inherit;
+	outline: none;
+	
+	margin: 4px;
+	border: none;
 
-		&::selection {
-			background-color: var( --color-90 );
-			color: white;
-		}
-		
-		&[type="text"] {
-			padding: 0 4px;
-		}
+	&:focus {
+	}
+	
 
-		&[type=checkbox]:checked,
-		&[type=radio]:checked {
-			accent-color: var( --color-80 );
-		}
+	&::selection {
+		background-color: var( --input-sel-background );
+		color: var( --input-sel-color );
+	}
+	
+	&[type="text"], &[type="password"] {
+		padding: 0 4px;
+	}
 
-		&[type=range] {
-			accent-color: var( --color-60 );
-		}
+	&[type="checkbox"]:checked,
+	&[type="radio"]:checked {
+		accent-color: var( --color-80 );
+	}
 
-		&::placeholder {
-			color: var( --color-gray-5 );
-			font-style: italic;
-		}
+	&[type="range"] {
+		accent-color: var( --color-60 );
+	}
 
-		&:invalid {
-			color: var( --color-red-9 );
-		}
+	&::placeholder {
+		color: var( --input-placeholder );
+		font-style: italic;
+		font-weight: 90%;
+
+	}
+
+	&[type="password"] {
+		font-weight: bold;
+	}
+
+	&:invalid {
+		color: var( --input-error );
 	}
 }
 

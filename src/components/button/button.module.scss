@@ -48,10 +48,9 @@
 	background-color: var( --button-background );
 	color: var( --button-color );
 
-	min-width: 10em;
 	gap: 0.4em;
 		
-	#icon {
+	&> #icon {
 		transition: color 0.3s;
 		width: 1em;
 		height: 1em;
@@ -62,11 +61,12 @@
 		}
 	}
 
-	#label {
+	&> #label {
 		@extend .flex;
 
 		padding: 0;
 		color: inherit;
+
 		&:empty {
 			display: none;
 		}

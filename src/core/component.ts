@@ -37,8 +37,7 @@ function genClassNames( x: any ) {
  * 
  */
 
-type ComponentChild = Component | string | UnsafeHtml | number | boolean | Component[];
-//type ComponentChildren = ComponentChild | ComponentChild[];
+export type ComponentContent = Component | string | UnsafeHtml | number | boolean | Component[];
 
 let gen_id = 1000;
 
@@ -56,7 +55,7 @@ export interface ComponentProps {
 
 	style?: Partial<CSSStyleDeclaration>;
 	attrs?: Record<string,string|number|boolean>;
-	content?: ComponentChild;
+	content?: ComponentContent;
 	dom_events?: GlobalDOMEvents;
 	cls?: string;
 	id?: string;
@@ -347,7 +346,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * @param content new content
 	 */
 
-	setContent( content: ComponentChild ) {
+	setContent( content: ComponentContent ) {
 		this.clearContent( );
 		this.appendContent( content );
 	}
@@ -357,7 +356,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * @param content content to append
 	 */
 
-	appendContent( content: ComponentChild ) {
+	appendContent( content: ComponentContent ) {
 		const d = this.dom;
 
 		const set = ( c: Component | string | UnsafeHtml | number | boolean ) => {
