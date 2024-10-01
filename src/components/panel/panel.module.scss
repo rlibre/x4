@@ -1,0 +1,31 @@
+@use "../shared.scss";
+
+:root {
+	--panel-border: var( --border );
+	--panel-title-color: var( --border );
+}
+
+
+.x4panel {
+	border: 1px solid var( --panel-border-color );
+	margin: 8px;
+	padding: 8px;
+	position: relative;
+
+	& > legend {
+		padding: 0 4px;
+		position: absolute;
+		left: 4px;
+		top: -0.7em;
+		//background-color: white;
+		font-weight: bold;
+		color: var(--color-gray-9);
+	}
+
+	& > .body {
+		@extend .rel-fit;
+		overflow: hidden;
+		justify-content: start;
+		padding: 8px;
+	}
+}

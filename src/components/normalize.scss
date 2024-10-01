@@ -1,0 +1,17 @@
+:root {
+	--font-name: "montserrat";
+	--font-size: 14px;
+}
+
+* {
+	user-select: none;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: var( --font-name );
+	font-size: var( --font-size );
+}
+
+
+

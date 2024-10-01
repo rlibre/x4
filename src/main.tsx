@@ -9,6 +9,8 @@ import { Panel } from './components/panel/panel'
 import "@fontsource/montserrat"
 import "./main.scss"
 import { TextEdit } from './components/textedit/textedit.js'
+import { TextArea } from './components/textarea/textarea.js'
+import { Switch } from './components/switch/switch.js'
 
 window.onload = ( ) => {
 	
@@ -32,9 +34,17 @@ window.onload = ( ) => {
 				new Button( { label:'OK', icon:"assets/house-light.svg", disabled: true } ),
 				new Button( { cls: "outline", label:'OK', icon:"assets/house-light.svg" } ),
 			]}),
-			new HBox({ content: [
-				new Checkbox( { label: 'Check', checked: true } ),
-				new Checkbox( { label: 'Check', disabled: true, checked: true } ),
+			new VBox({ content: [
+				new HBox({ content: [
+					new Checkbox( { label: 'Unchecked', checked: false } ),
+					new Checkbox( { label: 'Checked', checked: true } ),
+					new Checkbox( { label: 'Disabled', disabled: true, checked: true } ),
+				]}),
+				new HBox({ content: [
+					new Switch( { label: 'Unchecked', checked: false } ),
+					new Switch( { label: 'Checked', checked: true } ),
+					new Switch( { label: 'Disabled', checked: true, disabled: true } ),
+				]}),
 			]}),
 			new HBox( {content: [
 				new Listbox( {
@@ -59,6 +69,7 @@ window.onload = ( ) => {
 						new Button( { icon: "assets/house-light.svg" })
 					] } ),
 					new TextEdit( { labelWidth: 90, label: "Email", value: "", type: "email", placeholder: "select your email contact" } ),
+					new TextArea( { label: "Demo", height: 140 } ),
 				]
 			})
 		]

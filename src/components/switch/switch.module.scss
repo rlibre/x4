@@ -1,0 +1,106 @@
+@use "../shared.scss";
+
+:root {
+	--switch-border: var( --border );
+	--switch-background: #eee;
+	--switch-background-disabled: var( --disabled-background );
+	--switch-checked: var( --accent-background );
+}
+
+.x4switch {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: relative;
+
+	gap: 4px;
+	margin-left: 5px;
+	cursor: pointer;
+
+	label {
+		cursor: pointer;
+	}
+
+	&:focus-within {
+		.x4label {
+			span {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.switch {
+		width: 2.2rem;
+		height: 18px;
+		position: relative;
+
+		input {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			appearance: none;
+			padding: 0;
+			margin: 0;
+			left: 0;
+			top: 0;
+			cursor: pointer;
+		}
+			
+		.track {
+			position: absolute;
+			pointer-events: none;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			border: 1px solid var( --switch-border );
+
+			background-color: var( --switch-background );
+			border-radius: 9px;
+
+			transition: background-color ease 0.2s;
+		}
+
+		.thumb {
+			position: absolute;
+			pointer-events: none;
+			left: 0.05rem;
+			top: 1px;
+
+			width: 1rem;
+			height: 1rem;
+
+			border-radius: 8px;
+			background-color: white;
+			box-shadow: 0 0 2px rgba(0,0,0,0.5);
+
+			transition: left ease 0.2s;
+		}
+	}
+
+	&:has(input:checked) {
+		.switch .thumb {
+			left: 1.15rem;
+		}
+		.switch .track {
+			background-color: var( --switch-checked );
+			//border-color: var( --color-70 );
+		}
+	}
+
+	&[disabled] {
+		input {
+			pointer-events: none;
+		}
+
+		label {
+			pointer-events: none;
+			color: var( --checkbox-color-disabled );
+		}
+
+		.switch .track,
+		&.x4switch:has(input:checked) .switch .track {
+			background-color: var( --switch-background-disabled );
+		}
+	}
+}

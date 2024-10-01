@@ -113,10 +113,6 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.setAttributes( props.attrs );
 			}
 
-			if( props.disabled ) {
-				this.enable( false );
-			}
-
 			if( props.cls ) {
 				this.addClass( props.cls );
 			}
@@ -149,6 +145,13 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			const classes = genClassNames( this );
 			this.dom.classList.add( ...classes );
+
+			// need to have children for next statements
+			requestAnimationFrame( ( ) => {
+				if( props.disabled ) {
+					this.enable( false );
+				}
+			});
 		}
 
 		(this.dom as any)[COMPONENT] = this;
@@ -569,11 +572,19 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
+	 * enable or disable a component (all sub HTMLElement will be also disabled)
 	 */
 
 	enable( ena = true ) {
 		this.setAttribute( "disabled", !ena );
+
+		// propagate diable state to all input children
+		const nodes = this.enumChildNodes( true );
+		nodes.forEach( x => {
+			if( x instanceof HTMLInputElement ) {
+				x.disabled = !ena;
+			}
+		});
 	}
 
 	/**
@@ -632,16 +643,53 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @param callback 
+	 * renvoie la liste des Composants enfants
 	 */
 
-	enumChilds( callback: ( c: Component ) => boolean | void ) {
-		for( let c=this.firstChild( ); c; c=c.nextElement() ) {
-			if( callback(c)===true ) {
-				break;
-			}
+	enumChildComponents( recursive: boolean ) {
+
+		let children: Component[] = [];
+			
+		const enm = ( root: Node ) => {
+			root.childNodes.forEach( ( c: Node ) => {
+				const cc = componentFromDOM( c as HTMLElement );
+				if( cc ) {
+					children.push(cc);
+				}
+
+				if( recursive && c.firstChild ) {
+					enm( c );
+				}
+			});
 		}
+
+		enm( this.dom );
+		return children;
+	}
+
+	/**
+	 * return children list of node (not all should be components)
+	 */
+
+	enumChildNodes( recursive: boolean ) {
+
+		if( this.hasClass("x4switch") ) {
+			debugger
+		}
+
+		let children: Node[] = [];
+			
+		const enm = ( root: Node ) => {
+			root.childNodes.forEach( ( c: Node ) => {
+				children.push(c);
+				if( recursive && c.firstChild ) {
+					enm( c );
+				}
+			});
+		}
+
+		enm( this.dom );
+		return children;
 	}
 
 	/**
