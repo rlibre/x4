@@ -26,7 +26,7 @@ import { Label } from '../label/label.js';
 
 
 type predefined = "ok" | "cancel" | "yes" | "no" | "retry" | "abort" | "-";	// - = flex
-type BtnGroupItem = predefined | Button | Label;
+export type BtnGroupItem = predefined | Button | Label;
 
 interface BtnClickEvent extends ComponentEvent {
 	emitter: predefined;
@@ -40,6 +40,7 @@ interface BtnGroupProps extends Omit<ComponentProps,"content"> {
 	align?: "left" | "center" | "right";	// left default
 	vertical?: boolean;					
 	items: BtnGroupItem[];
+	reverse?: boolean,
 }
 
 export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {

@@ -27,6 +27,8 @@ import { ColorPicker } from './components/colorpicker/colorpicker.js'
 import { Menu } from './components/menu/menu'
 import { initTooltips } from './components/tooltips/tooltips.js'
 import { Treeview, TreeItem } from './components/treeview/treeview.js'
+import { Dialog } from './components/dialog/dialog.js'
+import { Form } from './components/form/form.js'
 
 
 
@@ -105,6 +107,21 @@ window.onload = ( ) => {
 		]}
 	]
 
+	const dialog = new Dialog( {
+		title: "Dialog",
+		modal: true,
+		movable: true,
+		sizable: true,
+		closable: true,
+		buttons: ['ok','cancel'],
+		form: new Form( {
+			content: [
+				new TextEdit( { label: "title", value: "" } ),
+			]
+		}),
+	})
+
+
 	const t = new HBox( {
 		style: {
 			alignItems: "start",
@@ -122,6 +139,8 @@ window.onload = ( ) => {
 					new Button( { label:'OK', icon:def_icon } ),
 					new Button( { label:'OK', icon:def_icon, disabled: true } ),
 					new Button( { cls: "outline", label:'OK', icon:def_icon } ),
+
+					new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
 				]}),
 				new VBox({ content: [
 					new HBox({ content: [

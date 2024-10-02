@@ -428,7 +428,6 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	appendContent( content: ComponentContent ) {
-		
 		const set = ( d: any, c: Component | string | UnsafeHtml | number | boolean ) => {
 			if (c instanceof Component ) {
 				d.appendChild( c.dom );
@@ -447,6 +446,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 		if( !isArray(content) ) {
 			set( this.dom, content );
+		}
+		else if( content.length<=8 ) {
+			for( const c of content ) {
+				set( this.dom, c );
+			}
 		}
 		else {
 			const fragment = document.createDocumentFragment( );

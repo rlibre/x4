@@ -1,0 +1,13 @@
+:root {
+	--form--background: var( --background-primary );
+}
+
+.x4form {
+	padding: 16px;
+	background-color: var( --color-form );
+
+	&>.xcontainer {
+
+	}
+}
+

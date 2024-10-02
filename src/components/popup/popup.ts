@@ -18,6 +18,8 @@ import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFr
 import { CSizer } from '../sizers/sizer';
 import { Rect, Point } from '@core/core_tools.js';
 
+import "./popup.module.scss"
+
 
 export interface PopupEvents extends ComponentEvents {
 	closed: ComponentEvent;
@@ -48,6 +50,7 @@ let popup_list:  Popup[] = [];
 export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Component<P,E> {
 
 	private _isopen = false;
+	private _isshown = false;
 
 	constructor( props: P ) {
 		super( props );
@@ -106,29 +109,15 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		xref += document.scrollingElement.scrollLeft;
 		yref += document.scrollingElement.scrollTop;
 
-		const width = window.innerWidth - 16;
-		const height = window.innerHeight - 16;
+		this.displayAt( xref, yref );
+	}
 
-		rm.left = xref;
-		rm.top = yref;
-		
-		if( rm.right>width ) {
-			rm.left = width-rm.width;
-		}
+	/**
+	 * 
+	 */
 
-		if( rm.bottom>height ) {
-			rm.top = rc.top+document.scrollingElement.scrollTop-rm.height;
-			if( rm.top<0 ) {
-				rm.top = 0;
-			}
-		}
-
-		this.setStyle( {
-			left: rm.left+"px",
-			top: rm.top+"px",
-		});
-
-		this.fire( "opened", {} );
+	displayCenter( ) {
+		this.displayNear( new Rect( window.innerWidth/2, window.innerHeight/2, 0, 0 ), "center middle" );
 	}
 
 	/**
@@ -157,8 +146,8 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 
 		if( this.props.movable ) {
-			const movers = this.queryAll( ".x4caption" );
-			movers.forEach( m => new CMover(m) );
+			const movers = this.queryAll( ".caption-element" );
+			movers.forEach( m => new CMover(m,this) );
 
 			if( this.hasClass("popup-caption") ) {
 				new CMover(this,this);
@@ -169,12 +158,15 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	private _show( ) {
-		if( this.props.modal ) {
+		
+		if( this.props.modal && !this._isshown ) {
 			this._showModalMask( );
 			modal_stack.push( this );
 			modal_count++;
 		}
 
+		this._isshown = true;
+		
 		if( this.props.autoClose ) {
 			if( autoclose_list.length==0 ) {
 				document.addEventListener( "pointerdown", this._dismiss );
@@ -229,6 +221,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			this._updateModalMask( );
 		}
 
+		this._isshown = false;
 		this.fire( "closed", {} );
 	}
 
@@ -323,7 +316,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	 */
 
 	private _createSizers( ) {
-
 		this.appendContent( [
 			new CSizer( "top" ),
 			new CSizer( "bottom" ),
