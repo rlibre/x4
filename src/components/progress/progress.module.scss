@@ -1,0 +1,41 @@
+:root {
+	--progress-background: var( --border );
+	--progress-color: var( --accent-background );
+}
+
+.x4progress {
+	background-color: var( --progress-background );
+	position: relative;
+	height: 6px;
+	margin: 0 5px;
+	border-radius: 3px;
+
+	.bar {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 0;
+
+		background-color: var( --progress-color );
+		border-radius: 3px;
+
+		transition: width ease 0.2s;
+	}
+
+	&.indeterm .bar {
+		background-image: linear-gradient(45deg,hsla(0,0%,100%,.15) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.15) 0,hsla(0,0%,100%,.15) 75%,transparent 0,transparent);
+		background-size: 20px 20px;
+		animation: slide 1s linear infinite;
+	}
+}
+
+@keyframes slide {
+	0% {
+        background-position: 0 0
+    }
+
+    to {
+        background-position: 2.5rem 0
+    }
+}

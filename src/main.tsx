@@ -5,13 +5,16 @@ import { HBox, VBox } from "./components/boxes/boxes"
 
 import { Listbox, ListItem } from './components/listbox/listbox'
 import { Panel } from './components/panel/panel'
-
-import "@fontsource/montserrat"
-import "./main.scss"
 import { TextEdit } from './components/textedit/textedit.js'
 import { TextArea } from './components/textarea/textarea.js'
 import { Switch } from './components/switch/switch.js'
 import { Combobox } from './components/combobox/combobox.js'
+import { Slider } from './components/slider/slider.js'
+
+
+import "@fontsource/montserrat"
+import "./main.scss"
+import { Progress } from './components/progress/progress.js'
 
 window.onload = ( ) => {
 	
@@ -72,6 +75,14 @@ window.onload = ( ) => {
 					new TextEdit( { labelWidth: 90, label: "Email", value: "", type: "email", placeholder: "select your email contact" } ),
 					new TextArea( { label: "Demo", height: 140 } ),
 					new Combobox( { label: 'ComboBox', items })
+				]
+			}),
+			new Panel( {
+				title: "Another panel",
+				width: 510,
+				content: [
+					new Slider( {min: 0, max: 100, step: 10, value: 50 } ),
+					new Progress( { min: 0, max: 100, value: 45 } ),
 				]
 			})
 		]

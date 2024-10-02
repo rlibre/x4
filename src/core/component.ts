@@ -65,6 +65,7 @@ export interface ComponentProps {
 	width?: string | number;
 	height?: string | number;
 	disabled?: true,
+	hidden?: true,
 
     // wrapper
 	existingDOM?: HTMLElement;
@@ -123,6 +124,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			if( props.cls ) {
 				this.addClass( props.cls );
+			}
+
+			if( props.hidden ) {
+				this.show( false );
 			}
 
 			if( props.id!==undefined ) {
@@ -606,7 +611,15 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	public scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
+	focus( ) {
+		(this.dom as HTMLElement).focus( );
+	}
+
+	/**
+	 * 
+	 */
+
+	scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
 		this.dom.scrollIntoView(arg);
 	}
 
@@ -790,7 +803,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return this.createElement( FRAGMENT, null ) as Component[];
 	}
 
-	// :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	// :: SPECIALS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
 	 * 
