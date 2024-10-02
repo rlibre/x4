@@ -230,3 +230,11 @@ export class Timer {
 		this._timers = null;
 	}
 }
+
+/**
+ * 
+ */
+
+export function asap( callback: ( ) => void ) {
+	return requestAnimationFrame( callback );
+}

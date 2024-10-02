@@ -16,25 +16,30 @@
 
 :root {
 	
-	--color-msgbox-caption: var( --color-error );
-	--color-msgbox-caption-text: var( --color-gray-0 );
+	--msgbox-caption-background: var( --alert-background );
+	--msgbox-caption-color: var( --alert-color );
+
+	--msgbox-icon-color:  var( --alert-background );
 }
 
-.x-message-box {
+.x4messagebox {
 
-	& > .x-caption {
-		background-color: var( --color-msgbox-caption );
+	& > .caption {
+		background-color: var( --msgbox-caption-background );
 
 		& > #title {
-			color: var( --color-msgbox-caption-text );
-			font-size: 120%;
+			color: var( --msgbox-caption-color );
 		}
 	}
 
-	& > .x-form {
-		.x-icon {
-			color: var( --color-error );
+	& .x4form {
+		.x4icon {
+			color: var( --msgbox-icon-color );
 			height: 96px;
+		}
+
+		.x4label {
+			padding: 16px;
 		}
 	}
 }

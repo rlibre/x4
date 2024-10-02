@@ -263,6 +263,8 @@ let fr = {
 		abort: "Abandonner",
 		retry: "Réessayer",
 
+		error: "Erreur",
+
 		open: 'Ouvrir',
 		new: 'Nouveau',
 		delete: 'Supprimer',
@@ -315,6 +317,8 @@ let en = {
 		no: 'No',
 		abort: "Abort",
 		retry: "Retry",
+
+		error: "Error",
 
 		open: 'Open',
 		new: 'New',

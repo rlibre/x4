@@ -1,13 +1,18 @@
 
 // :: MESSAGEBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-import { _tr } from '@core/core_i18n.js';
-import { HBox } from '../boxes/boxes.js';
-import { Icon } from '../icon/icon.js';
-import { Label } from '../label/label.js';
+import { _tr } from '@core/core_i18n';
 
-///@ts-ignore
+import { HBox } from '../boxes/boxes';
+import { Icon } from '../icon/icon';
+import { Label } from '../label/label';
+import { Dialog, DialogProps } from "../dialog/dialog"
+
+import "./messages.module.scss";
+
 import error_icon from "./circle-exclamation.svg";
+import { asap, UnsafeHtml } from '@core/core_tools.js';
+import { Form } from '../form/form.js';
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -22,15 +27,15 @@ export class MessageBox extends Dialog<DialogProps>
 		super(props);
 	}
 
-	set text(txt: string ) {
-		this.m_label.setLabel( txt );
+	setText(txt: string | UnsafeHtml ) {
+		this.m_label.setText( txt );
 	}
 
 	/**
 	 * display a messagebox
 	 */
 
-	static show( msg: string ): MessageBox {
+	static show( msg: string | UnsafeHtml ): MessageBox {
 
 		const box = new MessageBox({ 
 			modal: true,
@@ -41,7 +46,7 @@ export class MessageBox extends Dialog<DialogProps>
 					new HBox( {
 						content: [
 							new Icon( { iconId: error_icon }),
-							new Label( { label: msg } ),
+							new Label( { text: msg } ),
 						]
 					}),
 				]
@@ -49,10 +54,8 @@ export class MessageBox extends Dialog<DialogProps>
 			buttons: ["ok","cancel"]
 		});
 	
-		box.on( "btnClick", ( ev ) => {
-			setTimeout( ( ) => {
-				box.close();
-			}, 0 );
+		box.on( "btnclick", ( ev ) => {
+			asap( ( ) => box.close() );
 		});
 
 		box.display();

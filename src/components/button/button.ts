@@ -38,7 +38,7 @@ interface ButtonEvents extends ComponentEvents {
 interface ButtonProps extends ComponentProps {
 	label?: string;
 	icon?: string;
-	click?: EventCallback<EvClick>;		
+	click?: EventCallback<EvClick>;
 }
 
 /**

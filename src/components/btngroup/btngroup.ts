@@ -15,14 +15,16 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, Flex } from '@core/component';
+import { EventCallback } from '@core/core_events.js';
 import { isString } from '@core/core_tools';
 import { _tr } from '@core/core_i18n'
 
 import { Button } from '../button/button';
+import { Box } from '../boxes/boxes.js';
+import { Label } from '../label/label.js';
+import { EvBtnClick } from '../dialog/dialog.js';
 
 import "./btngroup.module.scss"
-import { Box, HBox } from '../boxes/boxes.js';
-import { Label } from '../label/label.js';
 
 
 type predefined = "ok" | "cancel" | "yes" | "no" | "retry" | "abort" | "-";	// - = flex
@@ -33,7 +35,7 @@ interface BtnClickEvent extends ComponentEvent {
 }
 
 interface BtnGroupEvents extends ComponentEvents {
-	click: BtnClickEvent;
+	btnclick: BtnClickEvent;
 }
 
 interface BtnGroupProps extends Omit<ComponentProps,"content"> {
@@ -41,6 +43,7 @@ interface BtnGroupProps extends Omit<ComponentProps,"content"> {
 	vertical?: boolean;					
 	items: BtnGroupItem[];
 	reverse?: boolean,
+	btnclick?: EventCallback<EvBtnClick>;
 }
 
 export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
@@ -57,6 +60,8 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 		if( props.items ) {
 			this.setButtons( props.items );
 		}
+
+		this.mapPropEvents( props, "btnclick" );
 	}
 
 	/**
@@ -89,7 +94,7 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 				}
 
 				b = new Button( { label: title, click: ( ) => {
-					this.fire( "click", {emitter:nm} )
+					this.fire( "btnclick", {emitter:nm} )
 				} } );
 			}
 

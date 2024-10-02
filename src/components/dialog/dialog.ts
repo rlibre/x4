@@ -25,7 +25,7 @@ import { Button } from '../button/button.js';
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
 
-interface DialogProps extends PopupProps {
+export interface DialogProps extends PopupProps {
 	icon?: string;
 	title: string;
 	form: Form;
@@ -39,7 +39,7 @@ export interface EvBtnClick extends Event {
 }
 
 interface DialogEvents extends PopupEvents {
-	btnClick: EvBtnClick;
+	btnclick: EvBtnClick;
 	close: ComponentEvent;
 }
 
@@ -74,6 +74,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				id: "btnbar",
 				reverse: true,
 				items: props.buttons,
+				btnclick: ( ev ) => { this.fire( "btnclick", ev ) }
 			}) 
 		])
 	}
