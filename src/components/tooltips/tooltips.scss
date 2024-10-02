@@ -1,0 +1,35 @@
+@use "../shared.scss";
+
+:root {
+	--tooltip-background: var( --color-primary-a70 );
+	--tooltip-color: var( --color-primary-a0 );
+	--tooltip-border: var( --border-dark );
+}
+
+.x4tooltip {
+	@extend .shadow-lg;
+	display: flex;
+	flex-direction: row;
+	border: none;
+	font-size: 90%;
+	position: absolute;
+
+	.x4icon {
+		width: 1.6em;
+		height: 100%;
+		padding: 2px 4px;
+		svg {
+			max-height: 100%;
+		}
+
+		background-color: var( --tooltip-background );
+		color: var( --tooltip-color );
+		border: 1px solid var( --tooltip-border );
+	}
+
+	#text {
+		background-color: var( --tooltip-background );
+		color: var( --tooltip-color );
+		padding: 4px;
+	}
+}

@@ -83,6 +83,8 @@ export interface ComponentProps {
 	disabled?: true,
 	hidden?: true,
 
+	tooltip?: string;
+
     // wrapper
 	existingDOM?: HTMLElement;
 
@@ -155,9 +157,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.setStyleValue( "width", props.width );
 			}
 
-			// small shortcut
 			if( props.height!==undefined ) {
 				this.setStyleValue( "height", props.height );
+			}
+
+			if( props.tooltip ) {
+				this.setAttribute( "tooltip", props.tooltip );
 			}
 
 			if( props.style ) {

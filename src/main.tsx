@@ -25,11 +25,14 @@ import "./main.scss"
 import { ColorInput } from './components/colorinput/colorinput.js'
 import { ColorPicker } from './components/colorpicker/colorpicker.js'
 import { Menu } from './components/menu/menu'
+import { initTooltips } from './components/tooltips/tooltips.js'
 
 
 
 window.onload = ( ) => {
 	
+	initTooltips( );
+
 	const testMenu = ( ev: MouseEvent ) => {
 		const sub = new Menu( { items: [
 				"Sub menu 1",
@@ -136,7 +139,7 @@ window.onload = ( ) => {
 						new Button( { icon: def_icon })
 					] } ),
 					new TextEdit( { labelWidth: 90, label: "Email", value: "", type: "email", placeholder: "select your email contact" } ),
-					new TextArea( { label: "Demo", height: 140 } ),
+					new TextArea( { label: "Demo", height: 140, tooltip: "This is a small tooltip" } ),
 					new Combobox( { label: 'ComboBox', items }),
 					new Combobox( { label: 'Readonly', items, readonly: true }),
 					new Combobox( { label: 'Disabled', items, disabled: true })
