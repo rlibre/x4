@@ -1,0 +1,104 @@
+@use "../shared.scss";
+
+.x4calendar {
+	border: 1px solid var( --border );
+	padding: 4px;
+	
+	.month-sel {
+		height: 2em;
+		align-items: center;
+		padding-left: 2em;
+
+		.month {
+			padding-right: 4px;
+		}
+
+		.year {
+			cursor: pointer;
+		}
+
+		.month, 
+		.year {
+			cursor: pointer;
+			&:hover {
+				text-decoration: underline;		
+			}
+		}
+				
+		.x4label {
+			font-weight: bold;
+		}
+
+		.x4button {
+			height: auto;
+			//color: var( --gray-900 );
+		}
+
+		margin-bottom: 8px;
+	}
+
+	.week {
+		@extend .flex;
+		align-items: center;
+		border: 1px solid transparent;
+		
+		&:hover {
+			//border-color: var( --x4-hover-color );
+			border-radius: 4px;
+		}
+
+		.cell {
+			@extend .flex;
+			width: 32px;
+			
+			color: var( --gray-900 );
+			text-align: center;
+
+			span {
+				margin: auto;
+			}
+		}
+
+		.today {
+			font-weight: bold;
+			background-color: var( --x4-error-color );
+				
+			span {
+				//border: 2px solid #013e69;
+				//padding: 4px;
+				border-radius: 2px;
+				color: white;
+			}
+		}
+
+		.weeknum {
+			width: 2em;
+			//color: @BLACK30;
+			font-size: 70%;
+		}
+
+		.day {
+			cursor: pointer;
+		}
+
+		.out {
+			//color: @BLACK30;
+		}
+
+		.day:hover {
+			background-color: var( --x4-hover-color );
+			color: white;
+		}
+	}
+
+	.header {
+		.cell {
+			color: var( --gray-800 );
+			height: 1.5em;
+		}
+
+		&:hover {
+			background-color: inherit;
+		}
+	}	
+}

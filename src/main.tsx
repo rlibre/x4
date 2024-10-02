@@ -31,6 +31,7 @@ import { Dialog } from './components/dialog/dialog.js'
 import { Form } from './components/form/form.js'
 import { MessageBox } from './components/messages/messages.js'
 import { unsafeHtml } from '@core/core_tools.js'
+import { Calendar } from './components/calendar/calendar.js'
 
 
 
@@ -203,7 +204,14 @@ window.onload = ( ) => {
 					new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
 					new Button( { label:'Message...', click: ( ) => {MessageBox.show( unsafeHtml( '<b>Care</b><br/>You will delete <i>all data</i>.' ) ) } } ),
 				]
-			})
+			}),
+			new Panel( {
+				title: "Another panel",
+				width: 610,
+				content: [
+					new Calendar( { } ),
+				]
+			}),
 		]
 	} );
 

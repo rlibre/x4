@@ -29,7 +29,7 @@ const OPEN_DELAY = 400;
  * 
  */
 
-interface MenuItem {
+export interface MenuItem {
 	cls?: string;
 	icon?: string;
 	text: string | UnsafeHtml;

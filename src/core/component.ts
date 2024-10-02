@@ -372,35 +372,6 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: CONTENT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * update the component
-	 * @param delay >0 delay in ms, <0 next frame, 0 immediately
-	 */
-
-	update( delay: number = 0 ) {
-
-		const up = ( ) => {
-			this.render( );
-		}
-
-		if( delay==0 ) {
-			up( );
-		}
-		else if( delay<0 ) {
-			requestAnimationFrame( up );
-		}
-		else {
-			setTimeout( up, delay );
-		}
-	}
-
-	/**
-	 * render the component
-	 */
-
-	render( ) {
-	}
-
-	/**
 	 * remove all content from component
 	 */
 
@@ -914,6 +885,9 @@ export function wrapDOM( el: HTMLElement ): Component {
 
 // just a flexible element that push other
 export class Flex extends Component {
+	constructor( ) {
+		super({})
+	}
 }
 
 
