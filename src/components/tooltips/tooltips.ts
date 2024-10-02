@@ -22,6 +22,7 @@ import { Popup, PopupProps } from '../popup/popup.js';
 import { Icon } from '../icon/icon.js';
 
 import "./tooltips.scss"
+
 import icon from "./circle-info-sharp-light.svg"
 
 
