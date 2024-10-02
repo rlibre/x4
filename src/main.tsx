@@ -18,11 +18,60 @@ import { Image } from './components/image/image.js'
 
 
 import "@fontsource/montserrat"
+
+import def_icon from "./assets/house-light.svg";
+
 import "./main.scss"
 import { ColorInput } from './components/colorinput/colorinput.js'
 import { ColorPicker } from './components/colorpicker/colorpicker.js'
+import { Menu } from './components/menu/menu'
+
+
 
 window.onload = ( ) => {
+	
+	const testMenu = ( ev: MouseEvent ) => {
+		const sub = new Menu( { items: [
+				"Sub menu 1",
+				{ text: "sub 1-1" }
+			] 
+		})
+
+		const sub3 = new Menu( { items: [
+				"Sub menu 3",
+				{ text: "sub 3-1" }
+			] 
+		})
+			
+		const sub2 = new Menu( { items: [
+				"Sub menu 2",
+				{ text: "sub 2-1" },
+				{ text: "menu e", menu: sub3 }
+			] 
+		})
+
+		//const time = new Label( { label: "X", cls: "center" } );
+		//time.setInterval( "tick", 20, ( ) => {
+		//	time.setLabel( Date.now()+"" );
+		//});
+		
+		const pop = new Menu( {items: [
+				"Title",
+				{ text: "menu a", click: null, icon: def_icon },
+				"-",
+				{ text: "menu b", click: null },
+				{ text: "menu c", click: null, disabled: true },
+				"-",
+				{ text: "menu d", menu: sub },
+				{ text: "menu e", menu: sub2 },
+				//time,
+			]
+		});
+
+		pop.displayAt( ev.pageX, ev.pageY );
+		ev.stopPropagation( );
+		ev.preventDefault( );
+	}
 	
 	const items: ListItem[] = [
 		{ id: 1, text: "Item 1" },
@@ -42,14 +91,14 @@ window.onload = ( ) => {
 		content: [
 			new Panel( {
 				title: "Panel",
-				icon:"assets/house-light.svg",
+				icon: def_icon,
 				width: 510,
 				content: [
-				new Label( { text: "label", icon: "assets/radio.svg" } ),
+				new Label( { text: "label", icon: def_icon } ),
 				new HBox( { content: [
-					new Button( { label:'OK', icon:"assets/house-light.svg" } ),
-					new Button( { label:'OK', icon:"assets/house-light.svg", disabled: true } ),
-					new Button( { cls: "outline", label:'OK', icon:"assets/house-light.svg" } ),
+					new Button( { label:'OK', icon:def_icon } ),
+					new Button( { label:'OK', icon:def_icon, disabled: true } ),
+					new Button( { cls: "outline", label:'OK', icon:def_icon } ),
 				]}),
 				new VBox({ content: [
 					new HBox({ content: [
@@ -79,12 +128,12 @@ window.onload = ( ) => {
 			]}),
 			new Panel( {
 				title: "Panel",
-				icon:"assets/house-light.svg",
+				icon: def_icon,
 				width: 510,
 				content: [
 					new TextEdit( { labelWidth: 90, label: "Login", value: "hello", required: true, disabled: true } ),
 					new TextEdit( { labelWidth: 90, label: "Password", value: "world", type: "password", inputGadgets: [
-						new Button( { icon: "assets/house-light.svg" })
+						new Button( { icon: def_icon })
 					] } ),
 					new TextEdit( { labelWidth: 90, label: "Email", value: "", type: "email", placeholder: "select your email contact" } ),
 					new TextArea( { label: "Demo", height: 140 } ),
@@ -114,6 +163,7 @@ window.onload = ( ) => {
 	const body = wrapDOM( document.body );
 	body.appendContent( t );
 	body.addClass( "fit" );
+	body.addDOMEvent( "contextmenu", ( ev ) => { testMenu(ev) } );
 }
 
 

@@ -18,7 +18,7 @@
 
 :root {
 	--label-background: transparent;
-	--label-color: rgb(73, 73, 73);
+	--label-color: var( --text-ternary );
 	--label-icon-color: rgb(0 0 0 / 44%);
 }
 

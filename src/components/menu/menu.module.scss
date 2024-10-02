@@ -1,0 +1,106 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file menu.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+:root {
+	--menu-background: var( --background-primary );
+	--menu-border: var( --border-hover );
+
+	--menuitem-color: var( --text-ternary );;
+	--menuitem-background-active: var( --accent-background-active );
+	--menuitem-color-active: var( --accent-color-active );
+	--menuitem-background-hover: var( --accent-background-hover );
+	--menuitem-color-hover: var( --accent-color-hover );
+}
+
+.x4menu {
+	@extend .shadow-lg;
+
+	position: absolute;
+	overflow: hidden;
+
+	border-radius: var(--bradius);
+	padding: 8px 0;
+	min-width: 150px;
+	
+	background-color: var(--menu-background);
+	border: 1px solid var(--menu-border);
+	
+	.x4cmenuitem {
+		@extend .hbox;
+
+		transition: background-color 0.3s, color 0.3s;
+
+		align-items: center;
+		color: var(--menuitem-color);
+		
+		padding: 6px;
+		gap: 10px;
+
+		cursor: pointer;
+
+		#icon {
+			width: 16px;
+			height: 16px;
+		}
+
+		#text {
+			@extend .flex;
+		}
+
+		&.title {
+			color: var( --text-primary );
+			cursor: auto;
+			margin-left: -16px;
+			margin-top: -6px;
+			font-weight: 600;
+		}
+
+		&.popup {
+			&:after {
+				content: url("./caret-right-solid.svg");
+				width: 6px;
+			}
+		}
+
+		&:hover:not(.title),
+		&.opened {
+			background-color: var(--menuitem-background-hover);
+			color: var(--menuitem-color-hover);
+		}
+
+		&:active:not(.title) {
+			background-color: var(--menuitem-background-active);
+			color: var(--menuitem-color-active);
+		}
+
+		&[disabled] {
+			&:hover {
+				background-color: var(--disabled-background) !important;
+			}
+			color: var( --disabled-color-dark ) !important;
+		}
+
+		transition: background-color 0.1s;
+	}
+
+	.x4cmenusep {
+		padding-top: 4px;
+		border-bottom: 1px solid var(--border);
+		margin-bottom: 4px;
+	}
+}

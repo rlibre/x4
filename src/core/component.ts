@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isArray, UnsafeHtml, isNumber, Rect } from './core_tools';
+import { isArray, UnsafeHtml, isNumber, Rect, Constructor } from './core_tools';
 import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
@@ -711,6 +711,29 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	prevElement<T extends Component = Component>( ): T {
 		const nxt = this.dom.previousElementSibling;
 		return componentFromDOM<T>( nxt );
+	}
+
+	/**
+	 * search for parent that match the given contructor 
+	 */
+
+	parentElement<T extends Component>( cls?: Constructor<T> ): T {
+		let p = this.dom;
+
+		while( p.parentElement ) {
+			const cp = componentFromDOM( p.parentElement );
+			if( !cls ) {
+				return cp as T;
+			}
+
+			if( cp && cp instanceof cls ) {
+				return cp;
+			}
+
+			p = p.parentElement;
+		}
+
+		return null;
 	}
 
 	/**

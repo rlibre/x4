@@ -167,3 +167,66 @@ export function isFeatureAvailable( name: keyof Features ): boolean {
 
 	return false;
 }
+
+export class Timer {
+	
+	protected _timers: Map<string,any>;
+	
+	/**
+	 * 
+	 */
+
+	setTimeout( name: string, time: number, callback: Function ) {
+		if( !this._timers ) {
+			this._timers = new Map( );
+		}
+		else {
+			this.clearTimeout( name );
+		}
+
+		const tm = setTimeout( callback, time );
+		this._timers.set( name, tm );
+
+		return tm;
+	}
+
+	clearTimeout( name: string ) {
+		if( this._timers && this._timers.has(name) ) {
+			clearTimeout( this._timers.get(name) );
+			this._timers.delete( name );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	setInterval( name: string, time: number, callback: Function ) {
+		if( !this._timers ) {
+			this._timers = new Map( );
+		}
+		else {
+			this.clearInterval( name );
+		}
+
+		const tm = setInterval( callback, time );
+		this._timers.set( name, tm );
+
+		return tm;
+	}
+
+	clearInterval( name: string ) {
+		if( this._timers && this._timers.has(name) ) {
+			clearInterval( this._timers.get(name) );
+			this._timers.delete( name );
+		}
+	}
+
+	clearAllTimeouts( ) {
+		this._timers?.forEach( t => {
+			clearTimeout( t );
+		} );
+
+		this._timers = null;
+	}
+}
