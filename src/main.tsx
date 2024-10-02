@@ -26,6 +26,7 @@ import { ColorInput } from './components/colorinput/colorinput.js'
 import { ColorPicker } from './components/colorpicker/colorpicker.js'
 import { Menu } from './components/menu/menu'
 import { initTooltips } from './components/tooltips/tooltips.js'
+import { Treeview, TreeItem } from './components/treeview/treeview.js'
 
 
 
@@ -85,6 +86,25 @@ window.onload = ( ) => {
 		{ id: 6, text: "Item 6" },
 	];
 
+	const tree_items: TreeItem[] = [
+		{ id: 1, text: "root", open: true, children: [
+			{ id: 2, text: "folder 1", children: [
+				{ id: 3, text: "folder 1.1", children: [
+					{ id: 4, text: "value 1.1" },
+					{ id: 5, text: "value 1.2", iconId: def_icon },
+					{ id: 6, text: "value 1.3" }
+				] }
+			]},
+			{ id: 10, text: "folder 2", open: true, children: [
+				{ id: 11, text: "folder 2.1", open: true, children: [
+					{ id: 12, text: "value 2.1" },
+					{ id: 13, text: "value 2.2" },
+					{ id: 14, text: "value 2.3" }
+				] }
+			]}
+		]}
+	]
+
 	const t = new HBox( {
 		style: {
 			alignItems: "start",
@@ -128,6 +148,10 @@ window.onload = ( ) => {
 						disabled: true,
 					})
 				]}),
+				new Treeview( {
+					items: tree_items,
+					height: 150,
+				}),
 			]}),
 			new Panel( {
 				title: "Panel",
