@@ -1,0 +1,49 @@
+:root {
+	--colorinput-btn-background: inherit;
+	--colorinput-btn-color: var( --text-secondary );
+	--colorinput-btn-color-hover: var( --text-primary );	
+}
+
+.x4colorinput {
+	margin: 5px;
+	border-bottom: 1px solid var( --border );
+	outline: none;
+
+	&:focus-within {
+		border-bottom-color: var( --border-focus );
+	}
+
+	.swatch {
+		margin: 4px;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	input {
+		outline: none;
+		margin: 0;
+		height: 100%;
+		flex-grow: 1;
+	}
+
+	.x4button {
+		margin: 0;
+		padding: 0;
+		outline: none;
+		background-color: var( --combobox-btn-background );
+		color: var( --colorinput-btn-color );
+
+		#icon {
+			color: var( --colorinput-btn-color );
+		}
+
+		&:hover, &:hover #icon {
+			color: var( --colorinput-btn-color-hover );
+		}
+
+		&:focus {
+			//background-color: var( --color-30 );
+			//color: var( --color-10 );
+		}
+	}
+}

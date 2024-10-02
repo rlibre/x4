@@ -1,3 +1,19 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file core_dom.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 /** @ignore this events must be defined on domNode (do not bubble) */
 export const unbubbleEvents = {
 	mouseleave: 1, mouseenter: 1, load: 1, unload: 1, scroll: 1, focus: 1, blur: 1, rowexit: 1, beforeunload: 1, stop: 1,

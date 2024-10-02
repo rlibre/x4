@@ -1,4 +1,20 @@
-import { isArray, UnsafeHtml, isNumber, Rect, IComponmentInterface } from './core_tools';
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file component.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+import { isArray, UnsafeHtml, isNumber, Rect } from './core_tools';
 import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
@@ -389,9 +405,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	appendContent( content: ComponentContent ) {
-		const d = this.dom;
-
-		const set = ( c: Component | string | UnsafeHtml | number | boolean ) => {
+		
+		const set = ( d: any, c: Component | string | UnsafeHtml | number | boolean ) => {
 			if (c instanceof Component ) {
 				d.appendChild( c.dom );
 			}
@@ -408,15 +423,15 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		}
 
 		if( !isArray(content) ) {
-			set( content );
+			set( this.dom, content );
 		}
 		else {
 			const fragment = document.createDocumentFragment( );
 			for (const child of content ) {
-				set( child );
+				set( fragment, child );
 			}
 
-			d.appendChild( fragment );
+			this.dom.appendChild( fragment );
 		}
 	}		
 
@@ -842,6 +857,13 @@ export function wrapDOM( el: HTMLElement ): Component {
 	}
 
 	return new Component( { existingDOM: el } );
+}
+
+
+// :: Special components ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+// just a flexible element that push other
+export class Flex extends Component {
 }
 
 

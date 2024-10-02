@@ -1,4 +1,20 @@
-import { Component, ComponentEvents, ComponentProps, componentFromDOM } from '@core/component';
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file sizer.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '@core/component';
 import { Point } from '@core/core_tools.js';
 
 
@@ -7,16 +23,16 @@ import { Point } from '@core/core_tools.js';
  * 
  */
 
-//interface SizeChangeEvent extends ComponentEvent {
-//	size: number;
-//}
-//
-//interface CSizerEvents extends ComponentEvents {
-//	resize: SizeChangeEvent;
-//}
+interface EvSizeChange extends ComponentEvent {
+	size: number;
+}
+
+interface CSizerEvent extends ComponentEvents {
+	resize: EvSizeChange;
+}
 
 
-export class CSizer extends Component<ComponentProps> {
+export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 	private _type: string;
 	private _ref: Component;
@@ -96,7 +112,7 @@ export class CSizer extends Component<ComponentProps> {
 		this._ref.setStyle( nr );
 
 		const nrc = this._ref.getBoundingRect( );
-		//this.fire( "resize", { size: horz ? nrc.width : nrc.height })
+		this.fire( "resize", { size: horz ? nrc.width : nrc.height })
 
 		e.preventDefault( );
 		e.stopPropagation( );

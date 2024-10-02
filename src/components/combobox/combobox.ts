@@ -1,3 +1,19 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file combobox.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 import { Component, ComponentEvent, ComponentProps, EvChange, EvSelectionChange, makeUniqueComponentId } from '@core/component';
 import { Listbox, ListboxID, ListItem, kbNav } from '../listbox/listbox';
 import { Popup, PopupEvents, PopupProps } from '../popup/popup.js';
@@ -75,7 +91,7 @@ export class Combobox extends Component<ComboboxProps> {
 		const id = makeUniqueComponentId( );
 
 		this.setContent( [
-			new HBox( { id: "label", content: new Label( { text: props.label, labelFor: id, width: props.labelWidth } ) } ),
+			new HBox( { id: "label", content: new Label( { tag: "label", text: props.label, labelFor: id, width: props.labelWidth } ) } ),
 			this._edit  = new HBox( { id: "edit", content: [
 				this._input  = new Input( { type: "text", value: "", readonly: props.readonly }),
 				this._button = new Button( { icon: icon } )
@@ -161,6 +177,10 @@ export class Combobox extends Component<ComboboxProps> {
 	}
 
 	showDropDown( ) {
+		if( this.isDisabled() ) {
+			return;
+		}
+		
 		const rc = this._edit.getBoundingRect( );
 		this._dropdown.setStyleValue( "width", rc.width+"px" );
 		this._dropdown.displayNear( rc, "top left", "bottom left", {x:0,y:6} );

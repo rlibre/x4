@@ -1,12 +1,36 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file shared.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+.box {
+	position: relative;
+}
+
+.x4box {
+	@extend .box;
+}
 
 .hbox {
+	@extend .box;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 }
 
-
 .vbox {
+	@extend .box;
 	display: flex;
 	flex-direction: column;
 }
@@ -52,4 +76,8 @@
 
 .shadow-xl {
 	box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,.05),rgba(0,0,0,.05) 0 2.25rem 1.75rem -0.4375rem,rgba(0,0,0,.04) 0 1.0625rem 1.0625rem -0.4375rem;
+}
+
+.x4flex {
+	@extend .flex;
 }

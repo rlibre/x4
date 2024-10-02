@@ -1,3 +1,19 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file combobox.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 @use "../shared.scss";
 
 :root {
@@ -51,13 +67,16 @@
 		}
 	}
 
-
 	&>#edit {
 		@extend .flex;
 		border-bottom: 1px solid var( --combobox-border );
 		
 		.x4input {
 			@extend .flex;
+
+			&[readonly] {
+				cursor: pointer;
+			}
 		}
 
 		.x4button {
@@ -76,13 +95,22 @@
 			}
 
 			&:focus {
-				background-color: var( --color-30 );
-				color: var( --color-10 );
+				//background-color: var( --color-30 );
+				//color: var( --color-10 );
 			}
 		}
 	}
 
+	&[disabled] {
+		&, * {
+			cursor: not-allowed;
+		}
 
+		#label .x4label {
+			color: var( --disabled-color-dark );
+			pointer-events: none;
+		}
+	}
 	
 	&[required] {
 		.x4label::before {

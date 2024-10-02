@@ -1,9 +1,25 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file textedit.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 @use "../shared.scss";
 
 :root {
 	--textedit-border: var( --border );
 	--textedit-border-focus: var( --border-focus );
-	--textedit-required: var( --alert-color );
+	--textedit-required: var( --alert-background );
 
 	--textedit-btn-background: inherit;
 	--textedit-btn-color: var( --text-secondary );

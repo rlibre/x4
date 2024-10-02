@@ -130,7 +130,7 @@ async function build() {
 				}), 
 				post_plugin
 			],
-			//assetNames: "assets/[name]-[hash]",
+			assetNames: "assets/[name]-[hash]",
 			loader: {
 				".svg": "file",
 				".jpg": "file",

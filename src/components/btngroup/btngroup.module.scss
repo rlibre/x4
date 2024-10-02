@@ -5,7 +5,7 @@
  *   /    \____   _|  
  *  /__/\__\   |_|.2
  * 
- * @file boxes.module.scss
+ * @file btngroup.model.scss
  * @author Etienne Cochard 
  * 
  * @copyright (c) 2024 R-libre ingenierie
@@ -14,13 +14,16 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-@use "../shared.scss";
+.x4btngroup {
+	align-content: start;
+	margin: 5px;
+	gap: 4px;
 
-.x4hbox {
-	@extend .hbox;
+	&.align-right {
+		justify-content: end;
+	}
+
+	&.align-center {
+		justify-content: center;
+	}
 }
-
-.x4vbox {
-	@extend .vbox;
-}
-

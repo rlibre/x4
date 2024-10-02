@@ -1,3 +1,18 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file core_tools.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
 
 
 /**
@@ -56,7 +71,15 @@ export function unsafeHtml( x: string ): UnsafeHtml {
 	return new UnsafeHtml( x );
 }
 
+/**
+ * 
+ */
 
+export function clamp<T>( v: T, min: T, max: T ) : T {
+	if( v<min ) { return min; }
+	if( v>max ) { return max; }
+	return v;
+}
 
 
 /**
@@ -129,3 +152,18 @@ export interface IFormElement extends IComponentInterface {
 	setRawValue( v: any ): void;
 }
 
+/**
+ * 
+ */
+
+interface Features {
+	eyedropper: 1,
+}
+
+export function isFeatureAvailable( name: keyof Features ): boolean {
+	switch( name ) {
+		case "eyedropper": return "EyeDropper" in window;
+	}
+
+	return false;
+}
