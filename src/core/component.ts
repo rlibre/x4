@@ -119,6 +119,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	readonly dom: Element;
 	readonly props: P;
+	private store: Map<string|Symbol,any>;
 
 	constructor( props: P ) {
 		super( );
@@ -314,7 +315,24 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return this.setAttribute( "data-"+name, value );
 	}
 
+	/**
+	 * idem as setData but onot on dom, you can store anything 
+	 */
 
+	setInternalData( name: string|Symbol, value: any ): this {
+		if( !this.store ) {
+			this.store = new Map( );
+		}
+
+		this.store.set( name, value );
+		return this;
+	}
+
+	getInternalData( name: string|Symbol ): any {
+		return this.store?.get(name);
+	}
+
+	
 	// :: DOM EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
