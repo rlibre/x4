@@ -3,7 +3,7 @@
  *  \  \/  /  / _
  *   \    /  /_| |_
  *   /    \____   _|  
- *  /__/\__\   |_|.2
+ *  /__/\__\   |_|
  * 
  * @file btngroup.ts
  * @author Etienne Cochard 

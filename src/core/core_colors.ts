@@ -3,7 +3,7 @@
  *  \  \/  /  / _
  *   \    /  /_| |_
  *   /    \____   _|  
- *  /__/\__\   |_|.2
+ *  /__/\__\   |_|
  * 
  * @file core_colors.ts
  * @author Etienne Cochard 
