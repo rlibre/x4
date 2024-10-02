@@ -1,6 +1,12 @@
-import { Component, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "@core/component"
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "@core/component"
 import { CSizer } from '../sizers/sizer';
 import { Rect, Point } from '@core/core_tools.js';
+
+
+export interface PopupEvents extends ComponentEvents {
+	closed: ComponentEvent;
+	opened: ComponentEvent;
+}
 
 export interface PopupProps extends ComponentProps {
 	modal?: boolean;
@@ -18,17 +24,12 @@ let autoclose_list: Popup[] = [];
 let popup_list:  Popup[] = [];
 
 
-//export interface PopupEvents extends ComponentEvents {
-//	closed: ComponentEvent;
-//	opened: ComponentEvent;
-//}
-//
 
 /**
  * 
  */
 
-export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents = PopupEvents*/> extends Component<P> {
+export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Component<P,E> {
 
 	private _isopen = false;
 
@@ -42,9 +43,9 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 
 	displayNear( rc: Rect, dst = "top left", src = "top left", offset = {x:0,y:0} ) {
 
-		this._show( );
-
-		let rb = new Rect( 0, 0, window.innerWidth, window.innerHeight );
+		this.setStyle( { left: "0px", top: "0px" } );	// avoid scrollbar
+		this._show( );									// to compute size
+		
 		let rm = this.getBoundingRect();
 
 		let xref = rc.left;
@@ -89,10 +90,29 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 		xref += document.scrollingElement.scrollLeft;
 		yref += document.scrollingElement.scrollTop;
 
+		const width = window.innerWidth - 16;
+		const height = window.innerHeight - 16;
+
+		rm.left = xref;
+		rm.top = yref;
+		
+		if( rm.right>width ) {
+			rm.left = width-rm.width;
+		}
+
+		if( rm.bottom>height ) {
+			rm.top = rc.top+document.scrollingElement.scrollTop-rm.height;
+			if( rm.top<0 ) {
+				rm.top = 0;
+			}
+		}
+
 		this.setStyle( {
-			left: xref+"px",
-			top: yref+"px",
-		})
+			left: rm.left+"px",
+			top: rm.top+"px",
+		});
+
+		this.fire( "opened", {} );
 	}
 
 	/**
@@ -121,7 +141,7 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 		}
 
 		if( this.props.movable ) {
-			const movers = this.queryAll( ".@caption" );
+			const movers = this.queryAll( ".x4caption" );
 			movers.forEach( m => new CMover(m) );
 
 			if( this.hasClass("popup-caption") ) {
@@ -129,7 +149,7 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 			}		
 		}
 
-		//this.fireEvent( "opened", {} );
+		this.fire( "opened", {} );
 	}
 
 	private _show( ) {
@@ -193,7 +213,7 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 			this._updateModalMask( );
 		}
 
-		//this.fireEvent( "closed", {} );
+		this.fire( "closed", {} );
 	}
 
 	/**
@@ -258,14 +278,14 @@ export class Popup<P extends PopupProps = PopupProps /*, E extends PopupEvents =
 		
 		if( !modal_mask ) {
 			modal_mask = new Component( {
-				cls: "@modal-mask",
+				cls: "x4modal-mask",
 				domEvents: {
 					click: this._dismiss
 				}
 			});
 		}
 
-		modal_mask.removeClass( "@hidden" );
+		modal_mask.show( true );
 		document.body.insertAdjacentElement( "beforeend", modal_mask.dom );
 	}
 

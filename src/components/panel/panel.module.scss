@@ -7,17 +7,18 @@
 
 
 .x4panel {
-	border: 1px solid var( --panel-border-color );
-	margin: 8px;
+	border: 1px solid var( --panel-border );
+	border-radius: 4px;
+	margin: 5px;
 	padding: 8px;
 	position: relative;
 
 	& > legend {
-		padding: 0 4px;
+		padding: 0 5px;
 		position: absolute;
 		left: 4px;
 		top: -0.7em;
-		//background-color: white;
+		background-color: white;
 		font-weight: bold;
 		color: var(--color-gray-9);
 	}

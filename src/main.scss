@@ -1,4 +1,6 @@
 @use "./components/normalize.scss";
 @use "./components/themes.scss";
 
-
+body {
+	padding: 16px;
+}

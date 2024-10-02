@@ -3,7 +3,7 @@ import { Label } from "./components/label/label"
 import { Checkbox } from "./components/checkbox/checkbox"
 import { HBox, VBox } from "./components/boxes/boxes"
 
-import { Listbox, ListboxItem } from './components/listbox/listbox'
+import { Listbox, ListItem } from './components/listbox/listbox'
 import { Panel } from './components/panel/panel'
 
 import "@fontsource/montserrat"
@@ -11,10 +11,11 @@ import "./main.scss"
 import { TextEdit } from './components/textedit/textedit.js'
 import { TextArea } from './components/textarea/textarea.js'
 import { Switch } from './components/switch/switch.js'
+import { Combobox } from './components/combobox/combobox.js'
 
 window.onload = ( ) => {
 	
-	const items: ListboxItem[] = [
+	const items: ListItem[] = [
 		{ id: 1, text: "Item 1" },
 		{ id: 2, text: "Item 2" },
 		{ id: 3, text: "Item 3" },
@@ -62,7 +63,7 @@ window.onload = ( ) => {
 			new Panel( {
 				title: "Panel",
 				icon:"assets/house-light.svg",
-				width: 450,
+				width: 510,
 				content: [
 					new TextEdit( { labelWidth: 90, label: "Login", value: "hello", required: true, disabled: true } ),
 					new TextEdit( { labelWidth: 90, label: "Password", value: "world", type: "password", inputGadgets: [
@@ -70,6 +71,7 @@ window.onload = ( ) => {
 					] } ),
 					new TextEdit( { labelWidth: 90, label: "Email", value: "", type: "email", placeholder: "select your email contact" } ),
 					new TextArea( { label: "Demo", height: 140 } ),
+					new Combobox( { label: 'ComboBox', items })
 				]
 			})
 		]
@@ -77,6 +79,7 @@ window.onload = ( ) => {
 
 	document.body.appendChild( t.dom );
 }
+
 
 
 

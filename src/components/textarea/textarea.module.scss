@@ -1,3 +1,5 @@
+@use "../shared.scss";
+
 :root {
 	--textarea-border: var( --border );
 	--textarea-border-focus: var( --border-focus );
@@ -8,6 +10,7 @@
 
 	.x4label{
 		gap: 0;
+		padding: 4px 0;
 
 		&::after {
 			content: ":"
@@ -15,11 +18,12 @@
 	}
 
 	textarea {
+		@extend .flex;
+
 		border: 1px solid var( --color-gray-3 );
 		padding: 4px;
 		outline: none;
 		font: inherit;
-		flex-grow: 1;
 
 		border: 1px solid var( --textarea-border );
 

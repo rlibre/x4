@@ -115,3 +115,17 @@ export interface Point {
 	x: number;
 	y: number;
 }
+
+/**
+ * 
+ */
+
+export interface IComponentInterface {
+}
+
+// form-element
+export interface IFormElement extends IComponentInterface {
+	getRawValue( ): any;
+	setRawValue( v: any ): void;
+}
+

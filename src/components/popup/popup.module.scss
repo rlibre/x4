@@ -1,4 +1,8 @@
-.x-popup {
+:root {
+	--modal-mask-background: rgba(0,0,0,0.5);
+}
+
+.x4popup {
 	background-color: var(--fill-color);
 	position: absolute;
 	border: 1px solid var(--border-color);
@@ -12,8 +16,8 @@
 	}
 }
 
-.x-modal-mask {
-	background-color: rgba(0,0,0,0.5);
+.x4modal-mask {
+	background-color: var( --modal-mask-background );
 	position: absolute;
 	left: 0;
 	top: 0;

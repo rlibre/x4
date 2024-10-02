@@ -35,17 +35,18 @@
 
 	&> #edit {
 		@extend .hbox;
-		flex-grow: 1;
+		@extend .flex;
 		border-bottom: 1px solid var( --textedit-border );
 		
 		.x4input {
+			@extend .flex;
 			outline: none;
 			margin: 0;
-			flex-grow: 1;
 		}
 
 		.x4button {
 			margin: 0;
+			padding: 0;
 			background-color: var( --textedit-btn-background );
 			color: var( --textedit-btn-color );
 
@@ -63,6 +64,13 @@
 		}
 	}
 
+	&:focus-within {
+		#edit {
+			border-bottom-color: var( --textedit-border-focus );
+		}
+	
+	}
+
 	&[required] {
 		& > #label > .x4label::before {
 			content: "*";
@@ -72,8 +80,10 @@
 	}
 
 	&[disabled] {
-		pointer-events: none;
-
+		&, * {
+			cursor: not-allowed;
+		}
+		
 		#label > .x4label #text,
 		#label > .x4label::before,
 		#label::after  {

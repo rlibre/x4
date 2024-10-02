@@ -1,4 +1,4 @@
-import { Component, componentFromDOM, ComponentProps } from '@core/component';
+import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '@core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { HBox } from '../boxes/boxes.js';
@@ -15,7 +15,7 @@ export enum kbNav {
 
 export type ListboxID = number | string;
 
-export interface ListboxItem {
+export interface ListItem {
 	id: ListboxID;
 	text: string;
 
@@ -29,29 +29,34 @@ export interface ListboxItem {
  * 
  */
 
-//export interface ChangeEvent extends ComponentEvent {
-//	selection: ListboxItem;
-//}
 
-//interface ListboxEvents extends ComponentEvents {
-//	change: ChangeEvent;
-//}
+interface ListboxEvents extends ComponentEvents {
+	//change: EvChange;
+	click?: EvClick;
+	dblClick?: EvDblClick;
+	contextMenu?: EvContextMenu;
+	selectionChange?: EvSelectionChange;
+}
+
+/**
+ * 
+ */
 
 interface ListboxProps extends Omit<ComponentProps,'content'> {
-	items?: ListboxItem[];
-	renderer?: ( item: ListboxItem ) => Component;
+	items?: ListItem[];
+	renderer?: ( item: ListItem ) => Component;
 	//header?: Header;
 	checkable?: true,
 }
 
 
 
-export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
+export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	private _view: Viewport;
 	private _selection: ListboxID;
 	private _selitem: Component;
-	private _items: ListboxItem[];
+	private _items: ListItem[];
 
 	preventFocus = false;
 
@@ -69,8 +74,10 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		] );
 		
 		this.setDOMEvents( {
-			click: 	 (ev) => this._onclick( ev ),
-			keydown: ( ev ) => this._onkey( ev ),
+			click: 	 (ev) => this._on_click( ev ),
+			keydown: ( ev ) => this._on_key( ev ),
+			dblclick: (e) => this._on_click(e),
+			contextmenu: (e) => this._on_ctx_menu(e),
 		} );
 
 		if( props.items ) {
@@ -82,7 +89,7 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 	 * 
 	 */
 
-	private _onkey( ev: KeyboardEvent ) {
+	private _on_key( ev: KeyboardEvent ) {
 		if( this.isDisabled() ) {
 			return;
 		}
@@ -127,8 +134,19 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 			else sens = kbNav.last;
 		}
 
+		const next_visible = ( el: Component, down: boolean ) => {
+			
+			while( el && !el.isVisible() ) {
+				el = down ? el.nextElement() : el.prevElement();
+			}
+
+			return el;
+		}
+
 		if( sens==kbNav.first || sens==kbNav.last ) {
-			const fel = sens==kbNav.first ? this._view.firstChild() : this._view.lastChild( );
+			let fel = sens==kbNav.first ? this._view.firstChild() : this._view.lastChild( );
+			fel = next_visible( fel, sens==kbNav.first );
+
 			if( fel ) {
 				const id = fel.getData( "id" );
 				this._selectItem( id, fel );
@@ -136,7 +154,9 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 			}
 		}
 		else {
-			const nel = sens==kbNav.next ? this._selitem.nextElement() : this._selitem.prevElement();
+			let nel = sens==kbNav.next ? this._selitem.nextElement() : this._selitem.prevElement();
+			nel = next_visible( nel, sens==kbNav.next );
+
 			if( nel ) {
 				const id = nel.getData( "id" );
 				this._selectItem( id, nel );
@@ -151,13 +171,28 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 	 * 
 	 */
 	
-	private _onclick( ev: UIEvent ) {
+	private _on_click( ev: UIEvent ) {
+		ev.stopImmediatePropagation();
+		ev.preventDefault( );
+
 		let target = ev.target as HTMLElement;
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 			if( c && c.hasClass("x4item") ) {
 				const id = c.getData( "id" );
-				this._selectItem( id, c );
+				const fev: ComponentEvent = { context:id };
+
+				if (ev.type == 'click') {
+					this.fire('click', fev );
+				}
+				else {
+					this.fire('dblClick', fev );
+				}
+
+				if (!fev.defaultPrevented) {
+					this._selectItem( id, c );
+				}
+				
 				return;
 			}
 
@@ -165,6 +200,32 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		}
 
 		this.clearSelection( );
+	}
+
+	/**
+	 * 
+	 */
+
+	private _on_ctx_menu(ev: MouseEvent) {
+
+		ev.preventDefault();		
+
+		let target = ev.target as HTMLElement;
+		while( target && target!=this.dom ) {
+			const c = componentFromDOM( target );
+			if( c && c.hasClass("x4item") ) {
+				const id = c.getData( "id" );
+				
+				this._selectItem(id, c);
+				this.fire('contextMenu', {uievent: ev, context: id } );
+			
+				return;
+			}
+
+			target = target.parentElement;
+		}
+
+		this.fire('contextMenu', { uievent:ev, context: null } );
 	}
 
 	/**
@@ -189,12 +250,28 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		}
 
 		const itm = this._findItem( id );
-		//this.fire( "change", { selection: itm } );
+		this.fire( "selectionChange", { selection: itm } );
 	}
+
+	/**
+	 * 
+	 */
 
 	private _findItem( id: ListboxID ) {
 		return this._items.find( x => x.id==id );
 	}
+
+	/**
+	 * 
+	 */
+	
+	private _findItemIndex( id: ListboxID ) {
+		return this._items.findIndex( x => x.id==id );
+	}
+
+	/**
+	 * 
+	 */
 
 	clearSelection( ) {
 		if( this._selitem ) {
@@ -203,10 +280,16 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		}
 
 		this._selection = undefined;
-		//this.fire( "change", { selection: undefined } );
+		this.fire( "selectionChange", { selection: undefined } );
 	}
 	
-	setItems( items: ListboxItem[] ) {
+	/**
+	 * 
+	 */
+
+	setItems( items: ListItem[] ) {
+		this.clearSelection( );
+		
 		this._view.clearContent( );
 		this._items = items;
 
@@ -216,7 +299,11 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		}
 	}
 
-	renderItem( item: ListboxItem ) {
+	/**
+	 * 
+	 */
+
+	renderItem( item: ListItem ) {
 		const renderer = this.props.renderer ?? this.defaultRenderer;
 		const line = renderer( item );
 	
@@ -226,19 +313,99 @@ export class Listbox extends Component<ListboxProps/*,ListboxEvents*/> {
 		return line;
 	}
 
-	defaultRenderer( item: ListboxItem ): Component {
+	/**
+	 * 
+	 */
+
+	defaultRenderer( item: ListItem ): Component {
 		return new HBox( {
 			cls: item.cls,
 			content: new Label( { icon: item.iconId, text: item.text }) 
 		} )
 	}
 
+	/**
+	 * 
+	 */
+
 	filter( filter: string ) {
-		const filtred = this._items.filter( x => x.text.includes(filter) );
-		if( this._selection && !filtred.some( x => x.id==this._selection ) ) {
+		const childs = this._view.enumChildComponents( false );
+		
+		if( !filter ) {
+			childs.forEach( x => x.show( true ) );
+		}
+		else {
+			// get list of visible items
+			const filtred = this._items
+					.filter( x => x.text.includes(filter) )
+					.map( x => x.id+'' );
+
+			// now hide all elements not in list
+			childs.forEach( x => {
+				x.show( filtred.includes( x.getData( "id" ) ) );
+			});
+		}
+	}
+
+	/**
+	 * append or prepend a new item
+	 * @param item 
+	 * @param prepend 
+	 * @param select 
+	 */
+
+	appendItem( item: ListItem, prepend = false, select = true ) {
+		
+		if( select ) {
 			this.clearSelection( );
 		}
 
-		this.setItems( filtred );
+		let el = this.renderItem( item );
+
+		if( prepend ) {
+			this._items.unshift( item );
+			this._view.prependContent( el );
+		}
+		else {
+			this._items.push( item );
+			this._view.appendContent( el );
+		}
+
+		if( select ) {
+			this._selectItem( item.id, el );
+		}
+	}
+
+	/**
+	 * update an item
+	 */
+
+	 updateItem( id: any, item: ListItem ) {
+
+		// find item
+		const idx = this._findItemIndex( id );
+		if( idx<0 ) {
+			return;
+		}
+		
+		// take care of selection
+		let was_sel = false;
+		if( this._selection && this._selection===id ) {
+			was_sel = true;
+		}
+
+		// replace it in the list
+		this._items[idx] = item;
+
+		// rebuild & replace it's line
+		const oldDOM = this.query( `[data-id="${item.id}"]` )?.dom;
+		if( oldDOM ) {
+			const _new = this.renderItem( item );
+			this._view.dom.replaceChild( _new.dom, oldDOM );
+
+			if( was_sel ) {
+				this._selectItem( item.id, _new );
+			}
+		}
 	}
 }

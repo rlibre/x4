@@ -9,20 +9,17 @@ input.x4input {
 	font: inherit;
 	outline: none;
 	
-	margin: 4px;
 	border: none;
-
-	&:focus {
-	}
-	
 
 	&::selection {
 		background-color: var( --input-sel-background );
 		color: var( --input-sel-color );
 	}
 	
-	&[type="text"], &[type="password"] {
-		padding: 0 4px;
+	&[type="text"], 
+	&[type="password"],
+	&[type="email"] {
+		padding: 8px 4px;
 	}
 
 	&[type="checkbox"]:checked,

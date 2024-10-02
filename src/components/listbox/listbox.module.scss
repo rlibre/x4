@@ -39,8 +39,9 @@
 			display: table;
 			
 			.x4item {
+				@extend .flex;
+				
 				padding: 4px;
-				flex-grow: 1;
 				background-color: transparent;
 				color: var( --color-gray-9 );
 

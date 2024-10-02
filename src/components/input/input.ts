@@ -1,5 +1,5 @@
 import { Component, ComponentProps } from '@core/component';
-//import { formatDate } from '@core/tools';
+import { IComponentInterface, IFormElement } from '@core/core_tools.js';
 
 import "./input.module.scss"
 
@@ -153,21 +153,103 @@ export class Input extends Component<InputProps> {
 		}
 	}
 
-	getValue( ) {
+	/**
+	 * @returns 
+	 */
+
+	public getValue( ) {
 		return (this.dom as HTMLInputElement).value;
 	}
 	
-	setValue( value: string ) {
+	/**
+	 * 
+	 * @param value 
+	 */
+	
+	public setValue( value: string ) {
 		(this.dom as HTMLInputElement).value = value+"";
 	}
 
-	getNumValue( ) {
+	/**
+	 * 
+	 * @returns 
+	 */
+	
+	public getNumValue( ) {
 		return parseFloat( this.getValue() );
 	}
 
-	setNumValue( value: number ) {
+	/**
+	 * 
+	 * @param value 
+	 */
+
+	public setNumValue( value: number ) {
 		this.setValue( value+"" );
 	}
+
+	/**
+	 * 
+	 */
+
+	public setReadOnly( ro: boolean ) {
+		const d = this.dom as HTMLInputElement;
+		d.readOnly = ro;
+	}
+
+	/**
+	 * select all the text
+	 */
+
+	public selectAll( ) {
+		const d = this.dom as HTMLInputElement;
+        d.select(); 
+	}
+
+	/**
+	 * select a part of the text
+	 * @param start 
+	 * @param length 
+	 */
+
+	public select( start: number, length: number = 9999 ) : void {
+		const d = this.dom as HTMLInputElement;
+		d.setSelectionRange( start, start+length );
+	}
+
+	/**
+	 * get the selection as { start, length }
+	 */
+
+	public getSelection( ) {
+		const d = this.dom as HTMLInputElement;
+
+		return {
+			start: d.selectionStart,
+			length: d.selectionEnd - d.selectionStart,
+		};
+	}
+
+	/**
+	 * 
+	 */
+
+	override queryInterface<T extends IComponentInterface>( name: string ): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ): any => { return this.getValue(); },
+				setRawValue: ( v: any ) => { this.setValue(v); }
+			};
+
+			//@ts-ignore
+			return i as T;
+		}
+		
+		return super.queryInterface( name );
+	}
 }
+
+
+
 
 

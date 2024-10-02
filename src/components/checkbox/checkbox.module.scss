@@ -18,6 +18,7 @@
 	align-items: center;
 
 	margin: 5px;
+	padding: 4px;
 	gap: 4px;
 	cursor: pointer;
 	
@@ -90,9 +91,12 @@
 	}
 
 	&[disabled] {
-		//cursor: not-allowed;
+		&, * {
+			cursor: not-allowed;
+		}
 			
 		label {
+		
 			pointer-events: none;
 			color: var( --checkbox-color-disabled );
 		}

@@ -1,7 +1,7 @@
-import { isArray, UnsafeHtml, isNumber, Rect } from './core_tools';
+import { isArray, UnsafeHtml, isNumber, Rect, IComponmentInterface } from './core_tools';
 import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
-import { EventMap } from './core_events';
+import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
 
 interface RefType<T extends Component> {
@@ -75,6 +75,14 @@ export interface ComponentProps {
 	//	this allow TS to recongnize derived props as ComponentProps
 	//[key: string]: any; 
 };
+
+
+/**
+ * 
+ */
+
+export interface ComponentEvent extends CoreEvent {
+}
 
 /**
  * 
@@ -301,6 +309,22 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		}
 	}
 
+	// :: HILEVEL EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	/**
+	 * tool to move named events to internal event map
+	 * @internal
+	 */
+	
+	protected mapPropEvents<N extends keyof E>(props: P, ...elements: N[] ) {
+		const p = props as any;
+		elements.forEach( n => {
+			if (p.hasOwnProperty(n) ) {
+				this.on( n, p[n] );
+			}
+		});
+	}
+
 	// :: CONTENT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
@@ -367,10 +391,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				d.appendChild( c.dom );
 			}
 			else if( c instanceof UnsafeHtml) {
-				d.insertAdjacentHTML('beforeend', c.toString() );
+				d.insertAdjacentHTML( 'beforeend' , c.toString() );
 			}
 			else if (typeof c === "string" || typeof c === "number") {
-				d.appendChild(document.createTextNode(c.toString()));
+				const tnode = document.createTextNode(c.toString());
+				d.appendChild( tnode );
 			}
 			else {
 				console.warn("Unknown type to append: ", c);
@@ -385,9 +410,47 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 			for (const child of content ) {
 				set( child );
 			}
+
 			d.appendChild( fragment );
 		}
 	}		
+
+	/**
+	 * cf. appendContent
+	 * @param content content to append
+	 */
+
+	prependContent( content: ComponentContent ) {
+		const d = this.dom;
+
+		const set = ( c: Component | string | UnsafeHtml | number | boolean ) => {
+			if (c instanceof Component ) {
+				d.insertBefore( d.firstChild, c.dom );
+			}
+			else if( c instanceof UnsafeHtml) {
+				d.insertAdjacentHTML( 'beforebegin', c.toString() );
+			}
+			else if (typeof c === "string" || typeof c === "number") {
+				const tnode = document.createTextNode(c.toString());
+				d.insertBefore( d.firstChild, tnode );
+			}
+			else {
+				console.warn("Unknown type to append: ", c);
+			}
+		}
+
+		if( !isArray(content) ) {
+			set( content );
+		}
+		else {
+			const fragment = document.createDocumentFragment( );
+			for (const child of content ) {
+				set( child );
+			}
+
+			d.insertBefore( d.firstChild, fragment );
+		}
+	}
 
 	/**
 	 * remove a single child
@@ -534,7 +597,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	getBoundingRect( ): Rect {
 		const rc = this.dom.getBoundingClientRect( );
-		return new Rect( rc );
+		return new Rect( rc.x, rc.y, rc.width, rc.height );
 	}
 
 	// :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -649,21 +712,15 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	enumChildComponents( recursive: boolean ) {
 
 		let children: Component[] = [];
-			
-		const enm = ( root: Node ) => {
-			root.childNodes.forEach( ( c: Node ) => {
-				const cc = componentFromDOM( c as HTMLElement );
-				if( cc ) {
-					children.push(cc);
-				}
+		
+		const nodes = this.enumChildNodes( recursive );
+		nodes.forEach( ( c: Node ) => {
+			const cc = componentFromDOM( c as HTMLElement );
+			if( cc ) {
+				children.push(cc);
+			}
+		} );
 
-				if( recursive && c.firstChild ) {
-					enm( c );
-				}
-			});
-		}
-
-		enm( this.dom );
 		return children;
 	}
 
@@ -672,23 +729,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	enumChildNodes( recursive: boolean ) {
-
-		if( this.hasClass("x4switch") ) {
-			debugger
-		}
-
-		let children: Node[] = [];
-			
-		const enm = ( root: Node ) => {
-			root.childNodes.forEach( ( c: Node ) => {
-				children.push(c);
-				if( recursive && c.firstChild ) {
-					enm( c );
-				}
-			});
-		}
-
-		enm( this.dom );
+		let children: Node[] = Array.from( recursive ? this.dom.querySelectorAll( '*' ) : this.dom.children );
 		return children;
 	}
 
@@ -741,8 +782,22 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return comp;
 	}
 
+	/**
+	 * 
+	 */
+
 	static createFragment( ): Component[] {
 		return this.createElement( FRAGMENT, null ) as Component[];
+	}
+
+	// :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	/**
+	 * 
+	 */
+
+	queryInterface<T extends IComponmentInterface>( name: string ): T {
+		return null;
 	}
 }  
 
@@ -775,3 +830,81 @@ export function wrapDOM( el: HTMLElement ): Component {
 
 	return new Component( { existingDOM: el } );
 }
+
+
+// :: HIGH LEVEL BASIC EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+/**
+ * Click Event
+ * click event do not have any additional parameters
+ */
+
+export interface EvClick extends ComponentEvent {
+}
+
+/**
+ * Change Event
+ * value is the the element value
+ */
+
+export interface EvChange extends ComponentEvent {
+	readonly value: any;
+}
+
+/**
+ * Selection Event
+ * value is the new selection or null
+ */
+
+interface ISelection {
+}
+
+export interface EvSelectionChange extends ComponentEvent {
+	readonly selection: ISelection;
+}
+
+
+/**
+ * ContextMenu Event
+ */
+
+export interface EvContextMenu extends ComponentEvent {
+	uievent: UIEvent;	// UI event that fire this event
+}
+
+/**
+ * Simple message
+ */
+
+export interface EvMessage extends ComponentEvent {
+	readonly msg: string;
+	readonly params?: any;
+}
+
+/**
+ * Drag/Drop event
+ */
+
+export interface EvDrag extends ComponentEvent {
+	element: unknown;
+	data: any;
+}
+
+/**
+ * Errors
+ */
+
+export interface EvError extends ComponentEvent {
+	code: number;
+	message: string;
+}
+
+/**
+ * DblClick Event
+ */
+
+export interface EvDblClick extends ComponentEvent {
+}
+

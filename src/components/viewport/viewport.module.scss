@@ -1,6 +1,7 @@
+@use "../shared.scss";
 
 .x4scrollview {
-	flex-grow: 1;
+	@extend .flex;
 
 	.x4viewport {
 		width: 100%;

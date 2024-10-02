@@ -1,42 +1,67 @@
-import { Component, ComponentProps, makeUniqueComponentId } from '@core/component.js';
+import { Component, ComponentEvents, ComponentProps, EvChange, makeUniqueComponentId } from '@core/component.js';
+import { EventCallback } from '@core/core_events.js';
 
 import { Input } from '../input/input';
 import { Label } from '../label/label';
 
+import { svgLoader } from '../icon/icon.js';
+
 import "./checkbox.module.scss"
 import icon from "./check.svg";
 
-import { HBox } from '../boxes/boxes.js';
-import { svgLoader } from '../icon/icon.js';
+/**
+ * Checkbox events
+ */
 
-interface CheckboxProps extends ComponentProps {
-	label: string;
-	checked?: boolean;
-	value?: string;
+interface CheckBoxEvents extends ComponentEvents {
+	change?: EvChange;
 }
 
 /**
- * 
+ * Checkbox properties.
  */
 
-export class Checkbox extends Component {
+interface CheckboxProps extends ComponentProps {
+	label: string; 			// The text label for the checkbox.
+	checked?: boolean;		// Optional boolean indicating if the checkbox is checked by default.
+	value?: string;			// Optional value associated with the checkbox.
+	change?: EventCallback<EvChange>;
+}
 
-	//private _check: Component;
-	//private _label: SimpleLabel;
+/**
+ * Checkbox component that can be checked or unchecked.
+ */
+
+export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
+
+	readonly _input: Input;
+
+	/**
+     * Creates an instance of the Checkbox component.
+     * 
+     * @param {CheckboxProps} props - The properties for the checkbox component, including label, checked state, and value.
+     * @example
+     * const checkbox = new Checkbox({ label: 'Accept Terms', checked: true });
+     */
 
 	constructor( props: CheckboxProps ) {
 		super( props );
 
 		const inputId = makeUniqueComponentId( );
 
+		this.mapPropEvents( props, 'change' );
+
 		this.setContent( [
 			new Component( {
 				cls: 'inner',
 				content: [
-					new Input( { 
+					this._input = new Input( { 
 						type:"checkbox", 
 						id: inputId, 
-						checked: props.checked 
+						checked: props.checked,
+						dom_events: {
+							change: ( ) => this._on_change( ),
+						}
 					})
 				] 
 			}),
@@ -52,4 +77,49 @@ export class Checkbox extends Component {
 			this.query<Label>( '.inner' ).dom.insertAdjacentHTML( "beforeend", svg );
 		});
 	}
+
+	/**
+	 * check state changed
+	 */
+
+	private _on_change() {
+		this.fire('change', { value:this.getCheck() } );
+	}
+
+	/**
+	 * @return the checked value
+	 */
+
+	public getCheck() {
+		const d = this._input.dom as HTMLInputElement;
+		return d.checked;
+	}
+
+	/**
+	 * change the checked value
+	 * @param {boolean} ck new checked value	
+	 */
+
+	public setCheck(ck: boolean) {
+		const d = this._input.dom as HTMLInputElement;
+		d.checked = ck;
+	}
+
+	/**
+	 * change the checkbox label
+	 * @param text 
+	 */
+
+	public setLabel(text: string) {
+		this.query<Label>('label').setText( text );
+	}
+
+	/**
+	 * toggle the checkbox
+	 */
+
+	public toggle() {
+		this.setCheck( !this.getCheck() );
+	}
+
 }

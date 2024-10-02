@@ -12,9 +12,10 @@
 	flex-direction: row;
 	align-items: center;
 	position: relative;
-
+    
 	gap: 4px;
 	margin-left: 5px;
+	padding: 4px;
 	cursor: pointer;
 
 	label {
@@ -89,6 +90,10 @@
 	}
 
 	&[disabled] {
+		&, * {
+			cursor: not-allowed;
+		}
+		
 		input {
 			pointer-events: none;
 		}
