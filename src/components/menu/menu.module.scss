@@ -31,7 +31,7 @@
 	@extend .shadow-lg;
 
 	position: absolute;
-	overflow: hidden;
+	overflow-y: scroll;
 
 	border-radius: var(--bradius);
 	padding: 8px 0;
@@ -39,6 +39,8 @@
 	
 	background-color: var(--menu-background);
 	border: 1px solid var(--menu-border);
+
+	max-height: calc( 100vh - 32px );
 	
 	.x4cmenuitem {
 		@extend .hbox;
