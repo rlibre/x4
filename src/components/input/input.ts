@@ -55,8 +55,8 @@ interface NumberProps extends BaseProps {
 	readonly?: boolean;
 	required?: boolean;
 	value: number | string;
-	min: number;
-	max: number;
+	min?: number;
+	max?: number;
 	step?: number;
 }
 

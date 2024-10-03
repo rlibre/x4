@@ -35,7 +35,7 @@ interface ButtonEvents extends ComponentEvents {
  * Button properties.
  */
 
-interface ButtonProps extends ComponentProps {
+export interface ButtonProps extends ComponentProps {
 	label?: string;
 	icon?: string;
 	click?: EventCallback<EvClick>;

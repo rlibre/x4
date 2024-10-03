@@ -21,7 +21,7 @@ import "./label.module.scss";
 import { UnsafeHtml } from '@core/core_tools.js';
 
 interface LabelProps extends ComponentProps {
-	text: string | UnsafeHtml;
+	text?: string | UnsafeHtml;
 	icon?: string;
 	labelFor?: string;
 }
@@ -31,9 +31,12 @@ export class Label extends Component<LabelProps> {
 	constructor( p: LabelProps ) {
 		super( { ...p, content: null } );
 
+		// small hack for react:
+		//	p.content may be the text
+		
 		this.setContent( [
 			new Icon( { id:"icon", iconId: this.props.icon } ),
-			new Component( { tag: 'span', id: 'text', content: this.props.text } )
+			new Component( { tag: 'span', id: 'text', content: this.props.text ?? p.content } )
 		] );
 
 		if( p.labelFor ) {

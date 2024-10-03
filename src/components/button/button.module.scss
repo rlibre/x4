@@ -36,6 +36,7 @@
 
 	// outline
 	--ol-button-background: var( --background-primary );
+	--ol-button-background-active: #eee;
 	--ol-button-color: var( --text-primary );
 	--ol-button-border: var( --border );
 	--ol-button-icon-color: var( --text-primary );
@@ -88,14 +89,14 @@
 		}
 	}
 
-	&:focus{
+	&:focus {
 		background-color: var( --button-background-focus );
 		color: var( --button-color-focus );
 		#icon {
 			color: var( --button-color-focus );
 		}
 
-		#label #text {
+		#label {
 			text-decoration: underline;
 		}
 	}
@@ -135,7 +136,7 @@
 	}
 
 	&:active{
-		background-color: var( --button-background-active );
+		background-color: var( --ol-button-background-active );
 		color: var( --button-color-active );
 		#icon {
 			color: var( --button-icon-color );

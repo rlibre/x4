@@ -9,7 +9,7 @@
  * 
  **/
 
-import { wrapDOM } from '@core/component.js'
+import { wrapDOM, Component } from '@core/component.js'
 
 import { Button } from "./components/button/button.js"
 import { Label } from "./components/label/label.js"
@@ -44,6 +44,8 @@ import "@fontsource/montserrat"
 import "./main.scss"
 
 import def_icon from "./assets/house-light.svg";
+import { Tabs } from './components/tabs/tabs.js'
+import { Rating } from './components/rating/rating.js'
 
 
 function main( ) {
@@ -251,6 +253,7 @@ function main( ) {
 						new ColorPicker( { color: "red",  } ),
 					]}),
 					new ColorInput( { color: "red",  } ),
+					new Rating( { value: 3 } ),
 					new SvgComponent( { svg: svg_builder, id: "", viewbox: "0 0 90 90", width: 90, height: 90, style: { margin: '16px'} } ),
 
 					new HBox( { content: [
@@ -267,6 +270,18 @@ function main( ) {
 					new Calendar( { } ),
 				]
 			}),
+			new Tabs( {
+
+				width: 500,
+				height: 200,
+
+				default: "page1",
+				items: [
+					{ name: "page1", title: "Tab 1", icon: def_icon, tab: (<Label><h4>tab 1 content</h4><p>lorem ipsum</p></Label>) },
+					{ name: "page2", title: "Tab 2", icon: def_icon, tab: (<Label><h4>tab 2 content</h4><p>ipsum lorem</p></Label>) },
+					{ name: "page3", title: "Tab 3", tab: (<Label><h4>tab 3 content</h4><p>ipsum ++</p></Label>) },
+				]
+			})
 		]
 	} );
 

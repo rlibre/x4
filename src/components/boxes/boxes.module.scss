@@ -24,3 +24,14 @@
 	@extend .vbox;
 }
 
+.x4stackbox {
+	&>* {
+		@extend .fit;
+		position: relative !important;
+	}
+
+	&>*:not(.selected) {
+		display: none;
+	}
+}
+

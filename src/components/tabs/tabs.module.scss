@@ -1,0 +1,46 @@
+@use "../shared.scss";
+
+:root {
+	--tab-border-selected: var( --accent-background );
+	--tab-border-hover: var( --accent-background-hover );
+}
+
+.x4tabs {
+	.x4ctablist {
+		gap: 4px;
+		padding: 5px 5px 0 5px;
+		
+		.x4button {
+			border: none;
+			border-bottom: 2px solid transparent;
+			color: var( --color-gray-7 );
+			margin: 0;
+			outline: none;
+			transition: border-color 0.2s ease;
+
+			&.selected {
+				border-bottom-color: var( --tab-border-selected );
+				font-weight: bold;
+				color: var( --color-gray-9 );
+			}
+
+			&:hover {
+				//border-bottom-color: var( --color-60 );
+				background-color: unset;;
+				color: black;
+				border-bottom-color: var( --tab-border-hover );	
+			}
+
+			&:focus {
+				color: var( --color-60 );
+			}
+		}
+
+	}
+
+	&> .body {
+		padding: 8px;
+		border: 1px solid var( --border );
+	}
+}
+
