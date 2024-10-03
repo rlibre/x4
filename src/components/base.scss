@@ -3,9 +3,9 @@
  *  \  \/  /  / _
  *   \    /  /_| |_
  *   /    \____   _|  
- *  /__/\__\   |_|
+ *  /__/\__\   |_|.2
  * 
- * @file icon.module.scss
+ * @file base.scss
  * @author Etienne Cochard 
  * 
  * @copyright (c) 2024 R-libre ingenierie
@@ -14,17 +14,13 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-@use "../shared.scss";
+@use "./shared.scss";
 
-.x4icon {
-	@extend .hbox;	
-
-	min-width: 10px;
-	height: 10px;
-    overflow: hidden;
-    
-	svg {
-		width: 100%;
-		height: 100%;
-	}
+.x4box {
+	@extend .box;
 }
+
+.x4flex {
+	@extend .flex;
+}
+

@@ -47,6 +47,7 @@ class SvgLoader {
 				this.waiters.set( file, [resolve] );
 				this._load( file )
 					.then( ( data: string ) => {
+						console.timeEnd( file );
 						this.cache.set( file, data );
 						const ww = this.waiters.get( file );
 						ww.forEach( cb => cb(data ) );
@@ -56,6 +57,7 @@ class SvgLoader {
 	}
 
 	private async _load( file: string ): Promise<string> {
+		console.time( file );
 		const res = await fetch( file );
 		if( res.ok ) {
 			return res.text( );
@@ -107,7 +109,10 @@ export class Icon extends Component<IconProps> {
 				} while( iconId.startsWith('var:') );
 			} 
 
-			if( iconId.endsWith(".svg") ) {
+			if( iconId.startsWith("data:image/svg+xml,<svg") ) {
+				this.dom.insertAdjacentHTML('beforeend', iconId.substring(19) );
+			}
+			else if( iconId.endsWith(".svg") ) {
 				svgLoader.load( iconId ).then( svg => {
 					this.clearContent( );
 					this.dom.insertAdjacentHTML('beforeend', svg );
@@ -119,6 +124,7 @@ export class Icon extends Component<IconProps> {
 		}
 		else {
 			this.clearContent( );
+			this.addClass( "empty" );
 		}
 	}
 }

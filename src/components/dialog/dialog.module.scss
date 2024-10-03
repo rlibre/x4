@@ -27,7 +27,8 @@
 	position: absolute;
 	background-color: white;
 	border: 1px solid var( --border-dark );
-	min-width: 350px;
+	min-width: min-content;
+    min-height: min-content;
 
 	&> .caption {
 		padding: 8px;

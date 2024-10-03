@@ -182,11 +182,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 			this.dom.classList.add( ...classes );
 
 			// need to have children for next statements
-			requestAnimationFrame( ( ) => {
-				if( props.disabled ) {
+			// and children way be created in caller
+			if( props.disabled ) {
+				this.addDOMEvent( "created", ( ) => {
 					this.enable( false );
-				}
-			});
+				} );
+			}
 		}
 
 		(this.dom as any)[COMPONENT] = this;
@@ -566,6 +567,14 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	getStyleValue<K extends keyof CSSStyleDeclaration>( name: K ) {
 		const _style = (this.dom as HTMLElement).style;
 		return _style[name];
+	}
+
+	setWidth( w: number | string ) {
+		this.setStyleValue( "width", isNumber(w) ? w+"px" : w );
+	}
+
+	setHeight( h: number | string ) {
+		this.setStyleValue( "height", isNumber(h) ? h+"px" : h );
 	}
 
 	/**

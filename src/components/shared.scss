@@ -18,10 +18,6 @@
 	position: relative;
 }
 
-.x4box {
-	@extend .box;
-}
-
 .hbox {
 	@extend .box;
 	display: flex;
@@ -58,10 +54,6 @@
 	min-width: 0;
 }
 
-
-.x4flex {
-	@extend .flex;
-}
 
 // from tailwind
 

@@ -1,12 +1,23 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * DEMO FILE
+ * 
+ **/
+
 import { wrapDOM } from '@core/component.js'
 
-import { Button } from "./components/button/button"
-import { Label } from "./components/label/label"
-import { Checkbox } from "./components/checkbox/checkbox"
-import { HBox, VBox } from "./components/boxes/boxes"
+import { Button } from "./components/button/button.js"
+import { Label } from "./components/label/label.js"
+import { Checkbox } from "./components/checkbox/checkbox.js"
+import { HBox, VBox } from "./components/boxes/boxes.js"
 
-import { Listbox, ListItem } from './components/listbox/listbox'
-import { Panel } from './components/panel/panel'
+import { Listbox, ListItem } from './components/listbox/listbox.js'
+import { Panel } from './components/panel/panel.js'
 import { TextEdit } from './components/textedit/textedit.js'
 import { TextArea } from './components/textarea/textarea.js'
 import { Switch } from './components/switch/switch.js'
@@ -15,16 +26,9 @@ import { Slider } from './components/slider/slider.js'
 import { Progress } from './components/progress/progress.js'
 import { BtnGroup } from './components/btngroup/btngroup.js'
 import { Image } from './components/image/image.js'
-
-
-import "@fontsource/montserrat"
-
-import def_icon from "./assets/house-light.svg";
-
-import "./main.scss"
 import { ColorInput } from './components/colorinput/colorinput.js'
 import { ColorPicker } from './components/colorpicker/colorpicker.js'
-import { Menu } from './components/menu/menu'
+import { Menu } from './components/menu/menu.js'
 import { initTooltips } from './components/tooltips/tooltips.js'
 import { Treeview, TreeItem } from './components/treeview/treeview.js'
 import { Dialog } from './components/dialog/dialog.js'
@@ -33,10 +37,16 @@ import { MessageBox } from './components/messages/messages.js'
 import { unsafeHtml } from '@core/core_tools.js'
 import { Calendar } from './components/calendar/calendar.js'
 import { Notification } from './components/notification/notification.js'
+import { SvgBuilder, SvgComponent } from '@core/core_svg.js'
+import { Header } from './components/header/header.js'
+
+import "@fontsource/montserrat"
+import "./main.scss"
+
+import def_icon from "./assets/house-light.svg";
 
 
-
-window.onload = ( ) => {
+function main( ) {
 	
 	initTooltips( );
 
@@ -120,11 +130,43 @@ window.onload = ( ) => {
 		buttons: ['ok','cancel'],
 		form: new Form( {
 			content: [
+				new Label( { cls: "x4flex", text: unsafeHtml("<h1>Example dialog</h1><p>This dialog is <i>resizable</i>...") } ),
 				new TextEdit( { label: "title", value: "" } ),
 			]
 		}),
-	})
+	});
 
+	const svg_builder = new SvgBuilder( );
+
+	svg_builder
+		.ellipse( 45, 45, 40 )
+		.stroke( "#ccc", 5 )
+		.fill( "transparent" );
+
+	svg_builder.path( )
+		.arc( 45, 45, 40, 0, 30*360/100 )
+		.stroke( "var( --accent-background )", 5 )
+		.fill( "none" )
+		.setAttr("tooltip","test")
+		.strokeCap( "round" )
+		.addDOMEvent( "mouseenter", ( ev ) => {
+			console.log( ev.target );
+			(ev.target as SVGElement).setAttribute( "stroke-width", "10px" );
+		})
+		.addDOMEvent( "mouseleave", ( ev ) => {
+			console.log( ev.target );
+			(ev.target as SVGElement).setAttribute( "stroke-width", "5px" );
+		});
+
+	svg_builder.text( 45, 42, "30%" )
+		.textAlign( "center" )
+		.verticalAlign( "baseline" )
+		.fontSize( "150%" )
+		.fontWeight( "bold" );
+
+	svg_builder.text( 45, 80, "custom control" )
+		.fontSize( "10px" )
+		.textAlign( "center" )
 
 	const t = new HBox( {
 		style: {
@@ -173,6 +215,13 @@ window.onload = ( ) => {
 					items: tree_items,
 					height: 150,
 				}),
+				new Header( { 
+					items: [
+						{ title: "Column ", name: "a1" },
+						{ title: "Column 66%", name: "a2", width: -2 },
+						{ title: "Column 33%", name: "a3", width: -1 },
+					]
+				} ),
 			]}),
 			new Panel( {
 				title: "Panel",
@@ -202,6 +251,7 @@ window.onload = ( ) => {
 						new ColorPicker( { color: "red",  } ),
 					]}),
 					new ColorInput( { color: "red",  } ),
+					new SvgComponent( { svg: svg_builder, id: "", viewbox: "0 0 90 90", width: 90, height: 90, style: { margin: '16px'} } ),
 
 					new HBox( { content: [
 						new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
@@ -226,7 +276,39 @@ window.onload = ( ) => {
 	body.addDOMEvent( "contextmenu", ( ev ) => { testMenu(ev) } );
 }
 
+function waitFontLoading(name: string) {
 
+	// tip for waiting font loading:
+	// by default, body is created invisible ((opacity = 0)
+	// we create a div inside with the font we need to wait the loading
+	// as soon as the font is loaded, it's size will change, the browser end font loading
+	// we can remove the div.
+	// pitfall: if the font is already loaded, ne never end.
+	// @review that
 
+	let ct = document.createElement('div');
 
+	ct.style.position = 'absolute';
+	ct.style.visibility = 'hidden';
+	ct.innerText = 'X';
 
+	document.body.appendChild(ct);
+
+	return new Promise<void>((resolve) => {
+
+		//let irc = ct.getBoundingClientRect();
+		const initialWidth = ct.offsetWidth;
+
+		let tm = setInterval(() => {
+
+			const newWidth = ct.offsetWidth;
+			if (newWidth!=initialWidth ) {
+				clearInterval(tm);
+				document.body.removeChild(ct);
+				resolve();
+			}
+		}, 0);
+	});
+}
+
+waitFontLoading( "montserrat" ).then( main );

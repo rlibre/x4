@@ -17,7 +17,7 @@
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '@core/component';
 import { Point } from '@core/core_tools.js';
 
-
+import "./sizer.module.scss"
 
 /**
  * 

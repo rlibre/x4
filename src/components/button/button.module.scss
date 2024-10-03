@@ -72,7 +72,7 @@
 		height: 1em;
 		//color: var( --button-icon-color );
 
-		&:empty {
+		&.empty {
 			display: none;
 		}
 	}

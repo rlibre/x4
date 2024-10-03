@@ -132,7 +132,7 @@ async function build() {
 			],
 			assetNames: "assets/[name]-[hash]",
 			loader: {
-				".svg": "file",
+				".svg": "dataurl",
 				".jpg": "file",
 				".png": "file",
 				".woff": "file",

@@ -18,8 +18,8 @@
 
 .x4scrollview {
 	@extend .flex;
+}
 
-	.x4viewport {
-		width: 100%;
-	}
+.x4viewport {
+	width: 100%;
 }

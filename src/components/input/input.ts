@@ -94,8 +94,11 @@ export class Input extends Component<InputProps> {
 		switch( props.type ) {
 			case "checkbox":
 			case "radio": {
-				this.setAttribute( "checked", props.checked );
-				this.setAttribute( "value", props.value );
+				const ck = this.dom as HTMLInputElement;
+				ck.checked = props.checked;
+				ck.value = props.value+"";
+				//this.setAttribute( "checked", props.checked );
+				//this.setAttribute( "value", props.value );
 				break;
 			}
 
