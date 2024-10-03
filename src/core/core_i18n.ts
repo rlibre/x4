@@ -264,6 +264,7 @@ let fr = {
 		retry: "Réessayer",
 
 		error: "Erreur",
+		today: "Aujourd'hui",
 
 		open: 'Ouvrir',
 		new: 'Nouveau',
@@ -319,6 +320,7 @@ let en = {
 		retry: "Retry",
 
 		error: "Error",
+		today: "Today",
 
 		open: 'Open',
 		new: 'New',

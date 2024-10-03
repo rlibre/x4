@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, Flex } from '@core/component'
-import { date_clone, date_hash, formatIntlDate, Point } from "@core/core_tools"
+import { date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "@core/core_tools"
 import { _tr } from '@core/core_i18n';
 import { EventCallback } from '@core/core_events.js';
 
@@ -26,6 +26,9 @@ import { HBox, VBox } from '../boxes/boxes'
 import { Menu, MenuItem } from '../menu/menu';
 
 import "./calendar.module.scss"
+import icon_prev from "./chevron-left-sharp-light.svg";
+import icon_today from "./calendar-check-sharp-light.svg";
+import icon_next from "./chevron-right-sharp-light.svg";
 
 interface CalendarEventMap extends ComponentEvents {
 	change?: EvChange;
@@ -76,7 +79,8 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		month_start.setDate(-day + 1 + 1);
 		let dte = date_clone(month_start);
 
-		let today = date_hash( this.m_date );
+		let selection = date_hash( this.m_date );
+		let today = date_hash( new Date() );
 
 		let month_end = date_clone(this.m_date);
 		month_end.setDate(1);
@@ -106,8 +110,9 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 					}
 				}),
 				new Flex( ),
-				new Button({ label: '<', click: () => this._next(false) } ),
-				new Button({ label: '>', click: () => this._next(true) } )
+				new Button({ icon: icon_prev, click: () => this._next(false) } ),
+				new Button({ icon: icon_today, click: () => this.setDate(new Date()), tooltip: _tr.global.today } ),
+				new Button({ icon: icon_next, click: () => this._next(true) } )
 			]
 		});
 
@@ -148,6 +153,10 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 			for (let d = 0; d < 7; d++) {
 
 				let cls = 'cell day';
+				if (date_hash(dte) == selection) {
+					cls += ' selection';
+				}
+
 				if (date_hash(dte) == today) {
 					cls += ' today';
 				}
@@ -161,8 +170,8 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 						cls,
 						flex: 1,
 						content: new Component({
-							tag: 'span',
-							content: formatIntlDate(dte, 'd'),
+							cls: "text",
+							content: unsafeHtml( `<span>${formatIntlDate(dte, 'd')}</span>` ),
 						}),
 						dom_events: {
 							click: () => this.select(dte)
@@ -243,11 +252,11 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		menu.displayAt(rc.left, rc.top);
 	}
 
-	get date() {
+	getDate() {
 		return this.m_date;
 	}
 
-	set date(date: Date) {
+	setDate(date: Date) {
 		this.m_date = date;
 		this._update();
 	}

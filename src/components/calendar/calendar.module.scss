@@ -16,6 +16,28 @@
 
 @use "../shared.scss";
 
+:root {
+	--calendar-btn-background: inherit;
+	--calendar-btn-color: var( --text-secondary );
+	--calendar-btn-color-hover: var( --text-primary );
+
+	--calendar-week-color: var( --accent-background );
+	--calendar-week-color-hover: var( --accent-background-hover );
+
+	--calendard-day-background-hover: var( --accent-background-hover );
+	--calendard-day-color-hover: var( --accent-color-hover );
+
+	--calendar-sel-background: var( --accent-background );
+	--calendar-sel-color: var( --accent-color );
+
+	--calendar-today-background: var( --alert-background );
+	--calendar-today-color: var( --alert-color );
+	--calendar-today-border: var( --accent-background );
+
+	--calendar-header-color: var( --text-primary );
+	--calendar-out-color: var( --disabled-color-dark );
+}
+
 .x4calendar {
 	border: 1px solid var( --border );
 	padding: 4px;
@@ -47,7 +69,12 @@
 
 		.x4button {
 			height: auto;
-			//color: var( --gray-900 );
+			background-color: var( --calendar-btn-background );
+			color: var( --calendar-btn-color );
+
+			&:hover {
+				color: var( --calendar-btn-color-hover );
+			}
 		}
 
 		margin-bottom: 8px;
@@ -56,41 +83,53 @@
 	.week {
 		@extend .flex;
 		align-items: center;
-		border: 1px solid transparent;
-		
-		&:hover {
-			//border-color: var( --x4-hover-color );
-			border-radius: 4px;
-		}
-
+		padding: 2px;
+				
 		.cell {
 			@extend .flex;
-			width: 32px;
+			min-width: 28px;
+			min-height: 28px;
 			
 			color: var( --gray-900 );
 			text-align: center;
+			
+			.text {
+				@extend .hbox;
 
-			span {
+				transition: background-color 0.3s, color 0.3s;
+				justify-content: center;
+				border: 1px solid transparent;
 				margin: auto;
+				border-radius: 14px;
+				width: 28px;
+				height: 28px;
+			}
+		}
+		
+		.today {
+			.text {
+				font-weight: bold;
+				background-color: var( --calendar-today-background );
+				color: var( --calendar-today-color );
+				//border-color: var( --calendar-today-border );
 			}
 		}
 
-		.today {
-			font-weight: bold;
-			background-color: var( --x4-error-color );
-				
-			span {
-				//border: 2px solid #013e69;
-				//padding: 4px;
-				border-radius: 2px;
-				color: white;
+		.selection {
+			.text {
+				background-color: var( --calendar-sel-background );
+				color: var( --calendar-sel-color );
 			}
 		}
 
 		.weeknum {
 			width: 2em;
-			//color: @BLACK30;
+			color: var( --calendar-week-color );
 			font-size: 70%;
+		}
+
+		&:hover .weeknum {
+			font-weight: bold;
 		}
 
 		.day {
@@ -98,19 +137,23 @@
 		}
 
 		.out {
-			//color: @BLACK30;
+			color: var( --calendar-out-color );
+			font-size: 80%;
 		}
 
 		.day:hover {
-			background-color: var( --x4-hover-color );
-			color: white;
+			.text {
+				background-color: var( --calendard-day-background-hover );
+				color: var( --calendard-day-color-hover );
+			}
 		}
 	}
 
 	.header {
 		.cell {
-			color: var( --gray-800 );
+			color: var( --calendar-header-color );
 			height: 1.5em;
+			justify-content: center;
 		}
 
 		&:hover {

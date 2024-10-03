@@ -400,6 +400,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	appendContent( content: ComponentContent ) {
 		const set = ( d: any, c: Component | string | UnsafeHtml | number | boolean ) => {
+	
 			if (c instanceof Component ) {
 				d.appendChild( c.dom );
 			}
@@ -410,7 +411,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				const tnode = document.createTextNode(c.toString());
 				d.appendChild( tnode );
 			}
-			else {
+			else if( c ) {
 				console.warn("Unknown type to append: ", c);
 			}
 		}

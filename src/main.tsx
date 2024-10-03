@@ -207,7 +207,7 @@ window.onload = ( ) => {
 			}),
 			new Panel( {
 				title: "Another panel",
-				width: 610,
+				width: 410,
 				content: [
 					new Calendar( { } ),
 				]
