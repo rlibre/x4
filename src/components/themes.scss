@@ -30,6 +30,9 @@
 
 	--color-danger-a50: #c01010;
 	--color-danger-a60: #{darken(#c01010,10%)};
+
+	--color-success-a50: #10c01f;
+	--color-success-a60: #{darken(#10c01f,10%)};
 }
 
 :root {
@@ -66,5 +69,9 @@
 	--alert-background: var( --color-danger-a50 );
 	--alert-background-active: var( --color-danger-a60 );
 	--alert-color: var( --color-primary-a0 );
+
+	--success-background: var( --color-success-a50 );
+	--success-background-active: var( --color-success-a60 );
+	--success-color: var( --color-success-a0 );
 }
 

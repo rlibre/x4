@@ -285,6 +285,36 @@ export function sprintf( format: string, ...args:any[] ) {
 	});
 }
 
+/**
+ * inverse of camel case
+ * theThingToCase -> the-thing-to-case
+ * @param {String} str 
+ */
+
+export function pascalCase(string: string): string {
+
+	let result = string;
+
+	result = result.replace(/([a-z])([A-Z])/g, "$1 $2");
+	result = result.toLowerCase();
+	result = result.replace(/[^- a-z0-9]+/g, ' ');
+
+	if (result.indexOf(' ') < 0) {
+		return result;
+	}
+
+	result = result.trim();
+	return result.replace(/ /g, '-');
+}
+
+export function camelCase( text: string ) {
+	let result = text.toLowerCase( );
+	result = result.replace( /[^a-zA-Z0-9]+(.)/g, (m,chr) => {
+		return chr.toUpperCase();
+	} );
+	return result;
+}
+
 // :: DATES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 let cur_locale: string = 'fr-FR';
@@ -639,4 +669,5 @@ export function calcAge(birth: Date, ref?: Date) {
 
 	return age;
 }
+
 

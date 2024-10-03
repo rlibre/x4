@@ -32,6 +32,7 @@ import { Form } from './components/form/form.js'
 import { MessageBox } from './components/messages/messages.js'
 import { unsafeHtml } from '@core/core_tools.js'
 import { Calendar } from './components/calendar/calendar.js'
+import { Notification } from './components/notification/notification.js'
 
 
 
@@ -201,8 +202,12 @@ window.onload = ( ) => {
 						new ColorPicker( { color: "red",  } ),
 					]}),
 					new ColorInput( { color: "red",  } ),
-					new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
-					new Button( { label:'Message...', click: ( ) => {MessageBox.show( unsafeHtml( '<b>Care</b><br/>You will delete <i>all data</i>.' ) ) } } ),
+
+					new HBox( { content: [
+						new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
+						new Button( { label:'Message...', click: ( ) => {MessageBox.show( unsafeHtml( '<b>Care</b><br/>You will delete <i>all data</i>.' ) ) } } ),
+						new Button( { label:'Notification...', click: ( ) => { new Notification( { mode: "success", text: "Modification saved", title: "Backup" } ).display( 5 ) } } ),
+					]}),
 				]
 			}),
 			new Panel( {

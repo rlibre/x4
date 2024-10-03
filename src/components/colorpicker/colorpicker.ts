@@ -90,10 +90,10 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
 		if( this.mdown ) {
 			const ir = this.irect;
 
-			let hpos = clamp(ev.pageX - ir.left, 0, ir.width );
+			let hpos = clamp(ev.clientX - ir.left, 0, ir.width );
 			let hperc = hpos / ir.width;
 
-			let vpos = clamp(ev.pageY - ir.top, 0, ir.height );
+			let vpos = clamp(ev.clientY - ir.top, 0, ir.height );
 			let vperc = vpos / ir.height;
 
 			this.hsv.saturation = hperc;
@@ -200,7 +200,7 @@ class HueSlider extends Box<BoxProps,CommonEvents> {
 		if( this.mdown ) {
 			const ir = this.irect;
 
-			let hpos = clamp(ev.pageX - ir.left, 0, ir.width );
+			let hpos = clamp(ev.clientX - ir.left, 0, ir.width );
 			let hperc = hpos / ir.width;
 
 			this.hsv.hue = hperc;
@@ -280,7 +280,7 @@ class AlphaSlider extends Box<BoxProps,CommonEvents> {
 		if( this.mdown ) {
 			const ir = this.irect;
 
-			let hpos = clamp(ev.pageX - ir.left, 0, ir.width );
+			let hpos = clamp(ev.clientX - ir.left, 0, ir.width );
 			let hperc = hpos / ir.width;
 
 			this.hsv.alpha = hperc;
@@ -305,6 +305,12 @@ class AlphaSlider extends Box<BoxProps,CommonEvents> {
 		const base = new Color(0,0,0)
 		base.setHsv( hsv.hue, hsv.saturation, hsv.value, 1 );
 		this.color.setStyleValue( "backgroundImage", `linear-gradient(90deg, transparent, ${base.toRgbString(false)})` );		
+	}
+
+	setColor( hsv: Hsv ) {
+		this.hsv = hsv;
+		this.updateBaseColor( hsv );
+		this.updateAlpha( );
 	}
 
 	move( delta: number ) {
@@ -411,7 +417,8 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 					const color = new Color( result.sRGBHex );
 					hsv = color.toHsv( );
 
-					this._alpha.updateBaseColor( hsv );
+					this._alpha.setColor( hsv );
+					
 					this._sat.updateBaseColor( hsv );
 					this._hue.updateHue( hsv );
 					updateColor( );

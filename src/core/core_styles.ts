@@ -14,6 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { pascalCase, isString } from './core_tools.js';
+
 export const unitless: Record<string,1> = {
 	animationIterationCount: 1,
 	aspectRatio: 1,
@@ -73,3 +75,141 @@ export type ariaValues = {
 export function isUnitLess( name: string ) {
 	return unitless[name] ? true : false;
 }
+
+/**
+ * 
+ */
+
+export class Stylesheet {
+
+	private m_sheet: CSSStyleSheet;
+	private m_rules: Map<string, number> = new Map( );
+
+	constructor() {
+		
+		function getStyleSheet( name: string ) : CSSStyleSheet {
+			for(let i=0; i<document.styleSheets.length; i++) {
+			  	let sheet = document.styleSheets[i];
+			  	if(sheet.title === name ) {
+					return <CSSStyleSheet>sheet;
+			  	}
+			}
+		}
+
+		this.m_sheet = getStyleSheet( 'x4-dynamic-css' );
+		if( !this.m_sheet ) {
+			const dom = document.createElement( 'style' );
+			dom.setAttribute('id', 'x4-dynamic-css' );
+			document.head.appendChild(dom);
+			this.m_sheet = <CSSStyleSheet>dom.sheet
+		}
+	}
+
+    /**
+     * add a new rule to the style sheet
+     * @param {string} name - internal rule name 
+     * @param {string} definition - css definition of the rule 
+     * @example
+     * setRule('xbody', "body { background-color: #ff0000; }" );
+     */
+
+	public setRule(name: string, definition: any ) {
+
+		if( isString(definition) ) {
+			let index = this.m_rules.get( name );
+			if (index !== undefined) {
+				this.m_sheet.deleteRule(index);
+			}
+			else {
+				index = this.m_sheet.cssRules.length;
+			}
+
+			this.m_rules.set( name, this.m_sheet.insertRule( definition, index) );
+		}
+		else {
+			let idx = 1;
+			for( let r in definition ) {
+
+				let rule = r + " { ",
+					css = definition[r];
+
+				for (let i in css) {
+					
+					let values = css[i];	// this is an array !
+					for (let j = 0; j < values.length; j++) {
+						rule += i + ": " + values[j] + "; "
+					}
+				}
+
+				rule += '}';
+
+				//console.log( rule );
+				
+				this.setRule( name+'--'+idx, rule );
+				idx++;
+			}
+		}
+	}
+
+	/**
+	 * return the style variable value
+	 * @param name - variable name 
+	 * @example
+	 * ```
+	 * let color = Component.getCss( ).getVar( 'button-color' );
+	 * ```
+	 */
+
+	public static getVar( name: string ) : any {
+		if( !Stylesheet.doc_style ) {
+			Stylesheet.doc_style = getComputedStyle( document.documentElement );
+		}
+
+		if( !name.startsWith('--') ) {
+			name = '--'+name;
+		}
+
+    	return Stylesheet.doc_style.getPropertyValue( name ); // #999999
+	}
+
+	static guid: number = 1;
+	static doc_style: CSSStyleDeclaration;
+}
+
+/**
+ * 
+ */
+
+export class ComputedStyle {
+	m_style:CSSStyleDeclaration;
+
+	constructor( style: CSSStyleDeclaration ) {
+		this.m_style = style;
+	}
+
+	/**
+	 * return the raw value
+	 */
+
+	value( name: keyof CSSStyleDeclaration ) : any {
+		return this.m_style[name];
+	}
+
+	/**
+	 * return the interpreted value
+	 */
+	
+	parse( name: keyof CSSStyleDeclaration ) : number {
+		name = pascalCase( name );
+		return parseInt( this.m_style[name] as any  );
+	}
+
+	/**
+	 * 
+	 */
+
+	get style( ) {
+		return this.m_style;
+	}
+}
+
