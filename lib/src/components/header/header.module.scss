@@ -1,0 +1,40 @@
+@use "../shared.scss";
+
+:root {
+	--header-background-hover: rgba(100,100,100,0.1);
+	--header-sizer-hover: var( --border-hover );
+}
+
+.x4header {
+	@extend .flex;
+	width: 100%;
+
+	overflow: hidden;
+	min-height: 2em;
+	border-bottom: 1px solid var( --border );
+
+
+	.cell {
+		border-bottom: 1px solid transparent;
+		overflow: hidden;
+		min-width: 3rem;
+
+		transition: border-color 0.5s ease;
+		padding: 4px;
+
+		span {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+		
+		&:hover {
+			background-color: var( --header-background-hover );
+		}
+
+		.x4csizer:hover {
+			border-right: 1px solid var( --header-sizer-hover );
+		}
+	}
+
+}

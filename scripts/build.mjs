@@ -18,6 +18,7 @@ import { WebSocketServer } from 'ws';
 import Watcher from "watcher"
 
 import { sassPlugin } from "esbuild-sass-plugin";
+import { dtsPlugin } from "esbuild-plugin-d.ts";
 //import { hostname } from 'node:os'
 
 console.log( chalk.green("\n\n-- X4Build 1.2 -------------------") );
@@ -26,6 +27,15 @@ const releaseMode = process.argv.some(a => a == "--release")
 const hmrMode = process.argv.some(a => a == "--hmr")		// hot module replacement
 const watchMode = process.argv.some(a => a == "--watch" )	// watch modifications
 const serveMode = process.argv.some(a => a == "--serve")	// watch modifications
+const cjsMode = process.argv.some(a => a == "--cjs")		// output mode 
+const dtsMode = process.argv.some(a => a == "--dts")		// generate .d.ts
+
+let outDir = process.argv.find( a => a.startsWith("--outdir=") );
+if( outDir ) {
+	outDir = outDir.substring(9);
+}
+
+console.log( "outdir =", outDir );
 
 
 function readPackage() {
@@ -51,12 +61,17 @@ const def_settings = {
 const pkg_settings = readPackage();
 const settings = { ...def_settings, ...pkg_settings.x4build };
 
+if( outDir ) {
+	settings.outdir = outDir;
+}
+
 console.log( chalk.green("    release mode ..", releaseMode ) );
 console.log( chalk.green("    hmr ...........", hmrMode ) );
 console.log( chalk.green("    watching ......", watchMode ) );
 console.log( chalk.green("    serve files ...", serveMode ) );
 console.log( chalk.green("    output dir ....", settings.outdir ) );
 console.log( chalk.green("    entry point ...", settings.entryPoints ) );
+console.log( chalk.green("    generate .d.ts.", dtsMode ) );
 console.log( chalk.green("    copying .......", settings.copy ) );
 
 console.log( chalk.green("----------------------------------") );
@@ -106,6 +121,13 @@ const post_plugin = {
 
 let buildcnt = 1;
 
+const other_plugins = [];
+
+if( dtsMode ) {
+	other_plugins.push( dtsPlugin( {
+	}) );
+}
+
 async function build() {
 
 	console.log(chalk.cyan(`building (${buildcnt++})...`));
@@ -120,15 +142,16 @@ async function build() {
 			charset: "utf8",
 			outdir: settings.outdir,
 			keepNames: true,
-			platform: "node",
-			format: "iife",
+			platform: "browser",
+			format: "esm",	//cjsMode ? "cjs" : "esm",
 			minify: releaseMode,
 			plugins: [ 
 				sassPlugin( {
 					type: "css",
 					filter: /\.scss$/,
 				}), 
-				post_plugin
+				post_plugin,
+				...other_plugins,
 			],
 			assetNames: "assets/[name]-[hash]",
 			loader: {
@@ -154,17 +177,6 @@ async function build() {
 		console.error(chalk.bgRed.white("build failure, waiting for correction"));
 		console.log(e.message);
 	}
-
-	//const ctx = await esbuild.context(settings);
-	//await ctx.watch( {} );
-
-	//const { host, port } = await ctx.serve({
-	//port: 5500,
-	//servedir: 'bin',
-	//fallback: "bin/index.html"
-	//});
-	//
-	//console.log(`Serving app at ${host}:${port}.`);
 }
 
 // :: WEBSOCKET SERVER FOR HRM ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -208,7 +220,7 @@ if (watchMode) {
 				targetPath = path.normalize(targetPath);
 			}
 
-			if (targetPath.startsWith("bin") || targetPath.startsWith("node_modules") ) {
+			if (targetPath.startsWith(settings.outdir) || targetPath.startsWith("node_modules") ) {
 				//console.log("skip watch", targetPath);
 				return true;
 			}

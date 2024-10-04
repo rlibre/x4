@@ -1,0 +1,59 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file textarea.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+:root {
+	--textarea-border: var( --border );
+	--textarea-border-focus: var( --border-focus );
+}
+
+.x4textarea {
+	margin: 5px;
+
+	.x4label{
+		gap: 0;
+		padding: 4px 0;
+
+		&::after {
+			content: ":"
+		}
+	}
+
+	textarea {
+		@extend .flex;
+
+		border: 1px solid var( --color-gray-3 );
+		padding: 4px;
+		outline: none;
+		font: inherit;
+
+		border: 1px solid var( --textarea-border );
+
+		&:focus {
+			border: 1px solid var( --textarea-border-focus );
+		}
+
+		&::selection {
+			background-color: var( --color-90 );
+			color: white;
+		}
+
+		&[resize=false] {
+			resize: none;
+		}
+	}
+}

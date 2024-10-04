@@ -1,12 +1,11 @@
 {
 	"compilerOptions": {
 		"strict": true,
+		"moduleResolution": "nodenext",
+		"module": "NodeNext",
 		"strictNullChecks": false,
 		"target": "ES2021",
-		"lib": [ "es2021", "DOM" ],
-		"jsx": "preserve",
-		"jsxFactory": "Component.createElement",
-		"jsxFragmentFactory": "Component.createFragment",
+		"lib": [ "es2022", "DOM" ],
 		"paths": {
 			"@core/*": ["./src/core/*"]
 		}
