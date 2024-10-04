@@ -1,31 +1,68 @@
 {
-  "name": "webcomp",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "scripts": {
-    "build": "node scripts/build.mjs --watch --hmr --serve",
-    "build-release": "node scripts/build.mjs --release --serve"
-  },
-  "devDependencies": {
-    "chalk": "^5.3.0",
-    "esbuild": "^0.24.0",
-    "esbuild-sass-plugin": "^3.3.1",
-    "watcher": "^2.3.1",
-    "ws": "^8.18.0"
-  },
-  "x4build": {
-    "entryPoints": [
-      "src/main.tsx"
-    ],
-    "copy": [
-      {
-        "from": "src/assets",
-        "to": "assets"
-      }
-    ]
-  },
-  "dependencies": {
-    "@fontsource/montserrat": "^5.1.0"
-  }
+	"name": "x4js",
+	"version": "2.0.2",
+	"description": "X4 framework",
+	"author": "etienne cochard",
+	"main": "src/x4.js",
+	"types": "lib/types/x4.d.ts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rlibre/x4.git"
+	},
+	"bugs": {
+		"url": "https://github.com/rlibre/x4/issues"
+	},
+	"keywords": [
+		"typescript",
+		"framework",
+		"sap",
+		"web",
+		"desktop",
+		"application"
+	],
+	"scripts": {
+		"build": "node scripts/build.mjs --watch --hmr --serve",
+		"build-release": "node scripts/build.mjs --release",
+		"build-dts": "dts-generator --project . --out lib/types/x4.d.ts",
+		"prepack": "node scripts/prepack.mjs"
+	},
+	"homepage": "https://x4js.org",
+	"module": "lib/esm/x4js.js",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./lib/types/x4js.d.ts",
+				"default": "./lib/esm/x4js.mjs"
+			},
+			"require": {
+				"types": "./lib/types/x4js.d.ts",
+				"default": "./lib/cjs/x4js.js"
+			}
+		}
+	},
+	"devDependencies": {
+		"chalk": "^5.3.0",
+		"dts-generator": "^3.0.0",
+		"esbuild": "^0.24.0",
+		"esbuild-sass-plugin": "^3.3.1",
+		"typescript": "^5.6.2",
+		"watcher": "^2.3.1",
+		"ws": "^8.18.0"
+	},
+	"x4build": {
+		"entryPoints": [
+			"src/x4.ts"
+		],
+		"outdir": "lib/esm",
+		"copy": [
+			{
+				"from": "src/assets",
+				"to": "assets"
+			}
+		]
+	},
+	"dependencies": {
+		"@fontsource/montserrat": "^5.1.0"
+	}
 }
