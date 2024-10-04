@@ -24,9 +24,10 @@ import { Button } from '../button/button.js';
 
 
 import "./colorinput.module.scss"
-import icon from "./pen-light.svg"
+import icon from "./crosshairs-simple-sharp-light.svg"
 
 //TODO: add swatches
+//TODO: better keyboard handling (selection after cursor)
 
 /**
  * 

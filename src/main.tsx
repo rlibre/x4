@@ -71,11 +71,6 @@ function main( ) {
 				{ text: "menu e", menu: sub3 }
 			] 
 		})
-
-		//const time = new Label( { label: "X", cls: "center" } );
-		//time.setInterval( "tick", 20, ( ) => {
-		//	time.setLabel( Date.now()+"" );
-		//});
 		
 		const pop = new Menu( {items: [
 				"Title",
@@ -86,7 +81,6 @@ function main( ) {
 				"-",
 				{ text: "menu d", menu: sub },
 				{ text: "menu e", menu: sub2 },
-				//time,
 			]
 		});
 
