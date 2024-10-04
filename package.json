@@ -1,10 +1,14 @@
 {
 	"name": "x4js",
-	"version": "2.0.7",
+	"version": "2.0.8",
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.ts",
 	"types": "lib/types/x4.d.ts",
+	"style": "lib/styles/x4.css",
+	"files": [
+		"lib/**/*"
+	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
