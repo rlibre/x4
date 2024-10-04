@@ -1,6 +1,6 @@
 {
 	"name": "x4js",
-	"version": "2.0.8",
+	"version": "2.0.9",
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.ts",
