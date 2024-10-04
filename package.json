@@ -1,6 +1,6 @@
 {
 	"name": "x4js",
-	"version": "2.0.5",
+	"version": "2.0.6",
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.js",
@@ -28,9 +28,6 @@
 	},
 	"homepage": "https://x4js.org",
 	"module": "lib/esm/x4.mjs",
-	"files": [
-		"lib/x4.css"
-	],
 	"exports": {
 		".": {
 			"import": {
@@ -56,12 +53,6 @@
 		"entryPoints": [
 			"src/x4.ts"
 		],
-		"outdir": "build",
-		"copy": [
-			{
-				"from": "src/assets",
-				"to": "assets"
-			}
-		]
+		"outdir": "build"
 	}
 }
