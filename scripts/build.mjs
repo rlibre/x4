@@ -30,6 +30,7 @@ const serveMode = process.argv.some(a => a == "--serve")	// watch modifications
 const cjsMode = process.argv.some(a => a == "--cjs")		// output mode 
 const dtsMode = process.argv.some(a => a == "--dts")		// generate .d.ts
 
+// forced outdir in command line
 let outDir = process.argv.find( a => a.startsWith("--outdir=") );
 if( outDir ) {
 	outDir = outDir.substring(9);
@@ -53,13 +54,16 @@ function readPackage() {
 }
 
 const def_settings = {
-	"entryPoints": ["src/main.ts"],
 	"outdir": "./bin",
 	"copy": [],
 };
 
 const pkg_settings = readPackage();
 const settings = { ...def_settings, ...pkg_settings.x4build };
+
+if( !settings.entryPoints ) {
+	settings.entryPoints = [pkg_settings.main];
+}
 
 if( outDir ) {
 	settings.outdir = outDir;
@@ -143,7 +147,7 @@ async function build() {
 			outdir: settings.outdir,
 			keepNames: true,
 			platform: "browser",
-			format: "esm",	//cjsMode ? "cjs" : "esm",
+			format: cjsMode ? "cjs" : "esm",
 			minify: releaseMode,
 			plugins: [ 
 				sassPlugin( {

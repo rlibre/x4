@@ -9,43 +9,43 @@
  * 
  **/
 
-import { wrapDOM, Component } from '@core/component.js'
+import { wrapDOM, Component } from "../src/core/component.ts";
+import { unsafeHtml } from '../src/core/core_tools.js'
+import { SvgBuilder, SvgComponent } from '../src/core/core_svg.js'
 
-import { Button } from "./components/button/button.js"
-import { Label } from "./components/label/label.js"
-import { Checkbox } from "./components/checkbox/checkbox.js"
-import { HBox, VBox } from "./components/boxes/boxes.js"
+import { Button } from "../src/components/button/button.js"
+import { Label } from "../src/components/label/label.js"
+import { Checkbox } from "../src/components/checkbox/checkbox.js"
+import { HBox, VBox } from "../src/components/boxes/boxes.js"
 
-import { Listbox, ListItem } from './components/listbox/listbox.js'
-import { Panel } from './components/panel/panel.js'
-import { TextEdit } from './components/textedit/textedit.js'
-import { TextArea } from './components/textarea/textarea.js'
-import { Switch } from './components/switch/switch.js'
-import { Combobox } from './components/combobox/combobox.js'
-import { Slider } from './components/slider/slider.js'
-import { Progress } from './components/progress/progress.js'
-import { BtnGroup } from './components/btngroup/btngroup.js'
-import { Image } from './components/image/image.js'
-import { ColorInput } from './components/colorinput/colorinput.js'
-import { ColorPicker } from './components/colorpicker/colorpicker.js'
-import { Menu } from './components/menu/menu.js'
-import { initTooltips } from './components/tooltips/tooltips.js'
-import { Treeview, TreeItem } from './components/treeview/treeview.js'
-import { Dialog } from './components/dialog/dialog.js'
-import { Form } from './components/form/form.js'
-import { MessageBox } from './components/messages/messages.js'
-import { unsafeHtml } from '@core/core_tools.js'
-import { Calendar } from './components/calendar/calendar.js'
-import { Notification } from './components/notification/notification.js'
-import { SvgBuilder, SvgComponent } from '@core/core_svg.js'
-import { Header } from './components/header/header.js'
+import { Listbox, ListItem } from '../src/components/listbox/listbox.js'
+import { Panel } from '../src/components/panel/panel.js'
+import { TextEdit } from '../src/components/textedit/textedit.js'
+import { TextArea } from '../src/components/textarea/textarea.js'
+import { Switch } from '../src/components/switch/switch.js'
+import { Combobox } from '../src/components/combobox/combobox.js'
+import { Slider } from '../src/components/slider/slider.js'
+import { Progress } from '../src/components/progress/progress.js'
+import { BtnGroup } from '../src/components/btngroup/btngroup.js'
+import { Image } from '../src/components/image/image.js'
+import { ColorInput } from '../src/components/colorinput/colorinput.js'
+import { ColorPicker } from '../src/components/colorpicker/colorpicker.js'
+import { Menu } from '../src/components/menu/menu.js'
+import { initTooltips } from '../src/components/tooltips/tooltips.js'
+import { Treeview, TreeItem } from '../src/components/treeview/treeview.js'
+import { Dialog } from '../src/components/dialog/dialog.js'
+import { Form } from '../src/components/form/form.js'
+import { MessageBox } from '../src/components/messages/messages.js'
+import { Calendar } from '../src/components/calendar/calendar.js'
+import { Notification } from '../src/components/notification/notification.js'
+import { Header } from '../src/components/header/header.js'
+import { Tabs } from '../src/components/tabs/tabs.js'
+import { Rating } from '../src/components/rating/rating.js'
 
 import "@fontsource/montserrat"
 import "./main.scss"
 
 import def_icon from "./assets/house-light.svg";
-import { Tabs } from './components/tabs/tabs.js'
-import { Rating } from './components/rating/rating.js'
 
 
 function main( ) {
@@ -271,9 +271,9 @@ function main( ) {
 
 				default: "page1",
 				items: [
-					{ name: "page1", title: "Tab 1", icon: def_icon, tab: (<Label><h4>tab 1 content</h4><p>lorem ipsum</p></Label>) },
-					{ name: "page2", title: "Tab 2", icon: def_icon, tab: (<Label><h4>tab 2 content</h4><p>ipsum lorem</p></Label>) },
-					{ name: "page3", title: "Tab 3", tab: (<Label><h4>tab 3 content</h4><p>ipsum ++</p></Label>) },
+					{ name: "page1", title: "Tab 1", icon: def_icon, tab: new Label( { text: unsafeHtml(`<h4>tab 1 content</h4><p>lorem ipsum</p>`)}) },
+					{ name: "page2", title: "Tab 2", icon: def_icon, tab: new Label( { text: unsafeHtml(`<h4>tab 2 content</h4><p>ipsum lorem</p>` )}) },
+					{ name: "page3", title: "Tab 3", tab: new Label( { text: unsafeHtml(`<h4>tab 3 content</h4><p>ipsum ++</p>` )}) },
 				]
 			})
 		]
@@ -321,3 +321,4 @@ function waitFontLoading(name: string) {
 }
 
 waitFontLoading( "montserrat" ).then( main );
+//main( );

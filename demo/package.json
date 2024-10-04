@@ -1,0 +1,26 @@
+{
+	"name": "x4js_demo_app",
+	"version": "2.0.11",
+	"description": "X4 framework",
+	"author": "etienne cochard",
+	"main": "main.ts",
+	"scripts": {
+		"build": "node ../scripts/build.mjs --watch --hmr --serve",
+		"build-release": "node ../scripts/build.mjs --release"
+	},
+	"devDependencies": {
+		"x4js": "^2.0"
+	},
+	"x4build": {
+		"outdir": "build",
+		"copy": [
+			{
+				"from": "index.html",
+				"to": "index.html"
+			}
+		]
+	},
+	"dependencies": {
+		"@fontsource/montserrat": "^5.1.0"
+	}
+}

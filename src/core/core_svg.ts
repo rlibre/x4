@@ -14,10 +14,10 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps } from '@core/component';
-import { isUnitLess } from "@core/core_styles";
-import { DOMEventHandler, GlobalDOMEvents, addEvent } from '@core/core_dom';
-import { isNumber, isString } from '@core/core_tools.js';
+import { Component, ComponentProps } from './component';
+import { isUnitLess } from "./core_styles";
+import { DOMEventHandler, GlobalDOMEvents, addEvent } from './core_dom';
+import { isNumber, isString } from './core_tools';
 
 const SVG_NS = "http://www.w3.org/2000/svg"; 
 

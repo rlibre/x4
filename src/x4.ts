@@ -58,3 +58,5 @@ export * from "./components/textedit/textedit"
 export * from "./components/tooltips/tooltips"
 export * from "./components/treeview/treeview"
 export * from "./components/viewport/viewport"
+
+import "./x4.scss"
