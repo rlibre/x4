@@ -1,6 +1,6 @@
 {
 	"name": "x4js",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.js",
@@ -63,8 +63,5 @@
 				"to": "assets"
 			}
 		]
-	},
-	"dependencies": {
-		"@fontsource/montserrat": "^5.1.0"
 	}
 }
