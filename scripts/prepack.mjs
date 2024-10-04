@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as fs from 'node:fs';
 import * as path from "node:path"
 import chalk from "chalk"
@@ -33,8 +35,6 @@ class DTSGenerator {
 	emit( lvl, code ) {
 		this.output.write( '\t'.repeat(lvl)+code );
 	}
-
-
 
 	/**
 	 * 
@@ -273,7 +273,6 @@ class DTSGenerator {
 		const compilerOptions = readJSON("tsconfig.json");
 
 		compilerOptions.declaration = true;
-		compilerOptions.outDir = "./zzz";
 
 		const host = ts.createCompilerHost(compilerOptions);
 		const program = ts.createProgram(inputFiles, compilerOptions, host);
@@ -323,7 +322,7 @@ async function main() {
 	console.log(chalk.green("creating .d.ts..."));
 	
 	const generator = new DTSGenerator( );
-	await generator.build( "lib/output.d.ts" );
+	await generator.build( "lib/types/x4js.d.ts" );
 
 	console.log(chalk.green("copying dependencies..."));
 
