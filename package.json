@@ -1,6 +1,6 @@
 {
 	"name": "x4js",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.js",
@@ -24,20 +24,22 @@
 	"scripts": {
 		"build": "node scripts/build.mjs --watch --hmr --serve",
 		"build-release": "node scripts/build.mjs --release",
-		"build-dts": "dts-generator --project . --out lib/types/x4.d.ts",
 		"prepack": "node scripts/prepack.mjs"
 	},
 	"homepage": "https://x4js.org",
 	"module": "lib/esm/x4js.js",
+	"files": [
+		"lib/x4.css"
+	],
 	"exports": {
 		".": {
 			"import": {
-				"types": "./lib/types/x4js.d.ts",
-				"default": "./lib/esm/x4js.mjs"
+				"types": "./lib/types/x4.d.ts",
+				"default": "./lib/esm/x4.mjs"
 			},
 			"require": {
-				"types": "./lib/types/x4js.d.ts",
-				"default": "./lib/cjs/x4js.js"
+				"types": "./lib/types/x4.d.ts",
+				"default": "./lib/cjs/x4.js"
 			}
 		}
 	},
@@ -54,7 +56,7 @@
 		"entryPoints": [
 			"src/x4.ts"
 		],
-		"outdir": "lib/esm",
+		"outdir": "build",
 		"copy": [
 			{
 				"from": "src/assets",
