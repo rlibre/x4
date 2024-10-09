@@ -520,25 +520,25 @@ export function parseIntlDate(value: string, fmts: string = _tr.global.date_inpu
  * @param date - date to format
  * @param fmt - format 
  * format specifiers:
- * d: date (no pad)
- * D: 2 digits date padded with 0
- * j: day of week short mode 'mon'
- * J: day of week long mode 'monday'
- * w: week number
- * m: month (no pad)
- * M: 2 digits month padded with 0
- * o: month short mode 'jan'
- * O: month long mode 'january'
- * y or Y: year
- * h: hour (24 format)
- * H: 2 digits hour (24 format) padded with 0
- * i: minutes
- * I: 2 digits minutes padded with 0
- * s: seconds
- * S: 2 digits seconds padded with 0
- * a: am or pm
- * anything else is inserted
- * if you need to insert some text, put it between {}
+ * - d: date (no pad)
+ * - D: 2 digits date padded with 0
+ * - j: day of week short mode 'mon'
+ * - J: day of week long mode 'monday'
+ * - w: week number
+ * - m: month (no pad)
+ * - M: 2 digits month padded with 0
+ * - o: month short mode 'jan'
+ * - O: month long mode 'january'
+ * - y or Y: year
+ * - h: hour (24 format)
+ * - H: 2 digits hour (24 format) padded with 0
+ * - i: minutes
+ * - I: 2 digits minutes padded with 0
+ * - s: seconds
+ * - S: 2 digits seconds padded with 0
+ * - a: am or pm
+ * - anything else is inserted
+ * - if you need to insert some text, put it between {}
  * 
  * @example
  * 
