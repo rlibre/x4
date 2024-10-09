@@ -7,8 +7,8 @@
 		"target": "ES2021",
 		"lib": [ "es2022", "DOM" ],
 		"paths": {
-			"@core/*": ["x4js"],
-			"@comp/*": ["x4js"]
+			"@core/*": ["./src/core"],
+			"@comp/*": ["./src/components"]
 		}
 	}
 }

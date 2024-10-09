@@ -188,7 +188,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.setDOMEvents( props.dom_events );
 			}
 
-			const classes = genClassNames( this, props.clsprefix ?? "" );
+			const classes = genClassNames( this );
 			this.dom.classList.add( ...classes );
 
 			// need to have children for next statements
