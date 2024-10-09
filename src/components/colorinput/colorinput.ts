@@ -15,7 +15,7 @@
  **/
 
 import { Component } from '../../core/component';
-import { isFeatureAvailable } from '../../core/core_tools.js';
+import { isFeatureAvailable, class_ns } from '../../core/core_tools.js';
 import { Color } from '../../core/core_colors';
 
 import { BoxProps, HBox } from '../boxes/boxes';
@@ -41,7 +41,10 @@ interface ColorInputProps extends BoxProps {
  * 
  */
 
+@class_ns( "x4" )
 export class ColorInput extends HBox<ColorInputProps> {
+	static "$cls-ns" = "x4";
+
 	constructor( props: ColorInputProps ) {
 		super( props );
 

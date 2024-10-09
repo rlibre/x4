@@ -22,6 +22,7 @@ import { Label } from '../label/label';
 import { HBox } from '../boxes/boxes.js';
 
 import "./switch.module.scss";
+import { class_ns } from '@core/core_tools.js';
 
 interface SwitchProps extends ComponentProps {
 	label: string;
@@ -29,6 +30,11 @@ interface SwitchProps extends ComponentProps {
 	value?: string;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class Switch extends HBox<SwitchProps> {
 	constructor(props: SwitchProps ) {
 		super( props );

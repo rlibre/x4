@@ -678,3 +678,11 @@ export function beep( ) {
     snd.play();
 }
 
+
+export const x4_class_ns_sym = Symbol( "class-ns" );
+
+export function class_ns( ns: string ) { 
+	return function (constructor: Function) { 
+		(constructor as any)[x4_class_ns_sym] = ns;
+	}
+}

@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, ComponentEvent } from '../../core/component';
-import { Rect } from '../../core/core_tools.js';
+import { class_ns, Rect } from '../../core/core_tools.js';
 
 import { HBox } from '../boxes/boxes';
 import { Input } from '../input/input.js';
@@ -37,6 +37,11 @@ interface SliderProps extends ComponentProps {
 	step?: number;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class Slider extends Component<SliderProps,SliderEvents> {
 
 	private _mdown = false;

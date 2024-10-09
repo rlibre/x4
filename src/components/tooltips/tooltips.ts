@@ -15,7 +15,7 @@
  **/
 
 import { Component, wrapDOM } from '../../core/component';
-import { Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
+import { class_ns, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Popup, PopupProps } from '../popup/popup.js';
@@ -80,6 +80,7 @@ function closeTT( ) {
  * 
  */
 
+@class_ns( "x4" )
 class Tooltip extends Popup {
 
 	constructor( props: PopupProps ) {

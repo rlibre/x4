@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "../../core/component"
 import { CSizer } from '../sizers/sizer';
-import { Rect, Point } from '../../core/core_tools.js';
+import { Rect, Point, class_ns } from '../../core/core_tools.js';
 
 import "./popup.module.scss"
 
@@ -47,6 +47,7 @@ let popup_list:  Popup[] = [];
  * 
  */
 
+@class_ns( "x4" )
 export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Component<P,E> {
 
 	private _isopen = false;

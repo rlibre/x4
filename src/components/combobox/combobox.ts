@@ -24,6 +24,7 @@ import { HBox } from '../boxes/boxes';
 
 import "./combobox.module.scss";
 import icon from "./updown.svg";
+import { class_ns } from '@core/core_tools.js';
 
 
 
@@ -36,6 +37,7 @@ interface DropdownProps extends Omit<PopupProps,"content"> {
 	items: ListItem[];
 }
 
+@class_ns( "x4" )
 class Dropdown extends Popup<DropdownProps,DropdownEvents> {
 
 	private _list: Listbox;
@@ -75,7 +77,7 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	items: ListItem[];
 }
 
-
+@class_ns( "x4" )
 export class Combobox extends Component<ComboboxProps> {
 
 	private _dropdown: Dropdown;

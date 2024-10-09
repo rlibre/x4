@@ -16,7 +16,7 @@
 
 import { Component } from "../../core/component"
 import { DOMEventHandler } from '../../core/core_dom';
-import { Timer, UnsafeHtml, isString } from '../../core/core_tools';
+import { Timer, UnsafeHtml, class_ns, isString } from '../../core/core_tools';
 
 import { Popup, PopupProps } from '../popup/popup';
 import { Icon } from '../icon/icon';
@@ -48,6 +48,7 @@ export interface MenuProps extends Omit<PopupProps,"content"> {
  * 
  */
 
+@class_ns( "x4" )
 class CMenuSep extends Component {
 	constructor( ) {
 		super( { } );
@@ -61,6 +62,7 @@ const openTimer = new Timer( );
  * 
  */
 
+@class_ns( "x4" )
 class CMenuItem extends Component {
 
 	private menu: Menu;
@@ -140,6 +142,7 @@ class CMenuItem extends Component {
  * 
  */
 
+@class_ns( "x4" )
 export class Menu extends Popup {
 	
 	constructor( props: MenuProps ) {

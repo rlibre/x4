@@ -23,6 +23,7 @@ import { Icon } from '../icon/icon.js';
 
 import "./treeview.module.scss";
 import folder_icon from "./chevron-down-light.svg"
+import { class_ns } from '@core/core_tools.js';
 
 //import folder_closed from "./folder-minus-light.svg"
 
@@ -58,6 +59,11 @@ interface TreeviewEvents extends ComponentEvents {
 	change: ChangeEvent;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 class CTreeViewItem extends Box {
 
 	private _item: TreeItem;
@@ -134,6 +140,7 @@ class CTreeViewItem extends Box {
  * 
  */
 
+@class_ns( "x4" )
 export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	private _selection: ListboxID;
 	private _selitem: Component;

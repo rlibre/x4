@@ -14,16 +14,19 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { class_ns } from '@core/core_tools.js';
 import { Component, ComponentProps } from "../../core/component"
 
 import "./viewport.module.scss"
 
+@class_ns( "x4" )
 export class Viewport extends Component {
 	constructor( props: ComponentProps ) {
 		super( props );
 	}
 }
 
+@class_ns( "x4" )
 export class ScrollView extends Component {
 	constructor( props: ComponentProps ) {
 		super( props );

@@ -14,6 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { class_ns } from '@core/core_tools.js';
 import { Component, ComponentProps } from '../../core/component.js';
 
 import "./image.module.scss"
@@ -31,6 +32,7 @@ export interface ImageProps extends ComponentProps {
  * 
  */
 
+@class_ns( "x4" )
 export class Image extends Component<ImageProps> {
 
 	private _img: Component;

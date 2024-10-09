@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
 import { EventCallback } from '../../core/core_events.js';
-import { UnsafeHtml } from '../../core/core_tools.js';
+import { class_ns, UnsafeHtml } from '../../core/core_tools.js';
 
 import { Icon } from "../icon/icon"
 
@@ -45,8 +45,8 @@ export interface ButtonProps extends ComponentProps {
  * Button component.
  */
 
+@class_ns( "x4" )
 export class Button extends Component<ButtonProps,ButtonEvents> {
-
 	/**
      * Creates an instance of Button.
      * 

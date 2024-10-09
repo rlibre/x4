@@ -14,7 +14,9 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-@use "./node_modules/x4js/lib/styles/x4.css" ;
+@use "./node_modules/x4js/src/x4.scss" ;
+
+
 
 body {
 	padding: 16px;

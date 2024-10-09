@@ -14,6 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { class_ns } from '@core/core_tools.js';
 import { Component, ComponentEvents, ComponentProps } from "../../core/component"
 
 import "./boxes.module.scss";
@@ -25,6 +26,7 @@ export interface BoxProps extends ComponentProps {
  * 
  */
 
+@class_ns( "x4" )
 export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
 }
 
@@ -33,6 +35,7 @@ export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=Component
  * 
  */
 
+@class_ns( "x4" )
 export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 }
 
@@ -40,6 +43,7 @@ export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
  * 
  */
 
+@class_ns( "x4" )
 export class VBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 	constructor( p: P ) {
 		super( p );
@@ -65,8 +69,8 @@ interface _StackItem extends StackItem {
 	page: Component;
 }
 
+@class_ns( "x4" )
 export class StackBox extends Box<StackedLayoutProps> {
-
 	private _items: _StackItem[];
 
 	constructor( props: StackedLayoutProps ) {

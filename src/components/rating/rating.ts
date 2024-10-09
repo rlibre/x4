@@ -22,6 +22,7 @@ import { Icon } from '../icon/icon.js';
 
 import "./rating.module.scss"
 import star_icon from "./star-sharp-solid.svg"
+import { class_ns } from '@core/core_tools.js';
 
 interface RatingEventMap extends ComponentEvents {
 	change: EvChange;
@@ -38,6 +39,11 @@ export interface RatingProps extends ComponentProps {
 	change?: EventCallback<EvChange>;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class Rating extends HBox<RatingProps,RatingEventMap> {
 
 	private m_els: Component[];

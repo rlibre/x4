@@ -15,7 +15,7 @@
  **/
 
 import { Color, Hsv } from '../../core/core_colors';
-import { Rect, clamp, isFeatureAvailable } from '../../core/core_tools';
+import { Rect, clamp, class_ns, isFeatureAvailable } from '../../core/core_tools';
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
@@ -49,6 +49,7 @@ interface CommonEvents extends ComponentEvents {
  * 
  */
 
+@class_ns( "x4" )
 export class Saturation extends Box<BoxProps,CommonEvents> {
 
 	private mdown = false;
@@ -165,6 +166,7 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
  * 
  */
 
+@class_ns( "x4" )
 class HueSlider extends Box<BoxProps,CommonEvents> {
 
 	private thumb: Component;
@@ -241,6 +243,7 @@ class HueSlider extends Box<BoxProps,CommonEvents> {
  * 
  */
 
+@class_ns( "x4" )
 class AlphaSlider extends Box<BoxProps,CommonEvents> {
 	
 	private thumb: Component;
@@ -343,6 +346,8 @@ interface ColorPickerChangeEvents extends ComponentEvents {
 /**
  * 
  */
+
+@class_ns( "x4" )
 export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> {
 
 	private _base: Color;

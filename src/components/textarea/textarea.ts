@@ -21,6 +21,7 @@ import { Label } from '../label/label';
 import { VBox } from '../boxes/boxes';
 
 import "./textarea.module.scss";
+import { class_ns } from '@core/core_tools.js';
 
 /**
  * 
@@ -32,6 +33,11 @@ interface TextAreaProps extends BaseProps {
 	resize?: boolean;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class TextArea extends VBox {
 	
 	private _input: Component;
