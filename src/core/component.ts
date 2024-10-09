@@ -239,6 +239,19 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
 	 * 
 	 */
+	
+	removeClassEx( re: RegExp ) {
+		const all = Array.from( this.dom.classList );
+		all.forEach( x => {
+			if( x.match(re) ) {
+				this.dom.classList.remove( x );
+			}
+		});
+	}
+
+	/**
+	 * 
+	 */
 
 	toggleClass( cls: string ) {
 		if( !cls ) return;

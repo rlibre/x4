@@ -37,6 +37,12 @@
 	&.center {
 		text-align: center;
 	}
+
+	#text {
+		&:empty {
+			display: none;
+		}
+	}
 	
 	#icon {
 		width: 1em;

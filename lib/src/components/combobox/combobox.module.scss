@@ -51,21 +51,24 @@
 	@extend .hbox;
 	margin: 5px;
 
-	&> #label {
-		padding: 0 6px;
-		border-bottom: 1px solid transparent;
+	//&> #label {
+	//	padding: 0 6px;
+	//	border-bottom: 1px solid transparent;
 
 		&> .x4label {
+			padding: 0 6px;
+			border-bottom: 1px solid transparent;
+
 			height: 100%;
 			padding: 0;
 			font-weight: 500;
 			gap: 0;
+					
+			#text::not(.empty)::after {
+				content: ":"
+			}
 		}
-			
-		&::after {
-			content: ":"
-		}
-	}
+	//}
 
 	&>#edit {
 		@extend .flex;

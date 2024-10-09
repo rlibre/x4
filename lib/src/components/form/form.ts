@@ -14,14 +14,17 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Box } from '../boxes/boxes.js';
+import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
 
 type FormValue = string | number | boolean;
 type FormValues = Record<string,FormValue>;
 
-export class Form extends Box {
+export interface FormProps extends BoxProps {
+}
+
+export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	setValues( values: FormValues ) {
 		const items = this.queryAll( "input[name]" );

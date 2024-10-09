@@ -20,32 +20,36 @@ import { Icon } from "../icon/icon"
 import "./label.module.scss";
 import { UnsafeHtml } from '../../core/core_tools.js';
 
-interface LabelProps extends ComponentProps {
+export interface LabelProps extends ComponentProps {
 	text?: string | UnsafeHtml;
 	icon?: string;
 	labelFor?: string;
 }
 
 export class Label extends Component<LabelProps> {
-
+	#text: Component;
+	
 	constructor( p: LabelProps ) {
 		super( { ...p, content: null } );
 
-		// small hack for react:
-		//	p.content may be the text
-		
 		this.setContent( [
 			new Icon( { id:"icon", iconId: this.props.icon } ),
-			new Component( { tag: 'span', id: 'text', content: this.props.text ?? p.content } )
+			this.#text = new Component( { tag: 'span', id: 'text' } )
 		] );
 
+		// small hack for react:
+		//	p.content may be the text
+		const text = this.props.text;
+		this.setText( text );
+	
 		if( p.labelFor ) {
 			this.setAttribute( "for", p.labelFor );
 		}
 	}
 
 	setText( text: string | UnsafeHtml ) {
-		this.query( "#text" ).setContent( text );
+		this.#text.setContent( text );
+		this.#text.setClass( "empty", !text );
 	}
 
 	setIcon( icon: string ) {
