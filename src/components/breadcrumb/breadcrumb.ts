@@ -15,11 +15,13 @@
  **/
 
 import { class_ns } from '@core/core_tools.js';
-import { BoxProps, HBox, Link } from '../components';
-import { ComponentEvents, EvClick } from '@core/component.js';
+import { BoxProps, Button, HBox, Icon, Link } from '../components';
+import { Component, ComponentEvents, EvClick } from '@core/component.js';
 import { EventCallback } from '@core/core_events.js';
 
 import "./breadcrumb.scss"
+
+import icon_sep from "./chevron-right.svg"
 
 /**
  * Breadcrumb events
@@ -34,6 +36,7 @@ interface BreadcrumbEvents extends ComponentEvents {
  */
 
 interface BreadcrumbElement {
+	icon?: string;
     name:  string;
     label: string;
 }
@@ -58,16 +61,24 @@ export class Breadcrumbs extends HBox<BreadcrumbsProps,BreadcrumbEvents> {
 		super( props );
 
 		this.mapPropEvents( props, "click" );
-		this.setContent( 
-			props.items?.map( x => {
-				return new Link( {
-					href: x.name,
-					text: x.label,
-					click: ( ev ) => {
-						this.fire( "click", ev );
-					}
-				})
-			} )
-		);
+		
+		const items: Component[] = [];
+		
+		props.items?.map( (x: BreadcrumbElement, idx ) => {
+			items.push( new Button( {
+				label: x.label,
+				icon: x.icon,
+				click: ( ) => {
+					this.fire( "click", { context: x.name } );
+				}
+			}) );
+
+			if( idx!=props.items.length-1 ) {
+				items.push( new Icon( { iconId: icon_sep } ) );
+			}
+		});
+
+		this.setContent( items );
 	}
 }
+
