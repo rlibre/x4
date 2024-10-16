@@ -8,6 +8,7 @@ import { svgLoader } from '../icon/icon.js';
 
 import "./checkbox.module.scss"
 import icon from "./check.svg";
+import { class_ns } from '@core/core_tools.js';
 
 /**
  * Checkbox events
@@ -32,8 +33,8 @@ interface CheckboxProps extends ComponentProps {
  * Checkbox component that can be checked or unchecked.
  */
 
+@class_ns( "x4" )
 export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
-
 	readonly _input: Input;
 
 	/**

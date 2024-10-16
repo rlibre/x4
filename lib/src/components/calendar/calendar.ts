@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, Flex } from '../../core/component'
-import { date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
+import { class_ns, date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
 import { _tr } from '../../core/core_i18n';
 import { EventCallback } from '../../core/core_events.js';
 
@@ -51,6 +51,7 @@ interface CalendarProps extends ComponentProps {
  * 	EventChange ( value = Date )
  */
 
+@class_ns( "x4" )
 export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 {
 	private m_date: Date;

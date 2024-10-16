@@ -15,18 +15,21 @@
  **/
 
 
+$color--base: #569cd6;
+$color--interval: 8.4%;
+
 :root {
 	--color-primary-a0: #ffffff;
-	--color-primary-a10: #e0eaf7;
-	--color-primary-a20: #c0d6ef;
-	--color-primary-a30: #a0c2e7;
-	--color-primary-a40: #7dafde;
-	--color-primary-a50: #569cd6;
-	--color-primary-a55: #{lighten(#477ba7,5%)};
-	--color-primary-a60: #477ba7;
-	--color-primary-a70: #375b7a;
-	--color-primary-a80: #283d51;
-	--color-primary-a90: #18212a;
+	--color-primary-a10:  #{lighten($color--base, $color--interval * 4)};
+	--color-primary-a20: #{lighten($color--base, $color--interval * 3)};
+	--color-primary-a30: #{lighten($color--base, $color--interval * 2)};
+	--color-primary-a40: #{lighten($color--base, $color--interval)};
+	--color-primary-a50: #{$color--base};
+	--color-primary-a55: #{darken($color--base,5%)};
+	--color-primary-a60: #{darken($color--base, $color--interval )};
+	--color-primary-a70: #{darken($color--base, $color--interval * 2)};
+	--color-primary-a80: #{darken($color--base, $color--interval * 3)};
+	--color-primary-a90: #{darken($color--base, $color--interval * 4)};
 	--color-primary-a100: #000000;
 
 	--color-danger-a50: #c01010;

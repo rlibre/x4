@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentProps } from '../../core/component';
-import { IComponentInterface, IFormElement } from '../../core/core_tools.js';
+import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools.js';
 
 import "./input.module.scss"
 
@@ -84,6 +84,7 @@ export type InputProps = CheckboxProps | RadioProps | TextInputProps | RangeProp
  * 
  */
 
+@class_ns( "x4" )
 export class Input extends Component<InputProps> {
 	constructor( props: InputProps ) {
 		super( { tag: "input", ...props } );

@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '../../core/component';
-import { Point } from '../../core/core_tools.js';
+import { class_ns, Point } from '../../core/core_tools.js';
 
 import "./sizer.module.scss"
 
@@ -31,7 +31,11 @@ interface CSizerEvent extends ComponentEvents {
 	resize: EvSizeChange;
 }
 
+/**
+ * 
+ */
 
+@class_ns( "x4" )
 export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 	private _type: string;

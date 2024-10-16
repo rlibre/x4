@@ -1,3 +1,4 @@
+import { class_ns } from '@core/core_tools.js';
 import { Component, ComponentProps } from '../../core/component.js';
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
@@ -16,6 +17,11 @@ interface HeaderProps extends Omit<ComponentProps,"content"> {
 	items: HeaderItem[]
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class Header extends HBox<HeaderProps> {
 
 	private _els: Component[];

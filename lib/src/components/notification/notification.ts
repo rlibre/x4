@@ -15,7 +15,7 @@
  **/
 
 import { ComponentProps } from '../../core/component.js';
-import { Rect, UnsafeHtml } from '../../core/core_tools.js';
+import { class_ns, Rect, UnsafeHtml } from '../../core/core_tools.js';
 
 import { Popup } from '../popup/popup.js';
 import { HBox, VBox } from '../boxes/boxes.js';
@@ -48,6 +48,7 @@ interface NotificationProps extends ComponentProps {
  * 
  */
 
+@class_ns( "x4" )
 export class Notification extends Popup {
 	constructor( props: NotificationProps ) {
 		super( { } );

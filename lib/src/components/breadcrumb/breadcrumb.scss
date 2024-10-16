@@ -1,0 +1,28 @@
+
+:root {
+	--link-color: var( --accent-background );
+}
+
+.x4breadcrumbs {
+	border-bottom: 1px solid var( --border );
+	padding: 8px 0;
+	font-size: 120%;
+	margin-bottom: 2em;
+		
+	&> .x4button {
+		border: none;
+		background-color: transparent;
+		color: var( --link-color );
+		border-radius: 16px;
+		padding: 6px 8px;
+		min-width: 60px;
+	
+		&:hover {
+			border-bottom-color: var( --link-color );
+		}
+
+		&:last-child {
+			font-weight: bold;
+		}
+	}
+}

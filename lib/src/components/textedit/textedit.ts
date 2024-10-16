@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentProps, makeUniqueComponentId } from '../../core/component';
-import { UnsafeHtml } from '../../core/core_tools';
+import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Input, TextInputProps } from "../input/input"
@@ -47,6 +47,7 @@ interface TextEditProps extends ComponentProps {
  * 
  */
 
+@class_ns( "x4" )
 export class TextEdit extends HBox {
 	constructor( props: TextEditProps ) {
 		super( props );

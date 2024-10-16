@@ -37,6 +37,7 @@
 	// outline
 	--ol-button-background: var( --background-primary );
 	--ol-button-background-active: #eee;
+	--ol-button-color-active: var( --text-primary );
 	--ol-button-color: var( --text-primary );
 	--ol-button-border: var( --border );
 	--ol-button-icon-color: var( --text-primary );
@@ -137,7 +138,7 @@
 
 	&:active{
 		background-color: var( --ol-button-background-active );
-		color: var( --button-color-active );
+		color: var( --ol-button-color-active );
 		#icon {
 			color: var( --button-icon-color );
 		}

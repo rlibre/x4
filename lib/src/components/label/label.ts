@@ -18,7 +18,7 @@ import { Component, ComponentProps } from "../../core/component"
 import { Icon } from "../icon/icon"
 
 import "./label.module.scss";
-import { UnsafeHtml } from '../../core/core_tools.js';
+import { class_ns, UnsafeHtml } from '../../core/core_tools.js';
 
 export interface LabelProps extends ComponentProps {
 	text?: string | UnsafeHtml;
@@ -26,6 +26,11 @@ export interface LabelProps extends ComponentProps {
 	labelFor?: string;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class Label extends Component<LabelProps> {
 	#text: Component;
 	

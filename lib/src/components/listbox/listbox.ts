@@ -21,6 +21,7 @@ import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 
 import "./listbox.module.scss"
+import { class_ns } from '@core/core_tools.js';
 
 export enum kbNav {
 	first,
@@ -65,8 +66,11 @@ interface ListboxProps extends Omit<ComponentProps,'content'> {
 	checkable?: true,
 }
 
+/**
+ * 
+ */
 
-
+@class_ns( "x4" )
 export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	private _view: Viewport;

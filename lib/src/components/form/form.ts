@@ -14,6 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { class_ns } from '@core/core_tools.js';
 import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
@@ -24,6 +25,7 @@ type FormValues = Record<string,FormValue>;
 export interface FormProps extends BoxProps {
 }
 
+@class_ns( "x4" )
 export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	setValues( values: FormValues ) {

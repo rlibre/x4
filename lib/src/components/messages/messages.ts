@@ -11,7 +11,7 @@ import { Dialog, DialogProps } from "../dialog/dialog"
 import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
-import { asap, UnsafeHtml } from '../../core/core_tools.js';
+import { asap, class_ns, UnsafeHtml } from '../../core/core_tools.js';
 import { Form } from '../form/form.js';
 
 export interface MessageBoxProps extends DialogProps {
@@ -19,6 +19,11 @@ export interface MessageBoxProps extends DialogProps {
 	click: (button: string) => void;
 }
 
+/**
+ * 
+ */
+
+@class_ns( "x4" )
 export class MessageBox extends Dialog<DialogProps>
 {
 	m_label: Label;
@@ -51,7 +56,7 @@ export class MessageBox extends Dialog<DialogProps>
 					}),
 				]
 			}),
-			buttons: ["ok","cancel"]
+			buttons: [ "ok.outline","cancel.outline" ]
 		});
 	
 		box.on( "btnclick", ( ev ) => {

@@ -25,6 +25,7 @@ import { Button } from '../button/button.js';
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
 import { CoreEvent } from '@core/core_events.js';
+import { class_ns } from '@core/core_tools.js';
 
 export interface DialogProps extends PopupProps {
 	icon?: string;
@@ -48,6 +49,7 @@ interface DialogEvents extends PopupEvents {
  * 
  */
 
+@class_ns( "x4" )
 export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents>  extends Popup<P,E> {
 
 	constructor( props: P ) {
