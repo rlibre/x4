@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, Flex } from '../../core/component';
+import { Component, ComponentEvents, ComponentProps, Flex } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { class_ns, isString } from '../../core/core_tools';
 import { _tr } from '../../core/core_i18n'

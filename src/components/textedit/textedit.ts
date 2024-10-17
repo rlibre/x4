@@ -35,6 +35,7 @@ interface TextEditProps extends ComponentProps {
 	inputId?: string;
 
 	type?: "text" | "email" | "password";
+	name?: string;
 	readonly?: boolean;
 	required?: boolean;
 	value: string | number;
@@ -71,6 +72,7 @@ export class TextEdit extends HBox {
 					type: props.type ?? "text", 
 					readonly: props.readonly, 
 					value: props.value, 
+					name: props.name,
 					id: props.inputId, 
 					required: props.required, 
 					disabled: props.disabled, 

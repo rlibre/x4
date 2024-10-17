@@ -35,6 +35,7 @@
 
 	&> #label {		// hbox
 		border-bottom: 1px solid transparent;
+		justify-content: end;
 
 		&> .x4label {
 			@extend .hbox;

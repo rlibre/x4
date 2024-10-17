@@ -14,9 +14,10 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, EvClick } from '@core/component';
-import { EventCallback } from '@core/core_events.js';
-import { class_ns, UnsafeHtml } from '@core/core_tools';
+import { Component, ComponentEvents, ComponentProps, EvClick } from '../../core/component';
+import { EventCallback } from '../../core/core_events';
+import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { Label } from '../label/label';
 
 
 /**
@@ -33,7 +34,8 @@ interface LinkEvents extends ComponentEvents {
 
 interface LinkProps extends ComponentProps {
 	href: string;
-	text: string | UnsafeHtml;	// you can also use content for complexe content
+	text?: string | UnsafeHtml;	// you can also use content for complexe content
+	icon?: string;
 	click?: EventCallback<EvClick>;
 }
 
@@ -45,9 +47,10 @@ export class Link extends Component<LinkProps,LinkEvents> {
 		this.setAttribute( "href", props.href );
 		this.mapPropEvents( props, "click" );
 
-		if( props.text ) {
-			this.setContent( props.text );
-		}
+		this.setContent( new Label( {
+			text: props.text,
+			icon: props.icon,
+		} ) );
 
 		this.addDOMEvent('click', (e) => this._on_click(e));
 	}

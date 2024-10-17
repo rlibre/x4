@@ -15,7 +15,7 @@
  **/
 
 import { class_ns } from '@core/core_tools.js';
-import { BoxProps, Button, HBox, Icon, Link } from '../components';
+import { BoxProps, Button, HBox, Icon } from '../components';
 import { Component, ComponentEvents, EvClick } from '@core/component.js';
 import { EventCallback } from '@core/core_events.js';
 
@@ -62,7 +62,8 @@ export class Breadcrumbs extends HBox<BreadcrumbsProps,BreadcrumbEvents> {
 
 		this.mapPropEvents( props, "click" );
 		
-		const items: Component[] = [];
+		const items: Component[] = [
+		];
 		
 		props.items?.map( (x: BreadcrumbElement, idx ) => {
 			items.push( new Button( {

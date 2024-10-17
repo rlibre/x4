@@ -38,6 +38,11 @@
 			@extend .flex;
 			color: var(--color-dialog-caption-text);
 			font-weight: bold;
+			font-size: 120%;
+
+			#icon {
+				color: var(--color-dialog-caption-text);
+			}
 		}
 
 		& > #closebox {
@@ -69,3 +74,17 @@
 	}
 }
 
+
+.x4dialog.danger {
+	
+	&> .caption {
+		background-color: var( --alert-background );
+
+	}
+
+	&> #btnbar {
+		&> .x4button {
+			background-color: var( --alert-background );
+		}
+	}
+}

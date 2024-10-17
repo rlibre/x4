@@ -27,6 +27,8 @@ let main_app: Application = null;
 
 export class Application<E extends ApplicationEvents = ApplicationEvents> extends CoreElement<E> {
 
+	#env = new Map<string,any>( );
+
 	constructor( ) {
 		super( );
 
@@ -40,5 +42,21 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 	static instance<P extends Application = Application>( ): P {
 		return main_app as P;
+	}
+
+	/**
+	 * 
+	 */
+
+	setEnv( name: string, value: any ) {
+		this.#env.set( name, value );
+	}
+
+	/**
+	 * 
+	 */
+	
+	getEnv( name: string, def_value?: any ) {
+		return this.#env.get( name ) ?? def_value;
 	}
 }

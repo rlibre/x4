@@ -4,8 +4,8 @@
 	"description": "X4 framework",
 	"author": "etienne cochard",
 	"main": "src/x4.ts",
-	"types": "lib/types/x4js.d.ts",
-	"files": [
+	"typess": "lib/types/x4js.d.ts",
+	"filess": [
 		"lib/**/*"
 	],
 	"license": "MIT",
@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://x4js.org",
 	"module": "lib/esm/x4.mjs",
-	"exports": {
+	"exportss": {
 		".": {
 			"import": {
 				"types": "./lib/types/x4.d.ts",

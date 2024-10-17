@@ -15,7 +15,7 @@
  **/
 
 import { class_ns } from '@core/core_tools.js';
-import { Component, ComponentEvents, ComponentProps } from "../../core/component"
+import { Component, ComponentContent, ComponentEvents, ComponentProps } from "../../core/component"
 
 import "./boxes.module.scss";
 
@@ -55,9 +55,11 @@ export class VBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
  * stack of widgets where only one widget is visible at a time
  */
 
+type ContentBuilder = ( ) => Component;
+
 interface StackItem {
 	name: string;
-	content: Component;
+	content: Component | ContentBuilder;
 }
 
 interface StackedLayoutProps extends Omit<ComponentProps,"content"> {
@@ -115,15 +117,23 @@ export class StackBox extends Box<StackedLayoutProps> {
 	private _createPage( page: _StackItem ) {
 		
 		let content: Component;
-		//if( page.content instanceof ComponentBuilder ) {
-		//	content = page.content.create( );
-		//}
-		//else {
+		if( page.content instanceof Function ) {
+			content = page.content( );
+			page.content = content;	// keep it
+		}
+		else {
 			content = page.content;
-		//}
+		}
 		
 		content?.setData( "stackname", page.name );
 		return content;
 	}
 }
 
+/**
+ * 
+ */
+
+@class_ns("x4")
+export class GridBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+}

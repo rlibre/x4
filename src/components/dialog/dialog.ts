@@ -19,20 +19,21 @@ import { PopupEvents, PopupProps, Popup } from '../popup/popup.js';
 import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
-import { ComponentContent, ComponentEvent } from '../../core/component.js';
+import { Component, ComponentContent, ComponentEvent } from '../../core/component.js';
 import { Button } from '../button/button.js';
 
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
-import { CoreEvent } from '@core/core_events.js';
+import { CoreEvent, EventCallback } from '@core/core_events.js';
 import { class_ns } from '@core/core_tools.js';
 
 export interface DialogProps extends PopupProps {
 	icon?: string;
 	title: string;
-	form: Form;
+	form?: Form;
 	buttons: BtnGroupItem[];
 	closable?: boolean;
+	btnclick?: EventCallback<EvBtnClick>;
 }
 
 
@@ -52,8 +53,12 @@ interface DialogEvents extends PopupEvents {
 @class_ns( "x4" )
 export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents>  extends Popup<P,E> {
 
+	private form: Form;
+
 	constructor( props: P ) {
-		super( props );
+		super( { modal: true, ...props } );
+
+		this.mapPropEvents( props, "btnclick" );
 
 		this.appendContent( [
 			new HBox( {
@@ -72,7 +77,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 					} ) : null,
 				]
 			}),
-			props.form,
+			this.form = props.form ? props.form : new Form( { } ),
 			new BtnGroup( {
 				id: "btnbar",
 				reverse: true,
@@ -82,13 +87,46 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 		])
 	}
 
+	/**
+	 * 
+	 */
+
 	display(  ) {
 		super.displayCenter(  );
 	}
 
+	/**
+	 * 
+	 */
+
 	override close( ) {
 		this.fire( "close", {} );
 		super.close( );
+	}
+
+	/**
+	 * 
+	 */
+
+	override setContent( form: Form ) {
+		this.dom.replaceChild( this.form.dom, form.dom );
+		this.form = form;
+	}
+
+	/**
+	 * 
+	 */
+	
+	getForm( ) {
+		return this.form;
+	}
+
+	/**
+	 * 
+	 */
+
+	getValues( ) {
+		return this.form.getValues( );
 	}
 }
 
