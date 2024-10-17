@@ -1,0 +1,155 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file button.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+:root {
+	--button-background: var( --accent-background );
+	--button-color: var( --accent-color );
+
+	--button-background-hover: var( --accent-background-hover );
+	--button-color-hover: var( --accent-color-hover );
+
+	--button-background-active: var( --accent-background-active );
+	--button-color-active: var( --accent-color-active );
+
+	--button-background-focus: var( --accent-background-focus );
+	--button-color-focus: var( --accent-color-focus );
+
+	--button-background-disabled: var( --disabled-background );
+	--button-color-disabled: var( --disabled-color );
+
+	--button-icon-color: rgb(255 255 255 / 64%);
+
+	// outline
+	--ol-button-background: var( --background-primary );
+	--ol-button-background-active: #eee;
+	--ol-button-color-active: var( --text-primary );
+	--ol-button-color: var( --text-primary );
+	--ol-button-border: var( --border );
+	--ol-button-icon-color: var( --text-primary );
+
+	--ol-button-border-focus: var( --accent-background-focus );
+	--ol-button-color-focus: var( --accent-background );
+}
+
+.x4button {
+	@extend .hbox;
+	
+	margin: 5px;
+	gap: 4px;
+
+	font-size: inherit;
+	font-family: inherit;
+	
+	padding: 8px;
+	margin: 2px;
+	transition: background-color 0.3s, color 0.3s;
+	
+	border: none;
+	outline: none;
+	cursor: pointer;
+	
+	background-color: var( --button-background );
+	color: var( --button-color );
+
+	gap: 0.4em;
+		
+	&> #icon {
+		transition: color 0.3s;
+		width: 1em;
+		height: 1em;
+		//color: var( --button-icon-color );
+
+		&.empty {
+			display: none;
+		}
+	}
+
+	&> #label {
+		@extend .flex;
+
+		padding: 0;
+		color: inherit;
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	&:focus {
+		background-color: var( --button-background-focus );
+		color: var( --button-color-focus );
+		#icon {
+			color: var( --button-color-focus );
+		}
+
+		#label {
+			text-decoration: underline;
+		}
+	}
+
+	&:hover {
+		background-color: var( --button-background-hover );
+		color: var( --button-color-hover );
+	}
+
+	&:active{
+		background-color: var( --button-background-active );
+		color: var( --button-color-active );
+	}	
+
+	&[disabled] {
+		cursor: not-allowed;
+		background-color: var( --button-background-disabled );
+		color: var( --button-color-disabled );
+	}
+}
+
+.x4button.outline {
+	background-color: var( --ol-button-background );
+	border: 1px solid var( --ol-button-border );
+	color: var( --ol-button-color );
+
+	#icon {
+		color: var( --ol-button-icon-color );
+	}
+
+	&:focus{
+		border-color: var( --ol-button-border-focus );
+		color: var( --ol-button-color-focus );
+		#icon {
+			color: var( --ol-button-color-focus );
+		}
+	}
+
+	&:active{
+		background-color: var( --ol-button-background-active );
+		color: var( --ol-button-color-active );
+		#icon {
+			color: var( --button-icon-color );
+		}
+	}	
+}
+
+.x4button.danger {
+	background-color: var( --alert-background );
+	color: var( --alert-color );
+
+	&:active {
+		background-color: var( --alert-background-active );
+	}
+}

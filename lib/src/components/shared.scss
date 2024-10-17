@@ -1,0 +1,90 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file shared.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+.box {
+	position: relative;
+}
+
+.hbox {
+	@extend .box;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.vbox {
+	@extend .box;
+	display: flex;
+	flex-direction: column;
+}
+
+
+.fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+
+.rel-fit {
+	position: relative;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.flex {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: 0;
+	min-width: 0;
+}
+
+
+// from tailwind
+
+.shadow-sm {
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.shadow-md {
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.shadow-lg {
+	box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.shadow-xl {
+	box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+
+@keyframes rotating {
+	from {
+	  transform: rotate(0deg);
+	}
+	to {
+	  transform: rotate(360deg);
+	}
+}
+
+.x4rotate {
+	animation: rotating 2s linear infinite;
+}

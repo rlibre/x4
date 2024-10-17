@@ -1,0 +1,23 @@
+:root {
+	--rating: var( --border );
+	--rating-hover: var( --border-hover );
+	--rating-checked: var( --accent-background );
+}
+
+.x4rating {
+	gap: 2px;
+
+	.item {
+		width: 16px;
+		height: 16px;
+		color: var( --rating );
+	}
+
+	.item:hover {
+		color: var( --rating-hover );
+	}
+
+	.item.checked {
+		color: var( --rating-checked );
+	}
+}

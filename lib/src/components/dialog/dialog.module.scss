@@ -1,0 +1,90 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file dialog.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@import "../shared.scss";
+
+:root {
+	--color-dialog-caption: var( --color-primary-a80 );
+	--color-dialog-caption-text: var( --color-primary-a0 );
+}
+
+.x4dialog {
+	@extend .shadow-xl, .vbox;
+
+	position: absolute;
+	background-color: white;
+	border: 1px solid var( --border-dark );
+	min-width: min-content;
+    min-height: min-content;
+
+	&> .caption {
+		padding: 8px;
+		background-color: var(--color-dialog-caption);
+	
+		& > #title {
+			@extend .flex;
+			color: var(--color-dialog-caption-text);
+			font-weight: bold;
+			font-size: 120%;
+
+			#icon {
+				color: var(--color-dialog-caption-text);
+			}
+		}
+
+		& > #closebox {
+			margin: 0;
+			padding: 4px;
+		}
+	}
+
+	&> .form {
+		min-height: 128px;
+		min-width: 450px;
+	}
+
+	&> #btnbar {
+		border-top: 1px solid var( --color-separation );
+		padding: 6px 16px;
+
+		justify-content: end;
+		gap: 8px;
+
+		&> .x4button {
+			min-width: 80px;
+			
+			.x-simple-label {
+				text-align: center;
+			}
+
+		}
+	}
+}
+
+
+.x4dialog.danger {
+	
+	&> .caption {
+		background-color: var( --alert-background );
+
+	}
+
+	&> #btnbar {
+		&> .x4button {
+			background-color: var( --alert-background );
+		}
+	}
+}

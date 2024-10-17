@@ -1,0 +1,71 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file slider.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--slider-track: var( --border );
+	--slider-thumb-background: var( --accent-background );
+	--slider-thumb-border: var( --accent-background );
+	--slider-thumb-border-focus: var( --border-focus );
+}
+
+.x4slider {
+	height: 28px;
+	outline: none;
+	padding: 10px 12px;
+	touch-action: none;
+	margin: 5px 0;
+
+	.track {
+		background-color: var( --slider-track );
+		width: 100%;
+
+		position: relative;
+		top: 50%;
+		height: 3px;
+	}
+
+	.bar {
+		position: absolute;
+		width: 61%;
+		height: 3px;
+		//padding: 4px 0;
+		background-color: var( --color-60 );
+	}
+
+	.thumb {
+		position: absolute;
+		left: 61%;
+		outline: none;
+		
+		background-color: var( --slider-thumb-background );
+		border: 3px solid var( --slider-thumb-border );
+		border-radius: 8px;
+
+		top: 50%;
+		width: 16px;
+		height: 16px;
+
+		transform: translate(-50%,-50%);
+		cursor: pointer;
+	}
+
+	&:focus .thumb {
+		outline-offset: 3px;
+    	outline-color: var(--slider-thumb-border-focus);
+		outline-style: solid;
+    	outline-width: 1px;
+	}
+}
