@@ -51,8 +51,9 @@
 		overflow-y: auto;
 		overflow-x: auto;
 		outline: none;
+		position: relative;
 
-		.x4viewport {
+		&> .x4viewport {
 			display: table;
 			
 			.x4item {
@@ -83,6 +84,39 @@
 			}
 		}
 	}
+
+	&> #footer {
+		border-top: 1px solid var(--border);
+		margin: 0;
+
+		&.x4btngroup {
+			gap: 0px;
+
+			.x4button {
+				background-color: var( --ol-button-background );
+				color: var( --ol-button-color );
+				margin: 0;
+								
+				.x4icon {
+					height: 1.5em;
+					width: 1.5em;
+				}
+
+				&:hover{
+					background-color: var( --ol-button-background-hover );
+					color: var( --ol-button-color-hover );
+				}	
+
+				&:active{
+					background-color: var( --ol-button-background-active );
+					color: var( --ol-button-color-active );
+					#icon {
+						color: var( --button-icon-color );
+					}
+				}	
+			}
+		}
+	}		
 
 	&[disabled] {
 		cursor: not-allowed;

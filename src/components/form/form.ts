@@ -23,6 +23,7 @@ type FormValue = string | number | boolean;
 type FormValues = Record<string,FormValue>;
 
 export interface FormProps extends BoxProps {
+	flex?: boolean;
 }
 
 @class_ns( "x4" )
@@ -30,11 +31,26 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	constructor( props: P ) {
 		super( { tag: "form", ...props } );
+
+		if( props.flex===false ) {
+			this.addClass( "no-flex" );
+		}
 	}
 
 	setValues( values: FormValues ) {
 		const items = this.queryAll( "input[name]" );
-		console.log( items );
+		
+		items.forEach( x => {
+			const ifx = x.queryInterface( "form-element" ) as IFormElement;
+			
+			if( ifx ) {
+				const nme = x.getAttribute( "name" );
+				if( values.hasOwnProperty( nme) ) {
+					ifx.setRawValue( values[nme] );
+				}
+			}
+		});
+
 	}
 
 	getValues( ): FormValues {

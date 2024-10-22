@@ -36,8 +36,11 @@
 
 	// outline
 	--ol-button-background: var( --background-primary );
-	--ol-button-background-active: #eee;
+	--ol-button-background-active: #ccc;
 	--ol-button-color-active: var( --text-primary );
+	--ol-button-background-hover: #eee;
+	--ol-button-color-hover: var( --text-primary );
+
 	--ol-button-color: var( --text-primary );
 	--ol-button-border: var( --border );
 	--ol-button-icon-color: var( --text-primary );
@@ -135,6 +138,11 @@
 			color: var( --ol-button-color-focus );
 		}
 	}
+
+	&:hover{
+		background-color: var( --ol-button-background-hover );
+		color: var( --ol-button-color-hover );
+	}	
 
 	&:active{
 		background-color: var( --ol-button-background-active );

@@ -113,5 +113,6 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	public setIcon( icon: string ) {
 		this.query<Icon>( "#icon" ).setIcon( icon );
 	}
+
 }
 

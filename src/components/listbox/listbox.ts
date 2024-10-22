@@ -21,7 +21,7 @@ import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 
 import "./listbox.module.scss"
-import { class_ns } from '@core/core_tools.js';
+import { class_ns, UnsafeHtml } from '@core/core_tools.js';
 
 export enum kbNav {
 	first,
@@ -34,7 +34,7 @@ export type ListboxID = number | string;
 
 export interface ListItem {
 	id: ListboxID;
-	text: string;
+	text: string | UnsafeHtml;
 
 	iconId?: string;
 	data?: any;
@@ -45,7 +45,6 @@ export interface ListItem {
 /**
  * 
  */
-
 
 interface ListboxEvents extends ComponentEvents {
 	//change: EvChange;
@@ -63,6 +62,7 @@ interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
 	//header?: Header;
+	footer?: Component,
 	checkable?: true,
 }
 
@@ -88,9 +88,14 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
 
+		if( props.footer ) {
+			props.footer.setAttribute( "id", "footer" );
+		}
+
 		this.setContent( [
 			//props.header ? props.header : null,
 			scroller,
+			props.footer,
 		] );
 		
 		this.setDOMEvents( {
@@ -427,5 +432,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 				this._selectItem( item.id, _new );
 			}
 		}
+	}
+
+	getSelection( ) {
+		return this._selection;
 	}
 }

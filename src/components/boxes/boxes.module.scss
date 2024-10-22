@@ -18,6 +18,9 @@
 
 .x4hbox {
 	@extend .hbox;
+	&.align-start {
+		align-items: start;
+	}
 }
 
 .x4vbox {

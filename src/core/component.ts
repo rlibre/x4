@@ -93,6 +93,7 @@ export interface ComponentProps {
 	height?: string | number;
 	disabled?: true,
 	hidden?: true,
+	flex?: boolean | number;
 
 	tooltip?: string;
 
@@ -161,6 +162,13 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			if( props.hidden ) {
 				this.show( false );
+			}
+
+			if( props.flex===true ) {
+				this.addClass( "x4flex" );
+			}
+			else if( props.flex!==undefined ) {
+				this.setStyleValue( "flexGrow", props.flex+"" );
 			}
 
 			if( props.id!==undefined ) {
@@ -704,10 +712,14 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	enable( ena = true ) {
 		this.setAttribute( "disabled", !ena );
 
+		if( this.dom instanceof HTMLInputElement || this.dom instanceof HTMLButtonElement ) {
+			this.dom.disabled = !ena;
+		}
+
 		// propagate diable state to all input children
 		const nodes = this.enumChildNodes( true );
 		nodes.forEach( x => {
-			if( x instanceof HTMLInputElement ) {
+			if( x instanceof HTMLInputElement || x instanceof HTMLButtonElement ) {
 				x.disabled = !ena;
 			}
 		});

@@ -69,4 +69,41 @@ export class MessageBox extends Dialog<DialogProps>
 		box.display();
 		return box;
 	}
+
+	/**
+	 * idem with promise
+	 */
+
+	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[] ) : Promise<string> {
+
+		return new Promise( (resolve, reject ) => {
+
+			const box = new MessageBox({ 
+				modal: true,
+				title: _tr.global.error,
+				movable: true,
+				form: new Form( {
+					content: [
+						new HBox( {
+							content: [
+								new Icon( { iconId: error_icon }),
+								new Label( { text: msg } ),
+							]
+						}),
+					]
+				}),
+				buttons: buttons ?? [ "ok.outline","cancel.outline" ]
+			});
+		
+			box.on( "btnclick", ( ev ) => {
+				asap( ( ) => {
+					resolve( ev.button );
+					box.close() 
+				});
+			});
+
+			box.display();
+		} );
+
+	}
 }

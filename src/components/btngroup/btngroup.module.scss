@@ -26,4 +26,10 @@
 	&.align-center {
 		justify-content: center;
 	}
+
+	.x4button:disabled {
+		.fa-primary {
+			fill: var( --border );
+		}
+	}
 }

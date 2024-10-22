@@ -108,7 +108,7 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 				}
 
 				b = new Button( { cls, label: title, click: ( ) => {
-					this.fire( "btnclick", {button:nm as string} )
+					this.fire( "btnclick", {button:txt as string} )
 				} } );
 			}
 

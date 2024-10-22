@@ -27,6 +27,10 @@
 	padding: 16px;
 	background-color: var( --color-form );
 
+	&.no-flex {
+		flex-grow: 0;
+	}
+
 	&>.xcontainer {
 
 	}

@@ -79,12 +79,10 @@ export class Notification extends Popup {
 			content: [
 				_icon,
 				new VBox( { cls: "body", content: [ 
-					new Label( { cls: "title", text: props.title } ),
+					props.title ? new Label( { cls: "title", text: props.title } ) : null,
 					new Label( { cls: "text", text: props.text } ),
 				] }),
-				new Button( { cls: "outline", icon: close_icon, click: ( ) => {
-					this.close( );
-				} } )
+				props.closable ? new Button( { cls: "outline", icon: close_icon, click: ( ) => {this.close( );} } ) : null
 			]
 		}) );
 	}

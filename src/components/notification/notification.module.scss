@@ -18,6 +18,7 @@
 
 :root {
 	--notification-border: var( --border );
+	--notification-background: white;
 
 	--notification-icon-default: var( --accent-background );
 	--notification-icon-success: var( --success-background );
@@ -30,18 +31,19 @@
 	padding: 8px;
 	border: 1px solid var(--notification-border);
 	border-left: 3px solid var( --accent-background );
+	background-color: var( --notification-background );
 		
 	&> .x4hbox {
 		gap: 8px;
 	}
 	
 	.x4icon {
-		width: 24px;
+		width: 2em;
+		height: 2em;
 		color: var( --notification-icon-default );
 	}
 	
 	.body {
-		
 		.title {
 			font-weight: bold;
 			padding: 6px 6px 3px 6px;

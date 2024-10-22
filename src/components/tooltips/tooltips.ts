@@ -23,7 +23,7 @@ import { Icon } from '../icon/icon.js';
 
 import "./tooltips.scss"
 
-import icon from "./circle-info-sharp-light.svg"
+import icon from "./comments-question.svg"
 
 
 let last_hit: HTMLElement = null;
@@ -67,7 +67,7 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 	timer.setTimeout( null, 300, ( ) => {
 		tooltip.setText( unsafeHtml(text) );
 		//tooltip.displayNear( rc, "top left", "bottom left", {x:0,y:4} );
-		tooltip.displayAt( pt.x, pt.y );
+		tooltip.displayAt( pt.x+17, pt.y+17 );
 	} );
 }
 
