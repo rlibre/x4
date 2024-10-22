@@ -13,6 +13,7 @@ import "./messages.module.scss";
 import error_icon from "./circle-exclamation.svg";
 import { asap, class_ns, UnsafeHtml } from '../../core/core_tools.js';
 import { Form } from '../form/form.js';
+import { BtnGroupItem } from '../components.js';
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -40,7 +41,7 @@ export class MessageBox extends Dialog<DialogProps>
 	 * display a messagebox
 	 */
 
-	static show( msg: string | UnsafeHtml ): MessageBox {
+	static show( msg: string | UnsafeHtml, buttons?: BtnGroupItem[] ): MessageBox {
 
 		const box = new MessageBox({ 
 			modal: true,
@@ -56,11 +57,13 @@ export class MessageBox extends Dialog<DialogProps>
 					}),
 				]
 			}),
-			buttons: [ "ok.outline","cancel.outline" ]
+			buttons: buttons ?? [ "ok.outline","cancel.outline" ]
 		});
 	
 		box.on( "btnclick", ( ev ) => {
-			asap( ( ) => box.close() );
+			asap( ( ) => {
+				box.close() 
+			});
 		});
 
 		box.display();

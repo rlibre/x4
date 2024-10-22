@@ -308,7 +308,8 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			modal_mask.show( false );
 		}
 		else {
-			this.dom.insertAdjacentElement( "beforebegin", modal_mask.dom );
+			const top = modal_stack[modal_stack.length-1];
+			top.dom.insertAdjacentElement( "beforebegin", modal_mask.dom );
 		}
 	}
 

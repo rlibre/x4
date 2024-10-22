@@ -34,6 +34,7 @@
 
 .x4modal-mask {
 	background-color: var( --modal-mask-background );
+	backdrop-filter: blur(8px);
 	position: absolute;
 	left: 0;
 	top: 0;

@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
+import { class_ns, IFormElement } from '@core/core_tools.js';
 import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
@@ -28,13 +28,28 @@ export interface FormProps extends BoxProps {
 @class_ns( "x4" )
 export class Form<P extends FormProps = FormProps> extends Box<P> {
 
+	constructor( props: P ) {
+		super( { tag: "form", ...props } );
+	}
+
 	setValues( values: FormValues ) {
 		const items = this.queryAll( "input[name]" );
 		console.log( items );
 	}
 
 	getValues( ): FormValues {
-		const result: FormValues = {};
+		const result: FormValues = {}
+		const items = this.queryAll( "input[name]" );
+
+		items.forEach( x => {
+			const ifx = x.queryInterface( "form-element" ) as IFormElement;
+			
+			if( ifx ) {
+				const nme = x.getAttribute( "name" );
+				result[nme] = ifx.getRawValue( );
+			}
+		});
+
 		return result;
 	}
 }
