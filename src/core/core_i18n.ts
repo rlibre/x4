@@ -303,7 +303,9 @@ let fr = {
 
 		copy: 'Copier',
 		cut: 'Couper',
-		paste: 'Coller'
+		paste: 'Coller',
+
+		filedrop: 'Déposez un fichier'
 	}
 };
 
@@ -359,7 +361,9 @@ let en = {
 
 		copy: 'Copy',
 		cut: 'Cut',
-		paste: 'Paste'
+		paste: 'Paste',
+
+		filedrop: 'Drop a file'
 	}
 };
 

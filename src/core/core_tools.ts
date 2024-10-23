@@ -678,6 +678,31 @@ export function beep( ) {
     snd.play();
 }
 
+let sb_width_cache= -1;
+
+/**
+ * compute scrollbar size
+ */
+
+export function getScrollbarSize() {
+
+	if (sb_width_cache <0 ) {
+		let outerDiv = document.createElement('div');
+		outerDiv.style.cssText = 'overflow:auto;position:absolute;top:0;width:100px;height:100px';
+
+		let innerDiv = document.createElement('div');
+		innerDiv.style.width = '200px';
+		innerDiv.style.height = '200px';
+
+		outerDiv.appendChild(innerDiv);
+		document.body.appendChild(outerDiv);
+
+		sb_width_cache = outerDiv.offsetWidth - outerDiv.clientWidth;
+		document.body.removeChild(outerDiv);
+	}
+
+	return sb_width_cache;
+}
 
 export const x4_class_ns_sym = Symbol( "class-ns" );
 

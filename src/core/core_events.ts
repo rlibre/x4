@@ -91,6 +91,34 @@ export class EventSource<E extends EventMap = EventMap > {
 				listeners.push(cb);
 			}
 		}
+
+		return ( ) => {
+			this.removeListener( name, callback );
+		}
+	}
+
+	/**
+	 * stop listening to an event
+	 * @param eventName - event name
+	 * @param callback - callback to remove (must be the same as in on )
+	 */
+
+	removeListener<K extends keyof E>(name: K, callback: (ev: E[K]) => any) {
+		
+		if (!this._registry ) {
+			return;
+		}
+
+		let listeners = this._registry.get(name as string);
+		if (!listeners) {
+			return;
+		}
+
+		const cb = callback as EventCallback;
+		const idx = listeners.indexOf(cb);
+		if (idx !== -1) {
+			listeners.splice(idx, 1);
+		}
 	}
 
 	fire<K extends keyof E>(name: K, evx: E[K]) {

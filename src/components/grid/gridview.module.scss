@@ -1,0 +1,147 @@
+$bwidth: 4px;
+
+:root {
+	--gridview-background: white;
+	
+	--gridview-header-cell-background: white;
+	--gridview-header-cell-color: black;
+	--gridview-header-cell-vline: transparent;
+	--gridview-header-cell-border: var( --border );
+
+	--gridview-cell-color: black;
+	--gridview-cell-vline: var( --border );
+
+	--gridview-row-background: white;
+	--gridview-row-odd-background: white;
+	--gridview-row-border: var( --border );
+
+	--gridview-row-background-hover: var( --accent-background-hover );
+	--gridview-row-background-sel: var( --accent-background );
+	--gridview-row-color-sel: var( --accent-color );
+}
+
+.x4gridview {
+	
+	$def-height: 2em;
+	
+	min-height: 0;
+	overflow: hidden;
+	background-color: var( --gridview-background );
+
+	&:focus {
+		outline: none;
+	}
+
+	.x4-scrollview {
+		position: relative;
+	}
+
+	.x4-cell {
+		position: relative;
+		overflow: hidden;
+		padding: 4px;
+		white-space: nowrap;
+		color: var( --gridview-cell-color );
+		height: $def-height;
+
+		span {
+			width: 100%;
+		}
+	}
+
+	.x4-footer,
+	.x4-header {
+		height: $def-height;
+		background-color: var( --gridview-header-cell-background );
+		color: var( --gridview-header-cell-color );
+		
+		align-items: center;
+		border-bottom: 1px solid var( --gridview-header-cell-border );
+		border-left: $bwidth solid var( --gridview-header-cell-vline );
+		
+		.x4sizer-bar {
+			background-color: transparent;
+		}
+
+		.x4-cell {
+			border-right: 1px solid var( --gridview-cell-vline );
+			height: 100%;
+			display: flex;
+			align-items: center;
+
+			span {
+				min-width: 0;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			&.sort {
+				height: 0.7rem;
+				opacity: 0.7;
+			}
+		}
+	}
+
+	.x4-header {
+		.x4-cell {
+			span {
+				width: unset;
+				//text-transform: uppercase;
+				//font-weight: bold;
+			}
+
+			.sort {
+				width: 0.6em;
+				height: 0.6em;
+				padding-left: 4px;
+			}
+		}
+	}
+
+	.x4-row {
+		position: absolute;
+		width: calc( 100% - $bwidth );	// todo: border of 1st col
+		border-bottom: 1px solid var( --gridview-row-border );
+		align-items: center;
+		height: $def-height;
+		border-left: $bwidth solid transparent;
+		background-color: var( --gridview-row-background );
+
+		&.odd {
+			background-color: var( --gridview-row-odd-background );
+		}
+		
+		&:hover {
+			background-color: var( --gridview-row-background-hover );
+			border-left-color: black;
+		}
+
+		&.selected {
+			background-color: var( --gridview-row-background-sel );
+
+			.x4-cell {
+				color: var( --gridview-row-color-sel );
+			}
+		}
+	}
+
+	.x4-cell {
+		//border-right: 1px solid #d0d0d0;
+		
+		&.center {
+			text-align: center;
+			justify-content: center;
+		}
+
+		&.right {
+			text-align: right;
+			justify-content: right;
+		}
+	}
+	
+	.empty-msg {
+		position: absolute;
+		left: 1em;
+		top: 4em;
+	}
+}

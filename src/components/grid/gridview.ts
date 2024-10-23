@@ -14,21 +14,21 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, componentFromDOM, ComponentProps, EvContextMenu, EvDblClick, EvSelectionChange, wrapDOM } from '@core/component.js';
-import { CoreEvent } from '@core/core_events.js';
-import { Label } from '../label/label.js';
-import { Icon } from '../icon/icon.js';
+import { Component, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvContextMenu, EvDblClick, EvSelectionChange, Flex, wrapDOM } from '../../core/component';
+import { CoreEvent } from '../../core/core_events';
+import { Label } from '../label/label';
+import { Icon } from '../icon/icon';
 
-import { HBox, VBox } from '../boxes/boxes.js';
-import { _tr } from '@core/core_i18n.js';
-import { isFunction, unsafeHtml, UnsafeHtml } from '@core/core_tools.js';
+import { HBox, VBox } from '../boxes/boxes';
+import { _tr } from '../../core/core_i18n.js';
+import { class_ns, getScrollbarSize, isFunction, unsafeHtml, UnsafeHtml } from '../../core/core_tools.js';
 
-import icon_arrow_up from "./icon-arrow-up.svg"
-import icon_arrow_down from "./icon-arrow-down.svg"
-import { DataStore, DataView } from './datastore.js';
+import icon_arrow_up from "./arrow-up.svg"
+import icon_arrow_down from "./arrow-down.svg"
+import { DataStore, DataView, DataModel, Record, EvViewChange } from './datastore.js';
 
-
-interface Record {}
+import "./gridview.module.scss"
+import { CSizer } from '../components.js';
 
 
 export interface EvGridCheck extends CoreEvent {
@@ -56,9 +56,10 @@ interface GridColumn {
 	sortable?: boolean;
 }
 
-interface GridColumnInternal extends GridColumn {
-	$hdr: ColHeader;
-	$ftr: Component;
+interface GridColumnEx extends GridColumn {
+	header?: ColHeader;
+	footer?: Component;
+	sens?: "up" | "dn";
 }
 
 export type CellRenderer = (rec: Record) => Component;
@@ -87,20 +88,25 @@ export interface GridViewProps extends ComponentProps {
  * 
  */
 
-class ColHeader extends Component<GridViewProps> {
+@class_ns( "x4" )
+class ColHeader extends Component {
 
 	private m_sens: "up" | "dn";
 	private m_sorted: boolean;
 	private m_sorter: Icon
 	
-	constructor( props: GridViewProps, title: string ) {
+	/**
+	 * 
+	 */
+	
+	constructor( props: ComponentProps, title: string ) {
 		super( props );
 
 		this.m_sorted = false;
 		this.m_sens = 'dn';
 	
 		this.setContent( [
-			new Label({
+			new Component({
 				tag: 'span',
 				content: title
 			}),
@@ -108,20 +114,23 @@ class ColHeader extends Component<GridViewProps> {
 				cls: 'sort',
 				hidden: true,
 				iconId: icon_arrow_down
-			})
+			}),
+			new CSizer( "right" )
 		]);
 	}
+
+	/**
+	 * 
+	 */
 
 	isSorted( ) {
 		return this.m_sorted;
 	}
 
-	//set sorted( v ) {
-	//	this.m_sorted = v;
-	//	this.m_sens = 'dn';
-	//	this.itemWithRef<Icon>( 'sorter' ).show( v );
-	//}
-
+	/**
+	 * 
+	 */
+	
 	sort( v: boolean, sens: "up" | "dn" ) {
 		this.m_sorted = v;
         this.m_sens = sens;
@@ -130,10 +139,18 @@ class ColHeader extends Component<GridViewProps> {
 		this.m_sorter.show(v);
 	}
 
-	get sens( ) {
+	/**
+	 * 
+	 */
+	
+	getSens( ) {
 		return this.m_sens;
 	}
 
+	/**
+	 * 
+	 */
+	
 	toggleSens( ) {
 		this.m_sens = this.m_sens=='up' ? 'dn' : 'up';
 		this.m_sorter.setIcon( this.m_sens == 'up' ? icon_arrow_down : icon_arrow_up );
@@ -146,12 +163,13 @@ class ColHeader extends Component<GridViewProps> {
  * gridview class
  */
 
+@class_ns( "x4" )
 export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 	protected m_dataview: DataView;
-	protected m_data_cx: EventDisposer;
-
-	protected m_columns: GridColumn[];
+	protected m_model: DataModel;
+	
+	protected m_columns: GridColumnEx[];
 
 	protected m_view_el: Component;
 	protected m_container: Component;
@@ -177,7 +195,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 	constructor(props: GridViewProps) {
 		super(props);
 
-		this.m_columns = props.columns;
+		this.m_columns = props.columns.map( x => x );
 		this.m_hasMarks = props.hasMarks ?? false;
 		this.m_marks = new Set<any>();
 
@@ -210,6 +228,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 	}
 
 	_on_create() {
+		this._render( );
 		this._updateScroll(true);
 	}
 
@@ -223,7 +242,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		let scrolltype = null;
 
 		if (sel === undefined) {
-			sel = this.m_dataview.getByIndex(0).getID();
+			sel = this.m_dataview.getIdByIndex(0);
 		}
 		else {
 
@@ -256,7 +275,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 				index = this.m_dataview.getCount() - 1;
 			}
 
-			sel = this.m_dataview.getByIndex(index).getID();
+			sel = this.m_dataview.getIdByIndex(index);
 		}
 
 		if (this.m_selection != sel && select) {
@@ -346,22 +365,21 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 			this.clearMarks( );
 		}
 
-		// unlink previous observer
-		if (this.m_data_cx) {
-			this.m_data_cx.dispose( );
+		const on_change = ( ev: EvViewChange ) => {
+			if (ev.change_type == 'change') {
+				this.m_selection = undefined;
+			}
+		
+			this._updateScroll(true);
 		}
 
+		// unlink previous observer
+		this.m_dataview.off( 'view_change', on_change );
+
+		this.m_model = null;
 		if (this.m_dataview) {
-
-			this.m_data_cx = this.m_dataview.on( 'view_change', ( ev ) => {
-				if (ev.change_type == 'change') {
-					this.m_selection = undefined;
-				}
-
-				this._updateScroll(true);
-			});
-
-			//this.update( );
+			this.m_model = this.m_dataview.getModel( );
+			this.m_dataview.on( 'view_change', on_change );
 			this._updateScroll(true);
 		}
 	}
@@ -391,11 +409,11 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 	}
 
 	/** @ignore */
-	render() {
+	private _render() {
 
 		this.m_recycler = [];
 		this.m_container = new Component({
-			cls: 'content',
+			cls: 'x4-content',
 		});
 
 		this.m_empty_msg = new Label({
@@ -404,7 +422,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		});
 
 		this.m_view_el = new Component({
-			cls: '@scroll-view',
+			cls: 'x4-scrollview',
 			flex: 1,
 			dom_events: {
 				sizechange: ( ) => this._updateScroll(true),
@@ -416,7 +434,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		let flex = false;
 		let cols = this.m_columns.map((col, index) => {
 
-			let cls = '@cell';
+			let cls = 'x4-cell';
 			if (col.cls) {
 				cls += ' ' + col.cls;
 			}
@@ -424,14 +442,13 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 			let comp = new ColHeader({
 				cls,
 				flex: col.flex,
-				sizable: 'right',
 				style: {
 					width: col.width+"px"
 				},
 				dom_events: {
 					click: (ev: MouseEvent) => {
 						let t = wrapDOM(<HTMLElement>ev.target);
-						if (!t.hasClass('@sizer-overlay')) { // avoid sizer click
+						if (!t.hasClass('sizer-overlay')) { // avoid sizer click
 							this._sortCol(col);
 							ev.preventDefault();
 						}
@@ -439,6 +456,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 				}
 			}, col.title );
 
+			/*
 			const resizeCol = ( ev: EvSize ) => {
 				this._on_col_resize(index, ev.size.width);
 
@@ -455,18 +473,19 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 				sens: 'right',
 				events: {resize: ( e ) => resizeCol(e )}
 			});
+			*/
 
 			if( col.flex ) {
 				flex = true;
 			}
 
-			(<any>col).$hdr = comp;
+			col.header = comp;
 			return comp;
 		});
 
-		(cols as any).push( new Flex( {
-			ref: 'flex',
-			cls: flex ? '@hidden' : ''
+		(cols as any).push( new Component( {
+			id: 'flex',
+			cls: flex ? 'x4hidden' : ''
 		} ) );
 		
 		// compute full width
@@ -476,7 +495,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		});
 
 		this.m_header = new HBox({
-			cls: '@header',
+			cls: 'x4-header',
 			content: <any>cols,
 			style: {
 				minWidth: full_width+"px"
@@ -486,7 +505,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		if( this.props.hasFooter ) {
 			let foots = this.m_columns.map((col, index) => {
 
-				let cls = '@cell';
+				let cls = 'x4-cell';
 
 				if (col.align) {
 					cls += ' ' + col.align;
@@ -505,17 +524,17 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 					}
 				});
 
-				(col as GridColumnInternal).$ftr = comp;
+				col.footer = comp;
 				return comp;
 			});
 
-			(foots as any).push( new Flex( {
-				ref: 'flex',
-				cls: flex ? '@hidden' : ''
+			(foots as any).push( new Component( {
+				id: 'flex',
+				cls: flex ? 'x4hidden' : ''
 			} ) );
 			
 			this.m_footer = new HBox({
-				cls: '@footer',
+				cls: 'x4-footer',
 				content: <any>foots,
 				style: {
 					minWidth: full_width+"px"
@@ -537,22 +556,22 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 	private _on_col_resize(col: number, width: number) {
 
-		const _col = this.m_columns[col] as GridColumnInternal;
+		const _col = this.m_columns[col];
 
 		let updateFlex = false;
 				
 		if( width>=0 ) {
 			_col.width = width;
 			if( _col.flex ) {
-				_col.$hdr.removeClass( '@flex' );
-				_col.$ftr?.removeClass( '@flex' );
+				_col.header.removeClass( 'x4flex' );
+				_col.footer?.removeClass( 'x4flex' );
 				_col.flex = undefined;
 				updateFlex = true;
 			}
 		}
 		else if( width<0 && !_col.flex ) {
-			_col.$hdr.addClass( '@flex' );
-			_col.$ftr?.addClass( '@flex' );
+			_col.header.addClass( 'x4flex' );
+			_col.footer?.addClass( 'x4flex' );
 			_col.flex = 1;
 			updateFlex = true;
 		}
@@ -565,9 +584,9 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 				}
 			});
 				
-			this.m_header.itemWithRef( 'flex' )?.show( flex ? false : true );
+			this.m_header.query( '#flex' )?.show( flex ? false : true );
 			if( this.m_footer ) {
-				this.m_footer.itemWithRef( 'flex' )?.show( flex ? false : true );
+				this.m_footer.query( '#flex' )?.show( flex ? false : true );
 			}
 		}
 
@@ -592,30 +611,29 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 	 * 
 	 */
 
-	private _sortCol(col: GridColumn, sens: "up" | "dn" = "up" ) {
+	private _sortCol(col: GridColumnEx, sens: "up" | "dn" = "up" ) {
 
 		if (col.sortable === false) {
 			return;
 		}
 
-		this.m_columns.forEach((c) => {
+		this.m_columns.forEach( c => {
 			if (c !== col) {
-				(c as GridColumnInternal).$hdr.sort( false, "dn" );
+				c.header.sort( false, "dn" );
 			}
 		});
 
-		const $hdr = (col as GridColumnInternal).$hdr;
-
-		if ($hdr.isSorted()) {
-			$hdr.toggleSens( );
+		const header = col.header;
+		if (header.isSorted()) {
+			header.toggleSens( );
 		}
 		else {
-			$hdr.sort( true, sens );
+			header.sort( true, sens );
 		}
 
 		if (this.m_dataview) {
 			this.m_dataview.sort([
-				{ field: col.id, ascending: $hdr.sens=='dn' ? false : true }
+				{ field: col.id, ascending: col.sens=='dn' ? false : true }
 			]);
 		}
 	}
@@ -626,10 +644,10 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 	private _computeItemHeight() {
 		let gr = document.createElement('div');
-		gr.classList.add('x-row');
+		gr.classList.add('x4-row');
 
 		let gv = document.createElement('div');
-		gv.classList.add('x-grid-view');
+		gv.classList.add('x4gridview');
 		gv.style.position = 'absolute';
 		gv.style.top = '-1000px';
 		gv.appendChild(gr);
@@ -646,23 +664,16 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		let row: Component;
 		if (this.m_recycler.length) {
 			row = this.m_recycler.pop();
-			row.clearClasses();
+			row.removeClass( '*' );
 			row.addClass( props.cls );
 			row.setContent( props.content );
 			row.setStyle( props.style );
-
-			for( let n in props.data ) {
-				row.setData( n, props.data[n] );
-			}
 		}
 		else {
 			row = new HBox( props );
-		}
-
-		if (!row.dom) {
 			this.m_container.appendContent(row);
 		}
-
+		
 		return row;
 	}
 
@@ -691,7 +702,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 		// if items height make scroll visible, update header width
 		if (((count + 1) * this.m_itemHeight) >= height) {
-			let w = Component.getScrollbarSize();
+			let w = getScrollbarSize();
 			this.m_header.setStyleValue("paddingRight", w);
 			this.m_footer?.setStyleValue("paddingRight", w);
 		}
@@ -711,10 +722,10 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		let limit = 100;
 		while (y < height && index < count && --limit > 0) {
 
-			let rec = this.m_dataview.getByIndex(index);
-			let rowid = rec.getID();
-
-			let crow = canOpt ? this.m_recycler.findIndex( ( r ) => r.getData('row-id')==rowid ) : -1;
+			const rec = this.m_dataview.getByIndex(index);
+			const rowid = this.m_dataview.getRecId( rec );
+						
+			let crow = canOpt ? this.m_recycler.findIndex( ( r ) => r.getIntData('row-id')==rowid ) : -1;
 			if( crow>=0 ) {
 				let rrow = this.m_recycler.splice( crow, 1 )[ 0 ];
 				rrow.setStyle( {
@@ -723,18 +734,18 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 				} );
 
 				if (this.m_hasMarks) {
-					rrow.setClass( '@marked', this.m_marks.has(rowid) );
+					rrow.setClass( 'x4marked', this.m_marks.has(rowid) );
 				}
 
-				rrow.removeClass( '@hidden' );
-				rrow.setClass( '@selected', this.m_selection === rowid );
+				rrow.removeClass( 'x4hidden' );
+				rrow.setClass( 'selected', this.m_selection === rowid );
 
 				this.m_visible_rows[cidx] = rrow;
 			}
 			else {
 				let cols = this.m_columns.map( col => {
 
-					let cls = '@cell';
+					let cls = 'x4-cell';
 					if (col.align) {
 						cls += ' ' + col.align;
 					}
@@ -750,22 +761,21 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 							cell.addClass(cls);
 							cell.setStyleValue('width', col.width);
 							if (col.flex !== undefined) {
-								cell.addClass('@flex');
+								cell.addClass('x4flex');
 								cell.setStyleValue('flex', col.flex);
 							}
 						}
 					}
 					else {
 
-						let fmt = col.formatter;
 						let text;
-
+						/*let fmt = col.formatter;
 						if (fmt && fmt instanceof Function) {
 							text = fmt(rec.getRaw(col.id), rec);
 						}
-						else {
-							text = rec.getField(col.id);
-						}
+						else {*/
+							text = this.m_model.getField(col.id,rec);
+						/*}*/
 
 						cell = new Component({
 							cls,
@@ -778,15 +788,15 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 					return cell;
 				});
 
-				let cls = '@row @hlayout center';
+				let cls = 'x4-row x4hbox center';
 				if (this.m_hasMarks) {
 					if (this.m_marks.has(rowid)) {
-						cls += ' @marked';
+						cls += ' marked';
 					}
 				}
 
 				if (this.m_selection === rowid) {
-					cls += ' @selected';
+					cls += ' selected';
 				}
 
 				let row = this.m_visible_rows[cidx] = this._createRow( {
@@ -796,9 +806,9 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 						top: (y + top)+"px",
 						minWidth: full_width+"px",
 					},
-					data: {
-						'row-id': rowid,
-						'row-idx': index
+					attrs: {
+						'data-row-id': rowid,
+						'data-row-idx': index
 					}
 				});
 
@@ -818,7 +828,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 		// if some cells are still in cache, hide them
 		this.m_recycler.forEach((c) => {
-			c.addClass('@hidden');
+			c.addClass('x4hidden');
 		})
 
 		//this.m_container.setContent(<ComponentContent>this.m_visible_rows);
@@ -862,11 +872,6 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 		const update = () => {
 
-			// element destroyed between updateScroll and now
-			if( !this.dom ) {
-				return;
-			}
-
 			let newTop = Math.floor(this.m_view_el.dom.scrollTop / (this.m_itemHeight || 1));
 
 			if (newTop != this.m_topIndex || forceUpdate) {
@@ -880,7 +885,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		}
 
 		if (forceUpdate) {
-			this.singleShot( update, 10 );
+			this.setTimeout( "up", 10, update );
 		}
 		else {
 			update();
@@ -896,7 +901,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 			let itm = componentFromDOM(dom);
 
 			if (itm) {
-				let id = itm.getData('row-id');
+				const id = itm.getIntData('row-id');
 				if (id !== undefined) {
 					return { id, itm };
 				}
@@ -941,13 +946,13 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 		while (dom && dom != self) {
 			let itm = componentFromDOM(dom),
-				id = itm?.getData('row-id');
+				id = itm?.getIntData('row-id');
 
 			if (id !== undefined) {
 				this._selectItem(id, itm);
 
-				let idx = itm.getData('row-idx');
-				let rec = this.m_dataview.getByIndex(idx);
+				let idx = itm.getIntData('row-idx');
+				let rec = this.m_dataview.getByIndex( idx );
 
 				this._showItemContextMenu(e, rec);
 				e.preventDefault();
@@ -984,7 +989,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 		if (this.m_selection !== undefined) {
 			let old = this._findItem(this.m_selection);
 			if (old) {
-				old.removeClass('@selected');
+				old.removeClass('selected');
 			}
 		}
 
@@ -1000,7 +1005,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 			}
 
 			if (dom_item) {
-				dom_item.addClass('@selected');
+				dom_item.addClass('selected');
 			}
 
 			let rec = this.m_dataview.getById(item);
@@ -1033,7 +1038,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 	private _renderCheck(rec: Record) {
 		let icon = '--x4-icon-square';
-		if (this.m_marks.has(rec.getID())) {
+		if (this.m_marks.has(this.m_model.getID(rec))) {
 			icon = '--x4-icon-square-check';
 		}
 
@@ -1042,7 +1047,7 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 
 	private _toggleMark(rec: Record) {
 
-		let id = rec.getID();
+		let id = this.m_model.getID(rec);
 		let chk = false;
 
 		if (this.m_marks.has(id)) {
@@ -1078,8 +1083,9 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 			return;
 		}
 
-		this.m_footer.enumChilds( (c) => {
-			let cid = c.getData( 'col' );
+		const fcols = this.m_footer.enumChildComponents( false );
+		fcols.forEach( c => {
+			let cid = c.getIntData( 'col' );
 			if( cid ) {
 				let col = this.m_columns[cid];
 
@@ -1090,19 +1096,18 @@ export class GridView extends VBox<GridViewProps, GridViewEvents> {
 					}
 					else {
 						let text;
-						const fmt = col.formatter;
+						/*const fmt = col.formatter;
 						if (fmt && fmt instanceof Function) {
 							text = fmt(value, rec);
 						}
-						else {
+						else {*/
 							text = value;
-						}
+						/*}*/
 
-						c.setContent( text, false );
+						c.setContent( text );
 					}
 				}
 			}
 		});
 	}
 }
-

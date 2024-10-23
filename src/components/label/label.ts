@@ -62,3 +62,31 @@ export class Label extends Component<LabelProps> {
 	}
 }
 
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+export interface SimpleTextProps extends ComponentProps {
+	text: string | UnsafeHtml;
+}
+
+@class_ns( "x4" )
+export class SimpleText extends Component<SimpleTextProps> {
+	
+	/**
+	 * 
+	 */
+	
+	constructor( p: SimpleTextProps ) {
+		super( { ...p } );
+
+		this.setContent( p.text );
+	}	
+
+	/**
+	 * 
+	 */
+
+	setText( text: string | UnsafeHtml ) {
+		this.setContent( text );
+		this.setClass( "empty", !text );
+	}
+}

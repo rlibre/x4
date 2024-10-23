@@ -103,6 +103,8 @@ export class Icon extends Component<IconProps> {
 	 */
 
 	setIcon( iconId: string ) {
+		this.clearContent( );
+			
 		if( iconId ) {
 			if( iconId.startsWith('var:') ) {
 				do {
@@ -125,7 +127,6 @@ export class Icon extends Component<IconProps> {
 			}
 		}
 		else {
-			this.clearContent( );
 			this.addClass( "empty" );
 		}
 	}

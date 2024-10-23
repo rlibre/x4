@@ -134,7 +134,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	readonly props: P;
 	protected readonly clsprefix: string;	// internal class name prefix (x4 internal)
 
-	private store: Map<string|Symbol,any>;
+	#store: Map<string|Symbol,any>;
 
 	constructor( props: P ) {
 		super( );
@@ -243,11 +243,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
+	 * special case: '*' mean clear class list
 	 */
 
 	removeClass( cls: string ) {
 		if( !cls ) return;
+
+		if( cls=='*' ) {
+			this.dom.classList.value = "";
+			return;
+		}
 		
 		if( cls.indexOf(' ')>=0 ) {
 			const ccs = cls.split( " " );
@@ -344,6 +349,18 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
+	 * @returns undefined if not a number
+	 */
+	getIntData( name: string ) : number {
+		const v = this.getAttribute( "data-"+name );
+		if( Number.isFinite(v) ) {
+			return parseInt( v );
+		}
+
+		return undefined;
+	}
+
+	/**
 	 * 
 	 */
 
@@ -356,16 +373,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	setInternalData( name: string|Symbol, value: any ): this {
-		if( !this.store ) {
-			this.store = new Map( );
+		if( !this.#store ) {
+			this.#store = new Map( );
 		}
 
-		this.store.set( name, value );
+		this.#store.set( name, value );
 		return this;
 	}
 
 	getInternalData( name: string|Symbol ): any {
-		return this.store?.get(name);
+		return this.#store?.get(name);
 	}
 
 	

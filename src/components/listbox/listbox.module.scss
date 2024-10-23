@@ -25,6 +25,8 @@
 	--listbox-item-color-disabled: var( --disabled-color-dark );
 	--listbox-item-background-hover: var( --background-secondary );
 
+	--listbox-icon-color: var( --text-ternary );
+
 	--listbox-border: var( --border );
 	--listbox-border-focus: var( --accent-background-focus );
 }
@@ -66,6 +68,11 @@
 				&> .x4label {
 					color: inherit;
 					padding: 2px 6px;
+				
+					#icon {
+						color: var( --listbox-icon-color );
+						fill: var( --listbox-icon-color );
+					}
 				}
 
 				&:hover {
@@ -75,6 +82,13 @@
 				&.selected {
 					background-color: var( --listbox-item-background-sel );
 					color: var( --listbox-item-color-sel );
+
+					&> .x4label {
+						#icon {
+							color: var( --listbox-item-color-sel );
+							fill: var( --listbox-item-color-sel );
+						}
+					}
 				}
 
 				&:active{

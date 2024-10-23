@@ -20,9 +20,9 @@ import { CoreEvent, EventCallback, EventMap, EventSource } from '@core/core_even
 import { isArray, isString } from '@core/core_tools.js';
 import { Component } from 'x4js';
 
+export type RecordID = any;
 
-
-export type ChangeCallback = (type: string, id?: any) => void;
+export type ChangeCallback = (type: string, id?: RecordID) => void;
 export type CalcCallback = () => string;
 
 export type FieldType = 'string' | 'int' | 'float' | 'date' | 'bool' | 'array' | 'object' | 'any' | 'calc';
@@ -30,7 +30,7 @@ export type DataIndex = Uint32Array;
 
 export interface EvDataChange extends CoreEvent {
 	change_type: 'create' | 'update' | 'delete' | 'data' | 'change';
-	id?: any;
+	id?: RecordID;
 }
 
 
@@ -48,7 +48,7 @@ export interface MetaData {
 	prec?: number;
 	required?: boolean;
 	calc?: (rec: Record) => any;
-	model?: Record;	// in case of array of subtypes, the model
+	model?: DataModel;	// in case of array of subtypes, the model
 }
 
 export interface FieldInfo extends MetaData {
@@ -88,7 +88,7 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 
 		// merge with parent class metas
 		let pctor = Object.getPrototypeOf(ctor);
-		if( pctor!=Record ) {
+		if( pctor!=DataModel ) {
 			let pmetas = pctor[metaFields];
 			mfld.fields = [...pmetas.fields, ...mfld.fields ]
 			
@@ -106,12 +106,12 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 
 export namespace data {
 
-/**
- * define a record id
- * @example
- *	\@data_id()
- *  id: string; // this field is the record id
- **/
+	/**
+	 * define a model id
+	 * @example
+	 *	\@data_id()
+	*  id: string; // this field is the record id
+	**/
 
 	export function id( ) {
 	return ( ownerCls: any, fldName: string ) => {
@@ -126,107 +126,105 @@ export namespace data {
 	}
 }
 
-/**
- * @ignore
- */
+	/**
+	 * @ignore
+	 */
 
 	export function field( data: MetaData ) {
 
-	return ( ownerCls: any, fldName: string ) => {
-		let metas = _getMetas( ownerCls );
-		metas.fields.push( {
-			name: fldName,
-			...data
-		} );
+		return ( ownerCls: any, fldName: string ) => {
+			let metas = _getMetas( ownerCls );
+			metas.fields.push( {
+				name: fldName,
+				...data
+			} );
+		}
 	}
-}
 
-/**
- * following member is a string field
- * @example
- * \@data_string()
- * my_field: string;	// this field will be seen as a string
- */
+	/**
+	 * following member is a string field
+	 * @example
+	 * \@data_string()
+	 * my_field: string;	// this field will be seen as a string
+	 */
 
 	export function string( props?: MetaData ) {
 		return field( { ...props, type: 'string' } );
-}
+	}
 
-/**
- * following member is an integer field
- * @example
- * \@data_string()
- * my_field: number;	// this field will be seen as an integer
- */
+	/**
+	 * following member is an integer field
+	 * @example
+	 * \@data_string()
+	 * my_field: number;	// this field will be seen as an integer
+	 */
 
 	export function int( props?: MetaData ) {
 		return field( { ...props, type: 'int' } );
-}
+	}
 
-/**
- * following member is a float field
- * @example
- * \@data_float()
- * my_field: number;	// this field will be seen as a float
- */
+	/**
+	 * following member is a float field
+	 * @example
+	 * \@data_float()
+	 * my_field: number;	// this field will be seen as a float
+	 */
 
 	export function float( props?: MetaData ) {
 		return field( { ...props, type: 'float' } );
-}
+	}
 
-/**
- * following member is a boolean field
- * @example
- * \@data_bool()
- * my_field: boolean;	// this field will be seen as a boolean
- */
+	/**
+	 * following member is a boolean field
+	 * @example
+	 * \@data_bool()
+	 * my_field: boolean;	// this field will be seen as a boolean
+	 */
 
 	export function bool( props?: MetaData ) {
 		return field( { ...props, type: 'bool' } );
-}
+	}
 
-/**
- * following member is a date field
- * @example
- * \@data_date()
- * my_field: date;	// this field will be seen as a date
- */
+	/**
+	 * following member is a date field
+	 * @example
+	 * \@data_date()
+	 * my_field: date;	// this field will be seen as a date
+	 */
 
 	export function date( props?: MetaData ) {
 		return field( { ...props, type: 'date' } );
-}
+	}
 
-/**
- * following member is a calculated field
- * @example
- * \@data_calc( )
- * get my_field(): string => {
- * 	return 'hello';
- * };	
- */
+	/**
+	 * following member is a calculated field
+	 * @example
+	 * \@data_calc( )
+	 * get my_field(): string => {
+	 * 	return 'hello';
+	 * };	
+	 */
 
 	export function calc( props?: MetaData ) {
 		return field( { ...props, type: 'calc'} ) 
-}
+	}
 
+	/**
+	 * 
+	 */
 
+	interface ModelConstructor {
+		new ( data?: any, id?: any ): DataModel;
+	}
 
-/**
- * 
- */
+	/**
+	 * following member is a record array
+	 * @example
+	 * \@data_array( )
+	 * my_field(): TypedRecord[];	
+	 */
 
-interface RecordConstructor {
-    new ( data?: any, id?: any ): Record;
-}
-
-/**
- * following member is a record array
- * @example
- * \@data_array( )
- * my_field(): TypedRecord[];	
- */
-
-	export function array( ctor: RecordConstructor, props?: MetaData  ) {
+	export function array( ctor: ModelConstructor, props?: MetaData  ) {
 		return data.field( { ...props, type: 'array', model: ctor ? new ctor() : null } )
 	}
 
@@ -239,34 +237,7 @@ interface RecordConstructor {
  * record model
  */
 
-export class Record  {
-	[ key: string ]: any;
-
-	constructor( data?: any, id?: any ) {
-
-		if( data!==undefined ) {
-			this.unSerialize( data, id );
-		}
-	}
-
-	clone( source?: any ) {
-		let rec = new (this.constructor as any)( );
-		if( source ) {
-			rec.unSerialize( source );
-		}
-		return rec;
-	}
-
-	/**
-	 * get the record unique identifier
-	 * by default the return value is the first field
-	 * @return unique identifier
-	 */
-
-	getID(): any { 
-		let metas = _getMetas( this, false );
-		return this[metas.id];
-	}
+export class DataModel {
 
 	/**
 	 * MUST IMPLEMENT
@@ -277,18 +248,19 @@ export class Record  {
 		let metas = _getMetas( this, false );
 		return metas.fields;
 	}
-
+	
 	/**
 	 * 
 	 */
 
-	validate( ) : Error[] {
+	validate( record: Record ) : Error[] {
 		
 		let errs: Error[] = null;
 
 		let fields = this.getFields( );
+
 		fields.forEach( (fi) => {
-			if( fi.required && !this.getField(fi.name) ) {
+			if( fi.required && !this.getField(fi.name,record) ) {
 				if( errs ) {
 					errs = [];
 				}
@@ -298,15 +270,11 @@ export class Record  {
 		})
 
 		return errs;
-	}
+	}	
 
-	//mapAnyFields() {
-	//	this.getFields = ( ) => {
-	//		return Object.keys( this ).map( (name) => {
-	//			return <FieldInfo>{ name };
-	//		});			
-	//	}
-	//}
+	/**
+	 * return the field index by name
+	 */
 
 	getFieldIndex( name: string ) : number {
 		let fields = this.getFields( );
@@ -318,12 +286,12 @@ export class Record  {
 	 * @returns an object with known record values
 	 */
 
-	serialize(): any { 
+	serialize( input: Record ): any { 
 		let rec: any = {};
 
 		this.getFields().forEach((f) => {
 			if( f.calc === undefined ) {
-				rec[f.name] = rec[f.name];
+				rec[f.name] = input[f.name];
 			}
 		});
 
@@ -336,25 +304,26 @@ export class Record  {
 	 * @returns a new Record
 	 */
 
-	unSerialize(data: any, id?: any) : Record { 
+	unSerialize(data: any, id?: RecordID ) : Record { 
 
-		let fields = this.getFields();
+		const fields = this.getFields();
+		const rec = new Record( );
 
 		fields.forEach( (sf) => {
 			let value = data[sf.name];
 			if (value !== undefined) {
-				this[sf.name] = this._convertField( sf, value );
+				rec[sf.name] = this._convertField( sf, value );
 			}
 		});
 
 		if( id!==undefined ) {
-			this[fields[0].name] = id;
+			rec[fields[0].name] = id;
 		}
 		else {
-			console.assert( this.getID()!==undefined ); // store do not have ID field
+			console.assert( this.getID(rec)!==undefined ); // store do not have ID field
 		}
 
-		return this;
+		return rec;
 	}
 
 	/**
@@ -389,6 +358,8 @@ export class Record  {
 			}
 
 			case 'array': {
+				debugger;
+				/*
 				let result: any[] = [];
 			
 				if( field.model ) {
@@ -398,6 +369,7 @@ export class Record  {
 			
 					return result;
 				}
+				*/
 				break;
 			}
 		}
@@ -406,17 +378,29 @@ export class Record  {
 	}
 
 	/**
+	 * get the record unique identifier
+	 * by default the return value is the first field
+	 * @return unique identifier
+	 */
+
+	getID( rec: Record ): any { 
+		if( !rec ) return null;
+		let metas = _getMetas( this, false );
+		return rec[metas.id];
+	}
+
+	/**
 	 * get raw value of a field
 	 * @param name - field name or field index
 	 */
 
-	getRaw( name: string | number ) : any {
+	getRaw( name: string | number, rec: Record ) : any {
 		
 		let idx;
 		let fields = this.getFields( );
 
 		if( typeof(name) === 'string' ) {
-			idx = fields.findIndex( fi => fi.name == name );
+			idx = fields.findIndex( ( fi: FieldInfo) => fi.name == name );
 			if( idx < 0 ) {
 				console.assert( false, 'unknown field: '+name);
 				return undefined;
@@ -436,20 +420,10 @@ export class Record  {
 
 		let fld = fields[idx];
 		if( fld.calc!==undefined ) {
-			return fld.calc( this );
+			return fld.calc( rec );
 		}
 		
-		return this[fld.name];
-	}
-
-	/**
-	 * 
-	 * @param name 
-	 * @param data 
-	 */
-
-	setRaw( name: string, data: string ) {
-		this[name] = data;
+		return rec[fld.name];
 	}
 
 	/**
@@ -459,18 +433,52 @@ export class Record  {
 	 * let value = record.get('field1');
 	 */
 
-	getField( name: string ): string {
-		let v = this.getRaw( name );
+	getField( name: string, rec: Record ): string {
+		let v = this.getRaw( name, rec );
 		return (v===undefined || v===null) ? '' : ''+v;
 	}
+}
 
-	/**
+/**
+ * 
+ */
+
+const $model = Symbol( "model" )
+
+export class Record  {
+	[ key: string ]: number | string | Date;
+
+	/*
+	/ **
+	 * @returns fields descriptors
+	 * /
+
+	getFields(): FieldInfo[] { 
+		let metas = _getMetas( this, false );
+		return metas.fields;
+	}
+
+	
+
+	/ **
+	 * 
+	 * @param name 
+	 * @param data 
+	 * /
+
+	setRaw( name: string, data: string ) {
+		this[name] = data;
+	}
+
+	
+
+	/ **
 	 * set field value
 	 * @param name - field name
 	 * @param value - value to set
 	 * @example
 	 * record.set( 'field1', 7 );
-	 */
+	 * /
 
 	setField(name: string, value: any) {
 		let fields = this.getFields( );
@@ -489,55 +497,9 @@ export class Record  {
 		
 		this.setRaw( fld.name, value );
 	}
+	*/
 }
 
-/**
- * by default, the field id is rhe first member or the record
- */
-
-export class AutoRecord extends Record {
-
-	private m_data;
-	private m_fid: string;
-
-	constructor( data: any ) {
-		super( );
-
-		this.m_data = data;
-	}
-
-	getID( ) {
-		if( !this.m_fid ) {
-			let fnames = Object.keys( this.m_data );
-			this.m_fid = fnames[0];
-		}
-
-		return this.m_data[this.m_fid];
-	}
-
-	getFields( ) : FieldInfo[] {
-		let fnames = Object.keys( this.m_data );
-		let fields: FieldInfo[] = fnames.map( (n) => {
-			return {
-				name: n
-			};
-		})
-
-		return fields;
-	}
-
-	getRaw( name: string ) : string {
-		return this.m_data[name];
-	}
-
-	setRaw( name: string, data: string ) {
-		this.m_data[name] = data;
-	}
-
-	clone( data: any ) {
-		return new AutoRecord( {...data} );
-	}
-}
 
 /**
  * 
@@ -596,9 +558,9 @@ export class DataProxy extends CoreElement<DataEventMap> {
  * 
  */
 
-interface DataStoreProps<T extends Record>  {
-	model: T;
-	data?: T[];
+interface DataStoreProps  {
+	model: DataModel;
+	data?: any[];
 	url?: string;
 	autoload?: false;
 	solver?: DataSolver;
@@ -615,16 +577,16 @@ interface DataStoreEventMap extends EventMap {
  * 
  */
 
-export class DataStore<T extends Record = Record> extends EventSource<DataStoreEventMap> {
+export class DataStore extends EventSource<DataStoreEventMap> {
 	
-	protected m_model: T;
+	protected m_model: DataModel;
 	protected m_fields: FieldInfo[];
-	protected m_records: T[];
+	protected m_records: Record[];
 
 	protected m_proxy: DataProxy;
 	protected m_rec_index: DataIndex;
 
-	constructor(props: DataStoreProps<T> ) {
+	constructor(props: DataStoreProps ) {
 		super( );
 
 		this.m_fields = undefined;
@@ -672,10 +634,10 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 
 	public setData( records: any[] ) {
 
-		let realRecords: T[] = [];
+		const realRecords: Record[] = new Array( records.length );
 
-		records.forEach( (rec) => {
-			realRecords.push( this.m_model.clone(rec) );
+		records.forEach( (rec,idx) => {
+			realRecords[idx] = this.m_model.unSerialize(rec);
 		});
 
 		this.setRawData( realRecords );
@@ -686,14 +648,13 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @param records - must be of the same type as model
 	 */
 
-	public setRawData(records: T[]) {
+	public setRawData(records: Record[]) {
 
 		this.m_records = records;
 		this._rebuildIndex( );
 		this.fire( 'data_change', { change_type: 'change'} );
 	}
 	
-
 	private _rebuildIndex( ) {
 		this.m_rec_index = null; // null to signal that we have to run on records instead of index
 		this.m_rec_index = this.createIndex( null ); // prepare index (remove deleted)
@@ -704,8 +665,9 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * 
 	 */
 
-	public update( rec: T ) {
-		let id = rec.getID();
+	public update( rec: Record ) {
+
+		let id = this.m_model.getID( rec );
 		let index = this.indexOfId(id);
 		if (index < 0) {
 			return false;
@@ -721,14 +683,13 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @param data 
 	 */
 
-	public append( rec: T | any ) {
+	public append( rec: Record | any ) {
 
 		if( !(rec instanceof Record) ) {
-			let nrec = this.m_model.clone( );
-			rec = nrec.unSerialize( rec );
+			rec = this.m_model.unSerialize( rec );
 		}
 
-		console.assert( rec.getID() );
+		console.assert( this.m_model.getID(rec) );
 
 		this.m_records.push( rec );
 		this._rebuildIndex( );
@@ -741,8 +702,10 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 
 	getMaxId( ) {
 		let maxID: number = undefined;
+		const m = this.m_model;
+
 		this.m_records.forEach( (r) => {
-			let rid = r.getID( );
+			let rid = m.getID( r );
 			if( maxID===undefined || maxID<rid ) {
 				maxID = rid;
 			}
@@ -756,7 +719,7 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @param id 
 	 */
 
-	public delete(id: any): boolean {
+	public delete(id: RecordID ): boolean {
 
 		let idx = this.indexOfId( id );
 		if( idx<0 ) {
@@ -792,17 +755,19 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * find the index of the element with the given id
 	 */
 
-	public indexOfId(id: any ): number {
+	public indexOfId(id: RecordID ): number {
 
 		//if( this.count<10 ) {
 		//	this.forEach( (rec) => rec.getID() == id );
 		//}
 
+		const m = this.m_model;
+
 		for( let lim = this.count, base = 0; lim != 0; lim >>= 1 ) {
 			
-			let p = base + (lim >> 1); // int conversion
-			let idx = this.m_rec_index[p];
-			let rid = this.m_records[idx].getID( );
+			const p = base + (lim >> 1); // int conversion
+			const idx = this.m_rec_index[p];
+			const rid = m.getID( this.m_records[idx] );
 	
 			if( rid==id ) {
 				return p;
@@ -822,7 +787,7 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @returns record or null
 	 */
 
-	public getById(id: any): T {
+	public getById(id: RecordID): Record {
 		let idx = this.indexOfId( id );
 		if( idx<0 ) {
 			return null;
@@ -837,16 +802,16 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @returns record or null
 	 */
 
-	public getByIndex( index: number ): T {
+	public getByIndex( index: number ): Record {
 		let idx = this.m_rec_index[index];
 		return this._getRecord( idx );
 	}
 
-	private _getRecord( index: number ) : T {
+	private _getRecord( index: number ) : Record {
 		return this.m_records[index] ?? null;
 	}
 
-	public moveTo( other: DataStore<T> ) {
+	public moveTo( other: DataStore ) {
 		other.setRawData( this.m_records );
 	}
 	
@@ -855,7 +820,7 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * @param opts 
 	 */
 
-	createView( opts?: DataViewProps<T> ) : DataView<T> {
+	createView( opts?: DataViewProps ) : DataView {
 		let eopts = { ...opts, store: this };
 		return new DataView( eopts );
 	}
@@ -957,6 +922,8 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 				}
 			
 				// scan all records and append only interesting ones
+				const m = this.m_model;
+
 				this.forEach( (rec, idx) => {
 
 					// skip deleted
@@ -964,7 +931,7 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 						return;
 					}
 
-					let field = rec.getRaw( filterFld );
+					let field = m.getRaw( filterFld, rec );
 					if( field===null || field===undefined ) {
 						field = '';
 					}
@@ -1019,13 +986,16 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 		}
 
 		// sort only by one field : optimize it
+		const m = this.m_model;
+
 		if( fidxs.length==1 ) {
 
-			let field = fidxs[0].fidx;
+			const field = fidxs[0].fidx;
+
 			index.sort( ( ia, ib ) => {
 
-				let va = this.getByIndex(ia).getRaw( field ) ?? '';
-				let vb = this.getByIndex(ib).getRaw( field ) ?? '';
+				let va = m.getRaw( field, this.getByIndex(ia) ) ?? '';
+				let vb = m.getRaw( field, this.getByIndex(ib) ) ?? '';
 				if (va > vb) { return 1; }
 				if (va < vb) { return -1; }
 				return 0;
@@ -1044,8 +1014,8 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 					let fidx = fidxs[fi].fidx;
 					let mul = fidxs[fi].asc ? 1 : -1;
 
-					let va = this.getByIndex(ia).getRaw( fidx ) ?? '';
-					let vb = this.getByIndex(ib).getRaw( fidx ) ?? '';
+					let va = m.getRaw( fidx, this.getByIndex(ia) ) ?? '';
+					let vb = m.getRaw( fidx, this.getByIndex(ib) ) ?? '';
 					if (va > vb) { return mul; }
 					if (va < vb) { return -mul; }
 				}
@@ -1061,7 +1031,7 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	 * 
 	 */
 
-	forEach( cb: ( rec:T, index: number ) => any ) {
+	forEach( cb: ( rec: Record, index: number ) => any ) {
 		
 		if( this.m_rec_index ) {
 			this.m_rec_index.some( (ri,index) => {
@@ -1088,6 +1058,10 @@ export class DataStore<T extends Record = Record> extends EventSource<DataStoreE
 	changed( ) {
 		this.fire( 'data_change', { change_type: 'change'} );
 	}
+
+	getModel( ) {
+		return this.m_model;
+	}
 }
 
 
@@ -1101,8 +1075,8 @@ interface DataViewEventMap extends EventMap {
 	view_change: EvViewChange;
 }
 
-interface DataViewProps<T extends Record> {
-	store?: DataStore<T>;
+interface DataViewProps {
+	store?: DataStore;
 	filter?: FilterInfo;
 	order?: string | SortProp[] | SortProp;
 }
@@ -1130,17 +1104,18 @@ export interface SortProp {
  * You can have multiple views for a single DataStore
  */
 
-export class DataView<T extends Record = Record> extends CoreElement<DataViewEventMap>
+export class DataView extends CoreElement<DataViewEventMap>
 {
 	protected m_index: DataIndex;
-	protected m_store: DataStore<T>;	
+	protected m_store: DataStore;	
+	protected m_model: DataModel;
 
 	protected m_sort: SortProp[];
 	protected m_filter: FilterInfo;
 
-	protected m_props: DataViewProps<T>;
+	protected m_props: DataViewProps;
 
-	constructor( props: DataViewProps<T> ) {
+	constructor( props: DataViewProps ) {
 		super( );
 
 		this.m_props = props;
@@ -1148,6 +1123,7 @@ export class DataView<T extends Record = Record> extends CoreElement<DataViewEve
 		this.m_index = null;
 		this.m_filter = null;
 		this.m_sort = null;
+		this.m_model = this.m_store.getModel();
 
 		this.filter( props.filter );
 		
@@ -1245,7 +1221,7 @@ export class DataView<T extends Record = Record> extends CoreElement<DataViewEve
 	 * @param id 
 	 */
 
-	public indexOfId(id: any): number {
+	public indexOfId(id: RecordID): number {
 		let ridx = this.m_store.indexOfId( id );
 		return this.m_index.findIndex( (rid) => rid === ridx );
 	}
@@ -1255,7 +1231,7 @@ export class DataView<T extends Record = Record> extends CoreElement<DataViewEve
 	 * @param index 
 	 */
 
-	public getByIndex(index: number): T {
+	public getByIndex(index: number): Record {
 		
 		if (index >= 0 && index < this.m_index.length) {
 			let rid = this.m_index[index];
@@ -1265,14 +1241,35 @@ export class DataView<T extends Record = Record> extends CoreElement<DataViewEve
 		return null;
 	}
 
+	public getIdByIndex( index: number ) : RecordID {
+		const rec = this.getByIndex( index );
+		return this.m_model.getID( rec );
+	}
+
+	public getRecId( rec: Record ): RecordID {
+		return this.m_model.getID( rec );
+	}
+
 	/**
 	 * 
 	 * @param id 
 	 */
 
-	public getById( id: any): T {
+	public getById( id: RecordID): Record {
 		return this.m_store.getById( id );
 	}
+
+	/**
+	 * 
+	 */
+
+	getModel( ) {
+		return this.m_model;
+	}
+
+	/**
+	 * 
+	 */
 
 	changed( ) {
 		this.fire( 'view_change', {change_type:'change'} );
@@ -1282,7 +1279,7 @@ export class DataView<T extends Record = Record> extends CoreElement<DataViewEve
 	 * 
 	 */
 
-	 forEach( cb: ( rec:T, index: number ) => any ) {
+	 forEach( cb: ( rec: Record, index: number ) => any ) {
 		this.m_index.some( ( index ) => {
 			let rec = this.m_store.getByIndex( index );
 			if( rec ) {

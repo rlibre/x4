@@ -87,6 +87,18 @@ export class CoreElement<E extends EventMap = EventMap> {
 	}
 
 	/**
+	 * detach
+	 */
+
+	off<K extends keyof E>( name: K, listener: ( ev: E[K] ) => void ) {
+		console.assert( listener!==undefined && listener!==null );
+
+		if( this.#events ) {
+			this.#events.removeListener( name, listener );
+		}
+	}
+
+	/**
 	 * 
 	 */
 

@@ -83,7 +83,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	 * 
 	 */
 
-	setupSocketMessaging( path?: string ) {
+	setupSocketMessaging( path?: string, looseCallback?: ( ) => void ) {
 		
 		const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 		const address = path ?? `${protocol}${window.location.hostname}:${window.location.port}/ws`;	
@@ -121,11 +121,13 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		msg_socket.onclose = ( ev ) => {
 			console.log( 'websocket closed:', ev );
 			msg_socket = null;
-			this.setupSocketMessaging( path );
+			//this.setupSocketMessaging( path );
+			looseCallback( );
 		}
 
 		msg_socket.onerror = (ev )=> {
 			console.log( 'websocket error:', ev );
+			msg_socket.close( );
 		}
 	}
 
