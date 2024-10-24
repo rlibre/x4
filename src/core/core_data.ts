@@ -5,7 +5,7 @@
  *   /    \____   _|  
  *  /__/\__\   |_|
  * 
- * @file datastore.ts
+ * @file core_data.ts
  * @author Etienne Cochard 
  * 
  * @copyright (c) 2024 R-libre ingenierie
@@ -14,15 +14,16 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { ComponentEvents, ComponentProps, EvChange } from '@core/component.js';
+
+import { EvChange } from '@core/component.js';
 import { CoreElement } from '@core/core_element.js';
 import { CoreEvent, EventCallback, EventMap, EventSource } from '@core/core_events.js';
 import { isArray, isString } from '@core/core_tools.js';
-import { Component } from 'x4js';
 
-export type RecordID = any;
+export type DataRecordID = any;
+export type DataFieldValue = string | Date | number | boolean;
 
-export type ChangeCallback = (type: string, id?: RecordID) => void;
+export type ChangeCallback = (type: string, id?: DataRecordID) => void;
 export type CalcCallback = () => string;
 
 export type FieldType = 'string' | 'int' | 'float' | 'date' | 'bool' | 'array' | 'object' | 'any' | 'calc';
@@ -30,7 +31,7 @@ export type DataIndex = Uint32Array;
 
 export interface EvDataChange extends CoreEvent {
 	change_type: 'create' | 'update' | 'delete' | 'data' | 'change';
-	id?: RecordID;
+	id?: DataRecordID;
 }
 
 
@@ -47,7 +48,7 @@ export interface MetaData {
 	type?: FieldType;
 	prec?: number;
 	required?: boolean;
-	calc?: (rec: Record) => any;
+	calc?: (rec: DataRecord) => any;
 	model?: DataModel;	// in case of array of subtypes, the model
 }
 
@@ -253,7 +254,7 @@ export class DataModel {
 	 * 
 	 */
 
-	validate( record: Record ) : Error[] {
+	validate( record: DataRecord ) : Error[] {
 		
 		let errs: Error[] = null;
 
@@ -286,7 +287,7 @@ export class DataModel {
 	 * @returns an object with known record values
 	 */
 
-	serialize( input: Record ): any { 
+	serialize( input: DataRecord ): any { 
 		let rec: any = {};
 
 		this.getFields().forEach((f) => {
@@ -304,10 +305,10 @@ export class DataModel {
 	 * @returns a new Record
 	 */
 
-	unSerialize(data: any, id?: RecordID ) : Record { 
+	unSerialize(data: any, id?: DataRecordID ) : DataRecord { 
 
 		const fields = this.getFields();
-		const rec = new Record( );
+		const rec = new DataRecord( );
 
 		fields.forEach( (sf) => {
 			let value = data[sf.name];
@@ -383,7 +384,7 @@ export class DataModel {
 	 * @return unique identifier
 	 */
 
-	getID( rec: Record ): any { 
+	getID( rec: DataRecord ): any { 
 		if( !rec ) return null;
 		let metas = _getMetas( this, false );
 		return rec[metas.id];
@@ -394,7 +395,7 @@ export class DataModel {
 	 * @param name - field name or field index
 	 */
 
-	getRaw( name: string | number, rec: Record ) : any {
+	getRaw( name: string | number, rec: DataRecord ) : any {
 		
 		let idx;
 		let fields = this.getFields( );
@@ -433,7 +434,7 @@ export class DataModel {
 	 * let value = record.get('field1');
 	 */
 
-	getField( name: string, rec: Record ): string {
+	getField( name: string, rec: DataRecord ): string {
 		let v = this.getRaw( name, rec );
 		return (v===undefined || v===null) ? '' : ''+v;
 	}
@@ -443,10 +444,12 @@ export class DataModel {
  * 
  */
 
+
+
 const $model = Symbol( "model" )
 
-export class Record  {
-	[ key: string ]: number | string | Date;
+export class DataRecord  {
+	[ key: string ]: DataFieldValue;
 
 	/*
 	/ **
@@ -505,11 +508,11 @@ export class Record  {
  * 
  */
 
-interface DataEventMap extends ComponentEvents {
+interface DataEventMap extends EventMap {
 	change?: EvChange;
 }
 
-type DataSolver = ( data: any ) => Record[];
+type DataSolver = ( data: any ) => DataRecord[];
 
 export interface DataProxyProps {
 	url: string;
@@ -581,7 +584,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	
 	protected m_model: DataModel;
 	protected m_fields: FieldInfo[];
-	protected m_records: Record[];
+	protected m_records: DataRecord[];
 
 	protected m_proxy: DataProxy;
 	protected m_rec_index: DataIndex;
@@ -634,7 +637,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 
 	public setData( records: any[] ) {
 
-		const realRecords: Record[] = new Array( records.length );
+		const realRecords: DataRecord[] = new Array( records.length );
 
 		records.forEach( (rec,idx) => {
 			realRecords[idx] = this.m_model.unSerialize(rec);
@@ -648,7 +651,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @param records - must be of the same type as model
 	 */
 
-	public setRawData(records: Record[]) {
+	public setRawData(records: DataRecord[]) {
 
 		this.m_records = records;
 		this._rebuildIndex( );
@@ -665,7 +668,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * 
 	 */
 
-	public update( rec: Record ) {
+	public update( rec: DataRecord ) {
 
 		let id = this.m_model.getID( rec );
 		let index = this.indexOfId(id);
@@ -683,9 +686,9 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @param data 
 	 */
 
-	public append( rec: Record | any ) {
+	public append( rec: DataRecord | any ) {
 
-		if( !(rec instanceof Record) ) {
+		if( !(rec instanceof DataRecord) ) {
 			rec = this.m_model.unSerialize( rec );
 		}
 
@@ -719,7 +722,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @param id 
 	 */
 
-	public delete(id: RecordID ): boolean {
+	public delete(id: DataRecordID ): boolean {
 
 		let idx = this.indexOfId( id );
 		if( idx<0 ) {
@@ -755,7 +758,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * find the index of the element with the given id
 	 */
 
-	public indexOfId(id: RecordID ): number {
+	public indexOfId(id: DataRecordID ): number {
 
 		//if( this.count<10 ) {
 		//	this.forEach( (rec) => rec.getID() == id );
@@ -787,7 +790,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @returns record or null
 	 */
 
-	public getById(id: RecordID): Record {
+	public getById(id: DataRecordID): DataRecord {
 		let idx = this.indexOfId( id );
 		if( idx<0 ) {
 			return null;
@@ -802,12 +805,12 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @returns record or null
 	 */
 
-	public getByIndex( index: number ): Record {
+	public getByIndex( index: number ): DataRecord {
 		let idx = this.m_rec_index[index];
 		return this._getRecord( idx );
 	}
 
-	private _getRecord( index: number ) : Record {
+	private _getRecord( index: number ) : DataRecord {
 		return this.m_records[index] ?? null;
 	}
 
@@ -1031,7 +1034,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * 
 	 */
 
-	forEach( cb: ( rec: Record, index: number ) => any ) {
+	forEach( cb: ( rec: DataRecord, index: number ) => any ) {
 		
 		if( this.m_rec_index ) {
 			this.m_rec_index.some( (ri,index) => {
@@ -1081,7 +1084,7 @@ interface DataViewProps {
 	order?: string | SortProp[] | SortProp;
 }
 
-export type FilterFunc = ( rec: Record ) => boolean;
+export type FilterFunc = ( rec: DataRecord ) => boolean;
 
 export interface FilterInfo {
 	op: '<' | '<=' | '=' | '>=' | '>' | '<>' | 'empty-result' | FilterFunc,	// emptydb mean return an empty result always
@@ -1094,6 +1097,7 @@ export interface FilterInfo {
 export interface SortProp {
 	field: string; 			// 
 	ascending: boolean;		// 
+	numeric?: boolean;		// numeric sort
 }
 
 
@@ -1221,7 +1225,7 @@ export class DataView extends CoreElement<DataViewEventMap>
 	 * @param id 
 	 */
 
-	public indexOfId(id: RecordID): number {
+	public indexOfId(id: DataRecordID): number {
 		let ridx = this.m_store.indexOfId( id );
 		return this.m_index.findIndex( (rid) => rid === ridx );
 	}
@@ -1231,7 +1235,7 @@ export class DataView extends CoreElement<DataViewEventMap>
 	 * @param index 
 	 */
 
-	public getByIndex(index: number): Record {
+	public getByIndex(index: number): DataRecord {
 		
 		if (index >= 0 && index < this.m_index.length) {
 			let rid = this.m_index[index];
@@ -1241,12 +1245,12 @@ export class DataView extends CoreElement<DataViewEventMap>
 		return null;
 	}
 
-	public getIdByIndex( index: number ) : RecordID {
+	public getIdByIndex( index: number ) : DataRecordID {
 		const rec = this.getByIndex( index );
 		return this.m_model.getID( rec );
 	}
 
-	public getRecId( rec: Record ): RecordID {
+	public getRecId( rec: DataRecord ): DataRecordID {
 		return this.m_model.getID( rec );
 	}
 
@@ -1255,7 +1259,7 @@ export class DataView extends CoreElement<DataViewEventMap>
 	 * @param id 
 	 */
 
-	public getById( id: RecordID): Record {
+	public getById( id: DataRecordID): DataRecord {
 		return this.m_store.getById( id );
 	}
 
@@ -1279,7 +1283,7 @@ export class DataView extends CoreElement<DataViewEventMap>
 	 * 
 	 */
 
-	 forEach( cb: ( rec: Record, index: number ) => any ) {
+	 forEach( cb: ( rec: DataRecord, index: number ) => any ) {
 		this.m_index.some( ( index ) => {
 			let rec = this.m_store.getByIndex( index );
 			if( rec ) {

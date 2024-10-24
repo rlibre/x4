@@ -782,10 +782,17 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	parentElement<T extends Component>( cls?: Constructor<T> ): T {
-		let p = this.dom;
+		return Component.parentElement<T>( this.dom, cls );	
+	}
 
-		while( p.parentElement ) {
-			const cp = componentFromDOM( p.parentElement );
+	/**
+	 * search for parent that match the given contructor 
+	 */
+	
+	static parentElement<T extends Component>( dom: Node, cls?: Constructor<T> ): T {
+
+		while( dom.parentElement ) {
+			const cp = componentFromDOM( dom.parentElement );
 			if( !cls ) {
 				return cp as T;
 			}
@@ -794,7 +801,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				return cp;
 			}
 
-			p = p.parentElement;
+			dom = dom.parentElement;
 		}
 
 		return null;
