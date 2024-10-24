@@ -33,7 +33,7 @@ export type CellRenderer = (rec: DataRecord) => Component;
 type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
 
 
-const SCROLL_LIMIT	= 200;
+const SCROLL_LIMIT = 200;
 
 
 /**
@@ -452,9 +452,12 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				break;
 			}
 
-			//case "percent": {
-			//	return new Component( { cls: "percent"+cls }, new Component( { cls: "bar", width: data+"%" } ) );
-			//}
+			case "percent": {
+				return new Box({
+					cls: "percent" + cls,
+					content: new Component({ cls: "bar", width: data + "%" })
+				});
+			}
 
 			case "icon": {
 				return new Icon({ cls, iconId: data + "" });
@@ -478,7 +481,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	 * 
 	 */
 
-	private _buildRow(rowid: number, row: DataRecord, top: number) {
+	private _buildRow(rowid: number, rec: DataRecord, top: number) {
 
 		const els: Component[] = [];
 		const count = this._getColCount();
@@ -489,7 +492,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				continue;
 			}
 
-			const content = this._renderCell(row, cdata.id, cdata.type);
+			const content = this._renderCell(rec, cdata.id, cdata.type);
 
 			let align = "start";
 			switch (cdata.align) {
@@ -509,7 +512,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			}
 
 			el.setData("col", col + "");
-			el.setData("row", row + "")
+			el.setData("row", rec + "")
 
 			els.push(el);
 		}
@@ -530,10 +533,9 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 	private _buildRowHeader(rowid: number, rec: DataRecord, top: number) {
 
-		const count = this._getColCount();
-
 		const cols: Component[] = [];
-
+		const count = this._getColCount();
+		
 		for (let col = 0; col < count; col++) {
 			const cdata = this._getCol(col);
 			if (!cdata?.fixed) {
@@ -565,7 +567,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			cols.push(el);
 		}
 
-		const rowel = new Box({ cls: "row", style: { top: top.toString() + "px" }, cols });
+		const rowel = new Box({ cls: "row", style: { top: top + "px" }, content: cols });
 		rowel.setData("row", rowid + "");
 
 		if (this._selection.has(rowid)) {
@@ -610,18 +612,18 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		const maxr = this._dataview.getCount();
 		let maxh = maxr;
 
-		if( maxr<SCROLL_LIMIT ) {
+		if (maxr < SCROLL_LIMIT) {
 			maxh *= this._row_height;
 		}
 		else {
 			const height = this._body.dom.parentElement.clientHeight;
 			const npage = height / this._row_height;
-			maxh = maxr - Math.floor( npage ) + npage*this._row_height;
+			maxh = maxr - Math.floor(npage) + npage * this._row_height;
 		}
 
 		this.setStyleVariable("--fixed-width", maxfw + "px");
-		this._body.setStyleValue( "height", maxh+"px" );
-		this._body.setStyleValue( "width", maxw+"px" );
+		this._body.setStyleValue("height", maxh + "px");
+		this._body.setStyleValue("width", maxw + "px");
 		this._vheader.setStyleValue("height", maxh + "px");
 	}
 
@@ -653,16 +655,27 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		});
 
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if( ev.deltaY && this._dataview.getCount()>=SCROLL_LIMIT ) {
-				scr_body.dom.scrollBy( 0, ev.deltaY<0 ? -1 : 1 );
-				ev.stopPropagation( );
-				ev.preventDefault( );
+			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
+				scr_body.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
+				ev.stopPropagation();
+				ev.preventDefault();
 			}
-			//if (ev.deltaY) {
-			//	scr_body.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
-			//	ev.stopPropagation();
-			//	ev.preventDefault();
-			//}
+
+			if( this._has_fixed && ev.deltaY ) {
+				// wheel on fixed part
+				//	fixed part do not have scrollbar, so we need to handle it by hand
+				let t = ev.target as Node;
+				while( t!=this.dom ) {
+					if( t == this._vheader.dom ) {
+						scr_body.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
+						ev.stopPropagation();
+						ev.preventDefault();
+						break;
+					}
+
+					t = t.parentNode;
+				}
+			}
 		})
 
 		this.addDOMEvent("click", (e) => {
@@ -680,6 +693,38 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				}
 			}
 		});
+
+		this.addDOMEvent("mouseover", (e) => {
+
+			if( !this._has_fixed ) {
+				return;
+			}
+
+			let el = Component.parentElement(e.target as HTMLElement, Component);
+			while (el && !el.hasClass("row")) {
+				el = el.parentElement();
+			}
+
+			if (el) {
+				const data = el.getData("row");
+
+				this.queryAll( ".hover" ).forEach( x => x.removeClass("hover") );
+
+				if (data) {
+					const rows = this.queryAll( `.row[data-row="${data}"]`);
+					rows.forEach( x => x.addClass( "hover" ) );
+				}
+			}
+		});
+
+		this.addDOMEvent("mouseleave", (e) => {
+
+			if( !this._has_fixed ) {
+				return;
+			}
+
+			this.queryAll( ".hover" ).forEach( x => x.removeClass("hover") );
+		} );
 
 		this._fheader = this._buildColHeader(true);
 		this._hheader = this._buildColHeader(false);
@@ -714,7 +759,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 			// rows
 			const rowc = this._dataview.getCount();
-			const mul = rowc<SCROLL_LIMIT ? this._row_height : 1;
+			const mul = rowc < SCROLL_LIMIT ? this._row_height : 1;
 
 			const start = Math.floor(this._top / mul);
 			const end = start + Math.ceil(rc.height / this._row_height);
@@ -765,7 +810,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				}
 
 				if (hasFixed) {
-					headers.push(new Component({ cls: "cell-out", style: { top: y.toString() + "px" } }));
+					headers.push(new Component({ cls: "cell-out", style: { top: y + "px" } }));
 				}
 
 				this._vis_rows = newvis;
