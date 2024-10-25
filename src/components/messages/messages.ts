@@ -74,13 +74,13 @@ export class MessageBox extends Dialog<DialogProps>
 	 * idem with promise
 	 */
 
-	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[] ) : Promise<string> {
+	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) : Promise<string> {
 
 		return new Promise( (resolve, reject ) => {
 
 			const box = new MessageBox({ 
 				modal: true,
-				title: _tr.global.error,
+				title: title ?? _tr.global.error,
 				movable: true,
 				form: new Form( {
 					content: [

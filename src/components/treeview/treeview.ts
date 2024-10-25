@@ -14,16 +14,18 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '../../core/component';
+import { class_ns } from '@core/core_tools';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvSelectionChange, componentFromDOM } from '../../core/component';
 
+import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label } from '../label/label';
 import { ListboxID, ListItem, kbNav } from '../listbox/listbox';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
-import { Icon } from '../icon/icon.js';
+import { Icon } from '../icon/icon';
 
 import "./treeview.module.scss";
 import folder_icon from "./chevron-down-light.svg"
-import { class_ns } from '@core/core_tools.js';
+
 
 //import folder_closed from "./folder-minus-light.svg"
 
@@ -49,6 +51,7 @@ export interface TreeItem extends ListItem {
 
 interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
+	footer?: Component;
 }
 
 interface ChangeEvent extends ComponentEvent {
@@ -56,7 +59,7 @@ interface ChangeEvent extends ComponentEvent {
 }
 
 interface TreeviewEvents extends ComponentEvents {
-	change: ChangeEvent;
+	selectionChange?: EvSelectionChange;
 }
 
 /**
@@ -78,8 +81,8 @@ class CTreeViewItem extends Box {
 
 		if( item ) {
 			this._label = new HBox( {cls:"label item", content: [
-				this._icon = new Icon( { iconId: item.children? folder_icon : item.iconId } ),
-				new Label( { tag: "span", cls: "", text: item.text } ),
+				this._icon = new Icon( { iconId: item.children ? folder_icon : undefined } ),
+				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
 
 			this._label.setData( "id", item.id+"" );
@@ -136,12 +139,19 @@ class CTreeViewItem extends Box {
 	}
 }
 
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
 /**
  * 
  */
 
 @class_ns( "x4" )
 export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
+
+	private _view: Viewport;
 	private _selection: ListboxID;
 	private _selitem: Component;
 	private _items: TreeItem[];
@@ -149,8 +159,16 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	constructor( props: TreeviewProps ) {
 		super( props );
 
-		if( props.items ) {
-			this.setItems( props.items );
+		const scroller = new ScrollView( { cls: "body" } );
+		this._view = scroller.getViewport( );
+
+		this.setContent( [
+			scroller,
+			props.footer,
+		] );
+
+		if( props.footer ) {
+			props.footer.setAttribute( "id", "footer" );
 		}
 
 		this.setAttribute( "tabindex", 0 );
@@ -158,6 +176,10 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			click: ( ev ) => this._onclick( ev ),
 			keydown: ( ev ) => this._onkey( ev ),
 		});
+
+		if( props.items ) {
+			this.setItems( props.items );
+		}
 	}
 
 	/**
@@ -165,11 +187,16 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	 */
 
 	setItems( items: TreeItem[ ] ) {
+		this.clearSelection( );
+		this._view.clearContent( );
 		this._items = items;
 
 		const root = new CTreeViewItem( { cls: "root"}, null );
-		root.setItems( items );
-		this.setContent( root );
+
+		if( items ) {
+			root.setItems( items );
+			this._view.setContent( root );
+		}
 	}
 
 	private _onclick( ev: UIEvent ) {
@@ -386,7 +413,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		const itm = this._findItem( id );
-		this.fire( "change", { selection: itm } );
+		this.fire( "selectionChange", { selection: itm } );
 	}
 
 	private _findItem( id: ListboxID ) {
@@ -405,6 +432,6 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		this._selection = undefined;
-		this.fire( "change", { selection: undefined } );
+		this.fire( "selectionChange", { selection: undefined } );
 	}
 }

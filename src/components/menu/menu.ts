@@ -90,7 +90,10 @@ class CMenuItem extends Component {
 			this.menu.on( "closed", ( ) => this.removeClass( "opened" ) );
 		}
 		else {
-			this.addDOMEvent( "mouseenter", ( ) => { openTimer.setTimeout( "open", OPEN_DELAY, ( ) => {this.dismiss(true)}); } );
+			this.addDOMEvent( "mouseenter", ( ) => { 
+				openTimer.setTimeout( "open", OPEN_DELAY, ( ) => {this.dismiss(true)}); 
+			} );
+
 			this.addDOMEvent( "click", ( ) => {
 				this.dismiss( false );
 				if( itm.click ) {

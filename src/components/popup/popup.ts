@@ -163,7 +163,11 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	private _show( ) {
-		if( this.props.modal && !this._isshown ) {
+		if( this._isshown ) {
+			return;
+		}
+
+		if( this.props.modal ) {
 			this._showModalMask( );
 			modal_stack.push( this );
 			modal_count++;

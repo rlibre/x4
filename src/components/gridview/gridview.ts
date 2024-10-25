@@ -695,20 +695,20 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			this.setStyleVariable("--footer-height", "0");
 		}
 
-		this._viewport.setDOMEvents({
-			scroll: (ev) => {
-				// sync horz & vert elements
-				this._left = this._viewport.dom.scrollLeft;
-				this.setStyleVariable("--left", -this._left + "px");
+		// SCROLL
+		this._viewport.addDOMEvent( "scroll", (ev) => {
+			// sync horz & vert elements
+			this._left = this._viewport.dom.scrollLeft;
+			this.setStyleVariable("--left", -this._left + "px");
 
-				this._top = this._viewport.dom.scrollTop;
-				this.setStyleVariable("--top", -this._top + "px");
+			this._top = this._viewport.dom.scrollTop;
+			this.setStyleVariable("--top", -this._top + "px");
 
-				//this.setTimeout( "update", 0, ( ) => this._update( ) );
-				this._update()
-			}
+			//this.setTimeout( "update", 0, ( ) => this._update( ) );
+			this._update()
 		});
 
+		// WHEEL
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
 			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
 				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
@@ -733,23 +733,66 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			}
 		})
 
-		this.addDOMEvent("click", (e) => {
+		const targetRow = ( e: MouseEvent ) => {
 			let el = Component.parentElement(e.target as HTMLElement, Component);
 			while (el && !el.hasClass("row")) {
 				el = el.parentElement();
 			}
 
 			if (el) {
-				const data = el.getData("row");
-				if (data) {
-					//TODO: multiselection
+				return el.getIntData("row");
+			}
+			
+			return undefined;
+		}
+
+
+		// CLICK
+		this.addDOMEvent("click", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				//TODO: multiselection
+				if( !this._selection.has(row) ) {
 					this._clearSelection();
-					const row = parseInt(data);
 					this._addSelection(row);
 				}
 			}
 		});
 
+		// DBLCLICK
+		this.addDOMEvent("dblclick", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				//TODO: multiselection
+				if( !this._selection.has(row) ) {
+					this._clearSelection();
+					this._addSelection(row);
+				}
+
+				const rec = this._dataview.getByIndex( row );
+				this.fire( "dblClick", { context: rec } );
+			}
+		});
+
+		// CONTEXT
+		this.addDOMEvent("contextmenu", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				//TODO: multiselection
+				if( !this._selection.has(row) ) {
+					this._clearSelection();
+					this._addSelection(row);
+				}
+
+				const rec = this._dataview.getByIndex( row );
+				this.fire( "contextMenu", { uievent: e, context: rec } );
+			}
+
+			e.preventDefault( );
+			e.stopPropagation( );
+		});
+
+		// MOUSE OVER
 		this.addDOMEvent("mouseover", (e) => {
 
 			if (!this._has_fixed) {
@@ -773,6 +816,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			}
 		});
 
+		// MOUSE LEAVE
 		this.addDOMEvent("mouseleave", (e) => {
 
 			if (!this._has_fixed) {

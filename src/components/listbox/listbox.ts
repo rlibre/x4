@@ -314,7 +314,6 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	setItems( items: ListItem[] ) {
 		this.clearSelection( );
-		
 		this._view.clearContent( );
 		this._items = items;
 

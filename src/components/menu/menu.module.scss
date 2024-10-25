@@ -31,7 +31,7 @@
 	@extend .shadow-lg;
 
 	position: absolute;
-	overflow-y: scroll;
+	overflow-y: auto;
 
 	border-radius: var(--bradius);
 	padding: 8px 0;

@@ -46,3 +46,15 @@
 		padding: 8px;
 	}
 }
+
+.x4panel.inline {
+	border: none;
+	border-top: 1px solid var( --border );
+	margin-top: 1.5em;
+
+	legend {
+		background: none;
+		top: -1.4em;
+		left: 0;
+	}
+}

@@ -352,9 +352,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * @returns undefined if not a number
 	 */
 	getIntData( name: string ) : number {
-		const v = this.getAttribute( "data-"+name );
+		const v = parseInt( this.getAttribute( "data-"+name ) );
 		if( Number.isFinite(v) ) {
-			return parseInt( v );
+			return v;
 		}
 
 		return undefined;
