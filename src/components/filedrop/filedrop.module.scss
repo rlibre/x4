@@ -17,7 +17,7 @@
 :root {
 	--filedrop-border: var( --border );
 	--filedrop-icon-color: var( --accent-background );
-	--filedrop-border-hover: var( --accent-background );
+	--filedrop-border-drop-hover: var( --accent-background );
 	--filedrop-icon-color-hover: var( --alert-background );
 }
 
@@ -40,7 +40,7 @@
 	}
 
 	&.hit {
-		border-color: var( --filedrop-border-hover );
+		border-color: var( --filedrop-border-drop-hover );
 		.x4icon {
 			color: var( --filedrop-icon-color-hover );
 			fill: var( --filedrop-icon-color-hover );

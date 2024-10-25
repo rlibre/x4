@@ -15,9 +15,11 @@
  **/
 
 
-import { Component, ComponentContent, ComponentEvents, ComponentProps, componentFromDOM } from '../../core/component';
-import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools.js';
-import { DataModel, DataStore, DataView, DataRecord, DataFieldValue, EvViewChange } from '../../core/core_data.js';
+import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools';
+import { DataModel, DataStore, DataView, DataRecord, DataFieldValue, EvViewChange } from '../../core/core_data';
+import { EventCallback } from '../../core/core_events';
+
 
 import { Icon } from '../icon/icon';
 import { Image } from '../image/image'
@@ -59,32 +61,28 @@ interface GridColumnEx extends GridColumn {
 	sens?: "up" | "dn";
 }
 
+interface GridviewEvents extends ComponentEvents {
+	click?: EvClick;
+	dblClick?: EvDblClick;
+	contextMenu?: EvContextMenu;
+	selectionChange?: EvSelectionChange;
+}
 
 interface GridviewProps extends ComponentProps {
 	footer?: boolean;
 	store: DataStore;
 	columns: GridColumn[];
+
+	click?: EventCallback<EvClick>;
+	dblClick?: EventCallback<EvDblClick>;
+	contextMenu?: EventCallback<EvContextMenu>;
+	selectionChange?: EventCallback<EvSelectionChange>;
 }
-
-interface GridviewEvents extends ComponentEvents {
-}
-
-
 
 /**
  * we can handle
  * 4_095 cols and (1_048_575-1)/2 rows (this is a chrome limitation max pixels of scrollbars )
  */
-
-function calcColName(col: number) {
-	let s = "";
-	while (col >= 0) {
-		s = String.fromCharCode(col % 26 + 65) + s;
-		col = Math.floor(col / 26) - 1;
-	}
-
-	return s;
-}
 
 /**
  * 
@@ -102,12 +100,12 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	private _dirty: number;
 
 	private _row_height: number;
-	private _def_col_w: number;
-
+	
 	private _left: number;
 	private _top: number;
 
 	private _body: Component;
+	private _viewport: Component;
 
 	private _fheader: Box;	// fixed col header
 	private _hheader: Box;	// col header
@@ -130,16 +128,11 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	constructor(props: GridviewProps) {
 		super(props);
 
-		if (props.store) {
-			this.setStore(props.store);
-		}
-
 		this._lock = 0;
 		this._dirty = 0;
 
 		this._row_height = 32;
-		this._def_col_w = 96;
-
+		
 		this._left = 0;
 		this._top = 0;
 
@@ -150,6 +143,8 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 		this._columns = props.columns.map(x => x);
 
+		this.mapPropEvents( props, "click", "dblClick", "contextMenu", "selectionChange" );
+
 		this.lock(true);
 		this.setAttribute("tabindex", 0);
 
@@ -158,6 +153,17 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			this._dirty = 1;
 			this.lock(false);
 		});
+
+		this.addDOMEvent("resized", () => {
+			this._updateFlexs( );
+			this._computeFullSize( );
+			this._update( true );
+		});
+
+		if (props.store) {
+			this.setStore(props.store);
+		}
+
 	}
 
 	/**
@@ -172,6 +178,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				this._selection.clear();
 			}
 
+			this._updateFlexs( );
 			this._computeFullSize();
 			this._update(true);
 		}
@@ -231,12 +238,18 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			}
 
 			const sizer = new CSizer("right");
+
+			sizer.on("stop", ( ) => {
+				this._updateFlexs( );
+			})
+
 			sizer.on("resize", (ev) => {
 				cdata.width = ev.size;
+				cdata.flex  = 0;
+				
 				const cols = this.queryAll(`[data-col="${col}"]`)
 				cols.forEach(c => {
 					c.setStyleValue("width", ev.size + "px");
-					console.log(c.dom);
 				});
 
 				const rh = header.getBoundingRect();
@@ -399,7 +412,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	private _renderCell(rec: DataRecord, col: string, type: string): ComponentContent {
 
 		let data = this._datamodel.getRaw(col, rec);
-		if (data === undefined) {
+		if (data === undefined || data === null) {
 			return null;
 		}
 
@@ -512,7 +525,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			}
 
 			el.setData("col", col + "");
-			el.setData("row", rec + "")
+			el.setData("row", rowid + "")
 
 			els.push(el);
 		}
@@ -535,7 +548,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 		const cols: Component[] = [];
 		const count = this._getColCount();
-		
+
 		for (let col = 0; col < count; col++) {
 			const cdata = this._getCol(col);
 			if (!cdata?.fixed) {
@@ -581,26 +594,68 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	 * 
 	 */
 
-	private _computeFullSize() {
-
+	private _updateFlexs( ) {
 		let maxw = 0;
-		let maxfw = 0;
+		let flexc = 0;
+
 		const ccount = this._getColCount();
 
 		for (let x = 0; x < ccount; x++) {
 			const cdata = this._getCol(x);
+		
+			if( !cdata.fixed && cdata.flex ) {
+				flexc += cdata.flex;
+			}
+			else {
+				maxw  += cdata.width;
+			}
+		}
+
+		if( flexc ) {
+			const width = this._viewport.dom.clientWidth;
+			const delta = width - maxw;
+			const fw = delta / flexc;
+
+			for (let col = 0; col < ccount; col++) {
+				const cdata = this._getCol(col);
+				if( !cdata.fixed && cdata.flex ) {
+					cdata.width = Math.max( cdata.flex*fw, 32 );
+
+					const cols = this.queryAll(`[data-col="${col}"]`)
+					cols.forEach(c => {
+						c.setStyleValue("width", cdata.width + "px");
+					});
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	private _computeFullSize() {
+
+		let maxw = 0;
+		let maxfw = 0;
+		
+		let flexw = 0;
+		let flexc = 0;
+
+		const ccount = this._getColCount();
+
+		for (let x = 0; x < ccount; x++) {
+			const cdata = this._getCol(x);
+			let w = 0;
+
 			if (cdata.fixed) {
 				this._has_fixed = true;
 			}
-
-			let w = 0;
-			if (cdata && cdata.width) {
+			
+			if ( cdata.width) {
 				w += cdata.width;
 			}
-			else {
-				w += this._def_col_w;
-			}
-
+			
 			if (cdata.fixed) {
 				maxfw += w;
 			}
@@ -634,19 +689,19 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	private _init() {
 		this._body = new Component({ cls: "body" });
 
-		const scr_body = new Viewport({ content: this._body });
+		this._viewport = new Viewport({ content: this._body });
 
 		if (!this._has_footer) {
 			this.setStyleVariable("--footer-height", "0");
 		}
 
-		scr_body.setDOMEvents({
+		this._viewport.setDOMEvents({
 			scroll: (ev) => {
 				// sync horz & vert elements
-				this._left = scr_body.dom.scrollLeft;
+				this._left = this._viewport.dom.scrollLeft;
 				this.setStyleVariable("--left", -this._left + "px");
 
-				this._top = scr_body.dom.scrollTop;
+				this._top = this._viewport.dom.scrollTop;
 				this.setStyleVariable("--top", -this._top + "px");
 
 				//this.setTimeout( "update", 0, ( ) => this._update( ) );
@@ -656,18 +711,18 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
 			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
-				scr_body.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
+				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
 				ev.stopPropagation();
 				ev.preventDefault();
 			}
 
-			if( this._has_fixed && ev.deltaY ) {
+			if (this._has_fixed && ev.deltaY) {
 				// wheel on fixed part
 				//	fixed part do not have scrollbar, so we need to handle it by hand
 				let t = ev.target as Node;
-				while( t!=this.dom ) {
-					if( t == this._vheader.dom ) {
-						scr_body.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
+				while (t != this.dom) {
+					if (t == this._vheader.dom) {
+						this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
 						ev.stopPropagation();
 						ev.preventDefault();
 						break;
@@ -687,6 +742,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			if (el) {
 				const data = el.getData("row");
 				if (data) {
+					//TODO: multiselection
 					this._clearSelection();
 					const row = parseInt(data);
 					this._addSelection(row);
@@ -696,7 +752,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 
 		this.addDOMEvent("mouseover", (e) => {
 
-			if( !this._has_fixed ) {
+			if (!this._has_fixed) {
 				return;
 			}
 
@@ -708,23 +764,25 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			if (el) {
 				const data = el.getData("row");
 
-				this.queryAll( ".hover" ).forEach( x => x.removeClass("hover") );
+				this.queryAll(".hover").forEach(x => x.removeClass("hover"));
 
 				if (data) {
-					const rows = this.queryAll( `.row[data-row="${data}"]`);
-					rows.forEach( x => x.addClass( "hover" ) );
+					const rows = this.queryAll(`.row[data-row="${data}"]`);
+					rows.forEach(x => x.addClass("hover"));
 				}
 			}
 		});
 
 		this.addDOMEvent("mouseleave", (e) => {
 
-			if( !this._has_fixed ) {
+			if (!this._has_fixed) {
 				return;
 			}
 
-			this.queryAll( ".hover" ).forEach( x => x.removeClass("hover") );
-		} );
+			this.queryAll(".hover").forEach(x => x.removeClass("hover"));
+		});
+
+		this._updateFlexs( );
 
 		this._fheader = this._buildColHeader(true);
 		this._hheader = this._buildColHeader(false);
@@ -735,14 +793,12 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			this._footer = this._buildColFooter(false);
 		}
 
-		this.setContent([scr_body, this._fheader, this._hheader, this._ffooter, this._footer, this._vheader]);
+		this.setContent([this._viewport, this._fheader, this._hheader, this._ffooter, this._footer, this._vheader]);
 
 		// compute misc variables
 		{
 			const rh = this.getStyleVariable("--row-height");
-			const cw = this.getStyleVariable("--def-col-width");
 			this._row_height = parseInt(rh);
-			this._def_col_w = parseInt(cw);
 		}
 
 		this._computeFullSize();
@@ -848,20 +904,29 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	 * 
 	 */
 
-	private _addSelection(ref: number) {
-		this._selection.add(ref)
+	private _addSelection(rowid: number) {
+		this._selection.add(rowid)
 
-		const els = this.queryAll(`.row[data-row="${ref}"]`)
+		const els = this.queryAll(`.row[data-row="${rowid}"]`)
 		els.forEach(el => {
 			el.addClass("selected");
 		});
+
+		const rec = this._dataview.getByIndex( rowid );
+		this.fire("selectionChange", { selection: rec } );
+	}
+
+	/**
+	 * 
+	 */
+	
+	getSelection( ) {
+		if( this._selection.size==0 ) {
+			return null;
+		}
+
+		const ids = Array.from( this._selection.values() );
+		return ids.map( id => this._dataview.getByIndex(id) );
 	}
 }
-
-
-
-
-
-
-
 

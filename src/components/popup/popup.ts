@@ -61,6 +61,10 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 	}
 
+	/**
+	 * 
+	 */
+
 	displayNear( rc: Rect, dst = "top left", src = "top left", offset = {x:0,y:0} ) {
 
 		this.setStyle( { left: "0px", top: "0px" } );	// avoid scrollbar
@@ -159,7 +163,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	private _show( ) {
-		
 		if( this.props.modal && !this._isshown ) {
 			this._showModalMask( );
 			modal_stack.push( this );
@@ -336,6 +339,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
  * 
  */
 
+export 
 class CMover {
 	private ref: Component;
 	private delta: Point;

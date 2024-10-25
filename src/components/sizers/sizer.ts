@@ -29,6 +29,8 @@ interface EvSizeChange extends ComponentEvent {
 
 interface CSizerEvent extends ComponentEvents {
 	resize: EvSizeChange;
+	start: ComponentEvent;
+	stop: ComponentEvent;
 }
 
 /**
@@ -68,9 +70,12 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			else {
 				this._delta.y = e.pageY-(rc.top+rc.height);
 			}
+
+			this.fire( "start", { })
 		});
 
 		this.addDOMEvent( "pointerup", ( e: PointerEvent ) => {
+			this.fire( "stop", { })
 			this.releaseCapture( e.pointerId );
 			this._ref = null;
 		});

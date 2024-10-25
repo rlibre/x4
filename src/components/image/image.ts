@@ -14,11 +14,24 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
-import { Component, ComponentProps } from '../../core/component.js';
+import { class_ns } from '../../core/core_tools';
+import { Component, ComponentEvents, ComponentProps } from '../../core/component';
+import { EventCallback, CoreEvent } from '../../core/core_events.js';
+import { dragManager } from '../../core/core_dragdrop.js';
+
+import { EvDropChange, FileDialog } from '../filedrop/filedrop';
+import { Menu } from '../menu/menu';
+
+
 
 import "./image.module.scss"
+import { _tr } from '@core/core_i18n.js';
 
+
+interface ImageEvents extends ComponentEvents {
+	change: EvDropChange;
+	clear: CoreEvent;
+}
 export interface ImageProps extends ComponentProps {
 	src: string;
 	fit?: "contain" | "cover" | "fill" | "scale-down";
@@ -26,6 +39,12 @@ export interface ImageProps extends ComponentProps {
 	lazy?: boolean;
 	alt?: string;
 	draggable?: boolean;
+
+	candrop?: boolean;
+	accept?: string;	// ex: 'image/*'
+
+	change?: EventCallback<EvDropChange>;
+	clear?: EventCallback<CoreEvent>;
 }
 
 /**
@@ -33,11 +52,11 @@ export interface ImageProps extends ComponentProps {
  */
 
 @class_ns( "x4" )
-export class Image extends Component<ImageProps> {
+export class Image<P extends ImageProps = ImageProps, E extends ImageEvents = ImageEvents> extends Component<P,E> {
 
 	private _img: Component;
 
-	constructor( props: ImageProps ) {
+	constructor( props: P ) {
 		super( props );
 
 		this._img = new Component( {
@@ -57,6 +76,63 @@ export class Image extends Component<ImageProps> {
 		
 		this.setContent( this._img );
 		this.setImage( props.src );
+
+		if( props.candrop ) {
+			this.mapPropEvents( props, "change", "clear" );
+
+			let fileDialog = new FileDialog( {
+				accept: props.accept,
+				multiple: false,
+				callback: ( files ) => {
+					this.fire( "change", { files } );
+				},
+			});
+
+			this.appendContent( fileDialog );
+
+			this.addDOMEvent( "click", ( ) => fileDialog.showDialog() );
+
+			const filterInput = ( _: Component, data: DataTransfer ) => {
+				// check that input is of type image
+				if( data.items?.length ) {
+					const type = data.items[0].type;
+					if( /image\/.*/.test(type) ) {
+						return true;
+					}
+				}	
+
+				return false;
+			}
+
+			dragManager.registerDropTarget( this, async ( cmd, el, infos ) => {
+				if( cmd=="enter" ) {
+					this.addClass( "hit" );
+				}
+				else if( cmd=='leave' ) {
+					this.removeClass( "hit" );
+				}
+				else if( cmd=='drop' ) {
+					if( infos.data.files && infos.data.files.length>0 ) {
+						const files = infos.data.files;
+						this.fire( "change", { files } );
+					}
+				}
+			}, filterInput );
+
+			this.addDOMEvent( "contextmenu", ( ev ) => {
+				const menu = new Menu( {
+					items: [
+						{ text: _tr.global.cut, click: ( ) => {
+							this.fire( "clear", {} );
+						} },
+					]
+				});
+
+				menu.displayAt( ev.pageX, ev.pageY );
+				ev.stopPropagation( );
+				ev.preventDefault( );
+			});
+		}
 	}
 
 	/**
@@ -64,6 +140,21 @@ export class Image extends Component<ImageProps> {
 	 */
 	
 	setImage( src: string ) {
-		this._img.setAttribute( "src", src );
+		if( src ) {
+			this._img.setAttribute( "src", src );
+		}
+		else {
+			this.clear( );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	clear( ) {
+		this._img.setAttribute( "src", 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' );
 	}
 }
+
+

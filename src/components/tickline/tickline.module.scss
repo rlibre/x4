@@ -3,9 +3,9 @@
  *  \  \/  /  / _
  *   \    /  /_| |_
  *   /    \____   _|  
- *  /__/\__\   |_|
+ *  /__/\__\   |_|.2
  * 
- * @file image.module.scss
+ * @file tickline.module.scss
  * @author Etienne Cochard 
  * 
  * @copyright (c) 2024 R-libre ingenierie
@@ -15,14 +15,12 @@
  **/
 
 :root {
-	--image-border-drop-hover: var( --accent-background );
+	--tickline-axis-color: var( --border );
+	--tickline-color: var( --accent-color );
+	--tickline-background: white;
 }
 
-.x4image {
+.x-tick-line {
 	position: relative;
-	background: none;
-
-	&.hit {
-		border-color: var( --image-border-drop-hover ) !important;
-	}
+	background-color: var( --tickline-background );
 }

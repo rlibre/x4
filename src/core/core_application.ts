@@ -127,7 +127,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 		msg_socket.onerror = (ev )=> {
 			console.log( 'websocket error:', ev );
-			msg_socket.close( );
+			//msg_socket.close( );
 		}
 	}
 

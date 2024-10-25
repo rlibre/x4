@@ -25,7 +25,7 @@ interface DropInfo {
 }
 
 type DropCallback = ( command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo ) => void;
-type FilterCallback = ( el: Component ) => boolean;
+type FilterCallback = ( el: Component, data: DataTransfer ) => boolean;
 
 /**
  * 
@@ -84,7 +84,7 @@ class DragManager {
 	registerDropTarget(el: Component, cb: DropCallback, filterCB?: FilterCallback ) {
 
 		const dragEnter = (ev: DragEvent) => {
-			if( filterCB && !filterCB(this.dragSource) ) {
+			if( filterCB && !filterCB(this.dragSource,ev.dataTransfer) ) {
 				console.log( 'reject ', el );
 				ev.dataTransfer.dropEffect = 'none';	
 				return;
@@ -98,7 +98,7 @@ class DragManager {
 		const dragOver = (ev: DragEvent) => {
 			//console.log( "dragover", ev.target );
 			
-			if( filterCB && !filterCB(this.dragSource) ) {
+			if( filterCB && !filterCB(this.dragSource,ev.dataTransfer) ) {
 				console.log( 'reject ', el );
 				ev.dataTransfer.dropEffect = 'none';	
 				return;

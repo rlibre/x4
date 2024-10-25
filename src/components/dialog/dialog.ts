@@ -130,3 +130,89 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	}
 }
 
+
+/**
+ * 
+ */
+
+@class_ns( "x4" )
+export class DialogEx<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents>  extends Component<P,E> {
+	private form: Form;
+
+	constructor( props: P ) {
+		super( { tag: "dialog", ...props } );
+
+		this.addClass( "x4dialog" );
+		this.mapPropEvents( props, "btnclick" );
+
+		this.appendContent( [
+			new HBox( {
+				cls: "caption",
+				content: [
+					new Label( { 
+						id: "title", 
+						cls: "caption-element",
+						icon: props.icon, 
+						text: props.title 
+					} ),
+					props.closable ? new Button( { 
+						id: "closebox", 
+						icon: close_icon, 
+						click:  ( ) => { this.close() }
+					} ) : null,
+				]
+			}),
+			this.form = props.form ? props.form : new Form( { } ),
+			new BtnGroup( {
+				id: "btnbar",
+				reverse: true,
+				items: props.buttons,
+				btnclick: ( ev ) => { this.fire( "btnclick", ev ) }
+			}) 
+		]);
+
+		document.body.appendChild( this.dom );
+	}
+
+	/**
+	 * 
+	 */
+
+	showModal(  ) {
+		(this.dom as HTMLDialogElement).showModal( );
+	}
+
+	show( ) {
+		(this.dom as HTMLDialogElement).show( );
+	}
+
+	close( ) {
+		(this.dom as HTMLDialogElement).close( );
+	}
+
+	/**
+	 * 
+	 */
+
+	override setContent( form: Form ) {
+		this.dom.replaceChild( this.form.dom, form.dom );
+		this.form = form;
+	}
+
+	/**
+	 * 
+	 */
+	
+	getForm( ) {
+		return this.form;
+	}
+
+	/**
+	 * 
+	 */
+
+	getValues( ) {
+		return this.form.getValues( );
+	}
+}
+

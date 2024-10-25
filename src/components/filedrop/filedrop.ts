@@ -31,7 +31,7 @@ type LoadCallback = ( files: FileList ) => void;
 
 
 interface FileDialogProps extends ComponentProps {
-	accept: string;	// "image/*"
+	accept: string;	// "image/png,image/jpeg"
 	multiple?: boolean;
 	callback: LoadCallback;
 }
@@ -68,7 +68,7 @@ export class FileDialog extends Component {
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-interface EvDropChange extends CoreEvent {
+export interface EvDropChange extends CoreEvent {
 	files: FileList;
 }
 
@@ -79,7 +79,7 @@ interface FileDropEvents extends ComponentEvents {
 interface FileDropProps extends ComponentProps {
 	label?: string | UnsafeHtml;
 	icon?: string;
-
+	multiple?: boolean;
 	accept: string;	// ex: 'image/*'
 	change: EventCallback<EvDropChange>;
 }
@@ -98,6 +98,7 @@ export class FileDrop extends VBox<FileDropProps,FileDropEvents> {
 
 		let fileDialog = new FileDialog( {
 			accept: props.accept,
+			multiple: props.multiple,
 			callback: ( files ) => {
 				this.fire( "change", { files } );
 			},

@@ -15,7 +15,7 @@
  **/
 
 :root {
-	--modal-mask-background: rgba(0,0,0,0.5);
+	--modal-mask-background: rgb(0 0 0 / 60% );
 }
 
 .x4popup {
@@ -32,6 +32,7 @@
 	}
 }
 
+::backdrop,
 .x4modal-mask {
 	background-color: var( --modal-mask-background );
 	backdrop-filter: blur(8px);
