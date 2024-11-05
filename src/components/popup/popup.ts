@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "../../core/component"
 import { CSizer } from '../sizers/sizer';
-import { Rect, Point, class_ns } from '../../core/core_tools.js';
+import { Rect, Point, class_ns, asap } from '../../core/core_tools.js';
 
 import "./popup.module.scss"
 
@@ -27,19 +27,15 @@ export interface PopupEvents extends ComponentEvents {
 }
 
 export interface PopupProps extends ComponentProps {
-	modal?: boolean;
 	autoClose?: boolean | string;
 	sizable?: boolean;
 	movable?: boolean;
 }
 
-
-let modal_mask: Component;
-let modal_count = 0;
-
-let modal_stack: Popup[] = [];
 let autoclose_list: Popup[] = [];
 let popup_list:  Popup[] = [];
+
+
 
 
 
@@ -50,7 +46,6 @@ let popup_list:  Popup[] = [];
 @class_ns( "x4" )
 export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Component<P,E> {
 
-	private _isopen = false;
 	private _isshown = false;
 
 	constructor( props: P ) {
@@ -59,6 +54,18 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		if( this.props.sizable ) {
 			this._createSizers( );
 		}
+
+		// wait for element to create it's childs
+		asap( ( ) => {
+			if( this.props.movable ) {
+				const movers = this.queryAll( ".caption-element" );
+				movers.forEach( m => new CMover(m,this) );
+
+				if( this.hasClass("popup-caption") ) {
+					new CMover(this,this);
+				}		
+			}
+		} );
 	}
 
 	/**
@@ -68,7 +75,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	displayNear( rc: Rect, dst = "top left", src = "top left", offset = {x:0,y:0} ) {
 
 		this.setStyle( { left: "0px", top: "0px" } );	// avoid scrollbar
-		this._show( );									// to compute size
+		this._do_show( );		// to compute size
 		
 		let rm = this.getBoundingRect();
 
@@ -89,7 +96,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			yref = rc.top + rc.height/2;
 		}
 
-		let halign = 'l';
 		if (dst.indexOf('right') >= 0) {
 			xref -= rm.width;
 		}
@@ -97,7 +103,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			xref -= rm.width/2;
 		}
 
-		let valign = 't';
 		if (dst.indexOf('bottom') >= 0) {
 			yref -= rm.height;
 		}
@@ -136,7 +141,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			top: y+"px",
 		})
 
-		this._show( );
+		this._do_show( );	// to compute size
 
 		const rc = this.getBoundingRect( );
 		const width = window.innerWidth - 16;
@@ -149,61 +154,19 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		if( rc.bottom>height ) {
 			this.setStyleValue( "top", height-rc.height );
 		}
-
-		if( this.props.movable ) {
-			const movers = this.queryAll( ".caption-element" );
-			movers.forEach( m => new CMover(m,this) );
-
-			if( this.hasClass("popup-caption") ) {
-				new CMover(this,this);
-			}		
-		}
-
-		this.fire( "opened", {} );
-	}
-
-	private _show( ) {
-		if( this._isshown ) {
-			return;
-		}
-
-		if( this.props.modal ) {
-			this._showModalMask( );
-			modal_stack.push( this );
-			modal_count++;
-		}
-
-		this._isshown = true;
-		
-		if( this.props.autoClose ) {
-			if( autoclose_list.length==0 ) {
-				document.addEventListener( "pointerdown", this._dismiss );
-			}
-
-			autoclose_list.push( this );
-			this.setData( "close", this.props.autoClose===true ? makeUniqueComponentId() : this.props.autoClose );
-		}
-
-		popup_list.push( this );
-		document.body.appendChild( this.dom );
-
-		this.show( );
-	}
-
-	override show( show = true ) {
-		this._isopen = show;
-		super.show( show );
 	}
 
 	isOpen( ) {
-		return this._isopen;
+		return this._isshown;
 	}
 
-	/**
-	 * 
-	 */
+	protected _do_hide( ) {
 
-	close( ) {
+		if( !this._isshown ) {
+			return;
+		}
+
+		super.show( false );
 		document.body.removeChild( this.dom );
 
 		// remove from popup list
@@ -222,15 +185,56 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			}
 		}
 
-		// update mask
-		if( this.props.modal ) {
-			const top = modal_stack.pop( );
-			console.assert( top==this );
-			this._updateModalMask( );
-		}
-
 		this._isshown = false;
 		this.fire( "closed", {} );
+	}
+
+	/**
+	 * 
+	 */
+
+	protected _do_show( ) {
+		if( this._isshown  ) {
+			return;
+		}
+
+		this._isshown = true;
+		super.show( true );
+		
+		if( this.props.autoClose ) {
+			if( autoclose_list.length==0 ) {
+				document.addEventListener( "pointerdown", this._dismiss );
+			}
+
+			autoclose_list.push( this );
+			this.setData( "close", this.props.autoClose===true ? makeUniqueComponentId() : this.props.autoClose );
+		}
+
+		popup_list.push( this );
+		document.body.appendChild( this.dom );
+		
+		this.fire( "opened", {} );
+	}
+
+	/**
+	 * 
+	 */
+
+	override show( show = true ) {
+		if( show ) {
+			this.displayCenter( );
+		}
+		else {
+			this._do_hide( );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	close( ) {
+		this._do_hide( );
 	}
 
 	/**
@@ -285,39 +289,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 		
 		list.forEach( x => x.close() );
-	}
-
-	/**
-	 * 
-	 */
-
-	private _showModalMask( ) {
-		
-		if( !modal_mask ) {
-			modal_mask = new Component( {
-				cls: "x4modal-mask",
-				domEvents: {
-					click: this._dismiss
-				}
-			});
-		}
-
-		modal_mask.show( true );
-		document.body.insertAdjacentElement( "beforeend", modal_mask.dom );
-	}
-
-	/**
-	 * 
-	 */
-
-	private _updateModalMask( ) {
-		if( --modal_count == 0 ) {
-			modal_mask.show( false );
-		}
-		else {
-			const top = modal_stack[modal_stack.length-1];
-			top.dom.insertAdjacentElement( "beforebegin", modal_mask.dom );
-		}
 	}
 
 	/**

@@ -91,7 +91,8 @@ export class StackBox extends Box<StackedLayoutProps> {
 	}
 
 	select( name: string ) {
-		let sel = this.query( `.selected` );
+		debugger;
+		let sel = this.query( `> .selected` );
 		if( sel ) {
 			sel.setClass( "selected", false );
 		}

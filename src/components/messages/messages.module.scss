@@ -46,4 +46,37 @@
 	}
 }
 
+.x4inputbox {
+
+	& > .caption {
+		background-color: var( --msgbox-caption-background );
+
+		& > #title {
+			color: var( --msgbox-caption-color );
+		}
+	}
+
+	& .x4form {
+		min-width: 400px;
+		.x4icon {
+			color: var( --msgbox-icon-color );
+			height: 64px;
+		}
+
+		.x4vbox {
+			padding: 16px;
+			gap: 16px;
+
+			.x4label {
+				line-height: 1.8em;
+			}
+
+			.x4input {
+				padding: 8px;
+				border: 1px solid var( --border );
+			}
+		}
+	}
+}
+
 

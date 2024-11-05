@@ -727,7 +727,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	enable( ena = true ) {
-		this.setAttribute( "disabled", !ena );
+		this.setAttribute( "disabled", ena ? 'true' : null );
 
 		if( this.dom instanceof HTMLInputElement || this.dom instanceof HTMLButtonElement ) {
 			this.dom.disabled = !ena;

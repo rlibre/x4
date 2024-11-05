@@ -63,7 +63,7 @@ export class MessageBox extends Dialog<DialogProps>
 			asap( ( ) => box.close() );
 		});
 
-		box.display();
+		box.show();
 		return box;
 	}
 }

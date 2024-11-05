@@ -251,7 +251,7 @@ function main( ) {
 					new SvgComponent( { svg: svg_builder, id: "", viewbox: "0 0 90 90", width: 90, height: 90, style: { margin: '16px'} } ),
 
 					new HBox( { content: [
-						new Button( { label:'Dialog...', click: ( ) => dialog.display() } ),
+						new Button( { label:'Dialog...', click: ( ) => dialog.show() } ),
 						new Button( { label:'Message...', click: ( ) => {MessageBox.show( unsafeHtml( '<b>Care</b><br/>You will delete <i>all data</i>.' ) ) } } ),
 						new Button( { label:'Notification...', click: ( ) => { new Notification( { mode: "success", text: "Modification saved", title: "Backup" } ).display( 5 ) } } ),
 					]}),

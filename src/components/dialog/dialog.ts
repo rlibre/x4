@@ -33,6 +33,7 @@ export interface DialogProps extends PopupProps {
 	form?: Form;
 	buttons: BtnGroupItem[];
 	closable?: boolean;
+	modal?: boolean;
 	btnclick?: EventCallback<EvBtnClick>;
 }
 
@@ -56,7 +57,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	private form: Form;
 
 	constructor( props: P ) {
-		super( { modal: true, ...props } );
+		super( { ...props, tag: "dialog" } );
 
 		this.mapPropEvents( props, "btnclick" );
 
@@ -91,103 +92,21 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	 * 
 	 */
 
-	display(  ) {
-		super.displayCenter(  );
+	override _do_show( ) {
+		super._do_show( );
+
+		if( this.props.modal!==false ) {
+			(this.dom as HTMLDialogElement).showModal( );
+		}
 	}
 
 	/**
 	 * 
 	 */
 
-	override close( ) {
-		this.fire( "close", {} );
-		super.close( );
-	}
-
-	/**
-	 * 
-	 */
-
-	override setContent( form: Form ) {
-		this.dom.replaceChild( this.form.dom, form.dom );
-		this.form = form;
-	}
-
-	/**
-	 * 
-	 */
-	
-	getForm( ) {
-		return this.form;
-	}
-
-	/**
-	 * 
-	 */
-
-	getValues( ) {
-		return this.form.getValues( );
-	}
-}
-
-
-/**
- * 
- */
-
-@class_ns( "x4" )
-export class DialogEx<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents>  extends Component<P,E> {
-	private form: Form;
-
-	constructor( props: P ) {
-		super( { tag: "dialog", ...props } );
-
-		this.addClass( "x4dialog" );
-		this.mapPropEvents( props, "btnclick" );
-
-		this.appendContent( [
-			new HBox( {
-				cls: "caption",
-				content: [
-					new Label( { 
-						id: "title", 
-						cls: "caption-element",
-						icon: props.icon, 
-						text: props.title 
-					} ),
-					props.closable ? new Button( { 
-						id: "closebox", 
-						icon: close_icon, 
-						click:  ( ) => { this.close() }
-					} ) : null,
-				]
-			}),
-			this.form = props.form ? props.form : new Form( { } ),
-			new BtnGroup( {
-				id: "btnbar",
-				reverse: true,
-				items: props.buttons,
-				btnclick: ( ev ) => { this.fire( "btnclick", ev ) }
-			}) 
-		]);
-
-		document.body.appendChild( this.dom );
-	}
-
-	/**
-	 * 
-	 */
-
-	showModal(  ) {
-		(this.dom as HTMLDialogElement).showModal( );
-	}
-
-	show( ) {
-		(this.dom as HTMLDialogElement).show( );
-	}
-
-	close( ) {
+	override _do_hide( ) {
 		(this.dom as HTMLDialogElement).close( );
+		super._do_hide( );
 	}
 
 	/**
@@ -215,4 +134,5 @@ export class DialogEx<P extends DialogProps = DialogProps, E extends DialogEvent
 		return this.form.getValues( );
 	}
 }
+
 

@@ -2,18 +2,20 @@
 // :: MESSAGEBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 import { _tr } from '../../core/core_i18n';
+import { asap, class_ns, UnsafeHtml } from '../../core/core_tools';
 
-import { HBox } from '../boxes/boxes';
+import { HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
 import { Label } from '../label/label';
 import { Dialog, DialogProps } from "../dialog/dialog"
+import { Form } from '../form/form';
+import { BtnGroupItem } from '../btngroup/btngroup';
+import { Input } from '../input/input';
 
 import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
-import { asap, class_ns, UnsafeHtml } from '../../core/core_tools.js';
-import { Form } from '../form/form.js';
-import { BtnGroupItem } from '../components.js';
+import pen_icon from "./pen-field.svg";
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -27,22 +29,15 @@ export interface MessageBoxProps extends DialogProps {
 @class_ns( "x4" )
 export class MessageBox extends Dialog<DialogProps>
 {
-	m_label: Label;
-
 	constructor(props: DialogProps) {
 		super(props);
 	}
 
-	setText(txt: string | UnsafeHtml ) {
-		this.m_label.setText( txt );
-	}
-
 	/**
-	 * display a messagebox
+	 * 
 	 */
 
-	static show( msg: string | UnsafeHtml, buttons?: BtnGroupItem[] ): MessageBox {
-
+	private static _create( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) {
 		const box = new MessageBox({ 
 			modal: true,
 			title: _tr.global.error,
@@ -59,14 +54,24 @@ export class MessageBox extends Dialog<DialogProps>
 			}),
 			buttons: buttons ?? [ "ok.outline","cancel.outline" ]
 		});
-	
+
+		return box;
+	}
+
+	/**
+	 * display a messagebox
+	 */
+
+	static show( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ): MessageBox {
+
+		const box = this._create( msg, buttons, title );
 		box.on( "btnclick", ( ev ) => {
 			asap( ( ) => {
 				box.close() 
 			});
 		});
 
-		box.display();
+		box.show();
 		return box;
 	}
 
@@ -77,24 +82,7 @@ export class MessageBox extends Dialog<DialogProps>
 	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) : Promise<string> {
 
 		return new Promise( (resolve, reject ) => {
-
-			const box = new MessageBox({ 
-				modal: true,
-				title: title ?? _tr.global.error,
-				movable: true,
-				form: new Form( {
-					content: [
-						new HBox( {
-							content: [
-								new Icon( { iconId: error_icon }),
-								new Label( { text: msg } ),
-							]
-						}),
-					]
-				}),
-				buttons: buttons ?? [ "ok.outline","cancel.outline" ]
-			});
-		
+			const box = this._create( msg, buttons, title );
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button );
@@ -102,8 +90,69 @@ export class MessageBox extends Dialog<DialogProps>
 				});
 			});
 
-			box.display();
+			box.show();
 		} );
 
 	}
 }
+
+
+@class_ns( "x4" )
+export class InputBox extends Dialog<DialogProps>
+{
+	constructor(props: DialogProps) {
+		super(props);
+	}
+
+	getValue( ) {
+		const input = this.query<Input>( "input" );
+		return input.getValue( );
+	}
+
+	private static _create( msg: string | UnsafeHtml, value: string, title: string ) {
+		const box = new InputBox({ 
+			modal: true,
+			title,
+			movable: true,
+			form: new Form( {
+				content: [
+					new HBox( {
+						content: [
+							new Icon( { iconId: pen_icon }),
+							new VBox( { flex: 1, content: [
+								new Label( { text: msg } ),
+								new Input( { value, type: "text" } )
+							]})
+						]
+					}),
+				]
+			}),
+			buttons: [ "ok.outline","cancel.outline" ]
+		});
+	
+		return box;
+	}
+
+	/**
+	 * idem with promise
+	 */
+
+	static async showAsync( msg: string | UnsafeHtml, value: string, title?: string ) : Promise<string> {
+
+		return new Promise( (resolve, reject ) => {
+
+			const box = this._create( msg, value, title );
+		
+			box.on( "btnclick", ( ev ) => {
+				asap( ( ) => {
+					resolve( ev.button=="ok" ? box.getValue( ) : null );
+					box.close() 
+				});
+			});
+
+			box.show();
+		} );
+
+	}
+}
+

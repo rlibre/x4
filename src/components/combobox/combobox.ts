@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvent, ComponentProps, EvChange, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
 import { Listbox, ListboxID, ListItem, kbNav } from '../listbox/listbox';
 import { Popup, PopupEvents, PopupProps } from '../popup/popup.js';
 import { Label } from '../label/label';
@@ -25,6 +25,7 @@ import { HBox } from '../boxes/boxes';
 import "./combobox.module.scss";
 import icon from "./updown.svg";
 import { class_ns } from '@core/core_tools.js';
+import { EventCallback } from '@core/core_events.js';
 
 
 
@@ -70,18 +71,23 @@ class Dropdown extends Popup<DropdownProps,DropdownEvents> {
  * 
  */
 
+interface ComboboxEvents extends ComponentEvents {
+	selectionChange: EvSelectionChange;
+}
+
 interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	label?: string;
 	labelWidth?: number | string;
 	readonly?: boolean;
 	items: ListItem[];
+	selectionChange?: EventCallback<EvSelectionChange>,
 }
 
 @class_ns( "x4" )
-export class Combobox extends Component<ComboboxProps> {
+export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 	private _dropdown: Dropdown;
-	private _label: Label;
+	//private _label: Label;
 	private _input: Input;
 	private _button: Button;
 	private _prevent_close = false;
@@ -91,6 +97,8 @@ export class Combobox extends Component<ComboboxProps> {
 		super( props );
 
 		const id = makeUniqueComponentId( );
+
+		this.mapPropEvents( props, "selectionChange" );
 
 		this.setContent( [
 			new HBox( { id: "label", content: new Label( { tag: "label", text: props.label, labelFor: id, width: props.labelWidth } ) } ),
@@ -104,11 +112,14 @@ export class Combobox extends Component<ComboboxProps> {
 
 		this._dropdown.on( "selectionChange", ( ev ) => {
 			const sel = ev.selection as ListItem;
+			//TODO: unsafehtml
 			this._input.setValue( sel ? sel.text : "" );
 			
 			if( !this._prevent_close ) {
 				this._dropdown.show( false );
 			}
+
+			this.fire( "selectionChange", ev );
 		});
 
 		this._button.addDOMEvent( "click", ( ) => this._on_click( ) );
@@ -186,6 +197,30 @@ export class Combobox extends Component<ComboboxProps> {
 		const rc = this._edit.getBoundingRect( );
 		this._dropdown.setStyleValue( "width", rc.width+"px" );
 		this._dropdown.displayNear( rc, "top left", "bottom left", {x:0,y:6} );
+	}
+
+	setItems( items: ListItem[] ) {
+		this._getList().setItems( items );		
+	}
+
+	getValue( ) {
+		return this._input.getValue( );
+	}
+
+	setValue( value: string ) {
+		this._input.setValue( value );
+	}
+
+	selectItem( index: ListboxID ) {
+		this._getList( ).select( index );
+	}
+
+	getSelection( ) {
+		this._getList( ).getSelection( );
+	}
+
+	private _getList( ) {
+		return this._dropdown.getList( );
 	}
 }
 

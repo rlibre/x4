@@ -380,6 +380,11 @@ body {
 	font-size: var( --font-size );
 }
 
+dialog {
+	margin: 0;
+	padding: 0;
+}
+
 .x4hidden {
 	display: none !important;
 }
