@@ -23,6 +23,7 @@
 }
 
 .x4messagebox {
+	max-width: 60vw;
 
 	& > .caption {
 		background-color: var( --msgbox-caption-background );
@@ -46,7 +47,9 @@
 	}
 }
 
-.x4inputbox {
+.x4inputbox,
+.x4promptbox {
+	max-width: 60vw;
 
 	& > .caption {
 		background-color: var( --msgbox-caption-background );
@@ -70,13 +73,15 @@
 			.x4label {
 				line-height: 1.8em;
 			}
-
-			.x4input {
-				padding: 8px;
-				border: 1px solid var( --border );
-			}
 		}
 	}
 }
 
+
+.x4inputbox {
+	.x4input {
+		padding: 8px;
+		border: 1px solid var( --border );
+	}
+}
 

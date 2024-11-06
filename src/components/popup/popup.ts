@@ -37,8 +37,8 @@ export interface PopupProps extends ComponentProps {
 let autoclose_list: Popup[] = [];
 let popup_list:  Popup[] = [];
 
-
-
+let modal_stack: Popup[] = [];
+let modal_mask: Component;
 
 
 /**
@@ -49,6 +49,7 @@ let popup_list:  Popup[] = [];
 export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Box<P,E> {
 
 	private _isshown = false;
+	protected _ismodal = false;
 
 	constructor( props: P ) {
 		super( props );
@@ -168,8 +169,13 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			return;
 		}
 
-		super.show( false );
-		document.body.removeChild( this.dom );
+		this.__hide( );
+		this.__remove( );
+
+		if( this._ismodal ) {
+			modal_stack.pop( );
+			this._hideModalMask( );
+		}
 
 		// remove from popup list
 		const idx = popup_list.indexOf( this );
@@ -201,8 +207,15 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 
 		this._isshown = true;
-		super.show( true );
-		
+		this.__append( );
+
+		if( this._ismodal ) {
+			modal_stack.push( this );
+			this._showModalMask( );
+		}
+
+		this.__show( );
+				
 		if( this.props.autoClose ) {
 			if( autoclose_list.length==0 ) {
 				document.addEventListener( "pointerdown", this._dismiss );
@@ -213,9 +226,28 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 
 		popup_list.push( this );
-		document.body.appendChild( this.dom );
 		
 		this.fire( "opened", {} );
+	}
+
+	/**
+	 * 
+	 */
+
+	protected __show( ) {
+		super.show( true );
+	}
+
+	protected __hide( ) {
+		super.show( false );
+	}
+
+	protected __append( ) {
+		document.body.appendChild( this.dom );
+	}
+
+	protected __remove( ) {
+		document.body.removeChild( this.dom );
 	}
 
 	/**
@@ -308,6 +340,26 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			new CSizer( "top-right" ),
 			new CSizer( "bottom-right" ),
 		])
+	}
+
+	private _showModalMask( ) {
+		if( !modal_mask ) {
+			modal_mask = new Component( { cls: 'x4modal-mask' } )
+			//document.body.appendChild( modal_mask.dom );
+		}
+
+		document.body.insertBefore( modal_mask.dom, this.dom );
+	}
+
+	private _hideModalMask( ) {
+		if( modal_mask ) {
+			if( modal_stack.length ) {
+				const top = modal_stack[ modal_stack.length-1 ];
+				document.body.insertBefore( modal_mask.dom, top.dom );
+			}
+
+			document.body.removeChild( modal_mask.dom );
+		}
 	}
 }
 

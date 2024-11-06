@@ -72,6 +72,13 @@ export function unsafeHtml( x: string ): UnsafeHtml {
 	return new UnsafeHtml( x );
 }
 
+export function unsafe( strings: TemplateStringsArray, ...values: any[] ): UnsafeHtml {
+    const result = strings.reduce((acc, str, i) => {
+        return acc + str + (values[i] || '');
+    }, '');
+    return unsafeHtml(result);
+}
+
 /**
  * 
  */

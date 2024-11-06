@@ -16,6 +16,7 @@ import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
 import pen_icon from "./pen-field.svg";
+import { Component } from '@core/component.js';
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -146,6 +147,62 @@ export class InputBox extends Dialog<DialogProps>
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button=="ok" ? box.getValue( ) : null );
+					box.close() 
+				});
+			});
+
+			box.show();
+		} );
+
+	}
+}
+
+
+
+@class_ns( "x4" )
+export class PromptBox extends Dialog<DialogProps>
+{
+	constructor(props: DialogProps) {
+		super(props);
+	}
+
+	private static _create( msg: string | UnsafeHtml, editor: Component, title: string ) {
+		const box = new PromptBox({ 
+			modal: true,
+			title,
+			movable: true,
+			form: new Form( {
+				content: [
+					new HBox( {
+						content: [
+							new Icon( { iconId: pen_icon }),
+							new VBox( { flex: 1, content: [
+								new Label( { text: msg } ),
+								editor
+							]})
+						]
+					}),
+				]
+			}),
+			buttons: [ "ok.outline.default","cancel.outline" ]
+		});
+	
+		return box;
+	}
+
+	/**
+	 * idem with promise
+	 */
+
+	static async showAsync( msg: string | UnsafeHtml, editor: Component, title?: string ) : Promise<string> {
+
+		return new Promise( (resolve ) => {
+
+			const box = this._create( msg, editor, title );
+		
+			box.on( "btnclick", ( ev ) => {
+				asap( ( ) => {
+					resolve( ev.button );
 					box.close() 
 				});
 			});

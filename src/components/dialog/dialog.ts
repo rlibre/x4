@@ -27,6 +27,8 @@ import { Button } from '../button/button.js';
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
 
+let modal_stack: Popup[] = [];
+
 export interface DialogProps extends PopupProps {
 	icon?: string;
 	title: string;
@@ -58,6 +60,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 
 	constructor( props: P ) {
 		super( { ...props, tag: "dialog" } );
+		this._ismodal = props.modal;
 
 		this.mapPropEvents( props, "btnclick" );
 
@@ -109,27 +112,6 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 			}
 		})
 
-	}
-
-	/**
-	 * 
-	 */
-
-	override _do_show( ) {
-		super._do_show( );
-
-		if( this.props.modal!==false ) {
-			(this.dom as HTMLDialogElement).showModal( );
-		}
-	}
-
-	/**
-	 * 
-	 */
-
-	override _do_hide( ) {
-		(this.dom as HTMLDialogElement).close( );
-		super._do_hide( );
 	}
 
 	/**

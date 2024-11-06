@@ -186,7 +186,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	private _on_focusout( ) {
-		this._popup.show( false );
+		//this._popup.show( false );
 	}
 	
 	private _on_click( ) {
