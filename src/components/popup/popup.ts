@@ -15,8 +15,10 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "../../core/component"
+
 import { CSizer } from '../sizers/sizer';
 import { Rect, Point, class_ns, asap } from '../../core/core_tools.js';
+import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
 
@@ -44,7 +46,7 @@ let popup_list:  Popup[] = [];
  */
 
 @class_ns( "x4" )
-export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Component<P,E> {
+export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Box<P,E> {
 
 	private _isshown = false;
 

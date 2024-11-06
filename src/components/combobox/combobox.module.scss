@@ -51,28 +51,30 @@
 	@extend .hbox;
 	margin: 5px;
 
-	//&> #label {
-	//	padding: 0 6px;
-	//	border-bottom: 1px solid transparent;
-
+	&> #label {
+		
 		&> .x4label {
-			padding: 0 6px;
+			padding: 0 6px 0 0;
 			border-bottom: 1px solid transparent;
 
 			height: 100%;
-			padding: 0;
 			font-weight: 500;
-			gap: 0;
+			gap: 0px;
 					
-			#text::not(.empty)::after {
-				content: ":"
+			#text:not(.empty) {
+				&::after {
+					content: ":"
+				}
 			}
 		}
-	//}
+	}
 
 	&>#edit {
 		@extend .flex;
 		border-bottom: 1px solid var( --combobox-border );
+		&:focus-within {
+			border-bottom-color: var( --combobox-border-focus );
+		}
 		
 		.x4input {
 			@extend .flex;
@@ -97,10 +99,10 @@
 				color: var( --combobox-btn-color-hover );
 			}
 
-			&:focus {
+			//&:focus {
 				//background-color: var( --color-30 );
 				//color: var( --color-10 );
-			}
+			//}
 		}
 	}
 

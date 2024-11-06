@@ -240,6 +240,10 @@ export function asap( callback: ( ) => void ) {
 	return requestAnimationFrame( callback );
 }
 
+export function oneshot( callback: ( ) => void, ms = 0 ) {
+	return setTimeout( callback, ms );
+}
+
 
 // :: STRING UTILS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

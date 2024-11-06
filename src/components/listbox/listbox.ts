@@ -22,7 +22,7 @@ import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 
 import "./listbox.module.scss"
-import { class_ns, UnsafeHtml } from '@core/core_tools.js';
+import { class_ns, isArray, UnsafeHtml } from '@core/core_tools.js';
 
 export enum kbNav {
 	first,
@@ -314,15 +314,14 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			} );
 		}
 
-		const itm = this._findItem( id );
-		this.fire( "selectionChange", { selection: itm } );
+		this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
 	}
 
 	/**
 	 * 
 	 */
 
-	private _findItem( id: ListboxID ) {
+	getItem( id: ListboxID ): ListItem {
 		return this._items.find( x => x.id==id );
 	}
 
@@ -330,16 +329,26 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 * select an item by it's id
 	 */
 
-	select( id: ListboxID ) {
-		if( !id ) {
+	select( ids: ListboxID | ListboxID[] ) {
+
+		if( !isArray(ids) ) {
+			ids = [ids];
+		}
+
+		if( !ids.length ) {
 			this.clearSelection( );
 			return;
 		}
 		
-		const itm = this.query( `[data-id="${id}"]` );
-		if( itm ) {
-			this._selectItem( id, itm, 'single' );
-		}
+		ids.forEach( id => {
+			const itm = this.query( `[data-id="${id}"]` );
+			if( itm ) {
+				this._multisel.add( id );
+				itm.addClass( "selected" );
+			}
+		});
+
+		this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
 	}
 
 	/**
@@ -369,15 +378,19 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	clearSelection( ) {
 		if( this._multisel.size ) {
 			this._clearSelection( );
-			this.fire( "selectionChange", { selection: undefined } );
 		}
+		
+		this.fire( "selectionChange", { selection: [], empty: true } );
 	}
 	
 	/**
 	 * 
 	 */
 
-	setItems( items: ListItem[] ) {
+	setItems( items: ListItem[], keepSel = false ) {
+
+		const oldSel = this.getSelection( );
+
 		this.clearSelection( );
 		this._view.clearContent( );
 		this._items = items;
@@ -385,6 +398,10 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		if( items ) {
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
+
+			if( keepSel ) {
+				this.select( oldSel );
+			}
 		}
 	}
 
@@ -499,11 +516,6 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	}
 
 	getSelection( ) {
-		if( this.props.multisel ) {
-			return Array.from( this._multisel );
-		}
-		else {
-			return this._lastsel;
-		}
+		return Array.from( this._multisel );
 	}
 }

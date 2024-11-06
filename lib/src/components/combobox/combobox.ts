@@ -80,7 +80,7 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
 @class_ns( "x4" )
 export class Combobox extends Component<ComboboxProps> {
 
-	private _dropdown: Dropdown;
+	private _popup: Dropdown;
 	private _label: Label;
 	private _input: Input;
 	private _button: Button;
@@ -100,16 +100,19 @@ export class Combobox extends Component<ComboboxProps> {
 			]} ),
 		])
 
-		this._dropdown = new Dropdown( { items: props.items } );
+		const popup = new Dropdown( { items: props.items } );
+		const list = popup.getList( );
 
-		this._dropdown.on( "selectionChange", ( ev ) => {
-			const sel = ev.selection as ListItem;
-			this._input.setValue( sel ? sel.text : "" );
+		popup.on( "selectionChange", ( ev ) => {
+			const [sel] = ev.selection as ListboxID[];
+			this._input.setValue( sel ? list.getItem(sel) : "" );
 			
 			if( !this._prevent_close ) {
-				this._dropdown.show( false );
+				popup.show( false );
 			}
 		});
+
+		this._popup = popup;
 
 		this._button.addDOMEvent( "click", ( ) => this._on_click( ) );
 		this._input.addDOMEvent( "input", ( ) => this._on_input( ) );
@@ -125,17 +128,17 @@ export class Combobox extends Component<ComboboxProps> {
 		switch( ev.key ) {
 			case "Enter":
 			case "Escape": {
-				this._dropdown.show( false );
+				this._popup.show( false );
 				break;
 			}
 
 			case "ArrowUp":
 				this._prevent_close = true;
-				if( !this._dropdown.isOpen( ) ) {
+				if( !this._popup.isOpen( ) ) {
 					this.showDropDown( );
 				}
 				else {
-					this._dropdown.getList().navigate( kbNav.prev );
+					this._popup.getList().navigate( kbNav.prev );
 				}
 
 				this._prevent_close = false;
@@ -143,11 +146,11 @@ export class Combobox extends Component<ComboboxProps> {
 
 			case "ArrowDown":
 				this._prevent_close = true;
-				if( !this._dropdown.isOpen( ) ) {
+				if( !this._popup.isOpen( ) ) {
 					this.showDropDown( );
 				}
 				else {
-					this._dropdown.getList().navigate( kbNav.next );
+					this._popup.getList().navigate( kbNav.next );
 				}
 
 				this._prevent_close = false;
@@ -163,15 +166,15 @@ export class Combobox extends Component<ComboboxProps> {
 	}
 
 	private _on_input( ) {
-		if( !this._dropdown.isOpen( ) ) {
+		if( !this._popup.isOpen( ) ) {
 			this.showDropDown( );
 		}
 
-		this._dropdown.getList().filter( this._input.getValue( ) );
+		this._popup.getList().filter( this._input.getValue( ) );
 	}
 
 	private _on_focusout( ) {
-		this._dropdown.show( false );
+		this._popup.show( false );
 	}
 	
 	private _on_click( ) {
@@ -184,8 +187,8 @@ export class Combobox extends Component<ComboboxProps> {
 		}
 		
 		const rc = this._edit.getBoundingRect( );
-		this._dropdown.setStyleValue( "width", rc.width+"px" );
-		this._dropdown.displayNear( rc, "top left", "bottom left", {x:0,y:6} );
+		this._popup.setStyleValue( "width", rc.width+"px" );
+		this._popup.displayNear( rc, "top left", "bottom left", {x:0,y:6} );
 	}
 }
 

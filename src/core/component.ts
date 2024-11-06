@@ -995,6 +995,7 @@ interface ISelection {
 
 export interface EvSelectionChange extends ComponentEvent {
 	readonly selection: ISelection;
+	readonly empty: boolean;
 }
 
 

@@ -24,7 +24,7 @@
 .x4dialog {
 	@extend .shadow-xl, .vbox;
 
-	position: absolute;
+	position: absolute !important;
 	background-color: white;
 	border: 1px solid var( --border-dark );
 	min-width: min-content;

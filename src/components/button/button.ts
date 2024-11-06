@@ -38,6 +38,7 @@ interface ButtonEvents extends ComponentEvents {
 export interface ButtonProps extends ComponentProps {
 	label?: string;
 	icon?: string;
+	tabindex?: boolean | number;
 	click?: EventCallback<EvClick>;
 }
 
@@ -60,11 +61,16 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 
 		this.mapPropEvents( props, 'click' );
 		this.addDOMEvent('click', (e) => this._on_click(e));
+		this.addDOMEvent('keydown', (e) => this._on_keydown(e) );
 
 		this.setContent( [
 			new Icon( { id: "icon", iconId: this.props.icon } ),
 			new Component( { id: "label", content: this.props.label } ),
 		] );
+
+		if( props.tabindex!==false ) {
+			this.setAttribute( 'tabindex', props.tabindex );
+		}
 	}
 
 	/**
@@ -87,6 +93,25 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 
 		ev.preventDefault();
 		ev.stopPropagation();
+	}
+
+	/**
+	 * simulate a click
+	 */
+
+	click( ) {
+		(this.dom as HTMLButtonElement).click( );
+	}
+
+	/**
+	 * called on key down
+	 */
+
+	protected _on_keydown( e: KeyboardEvent ) {
+		if( e.key=='Enter' ) {
+			this.click( );
+			e.preventDefault( );
+		}
 	}
 
 	/**

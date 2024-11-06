@@ -19,13 +19,13 @@ import { PopupEvents, PopupProps, Popup } from '../popup/popup.js';
 import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
-import { Component, ComponentContent, ComponentEvent } from '../../core/component.js';
+import { CoreEvent, EventCallback } from '@core/core_events.js';
+import { class_ns } from '@core/core_tools.js';
+import { ComponentEvent } from '../../core/component.js';
 import { Button } from '../button/button.js';
 
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
-import { CoreEvent, EventCallback } from '@core/core_events.js';
-import { class_ns } from '@core/core_tools.js';
 
 export interface DialogProps extends PopupProps {
 	icon?: string;
@@ -85,7 +85,30 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				items: props.buttons,
 				btnclick: ( ev ) => { this.fire( "btnclick", ev ) }
 			}) 
-		])
+		]);
+
+		this.addDOMEvent( "keydown",  (ev) => {
+			console.log( ev.key );
+			if( ev.key=='Escape' ) {
+				// todo cancel
+				ev.preventDefault( );
+				ev.stopPropagation( );
+			}
+			else if( ev.key=='Enter' ) {
+				// todo default button
+				ev.preventDefault( );
+				ev.stopPropagation( );	
+
+				const def = this.query<Button>( 'button.default');
+				if( def ) {
+					def.click( );
+				}
+			}
+			else if (ev.key === 'Tab') {
+				
+			}
+		})
+
 	}
 
 	/**

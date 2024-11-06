@@ -96,7 +96,7 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 
 				const nm = (b as predefined);
 
-				let [txt,cls] = nm.split( "." );
+				let [txt,cls,...def] = nm.split( "." );
 								
 				switch( txt as predefined ) {
 					case "ok": 		title = _tr.global.ok; break;
@@ -110,6 +110,14 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 				b = new Button( { cls, label: title, click: ( ) => {
 					this.fire( "btnclick", {button:txt as string} )
 				} } );
+
+				if( def.includes('default') ) {
+					b.addClass( 'default' );
+				}
+
+				if( def.includes('autofocus') ) {
+					b.setAttribute( 'autofocus', true );
+				}
 			}
 
 			childs.push( b );

@@ -19,8 +19,8 @@
 }
 
 .x4popup {
+	position: absolute !important;
 	background-color: var(--fill-color);
-	position: absolute;
 	border: 1px solid var(--border-color);
 	overflow: hidden;
 	z-index: 1000;

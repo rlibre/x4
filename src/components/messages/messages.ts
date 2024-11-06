@@ -127,7 +127,7 @@ export class InputBox extends Dialog<DialogProps>
 					}),
 				]
 			}),
-			buttons: [ "ok.outline","cancel.outline" ]
+			buttons: [ "ok.outline.default","cancel.outline" ]
 		});
 	
 		return box;

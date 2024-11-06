@@ -413,7 +413,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		const itm = this._findItem( id );
-		this.fire( "selectionChange", { selection: itm } );
+		this.fire( "selectionChange", { selection: itm, empty: false } );
 	}
 
 	private _findItem( id: ListboxID ) {
@@ -432,6 +432,6 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		this._selection = undefined;
-		this.fire( "selectionChange", { selection: undefined } );
+		this.fire( "selectionChange", { selection: undefined, empty: true } );
 	}
 }

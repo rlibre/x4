@@ -27,6 +27,7 @@
 
 	--listbox-icon-color: var( --text-ternary );
 
+	--listbox-background: white;
 	--listbox-border: var( --border );
 	--listbox-border-focus: var( --accent-background-focus );
 }
@@ -36,6 +37,7 @@
 
 	margin: 5px;
 	border: 1px solid var( --listbox-border );
+	background-color: var( --listbox-background );
 
 	&:focus-within {
 		border-color: var( --listbox-border-focus );
@@ -91,10 +93,10 @@
 					}
 				}
 
-				&:active{
+				//&:active{
 					//background-color: var( --color-80 );
 					//color: var(--color-0);
-				}	
+				//}	
 			}
 		}
 	}
@@ -128,6 +130,10 @@
 						color: var( --button-icon-color );
 					}
 				}	
+
+				&:focus {
+					background-color: var( --ol-button-background-hover );
+				}
 			}
 		}
 	}		

@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component } from './component.js';
+import { Component, componentFromDOM } from './component.js';
 import { CoreElement } from './core_element.js';
 import { CoreEvent, EventMap } from './core_events';
 
@@ -47,6 +47,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 	setMainView( view: Component ) {
 		document.body.appendChild( view.dom );
+		this._setupKeyboard( );
 	}
 
 	static instance<P extends Application = Application>( ): P {
@@ -77,6 +78,59 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		Application.instance().fire( "global", { msg, params } );
 	}
 
+	/**
+	 * 
+	 */
+
+	private _setupKeyboard( ) {
+		
+		document.addEventListener( "keydown", (ev) => {
+			console.log( "doc key:", ev.key,  );
+
+			if( ev.key=="Tab" ) {
+				
+				let act = document.activeElement;
+				let topmost: HTMLElement;
+
+				while( act ) {
+					if( act.classList.contains("x4box") ) {
+						topmost = act as HTMLElement;
+					}
+
+					act = act.parentElement;
+				}
+
+				if( topmost ) {
+
+					const focusable = topmost.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+					if( !focusable.length ) {
+						ev.preventDefault( );
+					}
+					else {
+						const first = focusable[0];
+						const last  = focusable[focusable.length - 1];
+						
+						let newf: HTMLElement;
+						if (ev.shiftKey && document.activeElement === first) {
+							ev.preventDefault();
+							newf = last as HTMLElement;
+							console.log( 'first' );
+						}
+						else if (!ev.shiftKey && document.activeElement === last) {
+							ev.preventDefault();
+							newf = first as HTMLElement;
+							console.log( 'last' );
+						}
+
+						if( newf ) {
+							newf.focus(); 
+						}
+					}
+				}
+			}
+
+		} );
+	}
 
 
 	/**

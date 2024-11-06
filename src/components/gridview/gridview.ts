@@ -957,7 +957,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		});
 
 		const rec = this._dataview.getByIndex( rowid );
-		this.fire("selectionChange", { selection: rec } );
+		this.fire("selectionChange", { selection: rec, empty: false } );
 	}
 
 	/**
