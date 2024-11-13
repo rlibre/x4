@@ -15,6 +15,8 @@
  **/
 
 import { class_ns } from '@core/core_tools.js';
+import { parseRoute, Router } from '@core/core_router.js';
+
 import { BoxProps, Button, HBox, Icon } from '../components';
 import { Component, ComponentEvents, EvClick } from '@core/component.js';
 import { EventCallback } from '@core/core_events.js';
@@ -36,9 +38,10 @@ interface BreadcrumbEvents extends ComponentEvents {
  */
 
 interface BreadcrumbElement {
+	name?: string;
 	icon?: string;
-    name:  string;
     label: string;
+	click?: ( name: string ) => void;
 }
 
 /**
@@ -61,22 +64,27 @@ export class Breadcrumbs extends HBox<BreadcrumbsProps,BreadcrumbEvents> {
 		super( props );
 
 		this.mapPropEvents( props, "click" );
-		
-		const items: Component[] = [
-		];
-		
-		props.items?.map( (x: BreadcrumbElement, idx ) => {
-			items.push( new Button( {
-				label: x.label,
-				icon: x.icon,
-				click: ( ) => {
-					this.fire( "click", { context: x.name } );
-				}
-			}) );
 
-			if( idx!=props.items.length-1 ) {
-				items.push( new Icon( { iconId: icon_sep } ) );
-			}
+		if( props.items ) {
+			this.setItems( props.items );
+		}
+	}
+
+	setItems( elements: BreadcrumbElement[ ] ) {
+
+		const items = elements.map( itm => {
+			return new Button( {
+				label: itm.label,
+				icon: itm.icon,
+				click: ( ) => {
+					if( itm.click ) {
+						itm.click( itm.name );
+					}
+					else {
+						this.fire( "click", { context: itm.name } );
+					}
+				}
+			})
 		});
 
 		this.setContent( items );

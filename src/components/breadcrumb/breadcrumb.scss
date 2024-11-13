@@ -1,28 +1,44 @@
 
 :root {
-	--link-color: var( --accent-background );
+	--breadcrumbs-background: var( --background-primary );
+	--breadcrumbs-icon-color: var( --accent-background );
+	--breadcrumbs-link-color: var( --accent-background );
 }
 
 .x4breadcrumbs {
+	background-color: var( --breadcrumbs-background );
 	border-bottom: 1px solid var( --border );
 	padding: 8px 0;
-	font-size: 120%;
 	margin-bottom: 2em;
 		
 	&> .x4button {
 		border: none;
 		background-color: transparent;
-		color: var( --link-color );
-		border-radius: 16px;
+		color: var( --breadcrumbs-link-color );
 		padding: 6px 8px;
 		min-width: 60px;
+
+		#icon {
+			fill: var( --breadcrumbs-icon-color );
+		}
 	
-		&:hover {
-			border-bottom-color: var( --link-color );
+		&:hover:not(:last-child) {
+			background-color: transparent;
+			color: var( --accent-background );
+			fill:  var( --accent-background );
+			border-bottom-color: var( --breadcrumbs-link-color );
+			#text {
+				text-decoration: underline;
+			}
 		}
 
 		&:last-child {
 			font-weight: bold;
+			cursor: auto;
+			&:hover {
+				background-color: transparent;
+				color: var( --breadcrumbs-link-color );
+			}
 		}
 	}
 }

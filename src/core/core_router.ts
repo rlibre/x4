@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { EvError } from './component.js';
+import { EvChange, EvError } from './component.js';
 import { EventMap, EventSource } from './core_events.js';
 
 type RouteHandler = ( params: any, path: string ) => void;
@@ -30,7 +30,7 @@ interface Route {
 	handler: RouteHandler;
 }
 
-function parseRoute(str: string | RegExp, loose = false): Segment {
+export function parseRoute(str: string | RegExp, loose = false): Segment {
 
 	if (str instanceof RegExp) {
 		return {
@@ -77,6 +77,7 @@ function parseRoute(str: string | RegExp, loose = false): Segment {
 }
 
 interface RouterEvents extends EventMap {
+	change: EvChange;
 	error: EvError;
 }
 
@@ -116,7 +117,7 @@ export class Router extends EventSource< RouterEvents > {
 
 		this.m_routes = [];
 		this.m_useHash = useHash;
-
+		
 		window.addEventListener('popstate', (event) => {
 			const url = this._getLocation( );
 			const found = this._find(url);
@@ -124,6 +125,8 @@ export class Router extends EventSource< RouterEvents > {
 			found.handlers.forEach(h => {
 				h(found.params,url);
 			});
+
+			this.fire( "change", { value: this._getLocation() } );
 		});
 	}
 
@@ -140,6 +143,10 @@ export class Router extends EventSource< RouterEvents > {
 		return this.m_useHash ? '/'+document.location.hash.substring(1) : document.location.pathname;
 	}
 
+	/**
+	 * 
+	 */
+
 	navigate( uri: string, notify = true, replace = false ) {
 
 		if( !uri.startsWith('/') ) {
@@ -152,7 +159,7 @@ export class Router extends EventSource< RouterEvents > {
 			//window.history.pushState({}, '', 'error')
 			console.log( 'route not found: '+uri );
 			this.fire( "error", {code: 404, message: "route not found" } );
-			return;
+			return false;
 		}
 
 		if( this.m_useHash ) {
@@ -171,11 +178,20 @@ export class Router extends EventSource< RouterEvents > {
 		}
 
 		if( notify ) {
-			found.handlers.forEach( h => {
-				h( found.params, uri );
-			} );
+			//found.handlers.forEach( h => {
+			//	h( found.params, uri );
+			//} );
+			
+			found.handlers[0]( found.params, uri );
 		}
+
+		this.fire( "change", { value: this._getLocation() } );
+		return true;
 	}
+
+	/**
+	 * 
+	 */
 
 	private _find( url: string ): { params: Record<string,any>, handlers: RouteHandler[] } {
 		

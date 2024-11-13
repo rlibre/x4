@@ -108,6 +108,8 @@ export class StackBox extends Box<StackedLayoutProps> {
 				sel.setClass( "selected", true );
 			}
 		}
+
+		return pg?.page;
 	}
 
 	/**

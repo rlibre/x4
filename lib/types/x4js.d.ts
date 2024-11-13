@@ -572,13 +572,16 @@ declare module 'x4js' {
 	export interface BoxProps extends ComponentProps {
 	}
 
-	@class_ns( "x4" ) export class Box<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
+	@class_ns( "x4" ) 
+	export class Box<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
 	}
 
-	@class_ns( "x4" ) export class HBox<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+	@class_ns( "x4" ) 
+	export class HBox<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 	}
 
-	@class_ns( "x4" ) export class VBox<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+	@class_ns( "x4" ) 
+	export class VBox<P extends BoxProps=BoxProps, E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 		constructor( p: P );
 	}
 
