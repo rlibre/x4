@@ -105,6 +105,7 @@ export class StackBox extends Box<StackedLayoutProps> {
 
 			sel = pg.page;
 			if( sel ) {
+				(sel as any).activate?.( );
 				sel.setClass( "selected", true );
 			}
 		}
@@ -138,4 +139,25 @@ export class StackBox extends Box<StackedLayoutProps> {
 
 @class_ns("x4")
 export class GridBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+
+
+	setRowCount( n: number ) {
+		this.setStyleValue( "gridTemplateRows", `repeat(${n})` );
+		
+	}
+
+	setColCount( n: number ) {
+		this.setStyleValue( "gridTemplateColumns", `repeat(${n})` );
+	}
+
+	/**
+	 * @param t "a a a" "b c c" "b c c"
+	 * user item.setAttribute( "grid-area", "a" );
+	 */
+
+	setTemplate( t: string[] ) {
+		this.setAttribute( "grid-template-area", t.map( x => '"' + x + '"' ).join(" ") );
+	}
+
+	
 }

@@ -686,8 +686,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	focus( ) {
+	focus( ): this {
 		(this.dom as HTMLElement).focus( );
+		return this;
 	}
 
 	/**
@@ -710,23 +711,25 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	show( vis = true ) {
+	show( vis = true ): this {
 		this.setClass( 'x4hidden', !vis );
+		return this;
 	}
 
 	/**
 	 * 
 	 */
 
-	hide( ) {
+	hide( ): this {
 		this.show( false );
+		return this;
 	}
 
 	/**
 	 * enable or disable a component (all sub HTMLElement will be also disabled)
 	 */
 
-	enable( ena = true ) {
+	enable( ena = true ): this {
 		this.setAttribute( "disabled", ena ? 'true' : null );
 
 		if( this.dom instanceof HTMLInputElement || this.dom instanceof HTMLButtonElement ) {
@@ -740,14 +743,17 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				x.disabled = !ena;
 			}
 		});
+
+		return this;
 	}
 
 	/**
 	 * 
 	 */
 
-	disable( ) {
+	disable( ): this {
 		this.enable( false );
+		return this;
 	}
 
 	/**
@@ -983,6 +989,14 @@ export interface EvClick extends ComponentEvent {
 
 export interface EvChange extends ComponentEvent {
 	readonly value: any;
+}
+
+/**
+ * Focus event
+ */
+
+export interface EvFocus extends ComponentEvent {
+	readonly focus_out: boolean;
 }
 
 /**

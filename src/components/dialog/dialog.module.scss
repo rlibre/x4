@@ -79,12 +79,20 @@
 	
 	&> .caption {
 		background-color: var( --alert-background );
+		color: var( --alert-color );
 
+		#closebox {
+			background-color: transparent;
+			color: var( --alert-color );
+		}
 	}
 
 	&> #btnbar {
-		&> .x4button {
-			background-color: var( --alert-background );
+		&> .x4button:not(.outline) {
+			&:not(:disabled) {
+				background-color: var( --alert-background );
+				color: var( --alert-color );
+			}
 		}
 	}
 }

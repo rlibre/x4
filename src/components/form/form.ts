@@ -19,8 +19,8 @@ import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
 
-type FormValue = string | number | boolean;
-type FormValues = Record<string,FormValue>;
+//type FormValue = string | number | boolean;
+type FormValues = Record<string,string>;
 
 export interface FormProps extends BoxProps {
 	flex?: boolean;

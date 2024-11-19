@@ -148,7 +148,7 @@ export interface Point {
 }
 
 /**
- * 
+ * @see queryInterface
  */
 
 export interface IComponentInterface {
@@ -158,6 +158,11 @@ export interface IComponentInterface {
 export interface IFormElement extends IComponentInterface {
 	getRawValue( ): any;
 	setRawValue( v: any ): void;
+}
+
+// tab-handler
+export interface ITabHandler extends IComponentInterface {
+	focusNext( next: boolean ): boolean;	// return true to stop event
 }
 
 /**

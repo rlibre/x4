@@ -88,7 +88,7 @@
 		padding: 0;
 		color: inherit;
 
-		&:empty {
+		&.empty {
 			display: none;
 		}
 	}
