@@ -244,7 +244,7 @@ export class Keyboard extends HBox<KeyboardProps>
 		this.setContent( [
 			new Flex( ),
 			this.keyboard = new VBox( {
-				width: '80%',
+				id: "kb",
 				cls: this.mode,
 				content: this._createContent( ),
 			}),
@@ -299,7 +299,7 @@ export class Keyboard extends HBox<KeyboardProps>
             }
         }
         else {
-            this.hide( );
+            //this.hide( );
             this.input = null;
         }
 	}

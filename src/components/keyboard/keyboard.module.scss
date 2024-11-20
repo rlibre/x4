@@ -19,12 +19,6 @@
 	--keyboard-hilite-color: #5ba921;
 }
 
-.kbicon {
-	div {
-		width: 0;
-	}
-}
-
 .x4keyboard {
 	z-index: 2000;
     position: absolute !important;
@@ -36,6 +30,11 @@
 	
 	box-sizing: border-box;
 	padding: 4px;
+
+	#kb {
+		width: 100vw;
+		max-width: 800px;
+	}
 	
 	.line {
 		flex-grow: 10;

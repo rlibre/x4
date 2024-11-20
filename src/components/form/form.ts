@@ -23,8 +23,12 @@ import "./form.module.scss"
 type FormValues = Record<string,string>;
 
 export interface FormProps extends BoxProps {
-	flex?: boolean;
+	autoComplete?: boolean;
 }
+
+/**
+ * 
+ */
 
 @class_ns( "x4" )
 export class Form<P extends FormProps = FormProps> extends Box<P> {
@@ -35,7 +39,15 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 		if( props.flex===false ) {
 			this.addClass( "no-flex" );
 		}
+
+		if( props.autoComplete!==undefined ) {
+			this.setAutoComplete( props.autoComplete );
+		}
 	}
+
+	/**
+	 * 
+	 */
 
 	setValues( values: FormValues ) {
 		const items = this.queryAll( "input[name]" );
@@ -53,6 +65,10 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	}
 
+	/**
+	 * 
+	 */
+
 	getValues( ): FormValues {
 		const result: FormValues = {}
 		const items = this.queryAll( "input[name]" );
@@ -67,6 +83,17 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 		});
 
 		return result;
+	}
+
+	/**
+	 * 
+	 */
+
+	setAutoComplete( on = true ) {
+		const items = this.queryAll( "input[name]" );
+		items.forEach( x => {		
+			x.setAttribute( "autocomplete", on ? "on" : "off" );
+		} );
 	}
 }
 
