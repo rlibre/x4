@@ -113,10 +113,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	 */
 
 	protected _on_keydown( e: KeyboardEvent ) {
-//		if( e.key=='Enter' ) {
-//			this.click( );
-//			e.preventDefault( );
-//		}
+		if( e.key=='Enter' ) {
+			this.click( );
+			e.preventDefault( );
+		}
 	}
 
 	/**

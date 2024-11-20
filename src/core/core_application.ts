@@ -35,10 +35,28 @@ export interface ApplicationEvents extends EventMap {
 // signleton
 let main_app: Application = null;
 
+
+
+class Process {
+
+	/**
+	 * can be use to see if we have some tactile input
+	 * @returns max touch point count
+	 */
+
+	getMaxTouchPoints( ) {
+		return navigator.maxTouchPoints;
+	}
+}
+
+
+
 export class Application<E extends ApplicationEvents = ApplicationEvents> extends CoreElement<E> {
 
 	private env = new Map<string,any>( );
 	private mainview: Component;
+	
+	static readonly process = new Process( );
 
 	constructor( ) {
 		super( );

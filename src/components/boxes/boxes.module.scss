@@ -28,6 +28,8 @@
 }
 
 .x4stackbox {
+	display: flex;
+	
 	&>* {
 		@extend .fit;
 		position: relative !important;

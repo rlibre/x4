@@ -299,7 +299,7 @@ export class Keyboard extends HBox<KeyboardProps>
             }
         }
         else {
-            //this.hide( );
+            this.hide( );
             this.input = null;
         }
 	}
@@ -518,5 +518,4 @@ export class Keyboard extends HBox<KeyboardProps>
 
         return result;
     }
-
 }
