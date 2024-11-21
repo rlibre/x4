@@ -17,7 +17,7 @@
 import { Component, componentFromDOM } from './component.js';
 import { CoreElement } from './core_element.js';
 import { CoreEvent, EventMap } from './core_events';
-import { ITabHandler } from './core_tools.js';
+import { getFocusableElements, ITabHandler } from './core_tools.js';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -126,7 +126,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		let act = document.activeElement;
 		let topmost: HTMLElement;
 
-		while( act ) {
+		while( act!=document.body ) {
 			const comp = componentFromDOM(act);
 			const ifx = comp.queryInterface( "tab-handler") as ITabHandler;
 
@@ -142,16 +142,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		}
 
 		if( topmost ) {
-			const els = [
-				'button:not([tabindex="-1"]):not([disabled])',
-				'[href]', 
-				'input:not([disabled])', 
-				'select:not([disabled])', 
-				'textarea:not([disabled])', 
-				'[tabindex]:not([tabindex="-1"]):not([disabled]'
-			]
-
-			const focusable = topmost.querySelectorAll(els.join(','));
+			const focusable = getFocusableElements( topmost );
 			if( !focusable.length ) {
 				return true;
 			}
@@ -160,10 +151,10 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 				const last  = focusable[focusable.length - 1];
 				
 				let newf: HTMLElement;
-				if (next && document.activeElement === first) {
+				if (!next && document.activeElement === first) {
 					newf = last as HTMLElement;
 				}
-				else if (!next && document.activeElement === last) {
+				else if (next && document.activeElement === last) {
 					newf = first as HTMLElement;
 				}
 

@@ -738,3 +738,21 @@ export function class_ns( ns: string ) {
 export function setWaitCursor( wait: boolean ) {
 	document.body.style.cursor = wait ? "wait" : "default";
 }
+
+/**
+ * return the focusable elements from a given node
+ */
+
+export function getFocusableElements( root: Element ) {
+	const els = [
+		'button:not([tabindex="-1"]):not([disabled])',
+		'[href]', 
+		'input:not([disabled])', 
+		'select:not([disabled])', 
+		'textarea:not([disabled])', 
+		'[tabindex]:not([tabindex="-1"])'
+	]
+
+	const focusable = Array.from( root.querySelectorAll(els.join(',')) );
+	return focusable.filter( x => (x as HTMLElement).offsetParent!=null );	// check visibility
+}

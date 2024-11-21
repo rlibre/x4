@@ -20,7 +20,7 @@ import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 import { CoreEvent, EventCallback } from '@core/core_events.js';
-import { class_ns, IComponentInterface, ITabHandler } from '@core/core_tools.js';
+import { class_ns, getFocusableElements, IComponentInterface, ITabHandler } from '@core/core_tools.js';
 import { ComponentEvent } from '../../core/component.js';
 import { Button } from '../button/button.js';
 
@@ -113,16 +113,8 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 
 	private focusNext( next: boolean) : boolean {
 
-		const els = [
-			'button:not([tabindex="-1"]):not([disabled])',
-			'[href]', 
-			'input:not([disabled])', 
-			'select:not([disabled])', 
-			'textarea:not([disabled])', 
-			'[tabindex]:not([tabindex="-1"]):not([disabled]'
-		]
-
-		const focusable = Array.from(this.dom.querySelectorAll(els.join(",")));
+		const focusable = getFocusableElements( this.dom );
+		
 		if (!focusable.length) {
 			return false;
 		}

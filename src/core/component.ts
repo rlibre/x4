@@ -312,10 +312,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	setAttributes( attrs: ComponentAttributes ) {
-		
 		for( const name in attrs ) {
-			const value = attrs[name];
-			this.setAttribute( name, value );
+			this.setAttribute( name, attrs[name] );
 		}
 	}
 
