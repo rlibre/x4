@@ -133,9 +133,7 @@ export class StackBox extends Box<StackedLayoutProps> {
 	}
 }
 
-/**
- * 
- */
+// :: GRIDBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 @class_ns("x4")
 export class GridBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
@@ -158,6 +156,62 @@ export class GridBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Compo
 	setTemplate( t: string[] ) {
 		this.setAttribute( "grid-template-area", t.map( x => '"' + x + '"' ).join(" ") );
 	}
-
-	
 }
+
+
+// :: MASONRY ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+// from a nice article of Andy Barefoot
+//	https://medium.com/@andybarefoot/a-masonry-style-layout-using-css-grid-8c663d355ebb
+
+interface MasonryProps extends Omit<BoxProps,"content"> {
+	items: Component[];
+}
+
+export class MasonryBox extends Box<MasonryProps> {
+
+	constructor(props: MasonryProps ) {
+		super(props);
+
+		this.addDOMEvent( 'resized', () => {
+			this.resizeAllItems( );
+		});
+
+		if( props.items ) {
+			const els = props.items.map( x => {
+				return new Box( {
+					cls: 'item',
+					content: x
+				} );
+			});
+			
+			this.setContent( els );
+		}
+	}
+
+	resizeItem(item: Component) {
+		const style = this.getComputedStyle();
+
+		const rowHeight = parseInt(style['gridAutoRows']);
+		const rowGap = parseInt(style['rowGap']);
+
+		let content = item.query('.content');
+		if( !content ) {
+			content = item;
+		}
+
+		if (content && (rowHeight + rowGap)) {
+			const rc = content.getBoundingRect();
+			const rowSpan = Math.ceil( (rc.height + rowGap) / (rowHeight + rowGap) );
+			item.setStyleValue('gridRowEnd', "span " + rowSpan);
+		}
+	}
+	  
+	resizeAllItems( ) {
+		const els = this.queryAll( ".item" );
+		els.forEach( itm => {;
+			this.resizeItem( itm );
+		} );
+	}
+}
+

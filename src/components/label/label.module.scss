@@ -53,6 +53,13 @@
 			display: none;
 		}
 	}
-	
+
+	&.rotate {
+		#icon {
+			animation: rotating 2s linear infinite;
+		}
+	}
 }
+
+
 

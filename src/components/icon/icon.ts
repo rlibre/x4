@@ -125,6 +125,8 @@ export class Icon extends Component<IconProps> {
 			else {
 				this.setContent( new Component( { tag: "img", attrs: { src: iconId } } ) );
 			}
+
+			this.removeClass( "empty" );
 		}
 		else {
 			this.addClass( "empty" );
