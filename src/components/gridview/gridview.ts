@@ -34,6 +34,14 @@ import "./gridview.module.scss"
 export type CellRenderer = (rec: DataRecord) => Component;
 type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
 
+export enum kbNav {
+	first,
+	prev,
+	pgdn,
+	pgup,
+	next,
+	last,
+}
 
 const SCROLL_LIMIT = 200;
 
@@ -160,10 +168,84 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			this._update( true );
 		});
 
+		this.addDOMEvent( "keydown", (e) => {
+			this._on_key( e );
+		})
+
 		if (props.store) {
 			this.setStore(props.store);
 		}
 
+	}
+
+	/**
+	 * 
+	 */
+
+	private _on_key( ev: KeyboardEvent ) {
+		if( this.isDisabled() ) {
+			return;
+		}
+
+		debugger;
+
+		switch( ev.key ) {
+			case "ArrowDown": {
+				this.navigate( kbNav.next );
+				break;
+			}
+
+			case "ArrowUp": {
+				this.navigate( kbNav.prev );
+				break;
+			}
+
+			case "Home": {
+				this.navigate( kbNav.first );
+				break;
+			}
+
+			case "End": {
+				this.navigate( kbNav.last );
+				break;
+			}
+
+			default:
+				return;
+		}
+
+		ev.preventDefault( );
+		ev.stopPropagation( );
+	}
+
+	/**
+	 * 
+	 */
+
+	navigate( sens: kbNav ) {
+
+		const fsel = this._selection.values().next().value;
+		if( !fsel ) {
+			if( sens==kbNav.next || sens==kbNav.pgdn )  sens = kbNav.first;
+			else sens = kbNav.last;
+		}
+
+		if( sens==kbNav.first || sens==kbNav.last ) {
+			let nel = sens==kbNav.first ? 0 : this._dataview.getCount()-1;
+			this._clearSelection();
+			this._addSelection( this._dataview.getIdByIndex(nel) );
+			return true;
+		}
+		else if( sens==kbNav.prev || sens==kbNav.next ) {
+			let nel = sens==kbNav.next ? fsel+1 : fsel-1;
+			if( nel>=0 && nel<this._dataview.getCount()-1 ) {
+				this._clearSelection();
+				this._addSelection( this._dataview.getIdByIndex(nel) );
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -345,13 +427,6 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		header.setClass("fixed", fixed);
 
 		return header;
-	}
-
-	/**
-	 * 
-	 */
-
-	navigate() {
 	}
 
 	/**
@@ -973,8 +1048,21 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			return null;
 		}
 
-		const ids = Array.from( this._selection.values() );
+		const ids = [...this._selection.values() ];
 		return ids.map( id => this._dataview.getByIndex(id) );
+	}
+
+	/**
+	 * 
+	 */
+
+	getFirstSel( ) {
+		if( this._selection.size==0 ) {
+			return null;
+		}
+
+		const id = this._selection.values().next().value;
+		return this._dataview.getByIndex( id );
 	}
 }
 
