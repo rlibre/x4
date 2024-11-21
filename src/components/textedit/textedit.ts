@@ -15,7 +15,7 @@
  **/
 
 import { EventCallback } from '@core/core_events.js';
-import { Component, ComponentProps, EvClick, EvFocus, makeUniqueComponentId } from '../../core/component';
+import { Component, ComponentProps, EvChange, EvClick, EvFocus, makeUniqueComponentId } from '../../core/component';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
@@ -47,6 +47,7 @@ interface TextEditProps extends ComponentProps {
 	inputAttrs?: any;
 
 	focus?: EventCallback<EvFocus>;
+	change?: EventCallback<EvChange>;
 }
 
 /**
@@ -88,6 +89,7 @@ export class TextEdit extends HBox {
 					autofocus: props.autofocus,
 					attrs: props.inputAttrs,
 					focus: props.focus,
+					change: props.change,
 				} ),
 				...gadgets,
 			]})

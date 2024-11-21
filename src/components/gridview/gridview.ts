@@ -199,6 +199,10 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		}
 	}
 
+	getView( ): DataView {
+		return this._dataview;
+	}
+
 	/**
 	 * 
 	 */

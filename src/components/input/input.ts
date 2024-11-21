@@ -15,7 +15,7 @@
  **/
 
 import { EventCallback } from '@core/core_events.js';
-import { Component, ComponentEvent, ComponentProps, EvFocus } from '../../core/component';
+import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
 import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools.js';
 
 import "./input.module.scss"
@@ -25,6 +25,7 @@ export interface BaseProps extends ComponentProps {
 	autofocus?: boolean;
 
 	focus?: EventCallback<EvFocus>;
+	change?: EventCallback<EvChange>;
 }
 
 interface CheckboxProps extends BaseProps {
@@ -85,6 +86,7 @@ export type InputProps = CheckboxProps | RadioProps | TextInputProps | RangeProp
 
 interface InputEvents extends ComponentEvent {
 	focus: EvFocus;
+	change: EvChange;
 }
 
 
@@ -97,7 +99,7 @@ export class Input extends Component<InputProps,InputEvents> {
 	constructor( props: InputProps ) {
 		super( { tag: "input", ...props } );
 
-		this.mapPropEvents( props, "focus" );
+		this.mapPropEvents( props, "focus", "change" );
 
 		this.setAttribute( "type", props.type ?? "text" );
 		this.setAttribute( "name", props.name );
@@ -191,6 +193,7 @@ export class Input extends Component<InputProps,InputEvents> {
 
 		this.addDOMEvent( "blur", ( e ) => { this.on_focus(e,true);} );
 		this.addDOMEvent( "focus", ( e ) => { this.on_focus(e,false);} );
+		this.addDOMEvent( "input", ( e ) => { this.on_change(e); });
 	}
 
 	/**
@@ -200,6 +203,20 @@ export class Input extends Component<InputProps,InputEvents> {
 	private on_focus( ev: FocusEvent, focus_out: boolean ) {
 		const event: EvFocus = { focus_out }
 		this.fire( "focus", event );
+
+		if( event.defaultPrevented ) {
+			ev.preventDefault( );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	private on_change( ev: InputEvent ) {
+
+		const event: EvChange = { value: this.getValue() };
+		this.fire( "change", event );
 
 		if( event.defaultPrevented ) {
 			ev.preventDefault( );
