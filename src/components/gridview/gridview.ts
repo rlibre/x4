@@ -187,8 +187,6 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 			return;
 		}
 
-		debugger;
-
 		switch( ev.key ) {
 			case "ArrowDown": {
 				this.navigate( kbNav.next );
@@ -210,6 +208,16 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				break;
 			}
 
+			case "PageDown": {
+				this.navigate( kbNav.pgdn );
+				break;
+			}
+
+			case "PageUp": {
+				this.navigate( kbNav.pgup );
+				break;
+			}
+
 			default:
 				return;
 		}
@@ -223,29 +231,86 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	 */
 
 	navigate( sens: kbNav ) {
-
-		const fsel = this._selection.values().next().value;
-		if( !fsel ) {
-			if( sens==kbNav.next || sens==kbNav.pgdn )  sens = kbNav.first;
-			else sens = kbNav.last;
+		if( !this._selection.size ) {
+			if( sens==kbNav.next || sens==kbNav.pgdn )  {
+				sens = kbNav.first;
+			}
+			else {
+				sens = kbNav.last;
+			}
 		}
 
 		if( sens==kbNav.first || sens==kbNav.last ) {
 			let nel = sens==kbNav.first ? 0 : this._dataview.getCount()-1;
 			this._clearSelection();
-			this._addSelection( this._dataview.getIdByIndex(nel) );
+			this._addSelection( nel );
+			this._scrollToIndex( nel );
 			return true;
 		}
 		else if( sens==kbNav.prev || sens==kbNav.next ) {
+			const fsel = this._selection.values().next().value;
 			let nel = sens==kbNav.next ? fsel+1 : fsel-1;
-			if( nel>=0 && nel<this._dataview.getCount()-1 ) {
+			if( nel>=0 && nel<this._dataview.getCount() ) {
 				this._clearSelection();
-				this._addSelection( this._dataview.getIdByIndex(nel) );
+				this._addSelection( nel );
+				this._scrollToIndex( nel );
+				return true;
+			}
+		}
+		else if( sens==kbNav.pgdn || sens==kbNav.pgup ) {
+			const pgh = this._vis_rows.size;
+
+			const fsel = this._selection.values().next().value;
+			
+			let sby = sens==kbNav.pgdn ? pgh : -pgh;
+			let nel = fsel+sby;
+
+			if( nel<0 ) {
+				nel = 0;
+			}
+			else if( nel>=this._dataview.getCount() ) {
+				nel = this._dataview.getCount()-1;
+			}
+
+			if( nel!=fsel ) {
+				this._clearSelection();
+				this._addSelection( nel );
+
+				if (this._dataview.getCount() < SCROLL_LIMIT) {
+					sby *= this._row_height;
+				}
+
+				this._viewport.dom.scrollBy( 0, sby );
+				
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * 
+	 */
+
+	private _scrollToIndex( index: number, block = 'nearest' ) {
+
+		// is it already visible ?
+		let rows = this.queryAll(`.row[data-row="${index}"]`);
+		if (rows.length) {
+			rows.forEach( row => {
+				row.scrollIntoView({ block: block as any } );
+			} );
+		}
+		// nope, refill
+		else {
+			let top = index;
+			if (this._dataview.getCount() < SCROLL_LIMIT) {
+				top *= this._row_height;
+			}
+
+			this._viewport.dom.scrollTo( 0, top );
+		}
 	}
 
 	/**
@@ -718,9 +783,6 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		let maxw = 0;
 		let maxfw = 0;
 		
-		let flexw = 0;
-		let flexc = 0;
-
 		const ccount = this._getColCount();
 
 		for (let x = 0; x < ccount; x++) {
@@ -956,6 +1018,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 				let newvis: typeof this._vis_rows = new Map();
 
 				let y = start * mul;
+				
 				for (let row = start; row < end && row < rowc; row++, y += this._row_height) {
 
 					let el = this._vis_rows.get(row);
