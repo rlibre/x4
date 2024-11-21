@@ -168,6 +168,7 @@ interface MasonryProps extends Omit<BoxProps,"content"> {
 	items: Component[];
 }
 
+@class_ns("x4")
 export class MasonryBox extends Box<MasonryProps> {
 
 	constructor(props: MasonryProps ) {
@@ -178,14 +179,7 @@ export class MasonryBox extends Box<MasonryProps> {
 		});
 
 		if( props.items ) {
-			const els = props.items.map( x => {
-				return new Box( {
-					cls: 'item',
-					content: x
-				} );
-			});
-			
-			this.setContent( els );
+			this.setItems( props.items );
 		}
 	}
 
@@ -212,6 +206,17 @@ export class MasonryBox extends Box<MasonryProps> {
 		els.forEach( itm => {;
 			this.resizeItem( itm );
 		} );
+	}
+
+	setItems( items: Component[] ) {
+		const els = items.map( x => {
+			return new Box( {
+				cls: 'item',
+				content: x
+			} );
+		});
+		
+		this.setContent( els );
 	}
 }
 

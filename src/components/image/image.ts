@@ -151,6 +151,14 @@ export class Image<P extends ImageProps = ImageProps, E extends ImageEvents = Im
 	/**
 	 * 
 	 */
+	
+	setBase64( mime: string, base64: string ) {
+		this.setImage( "data:"+mime+";base64,"+base64 );
+	}
+
+	/**
+	 * 
+	 */
 
 	clear( ) {
 		this._img.setAttribute( "src", 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' );

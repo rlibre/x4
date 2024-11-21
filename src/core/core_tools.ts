@@ -367,7 +367,7 @@ export function date_format(date: Date, options?: any): string {
 
 export function date_diff(date1: Date, date2: Date, options?: any): string {
 
-	var dt = (date1.getTime() - date2.getTime()) / 1000;
+	let dt = (date1.getTime() - date2.getTime()) / 1000;
 
 	// seconds
 	let sec = dt;
