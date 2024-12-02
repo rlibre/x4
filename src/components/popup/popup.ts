@@ -21,6 +21,7 @@ import { Rect, Point, class_ns, asap } from '../../core/core_tools.js';
 import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
+import { Application } from '@core/core_application.js';
 
 
 export interface PopupEvents extends ComponentEvents {
@@ -40,6 +41,10 @@ let popup_list:  Popup[] = [];
 let modal_stack: Popup[] = [];
 let modal_mask: Component;
 
+
+function getRoot( ) {
+	return document.body;
+}
 
 /**
  * 
@@ -243,11 +248,13 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	protected __append( ) {
-		document.body.appendChild( this.dom );
+		const root = getRoot( );
+		root.appendChild( this.dom );
 	}
 
 	protected __remove( ) {
-		document.body.removeChild( this.dom );
+		const root = getRoot( );
+		root.removeChild( this.dom );
 	}
 
 	/**
@@ -348,17 +355,20 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			//document.body.appendChild( modal_mask.dom );
 		}
 
-		document.body.insertBefore( modal_mask.dom, this.dom );
+		const root = getRoot( );
+		root.insertBefore( modal_mask.dom, this.dom );
 	}
 
 	private _hideModalMask( ) {
 		if( modal_mask ) {
+			const root = getRoot( );
 			if( modal_stack.length ) {
 				const top = modal_stack[ modal_stack.length-1 ];
-				document.body.insertBefore( modal_mask.dom, top.dom );
+				root.insertBefore( modal_mask.dom, top.dom );
 			}
-
-			document.body.removeChild( modal_mask.dom );
+			else {
+				root.removeChild( modal_mask.dom );
+			}
 		}
 	}
 }

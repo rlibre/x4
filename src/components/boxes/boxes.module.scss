@@ -28,6 +28,8 @@
 }
 
 .x4stackbox {
+	display: flex;
+	
 	&>* {
 		@extend .fit;
 		position: relative !important;
@@ -40,4 +42,13 @@
 
 .x4gridbox {
 	display: grid;
+}
+
+.x4masonrybox {
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+	grid-auto-rows: 10px;
+
+	overflow: hidden;
 }

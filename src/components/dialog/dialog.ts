@@ -20,7 +20,7 @@ import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 import { CoreEvent, EventCallback } from '@core/core_events.js';
-import { class_ns } from '@core/core_tools.js';
+import { class_ns, getFocusableElements, IComponentInterface, ITabHandler } from '@core/core_tools.js';
 import { ComponentEvent } from '../../core/component.js';
 import { Button } from '../button/button.js';
 
@@ -53,81 +53,116 @@ interface DialogEvents extends PopupEvents {
  * 
  */
 
-@class_ns( "x4" )
-export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents>  extends Popup<P,E> {
+@class_ns("x4")
+export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents> extends Popup<P, E> {
 
 	private form: Form;
 
-	constructor( props: P ) {
-		super( { ...props, tag: "dialog" } );
-		this._ismodal = props.modal;
+	constructor(props: P) {
+		super({ tag: "dialog", modal: true, ...props });
 
-		this.mapPropEvents( props, "btnclick" );
+		this._ismodal = this.props.modal;
 
-		this.appendContent( [
-			new HBox( {
+		this.mapPropEvents(props, "btnclick");
+
+		this.appendContent([
+			new HBox({
 				cls: "caption",
 				content: [
-					new Label( { 
-						id: "title", 
+					new Label({
+						id: "title",
 						cls: "caption-element",
-						icon: props.icon, 
-						text: props.title 
-					} ),
-					props.closable ? new Button( { 
-						id: "closebox", 
-						icon: close_icon, 
-						click:  ( ) => { this.close() }
-					} ) : null,
+						icon: props.icon,
+						text: props.title
+					}),
+					props.closable ? new Button({
+						id: "closebox",
+						icon: close_icon,
+						tabindex: -1,
+						click: () => { this.close() }
+					}) : null,
 				]
 			}),
-			this.form = props.form ? props.form : new Form( { } ),
-			new BtnGroup( {
+			this.form = props.form ? props.form : new Form({}),
+			new BtnGroup({
 				id: "btnbar",
 				reverse: true,
 				items: props.buttons,
-				btnclick: ( ev ) => { this.fire( "btnclick", ev ) }
-			}) 
+				btnclick: (ev) => { this.fire("btnclick", ev) }
+			})
 		]);
 
-		this.addDOMEvent( "keydown",  (ev) => {
-			console.log( ev.key );
-			if( ev.key=='Escape' ) {
-				// todo cancel
-				ev.preventDefault( );
-				ev.stopPropagation( );
-			}
-			else if( ev.key=='Enter' ) {
-				// todo default button
-				ev.preventDefault( );
-				ev.stopPropagation( );	
+		this.addDOMEvent("keydown", (ev) => {
 
-				const def = this.query<Button>( 'button.default');
-				if( def ) {
-					def.click( );
+			if (ev.key == 'Escape') {
+				// todo cancel
+				ev.preventDefault();
+				ev.stopPropagation();
+			}
+			else if (ev.key == 'Enter') {
+				const def = this.query<Button>('button.default');
+				if (def) {
+					ev.preventDefault();
+					ev.stopPropagation();
+
+					def.click();
 				}
 			}
-			else if (ev.key === 'Tab') {
-				
-			}
 		})
+	}
 
+	private focusNext( next: boolean) : boolean {
+
+		const focusable = getFocusableElements( this.dom );
+		
+		if (!focusable.length) {
+			return false;
+		}
+		else {
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+			const active = document.activeElement;
+
+			let newf: HTMLElement;
+			if (!next && active === first) {
+				newf = last as HTMLElement;
+			}
+			else if (next && active === last) {
+				newf = first as HTMLElement;
+			}
+			else {
+				const idx = focusable.indexOf(active);
+				if (!next) {
+					newf = focusable[idx - 1] as HTMLElement;
+				}
+				else {
+					newf = focusable[idx + 1] as HTMLElement
+				}
+			}
+
+			if (newf) {
+				newf.focus();
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	/**
 	 * 
 	 */
 
-	override setContent( form: Form ) {
-		this.dom.replaceChild( this.form.dom, form.dom );
+	override setContent(form: Form) {
+		this.dom.replaceChild(this.form.dom, form.dom);
 		this.form = form;
 	}
 
 	/**
 	 * 
 	 */
-	
-	getForm( ) {
+
+	getForm() {
 		return this.form;
 	}
 
@@ -135,8 +170,34 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	 * 
 	 */
 
-	getValues( ) {
-		return this.form.getValues( );
+	getValues() {
+		return this.form.getValues();
+	}
+
+	/**
+	 * 
+	 */
+
+	getButton(name: string) {
+		const btns = this.query<BtnGroup>("#btnbar");
+		return btns.getButton(name);
+	}
+
+	/**
+	 * 
+	 */
+
+	override queryInterface<T extends IComponentInterface>( name: string ): T {
+		if( name=="tab-handler" ) {
+			const i: ITabHandler = {
+				focusNext: ( n: boolean ) => { return this.focusNext( n ); }
+			};
+
+			//@ts-ignore
+			return i as T;
+		}
+		
+		return super.queryInterface( name );
 	}
 }
 

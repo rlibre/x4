@@ -46,4 +46,25 @@
 			fill: var( --filedrop-icon-color-hover );
 		}
 	}
+
+	&:focus{
+		border-color: var( --ol-button-border-focus );
+		color: var( --ol-button-color-focus );
+		#icon {
+			color: var( --ol-button-color-focus );
+		}
+	}
+
+	&:hover{
+		background-color: var( --ol-button-background-hover );
+		color: var( --ol-button-color-hover );
+	}	
+
+	&:active{
+		background-color: var( --ol-button-background-active );
+		color: var( --ol-button-color-active );
+		#icon {
+			color: var( --button-icon-color );
+		}
+	}	
  }

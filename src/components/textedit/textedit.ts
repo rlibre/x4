@@ -14,7 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps, makeUniqueComponentId } from '../../core/component';
+import { EventCallback } from '@core/core_events.js';
+import { Component, ComponentProps, EvChange, EvClick, EvFocus, makeUniqueComponentId } from '../../core/component';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
@@ -34,14 +35,19 @@ interface TextEditProps extends ComponentProps {
 	labelWidth?: number;
 	inputId?: string;
 
-	type?: "text" | "email" | "password";
+	type?: "text" | "email" | "password" | "date" | "number";
 	name?: string;
 	readonly?: boolean;
 	required?: boolean;
 	value: string | number;
 	placeholder?: string;
+	autofocus?: boolean;
 
 	inputGadgets?: Component[];
+	inputAttrs?: any;
+
+	focus?: EventCallback<EvFocus>;
+	change?: EventCallback<EvChange>;
 }
 
 /**
@@ -50,6 +56,9 @@ interface TextEditProps extends ComponentProps {
 
 @class_ns( "x4" )
 export class TextEdit extends HBox {
+
+	private input: Input;
+
 	constructor( props: TextEditProps ) {
 		super( props );
 
@@ -68,7 +77,7 @@ export class TextEdit extends HBox {
 				new Label( { tag: "label", text: props.label, labelFor: props.inputId } ),
 			]}),
 			new HBox( { id: "edit", content: [
-				new Input( { 
+				this.input = new Input( { 
 					type: props.type ?? "text", 
 					readonly: props.readonly, 
 					value: props.value, 
@@ -76,10 +85,26 @@ export class TextEdit extends HBox {
 					id: props.inputId, 
 					required: props.required, 
 					disabled: props.disabled, 
-					placeholder: props.placeholder 
+					placeholder: props.placeholder,
+					autofocus: props.autofocus,
+					attrs: props.inputAttrs,
+					focus: props.focus,
+					change: props.change,
 				} ),
 				...gadgets,
 			]})
 		])
+	}
+
+	getValue( ) {
+		return this.input.getValue( );
+	}
+
+	setValue( value: string ) {
+		this.input.setValue( value );
+	}
+
+	getInput( ) {
+		return this.input;
 	}
 }

@@ -25,6 +25,7 @@ import { Label } from '../label/label.js';
 import { EvBtnClick } from '../dialog/dialog.js';
 
 import "./btngroup.module.scss"
+import { Input } from '../components.js';
 
 /**
  * accept "ok" or "ok.<classname>"
@@ -36,9 +37,9 @@ type predefined = 		`ok${ "" | `.${string}`}`
 					|	`no${ "" | `.${string}`}`
 					| 	`retry${ "" | `.${string}`}`
 					| 	`abort${ "" | `.${string}`}`
-					| 	"-";	// - = flex
+					| 	"-" | ">>";	// - = flex
 
-export type BtnGroupItem = predefined | Button | Label;
+export type BtnGroupItem = predefined | Button | Label | Input;
 
 interface BtnGroupEvents extends ComponentEvents {
 	btnclick: EvBtnClick;
@@ -86,9 +87,18 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 
 		const childs: Component[] = [];
 
+		const hasOption = ( options: string[], value: string ) => {
+			const idx = options.indexOf( value );
+			if( idx>=0 ) {
+				options.splice( idx, 1 );
+				return true;
+			}
+		}
+
+
 		btns?.forEach( (b: string | Component) => {
 
-			if( b==="-" ) {
+			if( b==="-" || b===">>" ) {
 				b = new Flex( );
 			}
 			else if( isString(b) ) {
@@ -96,8 +106,9 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 
 				const nm = (b as predefined);
 
-				let [txt,cls,...def] = nm.split( "." );
-								
+				let [txt,...def] = nm.split( "." );
+
+				let cls = "";
 				switch( txt as predefined ) {
 					case "ok": 		title = _tr.global.ok; break;
 					case "cancel": 	title = _tr.global.cancel; break;
@@ -107,22 +118,32 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 					case "retry":	title = _tr.global.retry; break;
 				}
 
-				b = new Button( { cls, label: title, click: ( ) => {
+				b = new Button( { cls, id: txt, label: title, click: ( ) => {
 					this.fire( "btnclick", {button:txt as string} )
 				} } );
 
-				if( def.includes('default') ) {
+				if( hasOption( def, "default" ) ) {
 					b.addClass( 'default' );
 				}
 
-				if( def.includes('autofocus') ) {
+				if( hasOption( def, "autofocus" ) ) {
 					b.setAttribute( 'autofocus', true );
 				}
+				
+				if( hasOption( def, "disabled" ) ) {
+					b.enable( false );
+				}
+
+				b.addClass( def.join(" ") );
 			}
 
 			childs.push( b );
 		});
 
 		super.setContent( childs );
+	}
+
+	getButton( id: string ) {
+		return this.query<Button>( '#'+id );
 	}
 }

@@ -88,7 +88,7 @@
 		padding: 0;
 		color: inherit;
 
-		&:empty {
+		&.empty {
 			display: none;
 		}
 	}
@@ -153,7 +153,7 @@
 	}	
 }
 
-.x4button.danger {
+.x4button.danger:not([disabled]) {
 	background-color: var( --alert-background );
 	color: var( --alert-color );
 

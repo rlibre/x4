@@ -34,6 +34,8 @@ input.x4input {
 	
 	&[type="text"], 
 	&[type="password"],
+	&[type="date"],
+	&[type="number"],
 	&[type="email"] {
 		padding: 4px 4px;
 	}

@@ -48,6 +48,9 @@ export interface ButtonProps extends ComponentProps {
 
 @class_ns( "x4" )
 export class Button extends Component<ButtonProps,ButtonEvents> {
+
+	#text: Component;
+
 	/**
      * Creates an instance of Button.
      * 
@@ -65,8 +68,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 
 		this.setContent( [
 			new Icon( { id: "icon", iconId: this.props.icon } ),
-			new Component( { id: "label", content: this.props.label } ),
+			this.#text = new Component( { id: "label" } ),
 		] );
+
+		this.setText( props.label );
 
 		if( props.tabindex!==false ) {
 			this.setAttribute( 'tabindex', props.tabindex );
@@ -124,9 +129,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
      */
 
 	public setText( text: string | UnsafeHtml ) {
-		this.query( "#label" ).setContent( text );
+		this.#text.setContent( text );
+		this.#text.setClass( "empty", !text );
 	}
-
+	
 	/**
      * Sets the icon of the button.
      * 

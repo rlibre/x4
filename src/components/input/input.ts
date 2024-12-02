@@ -14,13 +14,18 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps } from '../../core/component';
+import { EventCallback } from '@core/core_events.js';
+import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
 import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools.js';
 
 import "./input.module.scss"
 
 export interface BaseProps extends ComponentProps {
 	name?: string;
+	autofocus?: boolean;
+
+	focus?: EventCallback<EvFocus>;
+	change?: EventCallback<EvChange>;
 }
 
 interface CheckboxProps extends BaseProps {
@@ -66,7 +71,7 @@ interface FileProps extends BaseProps {
 }
 
 export interface TextInputProps extends BaseProps {
-	type: "text" | "email" | "password";
+	type: "text" | "email" | "password" | "date" | "number";
 	readonly?: boolean;
 	required?: boolean;
 	pattern?: string;
@@ -79,18 +84,29 @@ export interface TextInputProps extends BaseProps {
 export type InputProps = CheckboxProps | RadioProps | TextInputProps | RangeProps | DateProps | NumberProps | FileProps;
 
 
+interface InputEvents extends ComponentEvent {
+	focus: EvFocus;
+	change: EvChange;
+}
+
 
 /**
  * 
  */
 
 @class_ns( "x4" )
-export class Input extends Component<InputProps> {
+export class Input extends Component<InputProps,InputEvents> {
 	constructor( props: InputProps ) {
 		super( { tag: "input", ...props } );
 
+		this.mapPropEvents( props, "focus", "change" );
+
 		this.setAttribute( "type", props.type ?? "text" );
 		this.setAttribute( "name", props.name );
+
+		if( props.autofocus===true ) {
+			this.setAttribute( "autofocus", true );
+		}
 					
 		switch( props.type ) {
 			case "checkbox":
@@ -112,12 +128,13 @@ export class Input extends Component<InputProps> {
 			}
 
 			case "number": {
-				this.setAttribute( "required", props.required );
-				this.setAttribute( "readonly", props.readonly );
-				this.setAttribute( "min", props.min );
-				this.setAttribute( "max", props.max );
-				this.setAttribute( "step", props.step );
-				this.setAttribute( "value", props.value+'' );
+				const p = this.props as NumberProps;
+				this.setAttribute( "required", p.required );
+				this.setAttribute( "readonly", p.readonly );
+				this.setAttribute( "min", p.min );
+				this.setAttribute( "max", p.max );
+				this.setAttribute( "step", p.step );
+				this.setAttribute( "value", p.value+'' );
 				break;
 			}
 
@@ -168,8 +185,41 @@ export class Input extends Component<InputProps> {
 					this.setAttribute( "spellcheck", false );
 				}
 
+				
+
 				break;
 			}
+		}
+
+		this.addDOMEvent( "blur", ( e ) => { this.on_focus(e,true);} );
+		this.addDOMEvent( "focus", ( e ) => { this.on_focus(e,false);} );
+		this.addDOMEvent( "input", ( e ) => { this.on_change(e); });
+	}
+
+	/**
+	 * 
+	 */
+
+	private on_focus( ev: FocusEvent, focus_out: boolean ) {
+		const event: EvFocus = { focus_out }
+		this.fire( "focus", event );
+
+		if( event.defaultPrevented ) {
+			ev.preventDefault( );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	private on_change( ev: InputEvent ) {
+
+		const event: EvChange = { value: this.getValue() };
+		this.fire( "change", event );
+
+		if( event.defaultPrevented ) {
+			ev.preventDefault( );
 		}
 	}
 

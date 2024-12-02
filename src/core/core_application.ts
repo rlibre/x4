@@ -17,6 +17,7 @@
 import { Component, componentFromDOM } from './component.js';
 import { CoreElement } from './core_element.js';
 import { CoreEvent, EventMap } from './core_events';
+import { getFocusableElements, ITabHandler } from './core_tools.js';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -34,9 +35,28 @@ export interface ApplicationEvents extends EventMap {
 // signleton
 let main_app: Application = null;
 
+
+
+class Process {
+
+	/**
+	 * can be use to see if we have some tactile input
+	 * @returns max touch point count
+	 */
+
+	getMaxTouchPoints( ) {
+		return navigator.maxTouchPoints;
+	}
+}
+
+
+
 export class Application<E extends ApplicationEvents = ApplicationEvents> extends CoreElement<E> {
 
-	#env = new Map<string,any>( );
+	private env = new Map<string,any>( );
+	private mainview: Component;
+	
+	static readonly process = new Process( );
 
 	constructor( ) {
 		super( );
@@ -46,6 +66,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	}
 
 	setMainView( view: Component ) {
+		this.mainview = view;
 		document.body.appendChild( view.dom );
 		this._setupKeyboard( );
 	}
@@ -58,8 +79,16 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	 * 
 	 */
 
+	getMainView( ) {
+		return this.mainview;
+	}
+
+	/**
+	 * 
+	 */
+
 	setEnv( name: string, value: any ) {
-		this.#env.set( name, value );
+		this.env.set( name, value );
 	}
 
 	/**
@@ -67,7 +96,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	 */
 	
 	getEnv( name: string, def_value?: any ) {
-		return this.#env.get( name ) ?? def_value;
+		return this.env.get( name ) ?? def_value;
 	}
 
 	/**
@@ -85,51 +114,58 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	private _setupKeyboard( ) {
 		
 		document.addEventListener( "keydown", (ev) => {
-			console.log( "doc key:", ev.key,  );
-
-			if( ev.key=="Tab" ) {
-				
-				let act = document.activeElement;
-				let topmost: HTMLElement;
-
-				while( act ) {
-					if( act.classList.contains("x4box") ) {
-						topmost = act as HTMLElement;
-					}
-
-					act = act.parentElement;
-				}
-
-				if( topmost ) {
-
-					const focusable = topmost.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-					if( !focusable.length ) {
-						ev.preventDefault( );
-					}
-					else {
-						const first = focusable[0];
-						const last  = focusable[focusable.length - 1];
-						
-						let newf: HTMLElement;
-						if (ev.shiftKey && document.activeElement === first) {
-							ev.preventDefault();
-							newf = last as HTMLElement;
-							console.log( 'first' );
-						}
-						else if (!ev.shiftKey && document.activeElement === last) {
-							ev.preventDefault();
-							newf = first as HTMLElement;
-							console.log( 'last' );
-						}
-
-						if( newf ) {
-							newf.focus(); 
-						}
-					}
+			if( ev.key=="Tab" || ev.key=="Enter" ) {
+				if( this.focusNext( !ev.shiftKey ) ) {
+					ev.preventDefault( );
 				}
 			}
-
 		} );
+	}
+
+	focusNext( next: boolean ) {
+		let act = document.activeElement;
+		let topmost: HTMLElement;
+
+		while( act!=document.body ) {
+			const comp = componentFromDOM(act);
+			const ifx = comp.queryInterface( "tab-handler") as ITabHandler;
+
+			if( ifx ) {
+				return ifx.focusNext( next );
+			}
+
+			if( act.classList.contains("x4box") ) {	// todo: that is too dirty
+				topmost = act as HTMLElement;
+			}
+
+			act = act.parentElement;
+		}
+
+		if( topmost ) {
+			const focusable = getFocusableElements( topmost );
+			if( !focusable.length ) {
+				return true;
+			}
+			else {
+				const first = focusable[0];
+				const last  = focusable[focusable.length - 1];
+				
+				let newf: HTMLElement;
+				if (!next && document.activeElement === first) {
+					newf = last as HTMLElement;
+				}
+				else if (next && document.activeElement === last) {
+					newf = first as HTMLElement;
+				}
+
+				if( newf ) {
+					newf.focus(); 
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 

@@ -148,7 +148,7 @@ export interface Point {
 }
 
 /**
- * 
+ * @see queryInterface
  */
 
 export interface IComponentInterface {
@@ -158,6 +158,11 @@ export interface IComponentInterface {
 export interface IFormElement extends IComponentInterface {
 	getRawValue( ): any;
 	setRawValue( v: any ): void;
+}
+
+// tab-handler
+export interface ITabHandler extends IComponentInterface {
+	focusNext( next: boolean ): boolean;	// return true to stop event
 }
 
 /**
@@ -362,7 +367,7 @@ export function date_format(date: Date, options?: any): string {
 
 export function date_diff(date1: Date, date2: Date, options?: any): string {
 
-	var dt = (date1.getTime() - date2.getTime()) / 1000;
+	let dt = (date1.getTime() - date2.getTime()) / 1000;
 
 	// seconds
 	let sec = dt;
@@ -732,4 +737,22 @@ export function class_ns( ns: string ) {
 
 export function setWaitCursor( wait: boolean ) {
 	document.body.style.cursor = wait ? "wait" : "default";
+}
+
+/**
+ * return the focusable elements from a given node
+ */
+
+export function getFocusableElements( root: Element ) {
+	const els = [
+		'button:not([tabindex="-1"]):not([disabled])',
+		'[href]', 
+		'input:not([disabled])', 
+		'select:not([disabled])', 
+		'textarea:not([disabled])', 
+		'[tabindex]:not([tabindex="-1"])'
+	]
+
+	const focusable = Array.from( root.querySelectorAll(els.join(',')) );
+	return focusable.filter( x => (x as HTMLElement).offsetParent!=null );	// check visibility
 }

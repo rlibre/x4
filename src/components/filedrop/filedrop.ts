@@ -39,7 +39,6 @@ interface FileDialogProps extends ComponentProps {
 export class FileDialog extends Component {
 
 	constructor( props: FileDialogProps ) {
-		
 		super( { 
 			tag: "input",
 			style: { 
@@ -48,7 +47,7 @@ export class FileDialog extends Component {
 			attrs: {
 				type: "file",
 				multiple: props.multiple ?? false,
-				accept: props.accept,
+				accept: props.accept
 			},
 			dom_events: {
 				change: ( ) => {
@@ -110,7 +109,9 @@ export class FileDrop extends VBox<FileDropProps,FileDropEvents> {
 			new SimpleText( { text: props.label ?? _tr.global.filedrop } ),
 		])
 
+		this.setAttribute( "tabIndex", 0 );
 		this.addDOMEvent( "click", ( ) => fileDialog.showDialog() );
+		this.addDOMEvent( "keydown", ( e ) => { if( e.key==" " ) { fileDialog.showDialog() } } );
 
 		dragManager.registerDropTarget( this, async ( cmd, el, infos ) => {
 			if( cmd=="enter" ) {

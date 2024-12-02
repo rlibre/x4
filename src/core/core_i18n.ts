@@ -305,7 +305,13 @@ let fr = {
 		cut: 'Couper',
 		paste: 'Coller',
 
-		filedrop: 'Déposez un fichier'
+		filedrop: 'Déposez un fichier',
+
+		keyboard: {
+			next: 'Suivant',
+			numeric: '123',
+			alpha: 'Abc'
+		},
 	}
 };
 
@@ -363,7 +369,13 @@ let en = {
 		cut: 'Cut',
 		paste: 'Paste',
 
-		filedrop: 'Drop a file'
+		filedrop: 'Drop a file',
+
+		keyboard: {
+			next: 'Next',
+			numeric: '123',
+			alpha: 'Abc'
+		},
 	}
 };
 
