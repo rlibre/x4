@@ -1,8 +1,9 @@
 
 :root {
 	--breadcrumbs-background: var( --background-primary );
-	--breadcrumbs-icon-color: var( --accent-background );
-	--breadcrumbs-link-color: var( --accent-background );
+	--breadcrumbs-icon-color: var( --text-ternary );
+	--breadcrumbs-link-color: var( --text-ternary );
+	--breadcrumbs-active-color: var( --accent-background );
 }
 
 .x4breadcrumbs {
@@ -16,10 +17,15 @@
 		background-color: transparent;
 		color: var( --breadcrumbs-link-color );
 		padding: 6px 8px;
+		padding-right: 0;
 		min-width: 60px;
 
 		#icon {
 			fill: var( --breadcrumbs-icon-color );
+		}
+
+		&:not(:last-child):after {
+			content: ">"
 		}
 	
 		&:hover:not(:last-child) {
@@ -34,6 +40,12 @@
 
 		&:last-child {
 			font-weight: bold;
+			color: var( --breadcrumbs-active-color );
+
+			#icon {
+				fill:  var( --breadcrumbs-active-color );
+			}
+
 			cursor: auto;
 			&:hover {
 				background-color: transparent;
