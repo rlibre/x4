@@ -43,7 +43,7 @@ class PropertyModel extends DataModel {
  * 
  */
 
-interface PropertyValue {
+export interface PropertyValue {
 	name: string;
 	label: string;
 	type: "number" | "string";

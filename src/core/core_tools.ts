@@ -158,6 +158,7 @@ export interface IComponentInterface {
 export interface IFormElement extends IComponentInterface {
 	getRawValue( ): any;
 	setRawValue( v: any ): void;
+	isValid( ): boolean;
 }
 
 // tab-handler

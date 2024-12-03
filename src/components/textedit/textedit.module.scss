@@ -92,7 +92,8 @@
 		& > #label > .x4label::before {
 			content: "*";
 			font-weight: bold;
-			color: var( --textedit-required )
+			color: var( --textedit-required );
+			margin-right: 2px;
 		}
 	}
 
