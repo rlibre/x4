@@ -756,3 +756,17 @@ export function getFocusableElements( root: Element ) {
 	const focusable = Array.from( root.querySelectorAll(els.join(',')) );
 	return focusable.filter( x => (x as HTMLElement).offsetParent!=null );	// check visibility
 }
+
+/**
+ * 
+ */
+
+export enum kbNav {
+	first,
+	prev,
+	pgdn,
+	pgup,
+	next,
+	last,
+}
+

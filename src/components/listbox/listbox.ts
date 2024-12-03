@@ -16,20 +16,13 @@
 
 import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events.js';
+import { kbNav, class_ns, isArray, UnsafeHtml } from '@core/core_tools.js';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 
 import "./listbox.module.scss"
-import { class_ns, isArray, UnsafeHtml } from '@core/core_tools.js';
-
-export enum kbNav {
-	first,
-	prev,
-	next,
-	last,
-}
 
 export type ListboxID = number | string;
 

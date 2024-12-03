@@ -692,11 +692,12 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 			rec = this.m_model.unSerialize( rec );
 		}
 
-		console.assert( this.m_model.getID(rec) );
+		const id = this.m_model.getID(rec);
+		console.assert( id!==undefined );
 
 		this.m_records.push( rec );
 		this._rebuildIndex( );
-		this.fire( 'data_change', {change_type: 'create', id: rec.getID() } );
+		this.fire( 'data_change', {change_type: 'create', id } );
 	}
 
 	/**

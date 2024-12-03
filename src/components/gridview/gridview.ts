@@ -19,7 +19,7 @@ import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, 
 import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools';
 import { DataModel, DataStore, DataView, DataRecord, DataFieldValue, EvViewChange } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
-
+import { kbNav } from '../../core/core_tools';
 
 import { Icon } from '../icon/icon';
 import { Image } from '../image/image'
@@ -33,15 +33,6 @@ import "./gridview.module.scss"
 
 export type CellRenderer = (rec: DataRecord) => Component;
 type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
-
-export enum kbNav {
-	first,
-	prev,
-	pgdn,
-	pgup,
-	next,
-	last,
-}
 
 const SCROLL_LIMIT = 200;
 
@@ -69,14 +60,14 @@ interface GridColumnEx extends GridColumn {
 	sens?: "up" | "dn";
 }
 
-interface GridviewEvents extends ComponentEvents {
+export interface GridviewEvents extends ComponentEvents {
 	click?: EvClick;
 	dblClick?: EvDblClick;
 	contextMenu?: EvContextMenu;
 	selectionChange?: EvSelectionChange;
 }
 
-interface GridviewProps extends ComponentProps {
+export interface GridviewProps extends ComponentProps {
 	footer?: boolean;
 	store: DataStore;
 	columns: GridColumn[];
@@ -97,7 +88,7 @@ interface GridviewProps extends ComponentProps {
  */
 
 @class_ns("x4")
-export class Gridview extends Component<GridviewProps, GridviewEvents> {
+export class Gridview<P extends GridviewProps = GridviewProps, E extends GridviewEvents = GridviewEvents> extends Component<P,E> {
 
 	private _dataview: DataView;
 	private _datamodel: DataModel;
@@ -133,7 +124,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
 
-	constructor(props: GridviewProps) {
+	constructor(props: P) {
 		super(props);
 
 		this._lock = 0;
@@ -360,7 +351,7 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		}
 		else {
 			if (--this._lock == 0 && this._dirty) {
-				this._update();
+				this._update( true );
 			}
 		}
 	}
@@ -910,6 +901,8 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 					this._addSelection(row);
 				}
 
+				this._on_dblclk( e, row );
+
 				const rec = this._dataview.getByIndex( row );
 				this.fire( "dblClick", { context: rec } );
 			}
@@ -987,6 +980,14 @@ export class Gridview extends Component<GridviewProps, GridviewEvents> {
 		}
 
 		this._computeFullSize();
+	}
+
+	/**
+	 * 
+	 */
+
+	protected _on_dblclk( e: UIEvent, row: number ) {
+		
 	}
 
 	/**

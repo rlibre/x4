@@ -14,8 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { Listbox, ListboxID, ListItem, kbNav } from '../listbox/listbox';
+import { Component, ComponentEvents, ComponentProps, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
+import { class_ns, kbNav } from '@core/core_tools';
+import { EventCallback } from '@core/core_events';
+
+import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
 import { Popup, PopupEvents, PopupProps } from '../popup/popup.js';
 import { Label } from '../label/label';
 import { Input } from '../input/input';
@@ -24,8 +27,6 @@ import { HBox } from '../boxes/boxes';
 
 import "./combobox.module.scss";
 import icon from "./updown.svg";
-import { class_ns } from '@core/core_tools.js';
-import { EventCallback } from '@core/core_events.js';
 
 
 
@@ -37,6 +38,7 @@ interface DropdownEvents extends PopupEvents {
 interface DropdownProps extends Omit<PopupProps,"content"> {
 	items: ListItem[];
 }
+
 
 @class_ns( "x4" )
 class Dropdown extends Popup<DropdownProps,DropdownEvents> {
