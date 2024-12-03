@@ -14,12 +14,13 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
+import { class_ns, isArray } from '@core/core_tools.js';
 import { Component, ComponentContent, ComponentEvents, ComponentProps } from "../../core/component"
 
 import "./boxes.module.scss";
 
 export interface BoxProps extends ComponentProps {
+	tag?: string;
 }
 
 /**
@@ -135,13 +136,45 @@ export class StackBox extends Box<StackedLayoutProps> {
 
 // :: GRIDBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-@class_ns("x4")
-export class GridBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 
+export interface GridboxProps extends BoxProps {
+	rows?: string | string[];
+	columns?: string | string[];
+}
+
+@class_ns("x4")
+export class GridBox<P extends GridboxProps=GridboxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+
+	constructor( props: P ) {
+		super( props );
+
+		if( props.rows ) {
+			this.setRows( props.rows );
+		}
+
+		if( props.columns ) {
+			this.setCols( props.columns );
+		}
+	}
+
+	setRows( r: string | string[] ) {
+		if( isArray(r) ) {
+			r = r.join( " " );
+		}
+
+		this.setStyleValue( "gridTemplateRows", r );
+	}
+
+	setCols( r: string | string[] ) {
+		if( isArray(r) ) {
+			r = r.join( " " );
+		}
+
+		this.setStyleValue( "gridTemplateColumns", r );
+	}
 
 	setRowCount( n: number ) {
 		this.setStyleValue( "gridTemplateRows", `repeat(${n})` );
-		
 	}
 
 	setColCount( n: number ) {
