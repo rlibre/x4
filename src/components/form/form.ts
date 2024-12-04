@@ -20,11 +20,13 @@ import { Box, BoxProps } from '../boxes/boxes';
 import "./form.module.scss"
 
 //type FormValue = string | number | boolean;
-type FormValues = Record<string,string>;
+export type FormValues = Record<string,string>;
 
 export interface FormProps extends BoxProps {
 	autoComplete?: boolean;
 }
+
+type ValidationFn = ( values: FormValues, is_valid: boolean ) => boolean;
 
 /**
  * 
@@ -32,6 +34,8 @@ export interface FormProps extends BoxProps {
 
 @class_ns( "x4" )
 export class Form<P extends FormProps = FormProps> extends Box<P> {
+	
+	private validator: ValidationFn;
 
 	constructor( props: P ) {
 		super( { tag: "form", ...props } );
@@ -94,6 +98,67 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 		items.forEach( x => {		
 			x.setAttribute( "autocomplete", on ? "on" : "off" );
 		} );
+	}
+
+	/**
+	 * 
+	 */
+
+	setValidator( validator: ValidationFn ) {
+
+		if( !this.validator ) {
+			this.validator = validator;
+			
+			// validation en live des valeurs
+			// disable du bouton ok si pas bon
+			this.addDOMEvent( "focusout", ( ) => this.validate() );
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	validate( ): FormValues {
+
+		const items = this.queryAll( "input[name]" );
+		
+		let result: FormValues = {};
+		let is_valid = true;
+
+		for( let x of items ) {
+			const ifx = x.queryInterface( "form-element" ) as IFormElement;
+			
+			if( ifx ) {
+				const nme = x.getAttribute( "name" );
+				result[nme] = ifx.getRawValue( );
+				if( !ifx.isValid() ) {
+					is_valid = false;
+				}
+			}
+		}
+
+		if( this.validator ) {
+			let new_values = {...result};
+			if( !this.validator( new_values, is_valid ) ) {
+				return null;
+			}
+
+			for( let name in result ) {
+				if( new_values[name] != result[name] ) {
+					const x = this.query( `input[${name}"]` );
+					const ifx = x.queryInterface( "form-element" ) as IFormElement;
+					ifx.setRawValue( new_values[name] );
+				}
+			}
+
+			result = new_values;
+		}
+		else if( !is_valid ) {
+			result = null;
+		}
+
+		return result;
 	}
 }
 

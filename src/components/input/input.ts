@@ -193,7 +193,7 @@ export class Input extends Component<InputProps,InputEvents> {
 
 		this.addDOMEvent( "blur", ( e ) => { this.on_focus(e,true);} );
 		this.addDOMEvent( "focus", ( e ) => { this.on_focus(e,false);} );
-		this.addDOMEvent( "input", ( e ) => { this.on_change(e); });
+		this.addDOMEvent( "input", ( e ) => { this.on_change(e as InputEvent); });
 	}
 
 	/**
@@ -304,11 +304,28 @@ export class Input extends Component<InputProps,InputEvents> {
 	 * 
 	 */
 
+	public isValid( ) {
+
+		if( (this.props as any).required ) {
+			const v = this.getValue( );
+			if( v==="" ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * 
+	 */
+
 	override queryInterface<T extends IComponentInterface>( name: string ): T {
 		if( name=="form-element" ) {
 			const i: IFormElement = {
 				getRawValue: ( ): any => { return this.getValue(); },
-				setRawValue: ( v: any ) => { this.setValue(v); }
+				setRawValue: ( v: any ) => { this.setValue(v); },
+				isValid: ( ) => { return this.isValid(); }
 			};
 
 			//@ts-ignore
