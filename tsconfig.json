@@ -4,9 +4,9 @@
 		"moduleResolution": "nodenext",
 		"module": "NodeNext",
 		"strictNullChecks": false,
-		"target": "ES2021",
+		"target": "ES2024",
 		"experimentalDecorators": true,
-		"lib": [ "es2022", "DOM" ],
+		"lib": [ "es2024", "DOM" ],
 		"paths": {
 			"@core/*": ["./src/core/*"]
 		}

@@ -41,7 +41,7 @@ export class MessageBox extends Dialog<DialogProps>
 	private static _create( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) {
 		const box = new MessageBox({ 
 			modal: true,
-			title: _tr.global.error,
+			title: title ?? _tr.global.error,
 			movable: true,
 			form: new Form( {
 				content: [
