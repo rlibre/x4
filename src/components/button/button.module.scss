@@ -73,6 +73,8 @@
 		
 	&> #icon {
 		transition: color 0.3s, fill 0.3s;
+		fill: var( --button-color );
+
 		width: 1em;
 		height: 1em;
 		//color: var( --button-icon-color );

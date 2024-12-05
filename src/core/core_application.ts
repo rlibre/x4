@@ -176,7 +176,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	setupSocketMessaging( path?: string, looseCallback?: ( ) => void ) {
 		
 		const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-		const address = path ?? `${protocol}${window.location.hostname}:${window.location.port}/ws`;	
+		const address = path ? protocol+path : `${protocol}${window.location.hostname}:${window.location.port}/ws`;	
 
 		let msg_socket:WebSocket = null;
 

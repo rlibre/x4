@@ -163,6 +163,10 @@ export class Keyboard extends HBox<KeyboardProps>
             target = target.parentNode as HTMLElement;
         }
 
+		if( !key ) {
+			return;
+		}
+
         switch( key ) {
             // bk space
             case 2: {
