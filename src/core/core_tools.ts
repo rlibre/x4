@@ -443,18 +443,25 @@ export function date_calc_weeknum(date: Date): number {
  * @param value - string date to parse
  * @param fmts - format list - i18 tranlation by default
  * allowed format specifiers:
- * d or D: date (1 or 2 digits)
- * m or M: month (1 or 2 digits)
- * y or Y: year (2 or 4 digits)
- * h or H: hours (1 or 2 digits)
- * i or I: minutes (1 or 2 digits)
- * s or S: seconds (1 or 2 digits)
+ * d: date (1 or 2 digits)
+ * D: date (2 digits)
+ * m: month (1 or 2 digits)
+ * M: month (2 digits)
+ * y: year (2 to 4 digits)
+ * Y: year (2 digits)
+ * YY: year (4 digits)
+ * h: hours (1 or 2 digits)
+ * H: hours (2 digits)
+ * i: minutes (1 or 2 digits)
+ * I: minutes (2 digits)
+ * s: seconds (1 or 2 digits)
+ * S: seconds (2 digits)
  * <space>: 1 or more spaces
  * any other char: <0 or more spaces><the char><0 or more spaces>
  * each specifiers is separated from other by a pipe (|)
  * more specific at first
  * @example
- * 'd/m/y|d m Y|dmy|y-m-d h:i:s|y-m-d'
+ * 'd/m/y|d m Y|dmy|y-m-d h:i:s|y-m-d|YY-M-D'
  */
 
 export function parseIntlDate(value: string, fmts: string = _tr.global.date_input_formats): Date {
@@ -466,25 +473,50 @@ export function parseIntlDate(value: string, fmts: string = _tr.global.date_inpu
 		//review: add hours, minutes, seconds
 
 		let smatch = '';
-		for (let c of fmatch) {
+		for (let i=0; i<fmatch.length; i++ ) {
+			const c = fmatch[i];
 
-			if (c == 'd' || c == 'D') {
+			if (c == 'd' ) {
 				smatch += '(?<day>\\d{1,2})';
 			}
-			else if (c == 'm' || c == 'M') {
+			else if( c == 'D') {
+				smatch += '(?<day>\\d{2})';
+			}
+			else if (c == 'm' ) {
 				smatch += '(?<month>\\d{1,2})';
 			}
-			else if (c == 'y' || c == 'Y') {
+			else if (c == 'M') {
+				smatch += '(?<month>\\d{2})';
+			}
+			else if (c == 'y' ) {
 				smatch += '(?<year>\\d{1,4})';
 			}
-			else if (c == 'h' || c == 'H') {
+			else if (c == 'Y') {
+				if( fmatch[i+1]=='Y' ) {
+					smatch += '(?<year>\\d{4})';
+					i++;
+				}
+				else {
+					smatch += '(?<year>\\d{2})';
+				}
+			}
+			else if (c == 'h') {
 				smatch += '(?<hour>\\d{1,2})';
 			}
-			else if (c == 'i' || c == 'I') {
+			else if (c == 'H') {
+				smatch += '(?<hour>\\d{2})';
+			}
+			else if (c == 'i') {
 				smatch += '(?<min>\\d{1,2})';
 			}
-			else if (c == 's' || c == 'S') {
+			else if (c == 'I') {
+				smatch += '(?<min>\\d{2})';
+			}
+			else if (c == 's') {
 				smatch += '(?<sec>\\d{1,2})';
+			}
+			else if (c == 'S') {
+				smatch += '(?<sec>\\d{2})';
 			}
 			else if (c == ' ') {
 				smatch += '\\s+';
