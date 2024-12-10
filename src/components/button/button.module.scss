@@ -131,26 +131,33 @@
 
 	#icon {
 		color: var( --ol-button-icon-color );
+		fill: var(--ol-button-icon-color);
 	}
 
 	&:focus{
 		border-color: var( --ol-button-border-focus );
 		color: var( --ol-button-color-focus );
+		fill: var( --ol-button-color-focus );
 		#icon {
 			color: var( --ol-button-color-focus );
+			fill: var( --ol-button-color-focus );
 		}
 	}
 
 	&:hover{
 		background-color: var( --ol-button-background-hover );
 		color: var( --ol-button-color-hover );
+		fill: var( --ol-button-color-hover );
 	}	
 
 	&:active{
 		background-color: var( --ol-button-background-active );
 		color: var( --ol-button-color-active );
+		fill: var( --ol-button-color-active );
+
 		#icon {
 			color: var( --button-icon-color );
+			fill: var( --button-icon-color );
 		}
 	}	
 }
