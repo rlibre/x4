@@ -83,3 +83,56 @@
 	}	
 }
 
+.x4radio.button {
+	--size: 24px;
+
+	&.outline {
+		border-radius: 22px;;
+	}
+
+	border: 1px solid transparent;
+	padding: 8px;
+	margin: 0;
+	
+	.inner {
+		display: none;
+	}
+
+	label {
+		display: flex;
+		//padding: 8px;
+		flex-grow: 1;
+
+		#text {
+			flex-grow: 1;
+			text-align: center;
+			color: var( --text-ternary );
+		}
+	
+		#icon {
+			fill: var( --text-ternary );
+			width: var( --size );
+			height: var( --size );
+		}
+	}
+
+	&:has(input:checked) {
+		background-color: var( --background-secondary );
+		border-color:  var( --accent-background );
+
+		.x4label {
+			#text {
+				color: var( --accent-background-active );
+				font-weight: bold;
+			}
+
+			#icon {
+				fill: var( --accent-background-active );
+			}
+
+			.fa-primary {
+				fill: var( --accent-background-active );
+			}
+		}
+	}
+}

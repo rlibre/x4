@@ -40,6 +40,7 @@ interface RadioEvents extends ComponentEvents {
 
 interface RadioProps extends ComponentProps {
 	label: string;
+	icon?: string;
 	name: string;	// all same names are grouped
 	value: number | string;
 	checked?: boolean;
@@ -80,7 +81,8 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 				tag: 'label',
 				text: props.label, 
 				id: undefined, 
-				labelFor: inputId 
+				labelFor: inputId, 
+				icon: props.icon,
 			} ),
 		])
 
