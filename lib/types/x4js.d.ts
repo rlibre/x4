@@ -259,7 +259,7 @@ declare module 'x4js' {
 
 	type ComponentAttributes = Record<string,string|number|boolean>;
 
-	type ComponentContent = Component | string | UnsafeHtml | number | boolean | Component[];
+	type ComponentContent = Component | string | UnsafeHtml | number | boolean | Component[] | UnsafeHtml[];
 
 	export interface ComponentProps  {
 		tag?: string;

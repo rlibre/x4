@@ -64,7 +64,7 @@ function genClassNames( x: any ): string[] {
  * 
  */
 
-export type ComponentContent = Component | string | UnsafeHtml | number | boolean | Component[];
+export type ComponentContent = Component | Component[] | string | string[] | UnsafeHtml| UnsafeHtml[] | number | boolean;
 
 let gen_id = 1000;
 
@@ -539,7 +539,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	queryAll( selector: string ): Component[] {
 		const all = this.dom.querySelectorAll( selector );
 		const rc = new Array( all.length );
-		all.forEach( (x,i) => rc[i]=componentFromDOM(x) );
+		all.forEach( (x,i) => rc[i]=wrapDOM(x as HTMLElement) );
 		return rc;
 	}
 
@@ -919,7 +919,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: SPECIALS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
+	 * system interfaces:
+	 * 	"form-element"
+	 * 	"tab-handler"
 	 * 
+	 * each app can create it's own interface
 	 */
 
 	queryInterface<T>( name: string ): T {

@@ -14,8 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, wrapDOM } from '../../core/component';
-import { class_ns, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
+import { Component, componentFromDOM, wrapDOM } from '../../core/component';
+import { class_ns, ITipHandler, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Popup, PopupProps } from '../popup/popup.js';
@@ -39,7 +39,12 @@ export function initTooltips( ) {
 		}
 		
 		const c = wrapDOM( ev.target as HTMLElement );
-		const tt = c.getAttribute( "tooltip" );
+		let tt = c.getAttribute( "tooltip" );
+		const ifx = c.queryInterface("tip-handler" ) as ITipHandler;
+		if( ifx ) {
+			tt = ifx.getTip( );
+		}
+
 		if( tt ) {
 			last_hit = ev.target as HTMLElement;
 			const rc = c.getBoundingRect( );
