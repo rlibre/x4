@@ -232,8 +232,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	addClass( cls: string ) {
 		if( !cls ) return;
-		
+				
 		if( cls.indexOf(' ')>=0 ) {
+			cls = cls.trim( );
 			const ccs = cls.split( " " );
 			this.dom.classList.add(...ccs);
 		}
