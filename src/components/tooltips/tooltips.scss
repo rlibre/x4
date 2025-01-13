@@ -62,4 +62,11 @@
 		color: var( --tooltip-color );
 		padding: 4px;
 	}
+
+	img {
+		max-width: 100px;
+		max-height: 50px;
+		background-color: white;
+		margin: 4px;
+	}
 }

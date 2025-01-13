@@ -35,6 +35,8 @@ $color--interval: 8.4%;
 	--color-danger-a50: #c01010;
 	--color-danger-a60: #{darken(#c01010,10%)};
 
+	--color-warning-a50: #b67b0d;
+
 	--color-success-a50: #10c01f;
 	--color-success-a60: #{darken(#10c01f,10%)};
 }
@@ -73,6 +75,9 @@ $color--interval: 8.4%;
 	--alert-background: var( --color-danger-a50 );
 	--alert-background-active: var( --color-danger-a60 );
 	--alert-color: var( --color-primary-a0 );
+
+	--warning-background: var( --color-warning-a50 );
+	--warning-color: var( --color-primary-a0 );
 
 	--success-background: var( --color-success-a50 );
 	--success-background-active: var( --color-success-a60 );

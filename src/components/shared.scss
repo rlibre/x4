@@ -85,6 +85,53 @@
 	}
 }
 
+@keyframes shaking {
+    0% {
+        transform: rotate(-15deg)
+    }
+
+    4% {
+        transform: rotate(15deg)
+    }
+
+    8%,24% {
+        transform: rotate(-18deg)
+    }
+
+    12%,28% {
+        transform: rotate(18deg)
+    }
+
+    16% {
+        transform: rotate(-22deg)
+    }
+
+    20% {
+        transform: rotate(22deg)
+    }
+
+    32% {
+        transform: rotate(-12deg)
+    }
+
+    36% {
+        transform: rotate(12deg)
+    }
+
+    40% {
+        transform: rotate(0deg)
+    }
+}
+
+
 .x4rotate {
 	animation: rotating 2s linear infinite;
+}
+
+.x4shake {
+	animation-name: shaking;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: reverse;
 }

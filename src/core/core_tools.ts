@@ -166,6 +166,11 @@ export interface ITabHandler extends IComponentInterface {
 	focusNext( next: boolean ): boolean;	// return true to stop event
 }
 
+// tip-handler
+export interface ITipHandler extends IComponentInterface {
+	getTip( ): string;
+}
+
 /**
  * 
  */
