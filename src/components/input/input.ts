@@ -259,6 +259,25 @@ export class Input extends Component<InputProps,InputEvents> {
 	}
 
 	/**
+	 * @return the checked value
+	 */
+
+	public getCheck() {
+		const d = this.dom as HTMLInputElement;
+		return d.checked;
+	}
+
+	/**
+	 * change the checked value
+	 * @param {boolean} ck new checked value	
+	 */
+
+	public setCheck(ck: boolean) {
+		const d = this.dom as HTMLInputElement;
+		d.checked = ck;
+	}
+
+	/**
 	 * 
 	 */
 

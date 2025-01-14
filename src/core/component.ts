@@ -47,7 +47,7 @@ function genClassNames( x: any ): string[] {
 	let self = Object.getPrototypeOf(x);
 
 	if( self.constructor==Component ) {
-		return ["x4component"];
+		return ["x4-comp"];
 	}
 
 	while (self && self.constructor !== Component ) {
