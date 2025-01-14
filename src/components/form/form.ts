@@ -53,8 +53,16 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	 * 
 	 */
 
+	private _get_inputs( ) {
+		return this.queryAll( "input[name], select[name], .x4combobox[name]" );
+	}
+
+	/**
+	 * 
+	 */
+
 	setValues( values: FormValues ) {
-		const items = this.queryAll( "input[name]" );
+		const items = this._get_inputs( );
 		
 		items.forEach( x => {
 			const ifx = x.queryInterface( "form-element" ) as IFormElement;
@@ -75,7 +83,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	getValues( ): FormValues {
 		const result: FormValues = {}
-		const items = this.queryAll( "input[name]" );
+		const items = this._get_inputs( );
 
 		items.forEach( x => {
 			const ifx = x.queryInterface( "form-element" ) as IFormElement;
@@ -94,7 +102,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	 */
 
 	setAutoComplete( on = true ) {
-		const items = this.queryAll( "input[name]" );
+		const items = this._get_inputs( );
 		items.forEach( x => {		
 			x.setAttribute( "autocomplete", on ? "on" : "off" );
 		} );

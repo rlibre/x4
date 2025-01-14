@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns, kbNav } from '@core/core_tools';
+import { class_ns, IComponentInterface, IFormElement, kbNav } from '@core/core_tools';
 import { EventCallback } from '@core/core_events';
 
 import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
@@ -79,8 +79,11 @@ interface ComboboxEvents extends ComponentEvents {
 
 interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	label?: string;
+	name?: string;
+	value?: string;
 	labelWidth?: number | string;
 	readonly?: boolean;
+	required?: boolean;
 	items: ListItem[];
 	selectionChange?: EventCallback<EvSelectionChange>,
 }
@@ -105,16 +108,23 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		this.setContent( [
 			new HBox( { id: "label", content: new Label( { tag: "label", text: props.label, labelFor: id, width: props.labelWidth } ) } ),
 			this._edit  = new HBox( { id: "edit", content: [
-				this._input  = new Input( { type: "text", value: "", readonly: props.readonly }),
+				this._input  = new Input( { id, type: "text", value: "", readonly: props.readonly, required: props.required }),
 				this._button = new Button( { icon: icon, tabindex: -1 } )
 			]} ),
 		])
 
+		if( props.name ) {
+			this.setAttribute( "name", props.name );
+		}
+
+		if( props.required ) {
+			this.setAttribute( "required", true );
+		}
+
 		this._popup = new Dropdown( { items: props.items } );
 		const list = this._popup.getList( );
 
-		this._popup.on( "selectionChange", ( ev ) => {
-			const [sel] = ev.selection as ListboxID[];
+		const _select = ( sel: ListboxID ) => {
 			const itm = list.getItem(sel);
 
 			//TODO: unsafehtml
@@ -124,9 +134,19 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			if( !this._prevent_close ) {
 				this._popup.show( false );
 			}
-			
-			this.fire( "selectionChange", ev );
+		}
+
+		this._popup.on( "selectionChange", ( ev ) => {
+			const [sel] = ev.selection as ListboxID[];
+			if( sel ) {	// no empty sel
+				_select( sel );			
+				this.fire( "selectionChange", ev );
+			}
 		});
+
+		if( props.value ) {
+			_select( props.value );
+		}
 
 		this._button.addDOMEvent( "click", ( ) => this._on_click( ) );
 		this._input.addDOMEvent( "input", ( ) => this._on_input( ) );
@@ -188,7 +208,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	private _on_focusout( ) {
-		//this._popup.show( false );
+		this._popup.show( false );
 	}
 	
 	private _on_click( ) {
@@ -228,6 +248,25 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 	private _getList( ) {
 		return this._popup.getList( );
+	}
+
+	/**
+	 * 
+	 */
+
+	override queryInterface<T extends IComponentInterface>( name: string ): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ): any => { return this.getSelection(); },
+				setRawValue: ( v: any ) => { this.selectItem(v); },
+				isValid: ( ) => { return this._input.isValid(); }
+			};
+
+			//@ts-ignore
+			return i as T;
+		}
+		
+		return super.queryInterface( name );
 	}
 }
 

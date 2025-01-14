@@ -118,9 +118,11 @@
 	}
 	
 	&[required] {
-		.x4label::before {
+		& > #label > .x4label::before {
 			content: "*";
-			color: var( --color-90 )
+			font-weight: bold;
+			color: var( --textedit-required );
+			margin-right: 2px;
 		}
 	}
 }
