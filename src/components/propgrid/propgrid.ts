@@ -171,6 +171,7 @@ export class PropertyGrid extends VBox {
 				items: prop.options,
 				name: prop.name,
 				change: ( e: EvChange ) => {
+					debugger;
 					prop.callback( prop.name, e.value );
 				}
 			});

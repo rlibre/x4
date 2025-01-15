@@ -57,11 +57,14 @@ export class Select extends Component<SelectProps,SelectEvents> {
 		}
 
 		this.setItems( props.items );
-		this.setAttribute( "value", props.value );
-
+		
 		this.addDOMEvent( "blur", ( e ) => { this.on_focus(e,true);} );
 		this.addDOMEvent( "focus", ( e ) => { this.on_focus(e,false);} );
 		this.addDOMEvent( "input", ( e ) => { this.on_change(e as InputEvent); });
+
+		if( props.value ) {
+			this.setValue( props.value );
+		}
 	}
 
 	/**
