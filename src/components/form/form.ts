@@ -129,7 +129,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	validate( ): FormValues {
 
-		const items = this.queryAll( "input[name]" );
+		const items = this._get_inputs( );
 		
 		let result: FormValues = {};
 		let is_valid = true;

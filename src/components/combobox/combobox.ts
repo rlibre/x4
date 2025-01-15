@@ -138,7 +138,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 		this._popup.on( "selectionChange", ( ev ) => {
 			const [sel] = ev.selection as ListboxID[];
-			if( sel ) {	// no empty sel
+			if( sel!==undefined ) {	// no empty sel
 				_select( sel );			
 				this.fire( "selectionChange", ev );
 			}

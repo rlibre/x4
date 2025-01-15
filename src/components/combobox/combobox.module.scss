@@ -50,6 +50,7 @@
 .x4combobox {
 	@extend .hbox;
 	margin: 5px;
+	gap: 6px;
 
 	&> #label {
 		

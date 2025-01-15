@@ -729,7 +729,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	enable( ena = true ): this {
-		this.setAttribute( "disabled", ena ? 'true' : null );
+		this.setAttribute( "disabled", !ena ? 'true' : null );
 
 		if( this.dom instanceof HTMLInputElement || this.dom instanceof HTMLButtonElement ) {
 			this.dom.disabled = !ena;
@@ -969,6 +969,13 @@ export function wrapDOM( el: HTMLElement ): Component {
 export class Flex extends Component {
 	constructor( ) {
 		super({})
+	}
+}
+
+// just a spacer element that push other
+export class Space extends Component {
+	constructor( width: number|string ) {
+		super( { width } )
 	}
 }
 

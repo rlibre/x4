@@ -1,0 +1,59 @@
+/**
+ * @file progrid.module.scss
+ * @author Etienne Cochard 
+ * @copyright (c) 2025 InCare
+ **/
+
+.propertygrid {
+
+	.root {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+	}
+
+	.group {
+		font-weight: bold;
+		background-color: var(--color-primary-a50);
+
+		display: flex;
+		align-items: center;
+		color: white;
+			
+		.x4button {
+			background-color: transparent;
+		}
+	}
+
+	.row {
+		border: 1px solid var( --border );
+		border-top: none;
+
+		&:has(:focus) {
+			background-color: var(--color-primary-a20);
+		}
+
+		&:hover {
+			background-color: var(--color-primary-a10);
+		}
+		
+		.cell {
+			flex-grow: 1;
+			flex-basis: 10px;
+	    	padding: 4px;
+
+			&>* {
+				width: 100%;
+			}
+		}
+
+		.cell:first-child {
+			border-right: 1px solid var( --border );
+		}
+
+		.hdr {
+			padding: 8px;
+			padding-left: 34px;
+		}
+	}
+}

@@ -178,18 +178,18 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			fel = next_visible( fel, sens==kbNav.first );
 
 			if( fel ) {
-				const id = fel.getData( "id" );
+				const id = fel.getInternalData( "id" );
 				this._selectItem( id, fel, 'single' );
 				return true;
 			}
 		}
 		else {
-			const selitem = this._itemFromID( this._lastsel );
+			const selitem = this._itemWithID( this._lastsel );
 			let nel = sens==kbNav.next ? selitem.nextElement() : selitem.prevElement();
 			nel = next_visible( nel, sens==kbNav.next );
 
 			if( nel ) {
-				const id = nel.getData( "id" );
+				const id = nel.getInternalData( "id" );
 				this._selectItem( id, nel, 'single' );
 				return true;
 			}
@@ -202,9 +202,10 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 * 
 	 */
 
-	private _itemFromID( id: ListboxID ) {
-		const itm = this.query( `[data-id="${id}"]` );
-		return itm;
+	private _itemWithID( id: ListboxID ) {
+		//const itm = this.query( `[data-id="${id}"]` );
+		const all = this._view.enumChildComponents( false );
+		return all.find( x => x.getInternalData("id")===id )
 	}
 
 	/**
@@ -219,7 +220,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 			if( c && c.hasClass("x4item") ) {
-				const id = c.getData( "id" );
+				const id = c.getInternalData( "id" );
 				const fev: ComponentEvent = { context:id };
 				if (ev.type == 'click') {
 					this.fire('click', fev );
@@ -253,7 +254,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 			if( c && c.hasClass("x4item") ) {
-				const id = c.getData( "id" );
+				const id = c.getInternalData( "id" );
 				
 				this._selectItem(id, c, 'single' );
 				this.fire('contextMenu', {uievent: ev, context: id } );
@@ -315,7 +316,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 */
 
 	getItem( id: ListboxID ): ListItem {
-		return this._items.find( x => x.id==id );
+		return this._items.find( x => x.id===id );
 	}
 
 	/**
@@ -332,9 +333,11 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			this.clearSelection( );
 			return;
 		}
-		
+
+		const all = this._view.enumChildComponents( false );
+
 		ids.forEach( id => {
-			const itm = this.query( `[data-id="${id}"]` );
+			const itm = all.find( x => x.getInternalData("id")===id );	//this.query( `[data-id="${id}"]` );
 			if( itm ) {
 				this._multisel.add( id );
 				itm.addClass( "selected" );
@@ -343,7 +346,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 		this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
 	}
-
+	
 	/**
 	 * 
 	 */
@@ -357,11 +360,16 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 */
 
 	private _clearSelection( ) {
+
+		const all = this._view.enumChildComponents( false );
+
 		if( this._multisel.size ) {
 			const ids = Array.from( this._multisel );
 			ids.forEach( id => {
-				const itm = this.query( `[data-id="${id}"]` );
-				itm.removeClass( "selected" );	
+				const itm = all.find( x => x.getInternalData("id")===id );	//this.query( `[data-id="${id}"]` );
+				if( itm ) {
+					itm.removeClass( "selected" );	
+				}
 			} );
 		}
 		
@@ -407,7 +415,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		const line = renderer( item );
 	
 		line.addClass( "x4item" );
-		line.setData( "id", item.id+"" );
+		line.setInternalData( "id", item.id );
 		
 		return line;
 	}
@@ -441,7 +449,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 			// now hide all elements not in list
 			childs.forEach( x => {
-				x.show( filtred.includes( x.getData( "id" ) ) );
+				x.show( filtred.includes( x.getInternalData( "id" ) ) );
 			});
 		}
 	}
@@ -497,7 +505,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._items[idx] = item;
 
 		// rebuild & replace it's line
-		const old = this._itemFromID( item.id );
+		const old = this._itemWithID( item.id );
 		if( old?.dom ) {
 			const _new = this.renderItem( item );
 			if( was_sel ) {

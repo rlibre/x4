@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, Flex } from '../../core/component';
+import { Component, ComponentEvents, ComponentProps, Flex, Space } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { class_ns, isString } from '../../core/core_tools';
 import { _tr } from '../../core/core_i18n'
@@ -37,7 +37,8 @@ type predefined = 		`ok${ "" | `.${string}`}`
 					|	`no${ "" | `.${string}`}`
 					| 	`retry${ "" | `.${string}`}`
 					| 	`abort${ "" | `.${string}`}`
-					| 	"-" | ">>";	// - = flex
+					| 	"-" | ">>"	// - = Flex
+					|   "~";		// space
 
 export type BtnGroupItem = predefined | Button | Label | Input;
 
@@ -100,6 +101,9 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 
 			if( b==="-" || b===">>" ) {
 				b = new Flex( );
+			}
+			else if( b=='~' ) {
+				b = new Space( "1em" );
 			}
 			else if( isString(b) ) {
 				let title: string;

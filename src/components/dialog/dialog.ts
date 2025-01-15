@@ -26,6 +26,7 @@ import { Button } from '../button/button.js';
 
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
+import { isString } from '../../../lib/src/x4.js';
 
 let modal_stack: Popup[] = [];
 
@@ -34,7 +35,7 @@ export interface DialogProps extends PopupProps {
 	title: string;
 	form?: Form;
 	buttons: BtnGroupItem[];
-	closable?: boolean;
+	closable?: boolean | string;
 	modal?: boolean;
 	btnclick?: EventCallback<EvBtnClick>;
 }
@@ -79,7 +80,14 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 						id: "closebox",
 						icon: close_icon,
 						tabindex: -1,
-						click: () => { this.close() }
+						click: () => { 
+							if( isString(props.closable) ) {
+								this.fire("btnclick", { button: props.closable } );
+							}
+							else {
+								this.close() 
+							}
+						}
 					}) : null,
 				]
 			}),
