@@ -31,6 +31,7 @@ export interface SelectProps extends ComponentProps {
 	name?: string;
 	value: string;
 	items: ListItem[];
+	multiple?: boolean;
 	change?: EventCallback<EvChange>;
 	focus?: EventCallback<EvFocus>;
 }
@@ -61,6 +62,10 @@ export class Select extends Component<SelectProps,SelectEvents> {
 		this.addDOMEvent( "blur", ( e ) => { this.on_focus(e,true);} );
 		this.addDOMEvent( "focus", ( e ) => { this.on_focus(e,false);} );
 		this.addDOMEvent( "input", ( e ) => { this.on_change(e as InputEvent); });
+
+		if( props.multiple ) {
+			this.setAttribute( "multiple", true );
+		}
 
 		if( props.value ) {
 			this.setValue( props.value );

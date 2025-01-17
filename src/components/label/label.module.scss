@@ -27,15 +27,16 @@
 
 	color: var( --label-color );
 	background-color: var( --label-background );
-	text-align: left;
 	gap: 0.2em;
 
-	&.right {
+	&.right  {
 		text-align: right;
+		justify-content: end;
 	}
 
 	&.center {
 		text-align: center;
+		justify-content: center;
 	}
 
 	#text {

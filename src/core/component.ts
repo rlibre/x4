@@ -974,8 +974,8 @@ export class Flex extends Component {
 
 // just a spacer element that push other
 export class Space extends Component {
-	constructor( width: number|string ) {
-		super( { width } )
+	constructor( width?: number|string, cls?: string ) {
+		super( { width, cls } )
 	}
 }
 

@@ -178,6 +178,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 		const address = path ? protocol+path : `${protocol}${window.location.hostname}:${window.location.port}/ws`;	
 
+		let opened = 0;
 		let msg_socket:WebSocket = null;
 
 		// we trap all 'global' messages send via application
@@ -198,6 +199,11 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 		msg_socket = new WebSocket(address, 'messaging' );
 
+		msg_socket.onopen = ( ) => {
+			console.log( 'websocket opened' );
+			opened = 1;
+		}
+
 		// receive a message
 		msg_socket.onmessage = ( e ) => {
 			if( e.data!='ping' ) {
@@ -211,14 +217,16 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		msg_socket.onclose = ( ev ) => {
 			console.log( 'websocket closed:', ev );
 			msg_socket = null;
-			//this.setupSocketMessaging( path );
-			looseCallback( );
+
+			if( opened ) {
+				looseCallback( );
+				opened = 0;
+			}
 		}
 
-		msg_socket.onerror = (ev )=> {
-			console.log( 'websocket error:', ev );
-			//msg_socket.close( );
-		}
+		//msg_socket.onerror = (ev )=> {
+		//	console.log( 'websocket error:', ev );
+		//}
 	}
 
 }

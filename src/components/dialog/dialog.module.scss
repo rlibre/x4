@@ -58,8 +58,9 @@
 	}
 
 	&> #btnbar {
-		border-top: 1px solid var( --color-separation );
-		padding: 6px 16px;
+		border-top: 1px solid var( --border );
+		padding: 6px 20px;
+		margin: 0;
 
 		justify-content: end;
 		gap: 8px;

@@ -12,4 +12,9 @@ see [home](https://x4js.org)
 ## API Documentation
 see [API](https://x4js.org/api/)
 
+## Ideas
 
+[ ] create separated elements for different kinds of input
+	CheckInput
+	RadioInput
+	NumberInput

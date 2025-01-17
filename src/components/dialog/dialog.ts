@@ -20,15 +20,15 @@ import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes.js';
 import { Label } from '../label/label.js';
 import { CoreEvent, EventCallback } from '@core/core_events.js';
-import { class_ns, getFocusableElements, IComponentInterface, ITabHandler } from '@core/core_tools.js';
+import { class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '@core/core_tools.js';
 import { ComponentEvent } from '../../core/component.js';
 import { Button } from '../button/button.js';
 
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";
-import { isString } from '../../../lib/src/x4.js';
 
-let modal_stack: Popup[] = [];
+
+//let modal_stack: Popup[] = [];
 
 export interface DialogProps extends PopupProps {
 	icon?: string;
