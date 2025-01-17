@@ -105,10 +105,12 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 		this.mapPropEvents( props, "selectionChange" );
 
+		const readonly = props.readonly===false ? false : true;	// by default
+
 		this.setContent( [
 			new HBox( { id: "label", content: new Label( { tag: "label", text: props.label, labelFor: id, width: props.labelWidth } ) } ),
 			this._edit  = new HBox( { id: "edit", content: [
-				this._input  = new Input( { id, type: "text", value: "", readonly: props.readonly, required: props.required }),
+				this._input  = new Input( { id, type: "text", value: "", readonly: readonly, required: props.required }),
 				this._button = new Button( { icon: icon, tabindex: -1 } )
 			]} ),
 		])
@@ -208,7 +210,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	private _on_focusout( ) {
-		this._popup.show( false );
+		//this._popup.show( false );
 	}
 	
 	private _on_click( ) {
