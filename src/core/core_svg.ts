@@ -165,7 +165,7 @@ class SvgItem {
 	 * @param name class name to add 
 	 */
 	
-	addClass( cls: string ) {
+	addClass( cls: string ): this {
 		if( !cls ) return;
 		
 		if( cls.indexOf(' ')>=0 ) {
@@ -175,6 +175,8 @@ class SvgItem {
 		else {
 			this._dom.classList.add(cls);
 		}
+
+		return this;
 	}
 
 	/**
@@ -525,7 +527,7 @@ export class SvgBuilder extends SvgGroup {
 
 interface SvgProps extends ComponentProps {
 	viewbox?: string;
-	svg?: SvgBuilder;
+	svg: SvgBuilder;
 }
 
 /**
