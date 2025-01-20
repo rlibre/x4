@@ -58,6 +58,15 @@
 		#icon {
 			width: 16px;
 			height: 16px;
+			
+			.fa-primary {
+				fill: var( --color-primary-a50 );
+			}
+
+			.fa-secondary {
+				fill: var( --color-primary-a30 );
+				opacity: 1;
+			}
 		}
 
 		#text {
