@@ -229,4 +229,36 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		//}
 	}
 
+	/**
+	 * get a local storage value
+	 * @param name name of the value
+	 * @returns the value (string) or undefined
+	 */
+
+	getStorage( name: string ) : string {
+		return localStorage.getItem( name );
+	}
+
+	getStorageJSON( name: string ) : any {
+		try {
+			return JSON.parse( localStorage.getItem( name ) );
+		}
+		catch( e ) {
+			return undefined;
+		}
+	}
+
+	/**
+	 * change a loclastorage value
+	 * @param name name of the value
+	 * @param value the value to store
+	 */
+
+	setStorage( name: string, value: string | number ) {
+		localStorage.setItem( name, value+'' );
+	}
+
+	setStorageJSON( name: string, value: any ) {
+		localStorage.setItem( name, JSON.stringify( value ) );
+	}
 }

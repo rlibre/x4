@@ -41,7 +41,7 @@ interface DropdownProps extends Omit<PopupProps,"content"> {
 
 
 @class_ns( "x4" )
-class Dropdown extends Popup<DropdownProps,DropdownEvents> {
+export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
 
 	private _list: Listbox;
 
@@ -91,7 +91,7 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
 @class_ns( "x4" )
 export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
-	private _popup: Dropdown;
+	private _popup: DropdownList;
 	//private _label: Label;
 	private _input: Input;
 	private _button: Button;
@@ -123,7 +123,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			this.setAttribute( "required", true );
 		}
 
-		this._popup = new Dropdown( { items: props.items } );
+		this._popup = new DropdownList( { items: props.items } );
 		const list = this._popup.getList( );
 
 		const _select = ( sel: ListboxID ) => {
@@ -210,7 +210,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	private _on_focusout( ) {
-		this._popup.show( false );
+		//this._popup.show( false );
 	}
 	
 	private _on_click( ) {

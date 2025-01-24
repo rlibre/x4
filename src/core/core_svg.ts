@@ -542,7 +542,7 @@ export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 		this.setAttribute( 'xmlns', SVG_NS );
 
 		if( props.viewbox ) {
-			this.setAttribute( "viewbox", props.viewbox );
+			this.setAttribute( "viewBox", props.viewbox );
 		}
 
 		if( props.svg ) {

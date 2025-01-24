@@ -271,9 +271,9 @@ function main( ) {
 
 				default: "page1",
 				items: [
-					{ name: "page1", title: "Tab 1", icon: def_icon, tab: new Label( { text: unsafeHtml(`<h4>tab 1 content</h4><p>lorem ipsum</p>`)}) },
-					{ name: "page2", title: "Tab 2", icon: def_icon, tab: new Label( { text: unsafeHtml(`<h4>tab 2 content</h4><p>ipsum lorem</p>` )}) },
-					{ name: "page3", title: "Tab 3", tab: new Label( { text: unsafeHtml(`<h4>tab 3 content</h4><p>ipsum ++</p>` )}) },
+					{ name: "page1", title: "Tab 1", icon: def_icon, content: new Label( { text: unsafeHtml(`<h4>tab 1 content</h4><p>lorem ipsum</p>`)}) },
+					{ name: "page2", title: "Tab 2", icon: def_icon, content: new Label( { text: unsafeHtml(`<h4>tab 2 content</h4><p>ipsum lorem</p>` )}) },
+					{ name: "page3", title: "Tab 3", content: new Label( { text: unsafeHtml(`<h4>tab 3 content</h4><p>ipsum ++</p>` )}) },
 				]
 			})
 		]

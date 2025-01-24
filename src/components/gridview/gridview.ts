@@ -32,6 +32,8 @@ import check_icon from "../checkbox/check.svg";
 import "./gridview.module.scss"
 
 export type CellRenderer = (rec: DataRecord) => Component;
+export type CellClassifier = (data: any, rec: DataRecord, col: string ) => string;	// return the cell computed class
+
 type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
 
 const SCROLL_LIMIT = 200;
@@ -54,6 +56,7 @@ interface GridColumn {
 	cls?: string;
 	sortable?: boolean;
 	footer_val?: string;
+	classifier?: CellClassifier;
 }
 
 interface GridColumnEx extends GridColumn {
@@ -311,6 +314,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	setStore(store: DataStore) {
 
 		const on_change = (ev: EvViewChange) => {
+			if( !this._viewport ) {
+				// not created
+				return;
+			}
 
 			if (ev.change_type == 'change') {
 				this._selection.clear();
@@ -544,7 +551,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	private _renderCell(rec: DataRecord, col: string, type: string): ComponentContent {
+	private _renderCell(rec: DataRecord, column: GridColumnEx, extra_cls: string[] ): ComponentContent {
+
+		const col = column.id;
+		const type = column.type;
 
 		let data = this._datamodel.getRaw(col, rec);
 		if (data === undefined || data === null) {
@@ -552,15 +562,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 
 		let cls = "";
-
-		//if( data.hasOwnProperty("cls") ) {
-		//	cls = " " + (data as FieldValueWithCls).cls;
-		//	data = (data as FieldValueWithCls).value;
-		//	if( data===undefined ) {
-		//		return null;
-		//	}
-		//}
-
+		if( column.classifier ) {
+			extra_cls.push( column.classifier( data, rec, col ) );
+		}
+		
 		if (data instanceof Function) {
 			return data(rec, col);
 		}
@@ -640,7 +645,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				continue;
 			}
 
-			const content = this._renderCell(rec, cdata.id, cdata.type);
+			const extra: string[] = []
+			const content = this._renderCell(rec, cdata, extra );
 
 			let align = "start";
 			switch (cdata.align) {
@@ -654,6 +660,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				style: { width: cdata?.width ? cdata.width + "px" : undefined, justifyContent: align },
 				content
 			});
+
+			if( extra.length ) {
+				el.addClass( extra.join(' ') );
+			}
 
 			if (cdata.type) {
 				el.addClass(cdata.type);

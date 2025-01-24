@@ -31,7 +31,7 @@ export interface TabItem {
 	name: string;
 	title: string;
 	icon?: string;
-	tab: Component;
+	content: Component;
 }
 
 /**
@@ -74,19 +74,12 @@ interface TablistEvents extends ComponentEvents {
 class CTabList extends HBox<TablistProps,TablistEvents> {
 
 	private _selitem: Button;
-	private _selection: string;
 	
-	constructor( props: TablistProps, content: TabItem[] ) {
+	constructor( props: TablistProps, items: TabItem[] ) {
 		super( props );
 
-		const tabs = content.map( tab => {
-			return new CTab( {
-				click: ( ev ) => this._on_click( ev ),
-			}, tab );
-		})
-
+		this.setItems( items );
 		this.mapPropEvents( props, "click" );
-		this.setContent( tabs );
 	}
 
 	private _on_click( ev: EvClick ) {
@@ -101,11 +94,28 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 		}
 
 		this._selitem = tab;
-		this._selection = name;
 		
 		if( this._selitem ) {
 			this._selitem.setClass( "selected", true );
 		}
+	}
+
+
+	setItems( items: TabItem[ ] ) {
+		this.clearContent( );
+		items.forEach( tab => {
+			this.addItem( tab );
+		})
+	}
+
+	addItem( tab: TabItem ) {
+		this.appendContent( new CTab( {
+			click: ( ev ) => this._on_click( ev ),
+		}, tab ) );
+	}
+
+	getTabCount( ) {
+		return this.dom.children.length;
 	}
 }
 
@@ -135,7 +145,7 @@ export class Tabs extends VBox<TabsProps> {
 		const pages = props.items?.map( x => {
 			return {
 				name: x.name,
-				content: x.tab ,
+				content: x.content ,
 			}
 		});
 		
@@ -163,6 +173,27 @@ export class Tabs extends VBox<TabsProps> {
 
 	private _onclick( ev: TablistClickEvent ) {
 		this.selectTab( ev.name );
+	}
+
+	/**
+	 * 
+	 */
+	
+	getTab( name: string ) {
+		return this._stack.getPage( name );
+	}
+
+	/**
+	 * 
+	 */
+
+	addTab( item: TabItem ) {
+		this._list.addItem( item );
+		this._stack.addItem( { name: item.name, content: item.content } );
+
+		if( this._list.getTabCount( )==1 ) {
+			this.selectTab( item.name );
+		}
 	}
 }
 

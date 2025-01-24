@@ -77,6 +77,20 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 		svgLoader.load( icon ).then( svg => {
 			this.query<Label>( '.inner' ).dom.insertAdjacentHTML( "beforeend", svg );
 		});
+
+		this.addDOMEvent('click', (e) => this._on_click(e));	// for outside click
+	}
+
+	/**
+	 * handle click outside label & input
+	 */
+	
+	protected _on_click( ev: MouseEvent ) {
+		if( ev.target==this.dom ) {
+			(this._input.dom as HTMLInputElement).click( );
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
 	}
 
 	/**

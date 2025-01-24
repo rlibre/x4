@@ -68,19 +68,19 @@ interface StackedLayoutProps extends Omit<ComponentProps,"content"> {
 	items: StackItem[];
 }
 
-interface _StackItem extends StackItem {
+interface StackItemEx extends StackItem {
 	page: Component;
 }
 
 @class_ns( "x4" )
 export class StackBox extends Box<StackedLayoutProps> {
-	private _items: _StackItem[];
+	private _items: StackItemEx[];
 
 	constructor( props: StackedLayoutProps ) {
 		super( props );
 
 		this._items = props.items?.map( itm => {
-			return { ...itm, page: null };
+			return { ...itm, page: null as any};
 		});
 
 		if( props.default ) {
@@ -89,6 +89,14 @@ export class StackBox extends Box<StackedLayoutProps> {
 		else if( this._items.length ) {
 			this.select( this._items[0].name );
 		}
+	}
+
+	addItem( item: StackItem ) {
+		this._items.push( {
+			name: item.name,
+			content: item.content,
+			page: null
+		});
 	}
 
 	select( name: string ) {
@@ -118,7 +126,7 @@ export class StackBox extends Box<StackedLayoutProps> {
 	 * 
 	 */
 
-	private _createPage( page: _StackItem ) {
+	private _createPage( page: StackItemEx ) {
 		
 		let content: Component;
 		if( page.content instanceof Function ) {
@@ -131,6 +139,15 @@ export class StackBox extends Box<StackedLayoutProps> {
 		
 		content?.setData( "stackname", page.name );
 		return content;
+	}
+
+	/**
+	 * 
+	 */
+	
+	getPage( name: string ) {
+		const pg = this._items.find( x => x.name==name );
+		return pg ? pg.page : null;
 	}
 }
 
