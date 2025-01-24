@@ -147,7 +147,7 @@ export class StackBox extends Box<StackedLayoutProps> {
 	
 	getPage( name: string ) {
 		const pg = this._items.find( x => x.name==name );
-		return pg ? pg.page : null;
+		return pg ? pg.content : null;
 	}
 }
 
