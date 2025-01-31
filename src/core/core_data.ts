@@ -851,11 +851,10 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 		else {
 			if( typeof(filter.op)==='function' ) {
 
-				let fn = <FilterFunc>filter.op;
+				let fn = filter.op as FilterFunc;
 
 				// scan all records and append only interesting ones
 				this.forEach( (rec, idx) => {
-
 					// skip deleted
 					if( !rec ) {
 						return;
@@ -1030,7 +1029,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 
 		return index	
 	}
-
+		
 	/**
 	 * 
 	 */
