@@ -54,7 +54,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	 */
 
 	private _get_inputs( ) {
-		return this.queryAll( "input[name], select[name], .x4combobox[name]" );
+		return this.queryAll( "[name]" );
 	}
 
 	/**
