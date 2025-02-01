@@ -66,6 +66,7 @@ export class Label extends Component<LabelProps> {
 
 export interface SimpleTextProps extends ComponentProps {
 	text: string | UnsafeHtml;
+	align?: "left" | "center" | "right";
 }
 
 @class_ns( "x4" )
@@ -79,6 +80,10 @@ export class SimpleText extends Component<SimpleTextProps> {
 		super( { ...p } );
 
 		this.setContent( p.text );
+
+		if( p.align ) {
+			this.addClass( "al-"+p.align );
+		}
 	}	
 
 	/**

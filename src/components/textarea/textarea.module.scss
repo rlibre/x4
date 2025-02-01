@@ -33,10 +33,13 @@
 		}
 	}
 
+	.x4label:has(.empty) {
+		display: none;
+	}
+
 	textarea {
 		@extend .flex;
 
-		border: 1px solid var( --color-gray-3 );
 		padding: 4px;
 		outline: none;
 		font: inherit;

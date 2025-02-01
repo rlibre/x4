@@ -4,7 +4,13 @@
  * @copyright (c) 2025 InCare
  **/
 
+:root {
+	--propertygrid-background: white;
+}
+
 .propertygrid {
+
+	background: var( --propertygrid-background );
 
 	.root {
 		display: grid;

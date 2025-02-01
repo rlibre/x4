@@ -31,6 +31,7 @@ interface TextAreaProps extends BaseProps {
 	label?: string;
 	value?: string;
 	resize?: boolean;
+	readonly?: boolean;
 }
 
 /**
@@ -56,5 +57,17 @@ export class TextArea extends VBox {
 		if( !props.resize ) {
 			this._input.setAttribute( "resize", false );
 		}
+
+		if( props.readonly ) {
+			this._input.setAttribute( "readonly", true );
+		}
+	}
+
+	setText( text: string ) {
+		(this._input.dom as HTMLTextAreaElement).value = text;
+	}
+
+	getText( ) {
+		return (this._input.dom as HTMLTextAreaElement).value;
 	}
 }

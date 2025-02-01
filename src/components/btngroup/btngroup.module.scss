@@ -14,10 +14,16 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+ :root {
+	--btngroup-background: white;
+ }
+
 .x4btngroup {
 	align-content: start;
 	margin: 5px;
 	gap: 4px;
+
+	background: var( --btngroup-background );
 
 	&.align-right {
 		justify-content: end;

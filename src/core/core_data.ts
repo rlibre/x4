@@ -229,6 +229,16 @@ export namespace data {
 		return data.field( { ...props, type: 'array', model: ctor ? new ctor() : null } )
 	}
 
+	/**
+	 * following member is unknown
+	 * @example
+	 * \@data.any( )
+	 * my_field: TypedRecord[];	
+	 */
+
+	export function any( props?: MetaData ) {
+		return field( { ...props, type: 'any' } );
+	}
 }
 
 

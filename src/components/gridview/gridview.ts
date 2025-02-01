@@ -50,6 +50,7 @@ interface GridColumn {
 	fixed?: boolean;
 	flex?: number;
 	align?: 'left' | 'center' | 'right';
+	header_align?: 'left' | 'center' | 'right';
 	renderer?: CellRenderer;				// for "renderer" type
 	formatter?: (input: any) => string;	// for "custom" type
 	type?: ColType;
@@ -416,7 +417,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				attrs: { "data-col": col },
 				style: { width: cdata.width ? cdata.width + "px" : undefined },
 				content: [
-					new SimpleText({ text: cdata.title }),
+					new SimpleText({ text: cdata.title, align: cdata.header_align ?? "left" }),
 					new Component({ cls: "sorter" }),
 					sizer
 				]
@@ -569,6 +570,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		if (data instanceof Function) {
 			return data(rec, col);
 		}
+		
+		if( column.formatter ) {
+			return column.formatter( data );
+		}
 
 		switch (type) {
 			case "checkbox": {
@@ -700,7 +705,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				continue;
 			}
 
-			const content = this._renderCell(rec, cdata.id, cdata.type);
+			const content = this._renderCell(rec, cdata.id, [cdata.type] );
 
 			let align = "start";
 			switch (cdata.align) {

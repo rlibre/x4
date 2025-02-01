@@ -16,8 +16,8 @@
  @use "../shared.scss";
 
 :root {
-	--treeitem-backgound: var( );
-	--treeitem-color: var( );
+
+	--treeview-background: white;
 
 	--treeitem-backgound-hover: var( --background-secondary );
 	--treeitem-color-hover: var( );
@@ -43,6 +43,7 @@
 	outline: none;
 	
 	border: 1px solid var( --border );
+	background: var( --treeview-background );
 
 	&:focus {
 		border: 1px solid var( --border-focus );
