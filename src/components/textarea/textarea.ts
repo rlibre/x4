@@ -15,13 +15,13 @@
  **/
 
 import { BaseProps } from '../input/input';
-import { Component } from '../../core/component';
+import { Component, ComponentProps } from '../../core/component';
 
 import { Label } from '../label/label';
 import { VBox } from '../boxes/boxes';
 
 import "./textarea.module.scss";
-import { class_ns } from '@core/core_tools.js';
+import { class_ns, IFormElement } from '@core/core_tools.js';
 
 /**
  * 
@@ -34,6 +34,54 @@ interface TextAreaProps extends BaseProps {
 	readonly?: boolean;
 }
 
+
+/**
+ * 
+ */
+
+class SimpleTextArea extends Component {
+
+	constructor( props: TextAreaProps ) {
+		super( { ...props, tag: "textarea" } );
+
+		this.setAttribute( "name", props.name );
+		this.setAttribute( "value", props.value+'' );
+
+		if( !props.resize ) {
+			this.setAttribute( "resize", false );
+		}
+
+		if( props.readonly ) {
+			this.setAttribute( "readonly", true );
+		}
+	}
+
+	setText( text: string ) {
+		(this.dom as HTMLTextAreaElement).value = text;
+	}
+
+	getText( ) {
+		return (this.dom as HTMLTextAreaElement).value;
+	}
+
+	queryInterface<T>(name: string): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ): any => { return this.getText(); },
+				setRawValue: ( v: any ) => { this.setText( v ); },
+				isValid: ( ) => { return true; }
+			};
+
+			//@ts-ignore
+			return i as T;
+		}
+		
+		return super.queryInterface( name );
+	}
+}
+
+
+
 /**
  * 
  */
@@ -41,33 +89,37 @@ interface TextAreaProps extends BaseProps {
 @class_ns( "x4" )
 export class TextArea extends VBox {
 	
-	private _input: Component;
+	private _input: SimpleTextArea;
 
 	constructor( props: TextAreaProps ) {
 		super( props );
 
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new Component( { tag: "textarea" })
+			this._input = new SimpleTextArea( props )
 		])
-
-		this._input.setAttribute( "name", props.name );
-		this._input.setAttribute( "value", props.value+'' );
-
-		if( !props.resize ) {
-			this._input.setAttribute( "resize", false );
-		}
-
-		if( props.readonly ) {
-			this._input.setAttribute( "readonly", true );
-		}
 	}
 
 	setText( text: string ) {
-		(this._input.dom as HTMLTextAreaElement).value = text;
+		this._input.setText( text );
 	}
 
 	getText( ) {
-		return (this._input.dom as HTMLTextAreaElement).value;
+		return this._input.getText( );
+	}
+
+	queryInterface<T>(name: string): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ): any => { return this.getText(); },
+				setRawValue: ( v: any ) => { this.setText( v ); },
+				isValid: ( ) => { return true; }
+			};
+
+			//@ts-ignore
+			return i as T;
+		}
+		
+		return super.queryInterface( name );
 	}
 }
