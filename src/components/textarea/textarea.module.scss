@@ -19,6 +19,7 @@
 :root {
 	--textarea-border: var( --border );
 	--textarea-border-focus: var( --border-focus );
+	--textarea-selection: var( --accent-background );
 }
 
 .x4textarea {
@@ -51,7 +52,7 @@
 		}
 
 		&::selection {
-			background-color: var( --color-90 );
+			background-color: var( --textarea-selection );
 			color: white;
 		}
 

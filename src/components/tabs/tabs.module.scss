@@ -25,14 +25,13 @@
 			}
 
 			&:hover {
-				//border-bottom-color: var( --color-60 );
 				background-color: unset;;
 				color: black;
 				border-bottom-color: var( --tab-border-hover );	
 			}
 
 			&:focus {
-				color: var( --color-60 );
+				//color: var( --color-60 );
 			}
 		}
 
