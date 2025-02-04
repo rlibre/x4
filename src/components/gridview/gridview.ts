@@ -428,7 +428,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				const now = Date.now();
 				const delta = last ? now - last : 0;
 				if (delta > 30 && delta < 300) {
-					this.sortCol(col);
+					this._sortCol(col);
 				}
 				else {
 					cell.setInternalData("touchend", now);
@@ -436,7 +436,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			})
 
 			cell.addDOMEvent("dblclick", () => {
-				this.sortCol(col);
+				this._sortCol(col);
 			});
 
 			els.push(cell);
@@ -477,7 +477,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			});
 
 			cell.addDOMEvent("dblclick", () => {
-				this.sortCol(col);
+				this._sortCol(col);
 			});
 
 			els.push(cell);
@@ -497,7 +497,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	sortCol(col: number) {
+	private _sortCol(col: number, ascending?: boolean ) {
 
 		setWaitCursor(true);
 
@@ -507,17 +507,23 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 			// already sorted ?
 			const scol = this.query(`.col-header [data-col="${col}"`);
-			if (scol.hasClass("sorted")) {
-				if (scol.hasClass("desc")) {
-					asc = true;
+
+			if( ascending===undefined ) {
+				if (scol.hasClass("sorted")) {
+					if (scol.hasClass("desc")) {
+						asc = true;
+					}
+					else {
+						asc = false;
+					}
 				}
 				else {
-					asc = false;
+					const sorted = this.queryAll(".sorted");
+					sorted.forEach(x => x.removeClass("sorted asc desc"));
 				}
 			}
 			else {
-				const sorted = this.queryAll(".sorted");
-				sorted.forEach(x => x.removeClass("sorted asc desc"));
+				asc = ascending;
 			}
 
 			scol.setClass("sorted");
@@ -545,7 +551,18 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 			setWaitCursor(false);
 		});
+	}
 
+	/**
+	 * 
+	 */
+
+	sortCol( colIdx: any, ascending: boolean ) {
+
+		const idx = this._columns.findIndex( x => x.id === colIdx );
+		if( idx>=0 ) {
+			this._sortCol( idx, ascending );
+		}
 	}
 
 	/**
@@ -1142,6 +1159,17 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		const id = this._selection.values().next().value;
 		return this._dataview.getByIndex( id );
+	}
+
+	/**
+	 * 
+	 */
+
+	selectItem( id: any ) {
+		const index = this._dataview.indexOfId( id );
+		if( index>=0 ) {
+			this._addSelection( index );
+		}
 	}
 }
 
