@@ -60,6 +60,10 @@
 			animation: rotating 2s linear infinite;
 		}
 	}
+
+	&.vertical {
+		@extend .vbox;
+	}
 }
 
 

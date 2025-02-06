@@ -26,6 +26,7 @@ interface CheckboxProps extends ComponentProps {
 	label: string; 			// The text label for the checkbox.
 	checked?: boolean;		// Optional boolean indicating if the checkbox is checked by default.
 	value?: boolean | number | string;			// Optional value associated with the checkbox.
+	name?: string;
 	change?: EventCallback<EvChange>;
 }
 
@@ -59,6 +60,7 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 					this._input = new Input( { 
 						type:"checkbox", 
 						id: inputId, 
+						name: props.name,
 						checked: props.checked,
 						dom_events: {
 							change: ( ) => this._on_change( ),
