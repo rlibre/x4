@@ -113,7 +113,7 @@ export class Input extends Component<InputProps,InputEvents> {
 			case "radio": {
 				const ck = this.dom as HTMLInputElement;
 				ck.checked = props.checked;
-				ck.value = props.value+"";
+				ck.value = props.value === undefined ? "" : props.value+"";
 				//this.setAttribute( "checked", props.checked );
 				//this.setAttribute( "value", props.value );
 				break;

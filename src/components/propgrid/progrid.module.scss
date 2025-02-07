@@ -11,6 +11,7 @@
 .propertygrid {
 
 	background: var( --propertygrid-background );
+	border: 1px solid var(--color-primary-a50);
 
 	.root {
 		display: grid;
@@ -19,21 +20,45 @@
 	}
 
 	.group {
+		height: 2em;
 		font-weight: bold;
-		background-color: var(--color-primary-a50);
+		background-color: white;
+		color: var(--color-primary-a50);
 
+		&:not( :last-child ) {
+			border-bottom: 1px solid var(--color-primary-a50);
+		}
+		
 		display: flex;
 		align-items: center;
-		color: white;
-			
-		.x4button {
+		padding-left: 8px;
+		gap: 8px;
+
+		&>.x4box {
+			flex-grow: 1;
+		}
+
+		&>.x4icon {
+			.fa-secondary,
+			.fa-primary {
+				fill: var( --color-primary-a50 );
+			}
+
+			width: 1.5em;
+			height: 1.5em;
+		}
+
+		&>.x4button {
 			background-color: transparent;
+			color: var(--color-primary-a50);
 		}
 	}
 
 	.row {
-		border: 1px solid var( --border );
-		border-top: none;
+		border-bottom: 1px solid var( --border-light );
+		//border-top: none;
+		//border-left: 1px solid var(--color-primary-a50);
+		//border-right: 1px solid var(--color-primary-a50);
 
 		&:has(:focus) {
 			background-color: var(--color-primary-a20);
