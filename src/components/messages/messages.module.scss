@@ -73,15 +73,20 @@
 			.x4label {
 				line-height: 1.8em;
 			}
+
+			justify-content: center;
 		}
 	}
-}
 
-
-.x4inputbox {
-	.x4input {
+	input {
 		padding: 8px;
 		border: 1px solid var( --border );
+
+		&:invalid {
+			border-color: var( --input-error );
+		}
 	}
+
+
 }
 

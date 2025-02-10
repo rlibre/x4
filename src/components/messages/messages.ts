@@ -176,7 +176,7 @@ export class PromptBox extends Dialog<DialogProps>
 					new HBox( {
 						content: [
 							new Icon( { iconId: pen_icon }),
-							new VBox( { flex: 1, content: [
+							new VBox( { flex: 1, cls: "right", content: [
 								new Label( { text: msg } ),
 								editor
 							]})

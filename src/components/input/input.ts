@@ -75,9 +75,11 @@ export interface TextInputProps extends BaseProps {
 	readonly?: boolean;
 	required?: boolean;
 	pattern?: string;
-	value: string | number;
+	value?: string | number;
 	placeholder?: string;
 	spellcheck?: boolean;
+	minlength?: number;
+	maxlength?: number;
 }
 
 
@@ -185,7 +187,13 @@ export class Input extends Component<InputProps,InputEvents> {
 					this.setAttribute( "spellcheck", false );
 				}
 
+				if( props.minlength!==undefined ) {
+					this.setAttribute( "minlength", props.minlength );
+				}
 				
+				if( props.maxlength!==undefined ) {
+					this.setAttribute( "maxlength", props.maxlength );
+				}
 
 				break;
 			}
