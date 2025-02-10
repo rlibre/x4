@@ -108,8 +108,7 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 	 */
 
 	public getCheck() {
-		const d = this._input.dom as HTMLInputElement;
-		return d.checked;
+		return this._input.getCheck();
 	}
 
 	/**
@@ -118,8 +117,7 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 	 */
 
 	public setCheck(ck: boolean) {
-		const d = this._input.dom as HTMLInputElement;
-		d.checked = ck;
+		this._input.setCheck( ck );
 	}
 
 	/**
