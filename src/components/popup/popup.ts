@@ -21,8 +21,6 @@ import { Rect, Point, class_ns, asap } from '../../core/core_tools.js';
 import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
-import { Application } from '@core/core_application.js';
-
 
 export interface PopupEvents extends ComponentEvents {
 	closed: ComponentEvent;
@@ -65,7 +63,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 
 		// wait for element to create it's childs
 		asap( ( ) => {
-			if( this.props.movable ) {
+			if( this.props.movable===true || (this.props.sizable && this.props.movable===undefined) ) {
 				const movers = this.queryAll( ".caption-element" );
 				movers.forEach( m => new CMover(m,this) );
 
@@ -261,13 +259,15 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	 * 
 	 */
 
-	override show( show = true ) {
+	override show( show = true ) : this {
 		if( show ) {
 			this.displayCenter( );
 		}
 		else {
 			this._do_hide( );
 		}
+
+		return this;
 	}
 
 	/**

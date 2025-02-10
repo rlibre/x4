@@ -168,7 +168,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.addClass( "x4flex" );
 			}
 			else if( props.flex!==undefined ) {
-				this.setStyleValue( "flexGrow", props.flex+"" );
+				this.setStyle( {
+					"flexGrow": props.flex+""
+				});
 			}
 
 			if( props.id!==undefined ) {

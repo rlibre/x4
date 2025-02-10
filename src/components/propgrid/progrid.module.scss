@@ -9,9 +9,9 @@
 }
 
 .propertygrid {
-
 	background: var( --propertygrid-background );
 	border: 1px solid var(--color-primary-a50);
+	overflow-y: auto;
 
 	.root {
 		display: grid;
