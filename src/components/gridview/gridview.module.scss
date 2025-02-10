@@ -216,7 +216,6 @@
 				flex-grow: 1;
 				text-overflow: ellipsis;
 				overflow: hidden;
-				text-align: center;
 			}
 
 			.sorter {
@@ -263,7 +262,7 @@
 			border-bottom: 1px solid transparent;
 			
 			&:hover {
-				background-color: var( --color-10 );
+				//background-color: var( --color-10 );
 				border-bottom-color: var( --gridview-row-background-hover );
 			}
 		}

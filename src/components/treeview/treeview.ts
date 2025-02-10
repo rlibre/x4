@@ -434,4 +434,12 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		this._selection = undefined;
 		this.fire( "selectionChange", { selection: undefined, empty: true } );
 	}
+
+	/**
+	 * 
+	 */
+
+	getSelection( ) {
+		return this._selection;
+	}
 }

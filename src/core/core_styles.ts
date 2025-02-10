@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { pascalCase, isString } from './core_tools.js';
+import { isString } from './core_tools.js';
 
 export const unitless: Record<string,1> = {
 	animationIterationCount: 1,
@@ -82,8 +82,8 @@ export function isUnitLess( name: string ) {
 
 export class Stylesheet {
 
-	private m_sheet: CSSStyleSheet;
-	private m_rules: Map<string, number> = new Map( );
+	readonly m_sheet: CSSStyleSheet;
+	readonly m_rules: Map<string, number> = new Map( );
 
 	constructor() {
 		
@@ -91,7 +91,7 @@ export class Stylesheet {
 			for(let i=0; i<document.styleSheets.length; i++) {
 			  	let sheet = document.styleSheets[i];
 			  	if(sheet.title === name ) {
-					return <CSSStyleSheet>sheet;
+					return sheet;
 			  	}
 			}
 		}
@@ -101,7 +101,7 @@ export class Stylesheet {
 			const dom = document.createElement( 'style' );
 			dom.setAttribute('id', 'x4-dynamic-css' );
 			document.head.appendChild(dom);
-			this.m_sheet = <CSSStyleSheet>dom.sheet
+			this.m_sheet = dom.sheet
 		}
 	}
 

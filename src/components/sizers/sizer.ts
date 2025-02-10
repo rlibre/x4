@@ -33,6 +33,8 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
+type SizerType = "left" | "top" | "right" | "bottom";
+
 /**
  * 
  */
@@ -40,11 +42,11 @@ interface CSizerEvent extends ComponentEvents {
 @class_ns( "x4" )
 export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
-	private _type: string;
+	private _type: SizerType;
 	private _ref: Component;
 	private _delta: Point;
 
-	constructor( type: string, target?: Component ) {
+	constructor( type: SizerType, target?: Component ) {
 		super( {} );
 
 		this._type = type;

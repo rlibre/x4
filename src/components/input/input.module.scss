@@ -19,6 +19,8 @@
 	--input-sel-color: var( --accent-color );
 	--input-placeholder: var( --disabled-background );
 	--input-error: var( --alert-background );
+
+	--input-checkbox-color: var( --accent-background );
 }
 
 input.x4input {
@@ -42,11 +44,12 @@ input.x4input {
 
 	&[type="checkbox"]:checked,
 	&[type="radio"]:checked {
-		accent-color: var( --color-80 );
+		accent-color: var( --input-checkbox-color );
+		padding: 2px;
 	}
 
 	&[type="range"] {
-		accent-color: var( --color-60 );
+		accent-color: var( --input-checkbox-color );
 	}
 
 	&::placeholder {

@@ -22,32 +22,43 @@ import { Input } from "../input/input"
 import { ListItem } from "../listbox/listbox"
 import { SimpleText } from "../label/label"
 import { isFunction } from '../../core/core_tools';
+import { Icon } from '../components.js'
 
 import "./progrid.module.scss"
-import folder_open from "./folder-open.svg"
-import folder_close from "./folder-closed.svg"
+import updown_icon from "./updown.svg"
+
 
 type IValue = boolean | number | string;
 type IValueCB = ( name: string) => IValue;
 
 interface PropertyValue {
-	group: string;
-	name: string;
 	type: 'boolean' | 'number' | 'string' | 'password' | 'options';
 	title?: string;
+	name?: string;
 	value: IValue | IValueCB;
 	options?: ListItem[];
 	callback: ( name: string, value: any ) => void;
+	cls?: string;
+}
+
+interface PropertyGroup {
+	title: string;
+	desc?: string;
+	icon?: string;
+	cls?: string;
+	collapsible?: boolean;
+
+	items: PropertyValue[];
 }
 
 export interface PropertyProps extends ComponentProps {
-	data: PropertyValue[];
+	groups: PropertyGroup[];
 }
 
 export class PropertyGrid extends VBox {
 
 	private root: Component;
-	private properties: PropertyValue[];
+	private groups: PropertyGroup[];
 
 	constructor(props: PropertyProps) {
 		super(props);
@@ -55,44 +66,30 @@ export class PropertyGrid extends VBox {
 		this.root = new Component({ cls: "root" });
 		this.setContent( this.root );
 
-		this._fillSettings( props.data );
+		if( props.groups ) {
+			this._fillSettings( props.groups );
+		}
 	};
 
 	/**
 	 * 
 	 */
 
-	private async _fillSettings( data: PropertyValue[] ) {
+	private async _fillSettings( _grps: PropertyGroup[] ) {
 
-		this.properties = data;
+		this.groups = _grps;
+		this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
 
-		interface g {
-			name: string;
-			group: Component;
-			items: Component[];
+		let items: Component[] = [];
+
+		for( const g of this.groups ) {
+			items.push( this.makeGroupHeader(g) );
+			g.items.forEach( i => {
+				items.push( this.makePropertyRow(i) );
+			});
 		}
 
-		let groups = new Map<string, g>();
-
-		for( const prop of data ) {
-			const nme = prop.group ?? "other";
-			let grp = groups.get(nme);
-
-			if (!grp) {
-				grp = {
-					name: nme,
-					group: this.makeGroupHeader(nme, false),
-					items: []
-				}
-
-				groups.set(nme, grp);
-			}
-
-			grp.items.push( await this.makePropertyRow(prop));
-		}
-
-		const sorted = [...groups.values()].sort((a, b) => { return a.name > b.name ? 1 : -1 });
-		this.root.setContent(sorted.flatMap(x => [x.group, ...x.items]));
+		this.root.setContent( items );
 	}
 
 	/**
@@ -101,28 +98,21 @@ export class PropertyGrid extends VBox {
 	 * @param {boolean} isCollapsible - Whether the group should support expand/collapse
 	 */
 
-	makeGroupHeader(displayName: string, isCollapsible: boolean) {
+	makeGroupHeader( g: PropertyGroup ) {
 
 		const toggle = (e: Component) => {
-
-			let parent = e.parentElement();
-			while (parent && !parent.hasClass("group")) {
-				parent = parent.parentElement();
-			}
 
 			let visible: boolean;
 			if (!e.hasClass("collapsed")) {
 				e.addClass("collapsed");
-				(e as Button).setIcon(folder_close);
 				visible = false;
 			}
 			else {
 				e.removeClass("collapsed");
-				(e as Button).setIcon(folder_open);
 				visible = true;
 			}
 
-			let p = parent.nextElement();
+			let p = e.nextElement();
 			while (p && p.hasClass("row")) {
 				p.show(visible);
 				p = p.nextElement();
@@ -132,12 +122,16 @@ export class PropertyGrid extends VBox {
 		const tr = new HBox({
 			cls: 'group',
 			content: [
-				new Button({ icon: folder_open, click: (e) => toggle(e.source as Component) }),
-				new SimpleText({ text: displayName }),
+				g.icon ? new Icon({ id: "icon", iconId: g.icon }) : null,
+				new VBox( { content: [
+					new SimpleText({ cls: "title", text: g.title }),
+					g.desc ? new SimpleText({ cls: "desc", text: g.desc }) : null,
+				]}),
+				g.collapsible? new Button({ icon: updown_icon, click: (e) => toggle(tr) }) : null,
 			]
 		});
 
-		tr.setClass("collapsible", isCollapsible);
+		tr.setClass("collapsible", g.collapsible );
 		return tr;
 	}
 
@@ -145,59 +139,61 @@ export class PropertyGrid extends VBox {
 	 * 
 	 */
 	
-	makePropertyRow(prop: PropertyValue) {
+	makePropertyRow( item: PropertyValue ) {
 
 		// If boolean create checkbox
 		let editor: Component;
-		let value = isFunction(prop.value) ? prop.value( prop.name ) : prop.value;
-		prop.value = value;
+		let value = isFunction(item.value) ? item.value( item.name ) : item.value;
+		item.value = value;
 
-		if (prop.type === 'boolean') {
+		if (item.type === 'boolean') {
 			editor = new Input({ 
 				type: "checkbox", 
-				id: prop.group + "-" + prop.name,
-				name: prop.name, 
+				id: item.name,
+				name: item.name, 
 				checked: value as boolean, 
-				change: ( e: EvChange ) => {
-					prop.callback( prop.name, e.value );
+				dom_events: {
+					change: ( e: Event ) => {
+						item.callback( item.name, (editor.dom as HTMLInputElement).checked );
+					}
 				}
 			});
 			
 		}
-		else if (prop.type === 'options') {
+		else if (item.type === 'options') {
 			editor = new Select( {
 				value: value as string,
-				id: prop.group + "-" + prop.name,
-				items: prop.options,
-				name: prop.name,
+				id: item.name,
+				items: item.options,
+				name: item.name,
 				change: ( e: EvChange ) => {
 					debugger;
-					prop.callback( prop.name, e.value );
+					item.callback( item.name, e.value );
 				}
 			});
 		}
-		else if (prop.type === 'password') {
+		else if (item.type === 'password') {
 			editor = new Input({ 
 				type: 'password',
-				id: prop.group + "-" + prop.name,
-				name: prop.name, 
+				id: item.name,
+				name: item.name, 
 				value: value as string, 
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						prop.callback( prop.name, (editor as Input).getValue() );
+						item.callback( item.name, (editor as Input).getValue() );
 					}
 				}
 			});
 		}
-		else if (prop.type === 'number') {
+		else if (item.type === 'number') {
 			editor = new Input({ 
 				type: 'number', 
-				id: prop.group + "-" + prop.name,
-				name: prop.name, 
+				id: item.name,
+				name: item.name, 
 				value: value as string,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						prop.callback( prop.name, (editor as Input).getValue() );
+						item.callback( item.name, (editor as Input).getValue() );
 					}
 				}
 			});
@@ -205,12 +201,12 @@ export class PropertyGrid extends VBox {
 		else {
 			editor = new Input({ 
 				type: 'text', 
-				id: prop.group + "-" + prop.name,
-				name: prop.name, 
+				id: item.name,
+				name: item.name, 
 				value: value as string,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						prop.callback( prop.name, (editor as Input).getValue() );
+						item.callback( item.name, (editor as Input).getValue() );
 					}
 				}
 			});
@@ -219,8 +215,8 @@ export class PropertyGrid extends VBox {
 		return new HBox({
 			cls: 'row',
 			content: [
-				new Component({ cls: 'cell hdr', content: prop.title ?? prop.name }),
-				new Component({ cls: 'cell', content: editor })
+				new Component({ cls: 'cell hdr', content: item.title ?? item.name }),
+				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })
 			]
 		});
 	}
@@ -230,31 +226,32 @@ export class PropertyGrid extends VBox {
 	 */
 
 	setPropValue( name: string, value: any ) {
-		const prop = this.properties.find( x => x.name==name );
-		if( !prop ) {
+		const all = this.groups.flatMap( x => [ ...x.items ] ) ;
+		const item = all.find( x => x.name==name );
+		if( !item ) {
 			return;
 		}
 
-		if (prop.type === 'boolean') {
-			const editor = this.root.query<Input>( '#'+prop.group+"-"+prop.name );
+		if (item.type === 'boolean') {
+			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
 				editor.setCheck( value as boolean );
 			}
 		}
-		else if (prop.type === 'options') {
-			const editor = this.root.query<Select>( '#'+prop.group+"-"+prop.name );
+		else if (item.type === 'options') {
+			const editor = this.root.query<Select>( '#'+item.name );
 			if( editor ) {
 				editor.setValue( value as string );
 			}
 		}
-		else if (prop.type === 'number') {
-			const editor = this.root.query<Input>( '#'+prop.group+"-"+prop.name );
+		else if (item.type === 'number') {
+			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
 				editor.setNumValue( value as number );
 			}
 		}
 		else {
-			const editor = this.root.query<Input>( '#'+prop.group+"-"+prop.name );
+			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
 				editor.setValue( value as string );
 			}

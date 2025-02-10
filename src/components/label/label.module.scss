@@ -60,7 +60,17 @@
 			animation: rotating 2s linear infinite;
 		}
 	}
+
+	&.vertical {
+		@extend .vbox;
+	}
 }
 
+
+.x4simpletext {
+	text-align: left;
+	&.al-center { text-align: center; }
+	&.al-right { text-align: right; }
+}
 
 

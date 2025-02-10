@@ -19,6 +19,7 @@
 :root {
 	--textarea-border: var( --border );
 	--textarea-border-focus: var( --border-focus );
+	--textarea-selection: var( --accent-background );
 }
 
 .x4textarea {
@@ -33,10 +34,13 @@
 		}
 	}
 
+	.x4label:has(.empty) {
+		display: none;
+	}
+
 	textarea {
 		@extend .flex;
 
-		border: 1px solid var( --color-gray-3 );
 		padding: 4px;
 		outline: none;
 		font: inherit;
@@ -48,7 +52,7 @@
 		}
 
 		&::selection {
-			background-color: var( --color-90 );
+			background-color: var( --textarea-selection );
 			color: white;
 		}
 

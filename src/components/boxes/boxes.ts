@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns, isArray } from '@core/core_tools.js';
+import { class_ns, isArray, isNumber, isString } from '@core/core_tools.js';
 import { Component, ComponentContent, ComponentEvents, ComponentProps } from "../../core/component"
 
 import "./boxes.module.scss";
@@ -147,7 +147,7 @@ export class StackBox extends Box<StackedLayoutProps> {
 	
 	getPage( name: string ) {
 		const pg = this._items.find( x => x.name==name );
-		return pg ? pg.page : null;
+		return pg ? pg.content : null;
 	}
 }
 
@@ -155,8 +155,8 @@ export class StackBox extends Box<StackedLayoutProps> {
 
 
 export interface GridboxProps extends BoxProps {
-	rows?: string | string[];
-	columns?: string | string[];
+	rows?: number | string | string[];
+	columns?: number | string | string[];
 }
 
 @class_ns("x4")
@@ -165,26 +165,32 @@ export class GridBox<P extends GridboxProps=GridboxProps,E extends ComponentEven
 	constructor( props: P ) {
 		super( props );
 
-		if( props.rows ) {
+		if( props.rows!==undefined ) {
 			this.setRows( props.rows );
 		}
 
-		if( props.columns ) {
+		if( props.columns!==undefined ) {
 			this.setCols( props.columns );
 		}
 	}
 
-	setRows( r: string | string[] ) {
+	setRows( r: number | string | string[] ) {
 		if( isArray(r) ) {
 			r = r.join( " " );
+		}
+		else if( isNumber(r) ) {
+			r = `repeat( ${r}, 1fr )`;
 		}
 
 		this.setStyleValue( "gridTemplateRows", r );
 	}
 
-	setCols( r: string | string[] ) {
+	setCols( r: number | string | string[] ) {
 		if( isArray(r) ) {
 			r = r.join( " " );
+		}
+		else if( isNumber(r) ) {
+			r = `repeat( ${r}, 1fr )`;
 		}
 
 		this.setStyleValue( "gridTemplateColumns", r );

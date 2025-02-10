@@ -229,6 +229,16 @@ export namespace data {
 		return data.field( { ...props, type: 'array', model: ctor ? new ctor() : null } )
 	}
 
+	/**
+	 * following member is unknown
+	 * @example
+	 * \@data.any( )
+	 * my_field: TypedRecord[];	
+	 */
+
+	export function any( props?: MetaData ) {
+		return field( { ...props, type: 'any' } );
+	}
 }
 
 
@@ -851,11 +861,10 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 		else {
 			if( typeof(filter.op)==='function' ) {
 
-				let fn = <FilterFunc>filter.op;
+				let fn = filter.op as FilterFunc;
 
 				// scan all records and append only interesting ones
 				this.forEach( (rec, idx) => {
-
 					// skip deleted
 					if( !rec ) {
 						return;
@@ -1030,7 +1039,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 
 		return index	
 	}
-
+		
 	/**
 	 * 
 	 */
