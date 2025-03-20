@@ -22,46 +22,93 @@
 }
 
 .x4slider {
-	height: 28px;
 	outline: none;
-	padding: 10px 12px;
 	touch-action: none;
-	margin: 5px 0;
+	overflow: hidden;
 
-	.track {
-		background-color: var( --slider-track );
-		width: 100%;
-
-		position: relative;
-		top: 50%;
-		height: 3px;
-	}
-
-	.bar {
-		position: absolute;
-		width: 61%;
-		height: 3px;
-		//padding: 4px 0;
-		//background-color: var( --color-60 );
-	}
-
-	.thumb {
-		position: absolute;
-		left: 61%;
-		outline: none;
+	&:not(.vertical) {
+		padding: 10px 12px;
+		margin: 5px 0;
+		height: 28px;
 		
-		background-color: var( --slider-thumb-background );
-		border: 3px solid var( --slider-thumb-border );
-		border-radius: 8px;
+		.track {
+			background-color: var( --slider-track );
+			width: 100%;
 
-		top: 50%;
-		width: 16px;
-		height: 16px;
+			position: relative;
+			top: 50%;
+			height: 3px;
+		}
 
-		transform: translate(-50%,-50%);
-		cursor: pointer;
+		.bar {
+			position: absolute;
+			width: 61%;
+			height: 3px;
+			//padding: 4px 0;
+			//background-color: var( --color-60 );
+		}
+
+		.thumb {
+			position: absolute;
+			left: 61%;
+			outline: none;
+			
+			background-color: var( --slider-thumb-background );
+			border: 3px solid var( --slider-thumb-border );
+			border-radius: 8px;
+
+			top: 50%;
+			width: 16px;
+			height: 16px;
+
+			transform: translate(-50%,-50%);
+			cursor: pointer;
+		}
 	}
 
+	&.vertical {
+		padding: 12px 10px;
+		margin: 0 5px;
+		width: 28px;
+
+		.track {
+			background-color: var( --slider-track );
+			height: 100%;
+	
+			position: relative;
+			left: 50%;
+			width: 3px;
+		}
+	
+		.bar {
+			position: absolute;
+			width: 3px;
+			height: 61%;
+			//padding: 4px 0;
+			//background-color: var( --color-60 );
+		}
+	
+		.thumb {
+			position: absolute;
+			left: 50%;
+			outline: none;
+			
+			background-color: var( --slider-thumb-background );
+			border: 3px solid var( --slider-thumb-border );
+			border-radius: 8px;
+	
+			top: 61%;
+			width: 16px;
+			height: 16px;
+	
+			transform: translate(-50%,-50%);
+			cursor: pointer;
+		}
+	
+	}
+
+
+	
 	&:focus .thumb {
 		outline-offset: 3px;
     	outline-color: var(--slider-thumb-border-focus);

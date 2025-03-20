@@ -14,7 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, ComponentEvent } from '../../core/component';
+import { EventCallback } from '@core/core_events.js';
+import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
 import { class_ns, Rect } from '../../core/core_tools.js';
 
 import { HBox } from '../boxes/boxes';
@@ -22,12 +23,8 @@ import { Input } from '../input/input.js';
 
 import './slider.module.scss';
 
-interface ChangeEvent extends ComponentEvent {
-	value: number;
-}
-
 interface SliderEvents extends ComponentEvents {
-	change: ChangeEvent;
+	change: EvChange;
 }
 
 interface SliderProps extends ComponentProps {
@@ -35,6 +32,8 @@ interface SliderProps extends ComponentProps {
 	min: number;
 	max: number;
 	step?: number;
+	vertical?: boolean;
+	change?: EventCallback<EvChange>;
 }
 
 /**
@@ -54,12 +53,25 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 	constructor( props: SliderProps ) {
 		super( props );
 
+		this.mapPropEvents( props, "change" );
+
+		if( props.vertical ) {
+			this.addClass( 'vertical' );
+		}
+
 		this.setContent( [
 			new HBox( { cls: "track", content: [
 				this._bar = new Component( { cls: "bar" } ),
 				this._thumb = new Component( { cls: "thumb" } ),
 			] }),
-			this._range = new Input( { type: "range", hidden: true, value: props.value, min: props.min, max: props.max, step: props.step } )
+			this._range = new Input( { 
+				type: "range", 
+				hidden: true, 
+				value: props.value, 
+				min: props.min, 
+				max: props.max, 
+				step: props.step,
+			} )
 		]);
 
 		this.setAttribute( "tabindex", 0 );
@@ -71,9 +83,7 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 			keydown: ( ev ) => this._on_key( ev ),
 		} );
 
-		this._range.addDOMEvent( "change", ( ev: Event) => {
-			//console.log( ev );
-		})
+		this._update( );
 	}
 
 	private _on_mousedown( ev: PointerEvent ) {
@@ -88,30 +98,55 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 		this.setCapture( ev.pointerId );
 	}
 
+	private _getMinMax( ) {
+		const min = parseInt( this._range.getAttribute( 'min' ) );
+		const max = parseInt( this._range.getAttribute( 'max' ) );
+		return [min,max];
+	}
+
 	private _on_mousemove( ev: PointerEvent ) {
 		if( this._mdown ) {
-			let pos = ev.pageX - this._irect.left;
-			if( pos<0 ) {
-				pos = 0;
+
+			let pos: number;
+			let size: number;
+			
+			if( !this.props.vertical ) {
+				pos = ev.offsetX;	// - this._irect.left;
+				size = this._irect.width;
 			}
-			else if( pos>this._irect.width ) {
-				pos = this._irect.width;
+			else {
+				pos  = ev.offsetY;	// - this._irect.top;
+				size = this._irect.height;
+			}
+		
+			let perc = pos / size;
+			if( this.props.vertical ) {
+				perc = 1-perc;
 			}
 
-			let perc = pos / this._irect.width * 100;
-			this._range.setNumValue( perc );
-			
+			const [min,max] = this._getMinMax( );
+
+			this._range.setNumValue( min + (perc * (max-min) ) );
 			this._update( );
 		}
 	}
 
 	private _update( ) {
 		const value = this._range.getNumValue( );
+		const [min,max] = this._getMinMax( );
 
-		const perc = value / (this.props.max-this.props.min) * 100;
-		this._thumb.setStyleValue( "left", perc+"%" );
-		this._bar.setStyleValue( "width", perc+"%" );
-		//thumb.setAttribute( "tooltip", value );
+		let perc = max>min ? value / Math.abs(max-min) * 100 : 0;
+
+		if( !this.props.vertical ) {
+			this._thumb.setStyleValue( "left", perc+"%" );
+			this._bar.setStyleValue( "width", perc+"%" );
+		}
+		else {
+			// 0 is at bottom
+			perc = 100-perc;
+			this._thumb.setStyleValue( "top", perc+"%" );
+			this._bar.setStyleValue( "height", perc+"%" );
+		}
 
 		this.fire( "change", { value } );
 	}
@@ -144,5 +179,20 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 			this._range.setNumValue( this._range.getNumValue()+inc );
 			this._update( );
 		}
+	}
+
+	setMin( min: number ) {
+		this._range.setAttribute( 'min', min+'' );
+		this._update( );
+	}
+
+	setMax( max: number ) {
+		this._range.setAttribute( 'max', max+'' );
+		this._update( );
+	}
+
+	setValue( v: number ) {
+		this._range.setNumValue( v );
+		this._update( );
 	}
 }

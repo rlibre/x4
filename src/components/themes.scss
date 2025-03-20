@@ -20,6 +20,7 @@ $color--interval: 8.4%;
 
 :root {
 	--color-primary-a0: #ffffff;
+	--color-primary-a5:  #{lighten($color--base, 35%)};
 	--color-primary-a10:  #{lighten($color--base, $color--interval * 4)};
 	--color-primary-a20: #{lighten($color--base, $color--interval * 3)};
 	--color-primary-a30: #{lighten($color--base, $color--interval * 2)};

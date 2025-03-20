@@ -422,6 +422,11 @@ export class SvgGroup extends SvgItem {
 		return item;
 	}
 
+	appendItems( ...items: SvgItem[] ): this  {
+		items.forEach( x => this._dom.appendChild( x.getDom() ) );
+		return this;
+	}
+
 	/**
 	 * 
 	 */
@@ -460,8 +465,12 @@ export class SvgGroup extends SvgItem {
 		return this.append( shape );
 	}
 
-	group( ) {
+	group( id?: string ) {
 		const group = new SvgGroup( );
+		if( id ) {
+			group.setAttr( 'id', id );
+		}
+
 		return this.append( group );
 	}
 
@@ -548,5 +557,9 @@ export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 		if( props.svg ) {
 			this.dom.appendChild( props.svg.getDom() );
 		}
+	}
+
+	addItems( ...items: SvgItem[] ) {
+		items.forEach( item => this.dom.appendChild( item.getDom() ) );
 	}
 }

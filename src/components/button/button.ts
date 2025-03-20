@@ -39,6 +39,7 @@ export interface ButtonProps extends ComponentProps {
 	label?: string;
 	icon?: string;
 	tabindex?: boolean | number;
+	autorepeat?: number | boolean;
 	click?: EventCallback<EvClick>;
 }
 
@@ -63,7 +64,15 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 		super( { ...props, tag: 'button', content: null } );
 
 		this.mapPropEvents( props, 'click' );
-		this.addDOMEvent('click', (e) => this._on_click(e));
+
+		if( props.autorepeat ) {
+			this.addDOMEvent('pointerdown', (e) => this._on_mouse(e) );
+			this.addDOMEvent('pointerup', (e) => this._on_mouse(e) );
+		}
+		else {
+			this.addDOMEvent('click', (e) => this._on_click(e));
+		}
+
 		this.addDOMEvent('keydown', (e) => this._on_keydown(e) );
 
 		this.setContent( [
@@ -98,6 +107,33 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 
 		ev.preventDefault();
 		ev.stopPropagation();
+	}
+
+	protected _on_mouse( e: PointerEvent ) {
+
+		let count = 0;
+
+		if( e.type=='pointerdown' ) {
+			this.dom.setPointerCapture( e.pointerId );
+
+			const rt = this.props.autorepeat===true ? 200 : this.props.autorepeat as number;
+
+			this.setTimeout( 'repeat', 500, ( ) => {
+				count++;
+
+				this.fire('click', {} );
+				this.setInterval( 'repeat', rt, ( ) => {
+					this.fire('click', {} );
+				})
+			} );
+		}
+		else {
+			this.clearTimeout( 'repeat' );
+
+			if( !count ) {
+				this.fire('click', {} );
+			}
+		}
 	}
 
 	/**

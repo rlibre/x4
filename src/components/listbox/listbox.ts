@@ -213,12 +213,16 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 */
 	
 	private _on_click( ev: MouseEvent ) {
-		ev.stopImmediatePropagation();
-		ev.preventDefault( );
-
 		let target = ev.target as HTMLElement;
+
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
+
+			// avoid trapping child ckick
+			if( c.dom.tagName==='INPUT' ) {
+				return;
+			}
+
 			if( c && c.hasClass("x4item") ) {
 				const id = c.getInternalData( "id" );
 				const fev: ComponentEvent = { context:id };
@@ -240,6 +244,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 
 		this.clearSelection( );
+
+		ev.stopImmediatePropagation();
+		ev.preventDefault( );
 	}
 
 	/**
@@ -329,8 +336,8 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			ids = [ids];
 		}
 
+		this.clearSelection( );
 		if( !ids.length ) {
-			this.clearSelection( );
 			return;
 		}
 
