@@ -495,17 +495,15 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	prependContent( content: ComponentContent ) {
 		const d = this.dom;
-
 		const set = ( c: Component | string | UnsafeHtml | number | boolean ) => {
 			if (c instanceof Component ) {
-				d.insertBefore( d.firstChild, c.dom );
+				d.insertAdjacentElement( 'afterbegin', c.dom );
 			}
 			else if( c instanceof UnsafeHtml) {
-				d.insertAdjacentHTML( 'beforebegin', c.toString() );
+				d.insertAdjacentHTML( 'afterbegin', c.toString() );
 			}
 			else if (typeof c === "string" || typeof c === "number") {
-				const tnode = document.createTextNode(c.toString());
-				d.insertBefore( d.firstChild, tnode );
+				d.insertAdjacentText( 'afterbegin', c.toString() );
 			}
 			else {
 				console.warn("Unknown type to append: ", c);

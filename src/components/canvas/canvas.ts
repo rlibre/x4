@@ -84,6 +84,10 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 		return this.m_canvas;
 	}
 
+	getContext( ) {
+		return (this.m_canvas.dom as HTMLCanvasElement).getContext('2d') as CanvasEx;
+	}
+
 	/**
 	 * redraw the canvas (force a paint)
 	 */
@@ -118,11 +122,11 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 			return;
 		}
 
-		const canvas = this.m_canvas.dom as HTMLCanvasElement;
+		//const canvas = this.m_canvas.dom as HTMLCanvasElement;
 		const w = dom.clientWidth;
 		const h = dom.clientHeight;
 
-		const ctx = <CanvasEx>canvas.getContext('2d');
+		const ctx = this.getContext();
 		if (w != this.m_iwidth || h != this.m_iheight) {
 			// adjustment for HDPI
 			let devicePixelRatio = window.devicePixelRatio || 1;
