@@ -18,10 +18,10 @@ import { Select } from "../select/select"
 import { Button } from "../button/button"
 import { Component, ComponentProps, EvChange, EvFocus } from "../../core/component"
 import { HBox, VBox } from "../boxes/boxes"
-import { Input } from "../input/input"
+import { Input, InputProps } from "../input/input"
 import { ListItem } from "../listbox/listbox"
 import { SimpleText } from "../label/label"
-import { isFunction } from '../../core/core_tools';
+import { class_ns, isFunction } from '../../core/core_tools';
 import { Icon } from '../components.js'
 
 import "./progrid.module.scss"
@@ -31,17 +31,20 @@ import updown_icon from "./updown.svg"
 type IValue = boolean | number | string;
 type IValueCB = ( name: string) => IValue;
 
-interface PropertyValue {
+export interface PropertyValue {
 	type: 'boolean' | 'number' | 'string' | 'password' | 'options';
 	title?: string;
+	desc?: string;
 	name?: string;
 	value: IValue | IValueCB;
 	options?: ListItem[];
 	callback: ( name: string, value: any ) => void;
+	step?: number;	// for numbers
+	live?: boolean;	// for live update 
 	cls?: string;
 }
 
-interface PropertyGroup {
+export interface PropertyGroup {
 	title: string;
 	desc?: string;
 	icon?: string;
@@ -55,6 +58,7 @@ export interface PropertyProps extends ComponentProps {
 	groups: PropertyGroup[];
 }
 
+@class_ns( "x4" )
 export class PropertyGrid extends VBox {
 
 	private root: Component;
@@ -67,7 +71,7 @@ export class PropertyGrid extends VBox {
 		this.setContent( this.root );
 
 		if( props.groups ) {
-			this._fillSettings( props.groups );
+			this.setItems( props.groups );
 		}
 	};
 
@@ -75,7 +79,7 @@ export class PropertyGrid extends VBox {
 	 * 
 	 */
 
-	private async _fillSettings( _grps: PropertyGroup[] ) {
+	setItems( _grps: PropertyGroup[] ) {
 
 		this.groups = _grps;
 		this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
@@ -154,7 +158,7 @@ export class PropertyGrid extends VBox {
 				checked: value as boolean, 
 				dom_events: {
 					change: ( e: Event ) => {
-						item.callback( item.name, (editor.dom as HTMLInputElement).checked );
+						item.callback?.( item.name, (editor.dom as HTMLInputElement).checked );
 					}
 				}
 			});
@@ -168,7 +172,7 @@ export class PropertyGrid extends VBox {
 				name: item.name,
 				change: ( e: EvChange ) => {
 					debugger;
-					item.callback( item.name, e.value );
+					item.callback?.( item.name, e.value );
 				}
 			});
 		}
@@ -180,7 +184,7 @@ export class PropertyGrid extends VBox {
 				value: value as string, 
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						item.callback( item.name, (editor as Input).getValue() );
+						item.callback?.( item.name, (editor as Input).getValue() );
 					}
 				}
 			});
@@ -191,9 +195,15 @@ export class PropertyGrid extends VBox {
 				id: item.name,
 				name: item.name, 
 				value: value as string,
+				step: item.step,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						item.callback( item.name, (editor as Input).getValue() );
+						item.callback?.( item.name, (editor as Input).getNumValue() );
+					}
+				},
+				change: ( ) => {
+					if( item.live ) {
+						item.callback?.( item.name, (editor as Input).getNumValue() );
 					}
 				}
 			});
@@ -206,7 +216,7 @@ export class PropertyGrid extends VBox {
 				value: value as string,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
-						item.callback( item.name, (editor as Input).getValue() );
+						item.callback?.( item.name, (editor as Input).getValue() );
 					}
 				}
 			});
@@ -215,7 +225,7 @@ export class PropertyGrid extends VBox {
 		return new HBox({
 			cls: 'row',
 			content: [
-				new Component({ cls: 'cell hdr', content: item.title ?? item.name }),
+				new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }),
 				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })
 			]
 		});
@@ -247,7 +257,7 @@ export class PropertyGrid extends VBox {
 		else if (item.type === 'number') {
 			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
-				editor.setNumValue( value as number );
+				editor.setNumValue( value as number, -2 );
 			}
 		}
 		else {

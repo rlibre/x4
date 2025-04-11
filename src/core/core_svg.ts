@@ -127,6 +127,14 @@ class SvgItem {
 	}
 
 	/**
+	 * return the given attribute if any 
+	 */
+
+	getAttr( name: string ) : string {
+		return this._dom.getAttribute( name );
+	}
+
+	/**
 	 * define a new attribute
 	 * @param name attibute name
 	 * @param value attribute value
@@ -193,7 +201,8 @@ class SvgItem {
 	 */
 
 	transform( tr: string ): this {
-		this.setAttr( "transform", tr );
+		const t = this.getAttr( "transform" ) ?? "";
+		this.setAttr( "transform", t+' '+tr );
 		return this;
 	}
 
@@ -548,5 +557,10 @@ export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 		if( props.svg ) {
 			this.dom.appendChild( props.svg.getDom() );
 		}
+	}
+
+	setSvg( bld: SvgBuilder ) {
+		this.clearContent( );
+		this.dom.appendChild( bld.getDom() );
 	}
 }

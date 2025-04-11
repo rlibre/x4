@@ -16,7 +16,7 @@
 
 import { EventCallback } from '@core/core_events.js';
 import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools.js';
+import { class_ns, IComponentInterface, IFormElement, isString } from '../../core/core_tools.js';
 
 import "./input.module.scss"
 
@@ -131,12 +131,26 @@ export class Input extends Component<InputProps,InputEvents> {
 
 			case "number": {
 				const p = this.props as NumberProps;
+				
 				this.setAttribute( "required", p.required );
 				this.setAttribute( "readonly", p.readonly );
 				this.setAttribute( "min", p.min );
 				this.setAttribute( "max", p.max );
 				this.setAttribute( "step", p.step );
-				this.setAttribute( "value", p.value+'' );
+				//this.setAttribute( "value", p.value+'' );
+				this.setNumValue( isString(p.value) ? parseFloat(p.value) : p.value, -2 );
+
+				this.addDOMEvent( "wheel", ( e: WheelEvent ) => {
+					if( this.hasFocus() ) { // only if has focus
+						e.preventDefault( );
+						let v = this.getNumValue();
+						const delta = e.deltaY < 0 ? 1 : -1;
+						v += (p.step ? p.step : 1) * delta;
+						this.setNumValue( v, -2 );
+
+						this.dom.dispatchEvent(new Event('input')); 
+					}
+				}, );
 				break;
 			}
 
@@ -260,9 +274,24 @@ export class Input extends Component<InputProps,InputEvents> {
 	/**
 	 * 
 	 * @param value 
+	 * @param ndec number of decimals or -1 for auto, -2 as prop.step
+	 * 
 	 */
 
-	public setNumValue( value: number ) {
+	public setNumValue( value: number, ndec = -1 ) {
+		
+		if( ndec==-2 && this.props.type=='number' ) {
+			const p = this.props as NumberProps;
+
+			if( p.step ) {
+				let ndec = -Math.floor(Math.log10(p.step ?? 1) );
+				return this.setValue( value.toFixed(ndec) );
+			}
+		}
+		else if( ndec>=0 ) {
+			return this.setValue( value.toFixed(ndec) );
+		}
+
 		this.setValue( value+"" );
 	}
 

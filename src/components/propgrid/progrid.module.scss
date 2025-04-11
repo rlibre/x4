@@ -8,11 +8,12 @@
 	--propertygrid-background: white;
 }
 
-.propertygrid {
+.x4propertygrid {
 	background: var( --propertygrid-background );
 	border: 1px solid var(--color-primary-a50);
 	overflow-y: auto;
-
+    flex-basis: 0;
+	
 	.root {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -20,10 +21,17 @@
 	}
 
 	.group {
-		height: 2em;
+		padding: 4px;;
+		min-height: 2em;
 		font-weight: bold;
 		background-color: white;
 		color: var(--color-primary-a50);
+
+		.x4box > .desc {
+			font-style: italic;
+			font-weight: normal;
+			color: var( --text-ternary );
+		}
 
 		&:not( :last-child ) {
 			border-bottom: 1px solid var(--color-primary-a50);

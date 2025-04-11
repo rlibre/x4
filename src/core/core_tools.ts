@@ -27,7 +27,7 @@ export function isString(val: any): val is string {
  * @returns true if object is a number
  */
 
-export function isNumber( v: any ): v is number {
+export function isNumber(v: any): v is number {
 	return typeof v === 'number' && isFinite(v);
 }
 
@@ -63,29 +63,29 @@ export type Constructor<P> = {
  */
 
 export class UnsafeHtml extends String {
-	constructor( value: string ) {
-		super( value );
+	constructor(value: string) {
+		super(value);
 	}
 }
 
-export function unsafeHtml( x: string ): UnsafeHtml {
-	return new UnsafeHtml( x );
+export function unsafeHtml(x: string): UnsafeHtml {
+	return new UnsafeHtml(x);
 }
 
-export function unsafe( strings: TemplateStringsArray, ...values: any[] ): UnsafeHtml {
-    const result = strings.reduce((acc, str, i) => {
-        return acc + str + (values[i] || '');
-    }, '');
-    return unsafeHtml(result);
+export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
+	const result = strings.reduce((acc, str, i) => {
+		return acc + str + (values[i] || '');
+	}, '');
+	return unsafeHtml(result);
 }
 
 /**
  * 
  */
 
-export function clamp<T>( v: T, min: T, max: T ) : T {
-	if( v<min ) { return min; }
-	if( v>max ) { return max; }
+export function clamp<T>(v: T, min: T, max: T): T {
+	if (v < min) { return min; }
+	if (v > max) { return max; }
 	return v;
 }
 
@@ -96,9 +96,9 @@ export function clamp<T>( v: T, min: T, max: T ) : T {
 
 export interface IRect {
 	left: number;
-    top: number;
-    height: number;
-    width: number;
+	top: number;
+	height: number;
+	width: number;
 }
 
 /**
@@ -111,41 +111,91 @@ export class Rect implements IRect {
 	height: number;
 	width: number;
 
-	constructor( );
-	constructor( l: number, t: number, w: number, h: number );
-	constructor( l: Rect );
-	constructor( l?: number | IRect, t?: number, w?: number, h?: number ) {
-		if( l!==undefined ) {
-			if( isNumber( l ) ) {
+	constructor();
+	constructor(l: number, t: number, w: number, h: number);
+	constructor(l: Rect);
+	constructor(l?: number | IRect, t?: number, w?: number, h?: number) {
+		if (l !== undefined) {
+			if (isNumber(l)) {
 				this.left = l;
 				this.top = t;
 				this.width = w;
 				this.height = h;
 			}
 			else {
-				Object.assign( this, l );
+				Object.assign(this, l);
 			}
 		}
 	}
-	
-	get right( ) {
-		return this.left+this.width; 
+
+	get right() {
+		return this.left + this.width;
 	}
 
-	get bottom( ) {
-		return this.top+this.height;
+	get bottom() {
+		return this.top + this.height;
 	}
 }
 
 
 /**
- * generic Point
+ * generic Point 
+ * TODO: IPoint
  */
 
 export interface Point {
 	x: number;
 	y: number;
 }
+
+/**
+ * generic Size 
+ * TODO: ISize
+ */
+
+export interface Size {
+	w: number;
+	h: number;
+}
+
+/**
+ * center one rect inside another
+ */
+
+
+export function centerRect(innerRect: IRect, outerRect: IRect, margin: number = 0): IRect {
+
+	const owidth  = outerRect.width - 2 * margin;
+	const oheight = outerRect.height - 2 * margin;
+
+	const ratio = innerRect.width / innerRect.height;
+
+	let nwidth = owidth;
+	let nheight = owidth / ratio;
+
+	if (nheight > oheight) {
+		nheight = oheight;
+		nwidth = oheight * ratio;
+	} 
+
+	const newLeft = outerRect.left + (outerRect.width - nwidth) / 2; 
+	const newTop  = outerRect.top + (outerRect.height - nheight) / 2;
+
+	return { left: newLeft, top: newTop, width: nwidth, height: nheight };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @see queryInterface
@@ -156,19 +206,19 @@ export interface IComponentInterface {
 
 // form-element
 export interface IFormElement extends IComponentInterface {
-	getRawValue( ): any;
-	setRawValue( v: any ): void;
-	isValid( ): boolean;
+	getRawValue(): any;
+	setRawValue(v: any): void;
+	isValid(): boolean;
 }
 
 // tab-handler
 export interface ITabHandler extends IComponentInterface {
-	focusNext( next: boolean ): boolean;	// return true to stop event
+	focusNext(next: boolean): boolean;	// return true to stop event
 }
 
 // tip-handler
 export interface ITipHandler extends IComponentInterface {
-	getTip( ): string;
+	getTip(): string;
 }
 
 /**
@@ -179,8 +229,8 @@ interface Features {
 	eyedropper: 1,
 }
 
-export function isFeatureAvailable( name: keyof Features ): boolean {
-	switch( name ) {
+export function isFeatureAvailable(name: keyof Features): boolean {
+	switch (name) {
 		case "eyedropper": return "EyeDropper" in window;
 	}
 
@@ -188,63 +238,63 @@ export function isFeatureAvailable( name: keyof Features ): boolean {
 }
 
 export class Timer {
-	
-	protected _timers: Map<string,any>;
-	
-	/**
-	 * 
-	 */
 
-	setTimeout( name: string, time: number, callback: Function ) {
-		if( !this._timers ) {
-			this._timers = new Map( );
-		}
-		else {
-			this.clearTimeout( name );
-		}
-
-		const tm = setTimeout( callback, time );
-		this._timers.set( name, tm );
-
-		return tm;
-	}
-
-	clearTimeout( name: string ) {
-		if( this._timers && this._timers.has(name) ) {
-			clearTimeout( this._timers.get(name) );
-			this._timers.delete( name );
-		}
-	}
+	protected _timers: Map<string, any>;
 
 	/**
 	 * 
 	 */
 
-	setInterval( name: string, time: number, callback: Function ) {
-		if( !this._timers ) {
-			this._timers = new Map( );
+	setTimeout(name: string, time: number, callback: Function) {
+		if (!this._timers) {
+			this._timers = new Map();
 		}
 		else {
-			this.clearInterval( name );
+			this.clearTimeout(name);
 		}
 
-		const tm = setInterval( callback, time );
-		this._timers.set( name, tm );
+		const tm = setTimeout(callback, time);
+		this._timers.set(name, tm);
 
 		return tm;
 	}
 
-	clearInterval( name: string ) {
-		if( this._timers && this._timers.has(name) ) {
-			clearInterval( this._timers.get(name) );
-			this._timers.delete( name );
+	clearTimeout(name: string) {
+		if (this._timers && this._timers.has(name)) {
+			clearTimeout(this._timers.get(name));
+			this._timers.delete(name);
 		}
 	}
 
-	clearAllTimeouts( ) {
-		this._timers?.forEach( t => {
-			clearTimeout( t );
-		} );
+	/**
+	 * 
+	 */
+
+	setInterval(name: string, time: number, callback: Function) {
+		if (!this._timers) {
+			this._timers = new Map();
+		}
+		else {
+			this.clearInterval(name);
+		}
+
+		const tm = setInterval(callback, time);
+		this._timers.set(name, tm);
+
+		return tm;
+	}
+
+	clearInterval(name: string) {
+		if (this._timers && this._timers.has(name)) {
+			clearInterval(this._timers.get(name));
+			this._timers.delete(name);
+		}
+	}
+
+	clearAllTimeouts() {
+		this._timers?.forEach(t => {
+			clearTimeout(t);
+		});
 
 		this._timers = null;
 	}
@@ -254,12 +304,12 @@ export class Timer {
  * 
  */
 
-export function asap( callback: ( ) => void ) {
-	return requestAnimationFrame( callback );
+export function asap(callback: () => void) {
+	return requestAnimationFrame(callback);
 }
 
-export function oneshot( callback: ( ) => void, ms = 0 ) {
-	return setTimeout( callback, ms );
+export function oneshot(callback: () => void, ms = 0) {
+	return setTimeout(callback, ms);
 }
 
 
@@ -301,7 +351,7 @@ export function pad(what: any, size: number, ch: string = '0') {
  * console.log( sprintf( 'here is arg 1 {1} and arg 0 {0}', 'argument 0', 'argument 1' ) )
  */
 
-export function sprintf( format: string, ...args:any[] ) {
+export function sprintf(format: string, ...args: any[]) {
 	return format.replace(/{(\d+)}/g, function (match, index) {
 		return typeof args[index] != 'undefined' ? args[index] : match;
 	});
@@ -329,11 +379,11 @@ export function pascalCase(string: string): string {
 	return result.replace(/ /g, '-');
 }
 
-export function camelCase( text: string ) {
-	let result = text.toLowerCase( );
-	result = result.replace( /[^a-zA-Z0-9]+(.)/g, (m,chr) => {
+export function camelCase(text: string) {
+	let result = text.toLowerCase();
+	result = result.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => {
 		return chr.toUpperCase();
-	} );
+	});
 	return result;
 }
 
@@ -478,26 +528,26 @@ export function parseIntlDate(value: string, fmts: string = _tr.global.date_inpu
 		//review: add hours, minutes, seconds
 
 		let smatch = '';
-		for (let i=0; i<fmatch.length; i++ ) {
+		for (let i = 0; i < fmatch.length; i++) {
 			const c = fmatch[i];
 
-			if (c == 'd' ) {
+			if (c == 'd') {
 				smatch += '(?<day>\\d{1,2})';
 			}
-			else if( c == 'D') {
+			else if (c == 'D') {
 				smatch += '(?<day>\\d{2})';
 			}
-			else if (c == 'm' ) {
+			else if (c == 'm') {
 				smatch += '(?<month>\\d{1,2})';
 			}
 			else if (c == 'M') {
 				smatch += '(?<month>\\d{2})';
 			}
-			else if (c == 'y' ) {
+			else if (c == 'y') {
 				smatch += '(?<year>\\d{1,4})';
 			}
 			else if (c == 'Y') {
-				if( fmatch[i+1]=='Y' ) {
+				if (fmatch[i + 1] == 'Y') {
 					smatch += '(?<year>\\d{4})';
 					i++;
 				}
@@ -536,11 +586,11 @@ export function parseIntlDate(value: string, fmts: string = _tr.global.date_inpu
 		let match = rematch.exec(value);
 
 		if (match) {
-			const now = new Date( );
+			const now = new Date();
 
 			let d = parseInt(match.groups.day ?? '1');
 			let m = parseInt(match.groups.month ?? '1');
-			let y = parseInt(match.groups.year ?? now.getFullYear()+'');
+			let y = parseInt(match.groups.year ?? now.getFullYear() + '');
 			let h = parseInt(match.groups.hour ?? '0');
 			let i = parseInt(match.groups.min ?? '0');
 			let s = parseInt(match.groups.sec ?? '0');
@@ -727,12 +777,12 @@ export function calcAge(birth: Date, ref?: Date) {
 
 // :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-export function beep( ) {
- 	const snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");  
-    snd.play();
+export function beep() {
+	const snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
+	snd.play();
 }
 
-let sb_width_cache= -1;
+let sb_width_cache = -1;
 
 /**
  * compute scrollbar size
@@ -740,7 +790,7 @@ let sb_width_cache= -1;
 
 export function getScrollbarSize() {
 
-	if (sb_width_cache <0 ) {
+	if (sb_width_cache < 0) {
 		let outerDiv = document.createElement('div');
 		outerDiv.style.cssText = 'overflow:auto;position:absolute;top:0;width:100px;height:100px';
 
@@ -762,9 +812,9 @@ export function getScrollbarSize() {
  * 
  */
 
-export const x4_class_ns_sym = Symbol( "class-ns" );
-export function class_ns( ns: string ) { 
-	return function (constructor: Function) { 
+export const x4_class_ns_sym = Symbol("class-ns");
+export function class_ns(ns: string) {
+	return function (constructor: Function) {
 		(constructor as any)[x4_class_ns_sym] = ns;
 	}
 }
@@ -773,7 +823,7 @@ export function class_ns( ns: string ) {
  * 
  */
 
-export function setWaitCursor( wait: boolean ) {
+export function setWaitCursor(wait: boolean) {
 	document.body.style.cursor = wait ? "wait" : "default";
 }
 
@@ -781,18 +831,18 @@ export function setWaitCursor( wait: boolean ) {
  * return the focusable elements from a given node
  */
 
-export function getFocusableElements( root: Element ) {
+export function getFocusableElements(root: Element) {
 	const els = [
 		'button:not([tabindex="-1"]):not([disabled])',
-		'[href]', 
-		'input:not([disabled])', 
-		'select:not([disabled])', 
-		'textarea:not([disabled])', 
+		'[href]',
+		'input:not([disabled])',
+		'select:not([disabled])',
+		'textarea:not([disabled])',
 		'[tabindex]:not([tabindex="-1"])'
 	]
 
-	const focusable = Array.from( root.querySelectorAll(els.join(',')) );
-	return focusable.filter( x => (x as HTMLElement).offsetParent!=null );	// check visibility
+	const focusable = Array.from(root.querySelectorAll(els.join(',')));
+	return focusable.filter(x => (x as HTMLElement).offsetParent != null);	// check visibility
 }
 
 /**

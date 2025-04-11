@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym } from './core_tools';
+import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools';
 import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
@@ -677,9 +677,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	getBoundingRect( ): Rect {
+	getBoundingRect( ): IRect {
 		const rc = this.dom.getBoundingClientRect( );
-		return new Rect( rc.x, rc.y, rc.width, rc.height );
+		return { left: rc.x, top: rc.y, width: rc.width, height: rc.height };
 	}
 
 	// :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -691,6 +691,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	focus( ): this {
 		(this.dom as HTMLElement).focus( );
 		return this;
+	}
+
+	hasFocus( ) {
+		return document.activeElement==this.dom;
 	}
 
 	/**
