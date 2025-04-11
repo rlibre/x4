@@ -579,7 +579,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			return null;
 		}
 
-		let cls = column.cls ? " "+column.cls : "";
+		let cls = "";
 		if( column.classifier ) {
 			extra_cls.push( column.classifier( data, rec, col ) );
 		}
@@ -595,7 +595,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		switch (type) {
 			case "checkbox": {
 				if (data) {
-					return new Icon({ cls: "cell-check"+cls, iconId: check_icon });
+					return new Icon({ cls: "cell-check" + cls, iconId: check_icon });
 				}
 
 				return undefined;
@@ -610,10 +610,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 
 			case "number": {
-				if( data===null ) {
-					return "";
-				}
-
 				if (!isNumber(data)) {
 					return "NaN";
 				}

@@ -135,6 +135,51 @@ export class Rect implements IRect {
 	get bottom() {
 		return this.top + this.height;
 	}
+
+	contains(pt: Point): boolean;
+	contains(rc: Rect): boolean;
+	contains(arg: any): boolean {
+		if (arg instanceof Rect) {
+			return arg.left >= this.left && arg.right <= this.right && arg.top >= this.top && arg.bottom <= this.bottom;
+		}
+		else {
+			return arg.x >= this.left && arg.x < this.right && arg.y >= this.top && arg.y < this.bottom;
+		}
+	}
+
+	touches(rc: Rect): boolean {
+		if (this.left > rc.right || this.right < rc.left || this.top > rc.bottom || this.bottom < rc.top) {
+			return false;
+		}
+
+		return true;
+	}
+
+	normalize(): this {
+		let w = this.width,
+			h = this.height;
+
+		if (w < 0) {
+			this.left += w;
+			this.width = -w;
+		}
+
+		if (h < 0) {
+			this.top += h;
+			this.height = -h;
+		}
+
+		return this;
+	}
+}
+
+/**
+ * generic size
+ */
+
+export interface Size {
+	w: number;
+	h: number;
 }
 
 
@@ -147,6 +192,7 @@ export interface Point {
 	x: number;
 	y: number;
 }
+
 
 /**
  * generic Size 

@@ -42,7 +42,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 	}
 
 	private __stopTimer( name: string ) {
-		const clear = this.#timers.get(name);
+		const clear = this.#timers?.get(name);
 		if (clear) { clear(); }
 	}
 

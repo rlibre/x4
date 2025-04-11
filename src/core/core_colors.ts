@@ -178,7 +178,7 @@ export class Color {
 
 
 	setRgb( r: number, g: number, b: number, a: number ): this {
-		this.rgb = [clamp(r,0,255),clamp(g,0,255),clamp(b,0,255),clamp(a,0,1)];
+		this.rgb = [clamp(r|0,0,255),clamp(g|0,0,255),clamp(b|0,0,255),clamp(a,0,1)];
 		return this;
 	}
 
@@ -189,7 +189,7 @@ export class Color {
 
 	toHexString( ): string {
 		const _ = this.rgb;
-		return _[3]==1 ? `#(${hx(_[0])},${hx(_[1])},${hx(_[2])})` : `rgba(${hx(_[0])},${hx(_[1])},${hx(_[2])},${hx(_[3]*255)})`
+		return _[3]==1 ? `#${hx(_[0])}${hx(_[1])}${hx(_[2])}` : `#${hx(_[0])}${hx(_[1])}${hx(_[2])}${(hx((_[3]*255)|0))}`
 	}
 
 	toRgb( ): Rgb {

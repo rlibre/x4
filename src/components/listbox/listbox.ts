@@ -92,6 +92,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
 		this._multisel = new Set( );
+		this._items = [];
 
 		if( props.footer ) {
 			props.footer.setAttribute( "id", "footer" );
@@ -213,12 +214,16 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 */
 	
 	private _on_click( ev: MouseEvent ) {
-		ev.stopImmediatePropagation();
-		ev.preventDefault( );
-
 		let target = ev.target as HTMLElement;
+
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
+
+			// avoid trapping child ckick
+			if( c.dom.tagName==='INPUT' ) {
+				return;
+			}
+
 			if( c && c.hasClass("x4item") ) {
 				const id = c.getInternalData( "id" );
 				const fev: ComponentEvent = { context:id };
@@ -240,6 +245,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 
 		this.clearSelection( );
+
+		ev.stopImmediatePropagation();
+		ev.preventDefault( );
 	}
 
 	/**
@@ -281,8 +289,11 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._lastsel = id;
 
 		if( mode=='single' ) {
-			this._clearSelection( );
+			if( this._multisel.has(id) ) {
+				return;
+			}
 
+			this._clearSelection( );
 			if( item ) {
 				this._multisel.add( id );
 				item.addClass( "selected" );
@@ -323,28 +334,35 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 * select an item by it's id
 	 */
 
-	select( ids: ListboxID | ListboxID[] ) {
+	select( ids: ListboxID | ListboxID[], notify = true ) {
 
 		if( !isArray(ids) ) {
 			ids = [ids];
 		}
 
 		if( !ids.length ) {
-			this.clearSelection( );
+			if( this._multisel.size ) {
+				this.clearSelection( );
+			}
+
 			return;
 		}
 
-		const all = this._view.enumChildComponents( false );
+		// if one of new selection not in old selection...
+		if( ids.some( x => !this._multisel.has(x)) ) {
+			this._clearSelection( );
+			const all = this._view.enumChildComponents( false );
 
-		ids.forEach( id => {
-			const itm = all.find( x => x.getInternalData("id")===id );	//this.query( `[data-id="${id}"]` );
-			if( itm ) {
-				this._multisel.add( id );
-				itm.addClass( "selected" );
-			}
-		});
+			ids.forEach( id => {
+				const itm = all.find( x => x.getInternalData("id")===id );	//this.query( `[data-id="${id}"]` );
+				if( itm ) {
+					this._multisel.add( id );
+					itm.addClass( "selected" );
+				}
+			});
 
-		this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+			this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+		}
 	}
 	
 	/**
@@ -379,9 +397,8 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	clearSelection( ) {
 		if( this._multisel.size ) {
 			this._clearSelection( );
+			this.fire( "selectionChange", { selection: [], empty: true } );
 		}
-		
-		this.fire( "selectionChange", { selection: [], empty: true } );
 	}
 	
 	/**
@@ -464,7 +481,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	appendItem( item: ListItem, prepend = false, select = true ) {
 		
 		if( select ) {
-			this.clearSelection( );
+			this._clearSelection( );
 		}
 
 		let el = this.renderItem( item );
