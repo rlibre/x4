@@ -206,6 +206,11 @@ class SvgItem {
 		return this;
 	}
 
+	clear_transform( ) {
+		this.setAttr( "transform", null );
+		return this;
+	}
+
 	/**
 	 * 
 	 */
@@ -572,7 +577,7 @@ export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 		this.clearContent( );
 		this.dom.appendChild( bld.getDom() );
 	}
-	
+
 	addItems( ...items: SvgItem[] ) {
 		items.forEach( item => this.dom.appendChild( item.getDom() ) );
 	}
