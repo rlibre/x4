@@ -455,12 +455,21 @@ export class SvgGroup extends SvgItem {
 		return this.append( text );
 	}
 
-	ellipse( x: number, y: number, r1: number, r2 = r1 ): SvgShape {
+	ellipse( x: number, y: number, r1: number, r2: number ): SvgShape {
 		const shape = new SvgShape( 'ellipse' );
 		shape.setAttr( 'cx', num(x)+'' );
 		shape.setAttr( 'cy', num(y)+'' );
 		shape.setAttr( 'rx', num(r1)+'' );
 		shape.setAttr( 'ry', num(r2)+'' );
+		return this.append( shape );
+	}
+
+	circle( x: number, y: number, r1: number ): SvgShape {
+		const shape = new SvgShape( 'ellipse' );
+		shape.setAttr( 'cx', num(x)+'' );
+		shape.setAttr( 'cy', num(y)+'' );
+		shape.setAttr( 'rx', num(r1)+'' );
+		shape.setAttr( 'ry', num(r1)+'' );
 		return this.append( shape );
 	}
 
