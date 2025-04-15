@@ -69,9 +69,27 @@ class SvgItem {
 		this._dom = document.createElementNS("http://www.w3.org/2000/svg", tag ); 
 	}
 
+	/**
+	 * @returns the svh element dom
+	 */
+
 	getDom( ) {
 		return this._dom;
 	}
+
+	/**
+	 * 
+	 */
+
+	reset( ) {
+		const attrs = this._dom.attributes;
+		for (let i = attrs.length - 1; i >= 0; i--) {
+			this._dom.removeAttribute(attrs[i].name);
+		}
+
+		return this;
+	}
+
 
 	/**
 	 * change the stroke color
@@ -134,6 +152,10 @@ class SvgItem {
 		return this._dom.getAttribute( name );
 	}
 
+	getNumAttr( name: string ) {
+		return parseInt( this._dom.getAttribute( name ) );
+	}
+
 	/**
 	 * define a new attribute
 	 * @param name attibute name
@@ -182,6 +204,25 @@ class SvgItem {
 		}
 		else {
 			this._dom.classList.add(cls);
+		}
+
+		return this;
+	}
+
+	/**
+	 * remove a class
+	 * @param name class name to remove
+	 */
+	
+	removeClass( cls: string ): this {
+		if( !cls ) return;
+		
+		if( cls.indexOf(' ')>=0 ) {
+			const ccs = cls.split( " " );
+			this._dom.classList.remove(...ccs);
+		}
+		else {
+			this._dom.classList.remove(cls);
 		}
 
 		return this;
@@ -259,6 +300,12 @@ export class SvgPath extends SvgItem {
 		return this;
 	}
 
+	reset( ) {
+		this._path = "";
+		super.reset( );
+		return this;
+	}
+
 	/**
 	 * move the current pos
 	 * @param x new pos x
@@ -284,6 +331,16 @@ export class SvgPath extends SvgItem {
 	}
 
 	/**
+	 * draw a curve
+	 */
+
+	curveTo( x1: number, y1: number, x2: number, y2: number, x3: number, y3: number ) {
+		this._path += clean`C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
+		return this._update( );
+	}
+
+
+	/**
 	 * close the currentPath
 	 */
 
@@ -302,13 +359,13 @@ export class SvgPath extends SvgItem {
 	 * @returns this
 	 */
 
-	arc( x: number, y: number, r: number, start: number, end: number ): this {
+	arc( x: number, y: number, r: number, start: number, end: number, clockwise= true ): this {
 
 		const st = p2c( x, y, r, start-90 );
 		const en = p2c( x, y, r, end-90 );
 
-		const flag = end - start <= 180 ? "0" : "1";
-		this._path += clean`M${st.x},${st.y}A${r},${r} 0 ${flag} 1 ${en.x},${en.y}`;
+		const flag = ((end-start) <= 180 ? "0" : "1");
+		this._path += clean`M${st.x},${st.y}A${r},${r} 0 ${flag} ${(clockwise ? '1' : '0')} ${en.x},${en.y}`;
 		
 		return this._update( );
 	}
@@ -368,6 +425,42 @@ export class SvgText extends SvgItem {
 		return this.setAttr( 'alignment-baseline', al );
 	}
 }
+
+/**
+ * 
+ */
+
+export class SvgIcon extends SvgItem {
+	constructor( svg: string ) {
+		super( "svg" );
+
+		if( svg.startsWith("data:image/svg+xml,") ) {
+			svg = svg.substring( 19 );
+		}
+
+		const parser = new DOMParser();
+		const doc = parser.parseFromString( decodeURIComponent(svg), "image/svg+xml");
+
+		const parserErrorElement = doc.querySelector("parsererror");
+		if( parserErrorElement ) {
+			console.error( "error while parsing svg:\n"+ parserErrorElement.textContent );
+		}
+
+		const svgRoot = doc.documentElement; // The <svg> element from the string
+		for( let i=0; i<svgRoot.attributes.length; i++) {
+			this._dom.setAttribute( svgRoot.attributes[i].name, svgRoot.attributes[i].value );
+		}
+
+		for( let i=0; i<svgRoot.childNodes.length; i++) {
+			const child = svgRoot.childNodes[i];
+			if (child.nodeType === 1) { 
+				this._dom.appendChild(child);
+			} 
+		}
+	}
+}
+
+
 
 /**
  * 
@@ -436,9 +529,10 @@ export class SvgGroup extends SvgItem {
 		return item;
 	}
 
-	appendItems( ...items: SvgItem[] ): this  {
-		items.forEach( x => this._dom.appendChild( x.getDom() ) );
-		return this;
+	appendItems<K extends SvgItem>( items: K[] )  {
+		items.forEach( item => {
+			this._dom.appendChild( item.getDom() );
+		} );
 	}
 
 	/**
@@ -471,6 +565,15 @@ export class SvgGroup extends SvgItem {
 		shape.setAttr( 'rx', num(r1)+'' );
 		shape.setAttr( 'ry', num(r1)+'' );
 		return this.append( shape );
+	}
+
+	icon( svg: string, x: number, y: number, w: number, h: number ): SvgIcon {
+		const icon = new SvgIcon( svg );
+		icon.setAttr( 'x', num(x)+'' );
+		icon.setAttr( 'y', num(y)+'' );
+		icon.setAttr( 'width', num(w)+'' );
+		icon.setAttr( 'height', num(h)+'' );
+		return this.append( icon );
 	}
 
 	rect( x: number, y: number, w: number, h: number ): SvgShape {
@@ -534,20 +637,35 @@ export class SvgGroup extends SvgItem {
 
 export class SvgBuilder extends SvgGroup {
 	private static g_clip_id = 1;
+	private static g_pat_id = 1;
 	
 	constructor( ) {
 		super(  );
 	}
 
 	addClip( x: number, y: number, w: number, h: number ) {
-        
-		const id = 'c-'+SvgBuilder.g_clip_id++;
+		const id = 'clip-'+SvgBuilder.g_clip_id++;
 		const clip = new SvgGroup( 'clipPath' );
 		clip.setAttr('id', id );
 		clip.rect( x, y, w, h );
 
 		this.append(clip);
-        return id;
+        return {id,clip};
+    }
+
+	addPattern( x: number, y: number, w: number, h: number ) {
+		const id = 'pat-'+SvgBuilder.g_pat_id++;
+
+		const pat = new SvgGroup( 'pattern' );
+		pat.setAttr( 'id', id );
+		pat.setAttr( 'x', num(x)+'' );
+		pat.setAttr( 'y', num(y)+'' );
+		pat.setAttr( 'width', num(w)+'' );
+		pat.setAttr( 'height', num(h)+'' );
+		pat.setAttr( 'patternUnits', "userSpaceOnUse" );
+
+		this.append(pat);
+		return {id,pat};
     }
 }
 
