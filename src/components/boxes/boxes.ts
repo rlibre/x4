@@ -15,9 +15,10 @@
  **/
 
 import { class_ns, isArray, isNumber, isString } from '@core/core_tools.js';
-import { Component, ComponentContent, ComponentEvents, ComponentProps } from "../../core/component"
+import { Component, ComponentContent, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 
 import "./boxes.module.scss";
+import { EventCallback } from '@core/core_events.js';
 
 export interface BoxProps extends ComponentProps {
 	tag?: string;
@@ -63,21 +64,42 @@ interface StackItem {
 	content: Component | ContentBuilder;
 }
 
-interface StackedLayoutProps extends Omit<ComponentProps,"content"> {
+/**
+ * 
+ */
+
+interface StackeBoxEvents extends ComponentEvents {
+	pageChange?: EvSelectionChange;
+}
+
+export interface StackBoxProps extends Omit<ComponentProps,"content"> {
 	default: string;
 	items: StackItem[];
+	pageChange?: EventCallback<EvSelectionChange>;
 }
+
+/**
+ * 
+ */
 
 interface StackItemEx extends StackItem {
 	page: Component;
 }
 
-@class_ns( "x4" )
-export class StackBox extends Box<StackedLayoutProps> {
-	private _items: StackItemEx[];
+/**
+ * 
+ */
 
-	constructor( props: StackedLayoutProps ) {
+@class_ns( "x4" )
+export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeBoxEvents = StackeBoxEvents>  extends Box<StackBoxProps,StackeBoxEvents> {
+	
+	protected _items: StackItemEx[];
+	protected _cur: number;
+
+	constructor( props: StackBoxProps ) {
 		super( props );
+
+		this.mapPropEvents( props, "pageChange" );
 
 		this._items = props.items?.map( itm => {
 			return { ...itm, page: null as any};
@@ -105,7 +127,9 @@ export class StackBox extends Box<StackedLayoutProps> {
 			sel.setClass( "selected", false );
 		}
 
-		const pg = this._items.find( x => x.name==name );
+		this._cur = this._items.findIndex( x => x.name==name );
+		const pg = this._items[this._cur];
+
 		if( pg ) {
 			if( !pg.page ) {
 				pg.page = this._createPage( pg );
@@ -117,6 +141,8 @@ export class StackBox extends Box<StackedLayoutProps> {
 				(sel as any).activate?.( );
 				sel.setClass( "selected", true );
 			}
+
+			this.fire( "pageChange", { selection: pg.name, empty: !sel } );
 		}
 
 		return pg?.page;
@@ -149,7 +175,38 @@ export class StackBox extends Box<StackedLayoutProps> {
 		const pg = this._items.find( x => x.name==name );
 		return pg ? pg.content : null;
 	}
+
+	/**
+	 * 
+	 */
+
+	getCurPage( ) {
+		const c = this._items[this._cur];
+		return c?.name;
+	}
 }
+
+// :: ASSIST BOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+@class_ns( "x4" )
+export class AssistBox extends StackBox {
+	selectNextPage( nxt = true ) {
+		let p;
+		if( nxt && this._cur<this._items.length-1 ) {
+			p = this._items[this._cur+1];
+		}
+		else if( !nxt && this._cur>0 ) {
+			p = this._items[this._cur-1];
+		}
+
+		if( p ) {
+			this.select( p.name );
+		}
+	}
+}
+
+
 
 // :: GRIDBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

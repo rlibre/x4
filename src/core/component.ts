@@ -52,7 +52,7 @@ function genClassNames( x: any ): string[] {
 
 	while (self && self.constructor !== Component ) {
 		const clsname:string = self.constructor.name;
-		const clsns: string = self.constructor.hasOwnProperty(x4_class_ns_sym) ? self.constructor[x4_class_ns_sym] :  "";
+		const clsns: string = (x4_class_ns_sym in self.constructor) ? self.constructor[x4_class_ns_sym] :  "";
 		classes.push( clsns+clsname.toLowerCase() );
 		self = Object.getPrototypeOf(self);
 	}
@@ -134,7 +134,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	readonly props: P;
 	protected readonly clsprefix: string;	// internal class name prefix (x4 internal)
 
-	#store: Map<string|Symbol,any>;
+	#store: Map<string|symbol,any>;
 
 	constructor( props: P ) {
 		super( );
@@ -373,7 +373,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * idem as setData but onot on dom, you can store anything 
 	 */
 
-	setInternalData( name: string|Symbol, value: any ): this {
+	setInternalData( name: string|symbol, value: any ): this {
 		if( !this.#store ) {
 			this.#store = new Map( );
 		}
@@ -382,7 +382,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return this;
 	}
 
-	getInternalData( name: string|Symbol ): any {
+	getInternalData( name: string|symbol ): any {
 		return this.#store?.get(name);
 	}
 
@@ -417,7 +417,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	protected mapPropEvents<N extends keyof E>(props: P, ...elements: N[] ) {
 		const p = props as any;
 		elements.forEach( n => {
-			if (p.hasOwnProperty(n) && p[n]) {
+			if ( (n in p) && p[n]) {
 				this.on( n, p[n] );
 			}
 		});
@@ -880,7 +880,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * called by the compiler when a jsx element is seen
 	 */
 
-	static createElement( clsOrTag: string | ComponentConstructor | Symbol | Function, attrs: any, ...children: Component[] ): Component | Component[] {
+	static createElement( clsOrTag: string | ComponentConstructor | symbol | Function, attrs: any, ...children: Component[] ): Component | Component[] {
 
 		let comp: Component;
 
