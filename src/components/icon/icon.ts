@@ -48,7 +48,6 @@ class SvgLoader {
 				this.waiters.set( file, [resolve] );
 				this._load( file )
 					.then( ( data: string ) => {
-						console.timeEnd( file );
 						this.cache.set( file, data );
 						const ww = this.waiters.get( file );
 						ww.forEach( cb => cb(data ) );
@@ -58,7 +57,6 @@ class SvgLoader {
 	}
 
 	private async _load( file: string ): Promise<string> {
-		console.time( file );
 		const res = await fetch( file );
 		if( res.ok ) {
 			return res.text( );
