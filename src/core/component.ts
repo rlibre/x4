@@ -52,7 +52,7 @@ function genClassNames( x: any ): string[] {
 
 	while (self && self.constructor !== Component ) {
 		const clsname:string = self.constructor.name;
-		const clsns: string = (x4_class_ns_sym in self.constructor) ? self.constructor[x4_class_ns_sym] :  "";
+		const clsns: string = self.constructor.hasOwnProperty(x4_class_ns_sym) ? self.constructor[x4_class_ns_sym] :  "";
 		classes.push( clsns+clsname.toLowerCase() );
 		self = Object.getPrototypeOf(self);
 	}
@@ -417,7 +417,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	protected mapPropEvents<N extends keyof E>(props: P, ...elements: N[] ) {
 		const p = props as any;
 		elements.forEach( n => {
-			if ( (n in p) && p[n]) {
+			if (p.hasOwnProperty(n) && p[n]) {
 				this.on( n, p[n] );
 			}
 		});
