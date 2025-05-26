@@ -27,9 +27,7 @@
 	position: absolute !important;
 	background-color: white;
 	border: 1px solid var( --border-dark );
-	min-width: min-content;
-    min-height: min-content;
-
+	
 	&> .caption {
 		padding: 8px;
 		background-color: var(--color-dialog-caption);
@@ -52,9 +50,10 @@
 		}
 	}
 
-	&> .form {
+	&> .x4form {
 		min-height: 128px;
 		min-width: 450px;
+		flex: 1;
 	}
 
 	&> #btnbar {

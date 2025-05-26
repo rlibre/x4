@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { EventCallback } from '@core/core_events.js';
-import { Component, ComponentProps, EvChange, EvClick, EvFocus, makeUniqueComponentId } from '../../core/component';
+//import { EventCallback } from '@core/core_events.js';
+import { Component, makeUniqueComponentId } from '../../core/component';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
-import { Input, TextInputProps } from "../input/input"
+import { DateProps, Input, InputProps, NumberProps, TextInputProps, TimeProps } from "../input/input"
 import { Label } from '../label/label';
 
 import "./textedit.module.scss";
@@ -30,12 +30,28 @@ import "./textedit.module.scss";
  * 
  */
 
-interface TextEditProps extends ComponentProps {
+type TextEditInputs = TextInputProps | NumberProps | DateProps | TimeProps;
+
+interface TextEditBase {
 	label: string | UnsafeHtml;
 	labelWidth?: number;
+	inputWidth?: number;		
+	inputId?: string;
+	inputGadgets?: Component[];
+	inputAttrs?: any;
+}
+
+type TextEditProps = TextEditInputs & TextEditBase;
+
+/*
+not enougth precise
+interface TextEditProps extends InputProps {
+	label: string | UnsafeHtml;
+	labelWidth?: number;
+	editWidth?: number;		
 	inputId?: string;
 
-	type?: "text" | "email" | "password" | "date" | "number";
+	type?: "text" | "email" | "password" | "date" | "number" | "time";
 	name?: string;
 	readonly?: boolean;
 	required?: boolean;
@@ -49,6 +65,7 @@ interface TextEditProps extends ComponentProps {
 	focus?: EventCallback<EvFocus>;
 	change?: EventCallback<EvChange>;
 }
+*/
 
 /**
  * 
@@ -71,26 +88,14 @@ export class TextEdit extends HBox {
 		}
 
 		const gadgets = props.inputGadgets ?? [];
+		const iprops: InputProps = { ...props, id: props.inputId, attrs: props.inputAttrs, width: props.inputWidth };
 
 		this.setContent( [
-			new HBox( { id: "label", width: props.labelWidth, content: [
+			props.label ? new HBox( { id: "label", width: props.labelWidth, content: [
 				new Label( { tag: "label", text: props.label, labelFor: props.inputId } ),
-			]}),
+			]}) : null,
 			new HBox( { id: "edit", content: [
-				this.input = new Input( { 
-					type: props.type ?? "text", 
-					readonly: props.readonly, 
-					value: props.value, 
-					name: props.name,
-					id: props.inputId, 
-					required: props.required, 
-					disabled: props.disabled, 
-					placeholder: props.placeholder,
-					autofocus: props.autofocus,
-					attrs: props.inputAttrs,
-					focus: props.focus,
-					change: props.change,
-				} ),
+				this.input = new Input( iprops ),
 				...gadgets,
 			]})
 		])

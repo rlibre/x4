@@ -297,7 +297,7 @@ export class DataModel {
 	 * @returns an object with known record values
 	 */
 
-	serialize( input: DataRecord ): any { 
+	serialize<T = any>( input: DataRecord ): T { 
 		let rec: any = {};
 
 		this.getFields().forEach((f) => {
@@ -306,8 +306,10 @@ export class DataModel {
 			}
 		});
 
-		return rec;
+		return rec as T;
 	}
+
+
 	
 	/**
 	 * default unserializer
@@ -454,11 +456,7 @@ export class DataModel {
  * 
  */
 
-
-
-const $model = Symbol( "model" )
-
-export class DataRecord  {
+export class DataRecord {
 	[ key: string ]: DataFieldValue;
 
 	/*
@@ -511,6 +509,8 @@ export class DataRecord  {
 		this.setRaw( fld.name, value );
 	}
 	*/
+
+	
 }
 
 
