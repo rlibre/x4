@@ -20,7 +20,7 @@ import { Component, ComponentProps, EvChange, EvFocus } from "../../core/compone
 import { HBox, VBox } from "../boxes/boxes"
 import { Input, InputProps } from "../input/input"
 import { ListItem } from "../listbox/listbox"
-import { SimpleText } from "../label/label"
+import { Label, SimpleText } from "../label/label"
 import { class_ns, isFunction } from '../../core/core_tools';
 import { Icon } from '../components.js'
 
@@ -32,7 +32,7 @@ type IValue = boolean | number | string;
 type IValueCB = ( name: string) => IValue;
 
 export interface PropertyValue {
-	type: 'boolean' | 'number' | 'string' | 'password' | 'options';
+	type: 'boolean' | 'number' | 'string' | 'password' | 'options' | 'label' | 'button';
 	title?: string;
 	desc?: string;
 	name?: string;
@@ -171,7 +171,6 @@ export class PropertyGrid extends VBox {
 				items: item.options,
 				name: item.name,
 				change: ( e: EvChange ) => {
-					debugger;
 					item.callback?.( item.name, e.value );
 				}
 			});
@@ -205,6 +204,21 @@ export class PropertyGrid extends VBox {
 					if( item.live ) {
 						item.callback?.( item.name, (editor as Input).getNumValue() );
 					}
+				}
+			});
+		}
+		else if (item.type === 'label') {
+			editor = new Label({ 
+				id: item.name,
+				text: value as string, 
+			});
+		}
+		else if (item.type === 'button') {
+			editor = new Button({ 
+				id: item.name,
+				label: value as string, 
+				click: ( ) => {
+					item.callback?.( item.name, '' );
 				}
 			});
 		}
