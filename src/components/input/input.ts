@@ -81,8 +81,7 @@ export interface NumberProps extends BaseProps {
 }
 
 export interface TextInputProps extends BaseProps {
-	//type: "text" | "email" | "password" | "date" | "number" | "time";
-	type?: "text";
+	type?: "text" | "email" | "password";
 	readonly?: boolean;
 	required?: boolean;
 	pattern?: string;
