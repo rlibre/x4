@@ -58,6 +58,7 @@ interface DialogEvents extends PopupEvents {
 export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents> extends Popup<P, E> {
 
 	private form: Form;
+	private _title: Label;
 
 	constructor(props: P) {
 		super({ tag: "dialog", modal: true, ...props });
@@ -70,7 +71,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 			new HBox({
 				cls: "caption",
 				content: [
-					new Label({
+					this._title = new Label({
 						id: "title",
 						cls: "caption-element",
 						icon: props.icon,
@@ -187,7 +188,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	 */
 
 	getButton(name: string) {
-		const btns = this.query<BtnGroup>("#btnbar");
+		const btns = this.getBtnBar( );
 		return btns.getButton(name);
 	}
 
@@ -206,6 +207,22 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 		}
 		
 		return super.queryInterface( name );
+	}
+
+	/**
+	 * 
+	 */
+
+	setTitle( title: string ) {
+		this._title.setText( title );
+	}
+
+	/**
+	 * 
+	 */
+
+	getBtnBar( ) {
+		return this.query<BtnGroup>("#btnbar");		
 	}
 }
 

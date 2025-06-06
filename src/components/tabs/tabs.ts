@@ -138,6 +138,7 @@ export class Tabs extends VBox<TabsProps> {
 
 	private _list: CTabList;
 	private _stack: StackBox;
+	private _current: string;
 
 	constructor( props: TabsProps ) {
 		super( props );
@@ -169,6 +170,7 @@ export class Tabs extends VBox<TabsProps> {
 	selectTab( name: string ) {
 		this._list.select( name );
 		this._stack.select( name );
+		this._current = name;
 	}
 
 	private _onclick( ev: TablistClickEvent ) {
@@ -181,6 +183,10 @@ export class Tabs extends VBox<TabsProps> {
 	
 	getTab( name: string ) {
 		return this._stack.getPage( name );
+	}
+
+	getCurTab( ) {
+		return this._current;
 	}
 
 	/**

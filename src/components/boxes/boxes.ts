@@ -14,10 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns, isArray, isNumber, isString } from '@core/core_tools.js';
-import { Component, ComponentContent, ComponentEvents, ComponentProps } from "../../core/component"
+import { asap, class_ns, isArray, isNumber, isString } from '@core/core_tools.js';
+import { Component, ComponentContent, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 
 import "./boxes.module.scss";
+import { EventCallback } from '@core/core_events.js';
 
 export interface BoxProps extends ComponentProps {
 	tag?: string;
@@ -61,23 +62,45 @@ type ContentBuilder = ( ) => Component;
 interface StackItem {
 	name: string;
 	content: Component | ContentBuilder;
+	title?: string;
 }
 
-interface StackedLayoutProps extends Omit<ComponentProps,"content"> {
+/**
+ * 
+ */
+
+interface StackeBoxEvents extends ComponentEvents {
+	pageChange?: EvSelectionChange;
+}
+
+export interface StackBoxProps extends Omit<ComponentProps,"content"> {
 	default: string;
 	items: StackItem[];
+	pageChange?: EventCallback<EvSelectionChange>;
 }
+
+/**
+ * 
+ */
 
 interface StackItemEx extends StackItem {
 	page: Component;
 }
 
-@class_ns( "x4" )
-export class StackBox extends Box<StackedLayoutProps> {
-	private _items: StackItemEx[];
+/**
+ * 
+ */
 
-	constructor( props: StackedLayoutProps ) {
+@class_ns( "x4" )
+export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeBoxEvents = StackeBoxEvents>  extends Box<StackBoxProps,StackeBoxEvents> {
+	
+	protected _items: StackItemEx[];
+	protected _cur: number;
+
+	constructor( props: StackBoxProps ) {
 		super( props );
+
+		this.mapPropEvents( props, "pageChange" );
 
 		this._items = props.items?.map( itm => {
 			return { ...itm, page: null as any};
@@ -105,7 +128,9 @@ export class StackBox extends Box<StackedLayoutProps> {
 			sel.setClass( "selected", false );
 		}
 
-		const pg = this._items.find( x => x.name==name );
+		this._cur = this._items.findIndex( x => x.name==name );
+		const pg = this._items[this._cur];
+
 		if( pg ) {
 			if( !pg.page ) {
 				pg.page = this._createPage( pg );
@@ -117,6 +142,8 @@ export class StackBox extends Box<StackedLayoutProps> {
 				(sel as any).activate?.( );
 				sel.setClass( "selected", true );
 			}
+
+			asap( ( ) => this.fire( "pageChange", { selection: pg.name, empty: !sel } ) );
 		}
 
 		return pg?.page;
@@ -149,18 +176,68 @@ export class StackBox extends Box<StackedLayoutProps> {
 		const pg = this._items.find( x => x.name==name );
 		return pg ? pg.content : null;
 	}
+
+	getItem( name: string ) {
+		const pg = this._items.find( x => x.name==name );
+		return pg;
+	}
+
+	/**
+	 * 
+	 */
+
+	getCurPage( ) {
+		const c = this._items[this._cur];
+		return c?.name;
+	}
 }
+
+// :: ASSIST BOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+@class_ns( "x4" )
+export class AssistBox extends StackBox {
+	selectNextPage( nxt = true ) {
+		let p;
+		if( nxt && this._cur<this._items.length-1 ) {
+			p = this._items[this._cur+1];
+		}
+		else if( !nxt && this._cur>0 ) {
+			p = this._items[this._cur-1];
+		}
+
+		if( p ) {
+			this.select( p.name );
+		}
+	}
+
+	isFirstPage( ) {
+		return this._cur==0;
+	}
+
+	isLastPage( ) {
+		return this._cur==this._items.length-1;
+	}
+}
+
+
 
 // :: GRIDBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+interface GridBoxItem {
+	row: number;	// starts at 0
+	col: number;	// starts at 0
+	item: Component;
+}
 
-export interface GridboxProps extends BoxProps {
+export interface GridBoxProps extends Omit<BoxProps,"content"> {
 	rows?: number | string | string[];
 	columns?: number | string | string[];
+	items?: GridBoxItem[];
 }
 
 @class_ns("x4")
-export class GridBox<P extends GridboxProps=GridboxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 
 	constructor( props: P ) {
 		super( props );
@@ -171,6 +248,10 @@ export class GridBox<P extends GridboxProps=GridboxProps,E extends ComponentEven
 
 		if( props.columns!==undefined ) {
 			this.setCols( props.columns );
+		}
+
+		if( props.items ) {
+			this.setItems( props.items );
 		}
 	}
 
@@ -211,6 +292,17 @@ export class GridBox<P extends GridboxProps=GridboxProps,E extends ComponentEven
 
 	setTemplate( t: string[] ) {
 		this.setAttribute( "grid-template-area", t.map( x => '"' + x + '"' ).join(" ") );
+	}
+
+	setItems( items: GridBoxItem[] ) {
+		items.forEach( x => {
+			x.item.setStyle( {
+				gridColumn: (x.col+1)+"",
+				gridRow: (x.row+1)+"",
+			} );
+		});
+
+		this.setContent( items.map( x => x.item ) );
 	}
 }
 

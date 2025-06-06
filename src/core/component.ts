@@ -304,9 +304,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	setClass( cls: string, set: boolean = true ) {
+	setClass( cls: string, set: boolean = true ) : this {
 		if( set ) this.addClass(cls);
 		else this.removeClass( cls );
+		return this;
 	}
 
 	// :: ATTRIBUTES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -315,10 +316,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * attributes
 	 */
 
-	setAttributes( attrs: ComponentAttributes ) {
+	setAttributes( attrs: ComponentAttributes ): this {
 		for( const name in attrs ) {
 			this.setAttribute( name, attrs[name] );
 		}
+		return this;
 	}
 
 	/**

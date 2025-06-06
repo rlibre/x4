@@ -84,6 +84,11 @@ export class CoreElement<E extends EventMap = EventMap> {
 		}
 		
 		this.#events.addListener( name, listener );
+		return {
+			off: ( ) => {
+				this.#events.removeListener( name, listener );
+			}
+		}
 	}
 
 	/**

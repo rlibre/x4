@@ -16,14 +16,17 @@
 
 import { EventCallback } from '@core/core_events.js';
 import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, isString } from '../../core/core_tools.js';
+import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools.js';
 
 import "./input.module.scss"
 
 export interface BaseProps extends ComponentProps {
 	name?: string;
 	autofocus?: boolean;
-
+	required?: boolean;
+	readonly?: boolean;
+	placeholder?: string;
+	
 	focus?: EventCallback<EvFocus>;
 	change?: EventCallback<EvChange>;
 }
@@ -36,54 +39,60 @@ interface CheckboxProps extends BaseProps {
 
 interface RadioProps extends BaseProps {
 	type: "radio";
-	value: boolean | number | string;
+	value?: boolean | number | string;
 	checked?: boolean;
 }
 
 export interface RangeProps extends BaseProps {
 	type: "range";
-	value: number;
+	value?: number;
 	min: number;
 	max: number;
 	step?: number;
 }
 
-interface DateProps extends BaseProps {
-	type: "date";
-	readonly?: boolean;
-	required?: boolean;
-	value: Date | string;
+export interface FileProps extends BaseProps {
+	type: "file";
+	accept: string | string[];
+	value?: never;
 }
 
-interface NumberProps extends BaseProps {
+
+export interface DateProps extends BaseProps {
+	type: "date";
+	value?: Date | string;
+}
+
+export interface TimeProps extends BaseProps {
+	type: "time";
+	readonly?: boolean;
+	required?: boolean;
+	value?: string;
+}
+
+export interface NumberProps extends BaseProps {
 	type: "number";
 	readonly?: boolean;
 	required?: boolean;
-	value: number | string;
+	value?: number | string;
 	min?: number;
 	max?: number;
 	step?: number;
 }
 
-interface FileProps extends BaseProps {
-	type: "file";
-	accept: string | string[];
-}
-
 export interface TextInputProps extends BaseProps {
-	type: "text" | "email" | "password" | "date" | "number";
+	type?: "text" | "email" | "password";
 	readonly?: boolean;
 	required?: boolean;
 	pattern?: string;
 	value?: string | number;
-	placeholder?: string;
 	spellcheck?: boolean;
 	minlength?: number;
 	maxlength?: number;
 }
 
 
-export type InputProps = CheckboxProps | RadioProps | TextInputProps | RangeProps | DateProps | NumberProps | FileProps;
+export type InputProps = TextInputProps | CheckboxProps | RadioProps | RangeProps | DateProps | NumberProps | FileProps | TimeProps;
 
 
 interface InputEvents extends ComponentEvent {
@@ -131,7 +140,7 @@ export class Input extends Component<InputProps,InputEvents> {
 
 			case "number": {
 				const p = this.props as NumberProps;
-				
+			
 				this.setAttribute( "required", p.required );
 				this.setAttribute( "readonly", p.readonly );
 				this.setAttribute( "min", p.min );
@@ -159,9 +168,9 @@ export class Input extends Component<InputProps,InputEvents> {
 
 				let v = props.value;
 				if( v instanceof Date ) {
-					//this.setAttribute( "value", formatDate( v, "Y-M-D" ) );
+					this.setAttribute( "value", formatIntlDate( v, "Y-M-D" ) );
 				}
-				else {
+				else if( props.value!==null && props.value!==undefined ) {
 					this.setAttribute( "value", v );
 				}
 
@@ -178,6 +187,14 @@ export class Input extends Component<InputProps,InputEvents> {
 				}
 
 				this.setAttribute( "accept", v );
+				break;
+			}
+
+			case "time": {
+				this.setAttribute( "required", props.required );
+				if( props.value!==null && props.value!==undefined ) {
+					this.setAttribute( "value", props.value );
+				}
 				break;
 			}
 
@@ -267,8 +284,12 @@ export class Input extends Component<InputProps,InputEvents> {
 	 * @returns 
 	 */
 	
-	public getNumValue( ) {
-		return parseFloat( this.getValue() );
+	public getNumValue( defNan?: number ) {
+		const v = parseFloat( this.getValue() );
+		if( isNaN(v) && defNan!==undefined ) {
+			return defNan;
+		}
+		return v;
 	}
 
 	/**
