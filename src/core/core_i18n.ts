@@ -97,7 +97,7 @@ export function addTranslation( name: string, ...parts: any[] ) {
 
 function _patch( obj: any, by: any ) {
 
-	for( let n in by ) {
+	for( const n in by ) {
 		const src = by[n];
 		if( typeof src === "string" ) {
 			obj[n] = src;
