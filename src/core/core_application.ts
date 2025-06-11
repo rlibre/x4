@@ -62,6 +62,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		super( );
 
 		console.assert( main_app==null, "Application must be a singleton." );
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		main_app = this;
 	}
 
@@ -185,7 +186,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		// then we send them on websocket
 		
 		this.on( 'global', ( e: EvMessage ) => {
-			if( e.hasOwnProperty(socket_sent) ) {
+			if( Object.prototype.hasOwnProperty.call( e, socket_sent) ) {
 				return;
 			}
 

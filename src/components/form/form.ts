@@ -69,7 +69,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 			
 			if( ifx ) {
 				const nme = x.getAttribute( "name" );
-				if( values.hasOwnProperty( nme) ) {
+				if( Object.prototype.hasOwnProperty.call(values,nme) ) {
 					ifx.setRawValue( values[nme] );
 				}
 			}

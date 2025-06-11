@@ -14,6 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { Point } from "../../core/core_tools"
 
 export interface CanvasEx extends CanvasRenderingContext2D {
 	width: number;
@@ -46,12 +47,17 @@ export function createPainter(c2d: CanvasRenderingContext2D, w: number, h: numbe
 	return cp;
 }
 
+/**
+ * 
+ */
+
 function smoothLine( this: CanvasRenderingContext2D, points: any[], path: CanvasPath = null, move = true) {
 	if (points.length < 2) {
 		return;
 	}
 
 	if (!path) {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		path = this;
 	}
 
@@ -67,14 +73,14 @@ function smoothLine( this: CanvasRenderingContext2D, points: any[], path: Canvas
 		return;
 	}
 
-	function midPointBtw(p1: IPoint, p2: IPoint ) {
+	function midPointBtw(p1: Point, p2: Point ) {
 		return {
 			x: p1.x + (p2.x - p1.x) / 2,
 			y: p1.y + (p2.y - p1.y) / 2
 		};
 	}
 
-	function getQuadraticXY(t: number, sx: number, sy: number, cp1x: number, cp1y: number, ex: number, ey: number) : IPoint {
+	function getQuadraticXY(t: number, sx: number, sy: number, cp1x: number, cp1y: number, ex: number, ey: number) : Point {
 		return {
 			x: (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * cp1x + t * t * ex,
 			y: (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * cp1y + t * t * ey
@@ -146,7 +152,7 @@ function smoothLineEx(this: CanvasRenderingContext2D, _points: any[], tension: n
 
 	for (; i < numOfSeg; i++) {
 
-		var st = i / numOfSeg,
+		const st = i / numOfSeg,
 			st2 = st * st,
 			st3 = st2 * st,
 			st23 = st3 * 2,
@@ -173,9 +179,9 @@ function smoothLineEx(this: CanvasRenderingContext2D, _points: any[], tension: n
 
 	function parse(pts: number[], cache: Float32Array, l: number) {
 
-		for (var i = 2, t; i < l; i += 2) {
+		for (let i = 2, t; i < l; i += 2) {
 
-			var pt1 = pts[i],
+			let pt1 = pts[i],
 				pt2 = pts[i + 1],
 				pt3 = pts[i + 2],
 				pt4 = pts[i + 3],
@@ -187,7 +193,7 @@ function smoothLineEx(this: CanvasRenderingContext2D, _points: any[], tension: n
 
 			for (t = 0; t < numOfSeg; t++) {
 
-				var c = t << 2, //t * 4;
+				let c = t << 2, //t * 4;
 
 					c1 = cache[c],
 					c2 = cache[c + 1],
@@ -206,6 +212,7 @@ function smoothLineEx(this: CanvasRenderingContext2D, _points: any[], tension: n
 	res[rPos] = points[l + 1];
 
 	if (!path) {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		path = this;
 	}
 
