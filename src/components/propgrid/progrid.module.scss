@@ -104,5 +104,9 @@
 			padding: 8px;
 			padding-left: 34px;
 		}
+
+		.cell:has(.x4button) {
+			padding: 4px 40px;
+		}
 	}
 }
