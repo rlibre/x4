@@ -678,7 +678,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
-	getBoundingRect( ): IRect {
+	getBoundingRect( ): Rect {
 		const rc = this.dom.getBoundingClientRect( );
 		return new Rect( rc.x, rc.y, rc.width, rc.height );
 	}
