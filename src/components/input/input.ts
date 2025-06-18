@@ -304,9 +304,12 @@ export class Input extends Component<InputProps,InputEvents> {
 		if( ndec==-2 && this.props.type=='number' ) {
 			const p = this.props as NumberProps;
 
-			if( p.step ) {
+			if( p.step<1 ) {
 				let ndec = -Math.floor(Math.log10(p.step ?? 1) );
 				return this.setValue( value.toFixed(ndec) );
+			}
+			else if( p.step>1 ) {
+				return this.setValue( value.toFixed() );
 			}
 		}
 		else if( ndec>=0 ) {
