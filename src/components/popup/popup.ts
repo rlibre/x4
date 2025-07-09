@@ -135,6 +135,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	displayCenter( center = true ) {
 		//this.displayNear( new Rect( window.innerWidth/2, window.innerHeight/2, 0, 0 ), "center middle" );
 		this.setClass( 'center', center );
+		this._do_show( );		// to compute size
 	}
 
 	/**
