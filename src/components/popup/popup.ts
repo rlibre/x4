@@ -129,7 +129,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	/**
-	 * 
+	 * s
 	 */
 
 	displayCenter( center = true ) {

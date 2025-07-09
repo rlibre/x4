@@ -39,6 +39,7 @@ type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" 
  * 
  */
 
+
 @class_ns( "x4" )
 export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
