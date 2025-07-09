@@ -120,27 +120,21 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		this.hide( );
 
-		/*
-        touchstart: (e) => {
-			console.log( 'touch start' );
-			//e.preventDefault( );
-			e.stopPropagation( );
-			
-			this.last_ev = e;
-			clearInterval( this.autorepeat );
-			this.autorepeat = setInterval( () => {
-				this.handleKey( this.last_ev );
-			}, 250 );
-		},
-		touchend: ( e ) => {
-			console.log( 'touch end' );
-			clearInterval( this.autorepeat );
-			this.last_ev = null;
-		},
-		*/
-
 		this.addDOMEvent( "mousedown", (e) => {
 			this.handleKey( e ); 	
+			e.preventDefault( );
+			e.stopPropagation( );
+		});
+
+		// for rapid people
+		this.addDOMEvent( "dblclick", (e) => {
+			this.handleKey( e ); 	
+			e.preventDefault( );
+			e.stopPropagation( );
+		});
+
+		// for slow people
+		this.addDOMEvent( "contextmenu", (e) => {
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
