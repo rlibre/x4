@@ -33,7 +33,7 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
-type SizerType = "left" | "top" | "right" | "bottom";
+type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
 /**
  * 

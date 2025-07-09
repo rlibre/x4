@@ -32,6 +32,13 @@
 	}
 }
 
+
+.x4popup.center {
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
 ::backdrop,
 .x4modal-mask {
 	background-color: var( --modal-mask-background );
