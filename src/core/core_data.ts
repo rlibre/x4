@@ -77,7 +77,7 @@ const metaFields = Symbol( 'metaField' );
 function _getMetas( obj: object, create = true ) : MetaInfos {
 	
 	let ctor = obj.constructor as any;
-	let mfld = ctor.hasOwnProperty(metaFields) ? ctor[metaFields] : undefined;
+	let mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
 	
 	if( mfld===undefined ) {
 		if( !create ) {
@@ -105,6 +105,7 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 	return mfld;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace data {
 
 	/**

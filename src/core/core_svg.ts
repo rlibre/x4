@@ -198,6 +198,7 @@ class SvgItem {
 	addClass( cls: string ): this {
 		if( !cls ) return;
 		
+		cls = cls.trim();
 		if( cls.indexOf(' ')>=0 ) {
 			const ccs = cls.split( " " );
 			this._dom.classList.add(...ccs);

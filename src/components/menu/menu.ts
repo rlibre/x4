@@ -38,7 +38,7 @@ export interface MenuItem {
 	click?: DOMEventHandler;
 }
 
-type MenuElement = MenuItem | Component | string;
+export type MenuElement = MenuItem | Component | string;
 
 export interface MenuProps extends Omit<PopupProps,"content"> {
 	items: MenuElement[];
@@ -149,7 +149,7 @@ class CMenuItem extends Component {
 export class Menu extends Popup {
 	
 	constructor( props: MenuProps ) {
-		super( { ...props, autoClose: "menu", modal: false } );
+		super( { ...props, autoClose: "menu" } );
 
 		this.addClass( "x4vbox" );
 

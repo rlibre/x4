@@ -82,7 +82,7 @@ export class PropertyGrid extends VBox {
 	setItems( _grps: PropertyGroup[] ) {
 
 		this.groups = _grps;
-		this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
+		//this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
 
 		let items: Component[] = [];
 
@@ -144,6 +144,8 @@ export class PropertyGrid extends VBox {
 	 */
 	
 	makePropertyRow( item: PropertyValue ) {
+
+		let use_hdr = true;
 
 		// If boolean create checkbox
 		let editor: Component;
@@ -214,6 +216,7 @@ export class PropertyGrid extends VBox {
 			});
 		}
 		else if (item.type === 'button') {
+			use_hdr = false;
 			editor = new Button({ 
 				id: item.name,
 				label: value as string, 
@@ -239,7 +242,7 @@ export class PropertyGrid extends VBox {
 		return new HBox({
 			cls: 'row',
 			content: [
-				new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }),
+				use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
 				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })
 			]
 		});
