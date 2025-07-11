@@ -285,20 +285,27 @@ export class Keyboard extends HBox<KeyboardProps>
         
         if( this.visible ) {
             if( this.input ) {
-                this.show( );
-                this._scrollIntoView( this.input );
-
 				const type = this.input.type;
-				const dtype = this.input.getAttribute( "data-type" );
 
-                if( type==='number' || dtype==='number' ) {
-                    this._switchMode( "number" )
+                if( type=='check' || type=="radio" ) {
+                    this.hide( );
+                    this.input = null;        
                 }
-				else if( type==='date' || dtype==='date' ) {
-					this._switchMode( "date");
-				}
                 else {
-                    this._switchMode( "lower" );
+                    this.show( );
+                    this._scrollIntoView( this.input );
+
+                    const dtype = this.input.getAttribute( "data-type" );
+
+                    if( type==='number' || dtype==='number' ) {
+                        this._switchMode( "number" )
+                    }
+                    else if( type==='date' || dtype==='date' ) {
+                        this._switchMode( "date");
+                    }
+                    else {
+                        this._switchMode( "lower" );
+                    }
                 }
             }
         }
