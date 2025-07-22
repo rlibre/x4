@@ -1,0 +1,161 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file listbox.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+:root {
+	--listbox-item-background-sel: var( --accent-background );
+	--listbox-item-color-sel: var( --accent-color );
+	--listbox-item-color-sel-disabled: var( --disabled-background );
+
+	--listbox-item-color: var( --text-primary );
+	--listbox-item-color-disabled: var( --disabled-color-dark );
+	--listbox-item-background-hover: var( --background-secondary );
+
+	--listbox-icon-color: var( --text-ternary );
+
+	--listbox-background: white;
+	--listbox-border: var( --border );
+	--listbox-border-focus: var( --accent-background-focus );
+}
+
+.x4listbox {
+	@extend .vbox;
+
+	margin: 5px;
+	border: 1px solid var( --listbox-border );
+	background-color: var( --listbox-background );
+
+	&:focus-within {
+		border-color: var( --listbox-border-focus );
+	}
+
+	outline: none;
+
+	&>.x4header {
+		border-bottom: 1px solid var( --color-gray-3 );
+	}
+
+	&>.body {
+		width: 100%;
+		flex-basis: 0;
+		overflow-y: auto;
+		overflow-x: auto;
+		outline: none;
+		position: relative;
+
+		&> .x4viewport {
+			display: table;
+			
+			.x4item {
+				@extend .flex;
+				
+				padding: 4px;
+				background-color: transparent;
+				color: var( --color-gray-9 );
+
+				&> .x4label {
+					color: inherit;
+					padding: 2px 6px;
+				
+					#icon {
+						color: var( --listbox-icon-color );
+						fill: var( --listbox-icon-color );
+					}
+				}
+
+				&:hover {
+					background-color: var( --listbox-item-background-hover );
+				}
+
+				&.selected {
+					background-color: var( --listbox-item-background-sel );
+					color: var( --listbox-item-color-sel );
+
+					&> .x4label {
+						#icon {
+							color: var( --listbox-item-color-sel );
+							fill: var( --listbox-item-color-sel );
+						}
+					}
+				}
+
+				//&:active{
+					//background-color: var( --color-80 );
+					//color: var(--color-0);
+				//}	
+			}
+		}
+	}
+
+	&> #footer {
+		border-top: 1px solid var(--border);
+		margin: 0;
+
+		&.x4btngroup {
+			gap: 0px;
+
+			.x4button {
+				background-color: var( --ol-button-background );
+				margin: 0;
+				color: var( --ol-button-color );
+
+				&:disabled {
+					color: var( --ol-button-color-disabled );
+				}
+								
+				.x4icon {
+					height: 1.5em;
+					width: 1.5em;
+				}
+
+				&:hover{
+					background-color: var( --ol-button-background-hover );
+					color: var( --ol-button-color-hover );
+				}	
+
+				&:active{
+					background-color: var( --ol-button-background-active );
+					color: var( --ol-button-color-active );
+					#icon {
+						color: var( --button-icon-color );
+					}
+				}	
+
+				&:focus {
+					background-color: var( --ol-button-background-hover );
+				}
+			}
+		}
+	}		
+
+	&[disabled] {
+		cursor: not-allowed;
+		border-color: var( --border );
+		color: var( --listbox-item-color-disabled );
+
+		&>.body {
+			.x4viewport {
+				pointer-events: none;
+				.x4item {
+					&.selected {
+						background-color: var( --listbox-item-color-sel-disabled );
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,92 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file messages.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	
+	--msgbox-caption-background: var( --alert-background );
+	--msgbox-caption-color: var( --alert-color );
+
+	--msgbox-icon-color:  var( --alert-background );
+}
+
+.x4messagebox {
+	max-width: 60vw;
+
+	& > .caption {
+		background-color: var( --msgbox-caption-background );
+
+		& > #title {
+			color: var( --msgbox-caption-color );
+		}
+	}
+
+	& .x4form {
+		min-width: 400px;
+		.x4icon {
+			color: var( --msgbox-icon-color );
+			height: 96px;
+		}
+
+		.x4label {
+			padding: 16px;
+			line-height: 1.8em;
+		}
+	}
+}
+
+.x4inputbox,
+.x4promptbox {
+	max-width: 60vw;
+
+	& > .caption {
+		background-color: var( --msgbox-caption-background );
+
+		& > #title {
+			color: var( --msgbox-caption-color );
+		}
+	}
+
+	& .x4form {
+		min-width: 400px;
+		.x4icon {
+			color: var( --msgbox-icon-color );
+			height: 64px;
+		}
+
+		.x4vbox {
+			padding: 16px;
+			gap: 16px;
+
+			.x4label {
+				line-height: 1.8em;
+			}
+
+			justify-content: center;
+		}
+	}
+
+	input {
+		padding: 8px;
+		border: 1px solid var( --border );
+
+		&:invalid {
+			border-color: var( --input-error );
+		}
+	}
+
+
+}
+

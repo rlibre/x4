@@ -1,0 +1,54 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file boxes.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+.x4hbox {
+	@extend .hbox;
+	&.align-start {
+		align-items: start;
+	}
+}
+
+.x4vbox {
+	@extend .vbox;
+}
+
+.x4stackbox {
+	display: flex;
+	
+	&>* {
+		@extend .fit;
+		position: relative !important;
+	}
+
+	&>*:not(.selected) {
+		display: none;
+	}
+}
+
+.x4gridbox {
+	display: grid;
+}
+
+.x4masonrybox {
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+	grid-auto-rows: 10px;
+
+	overflow: hidden;
+}

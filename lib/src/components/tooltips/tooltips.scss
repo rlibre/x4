@@ -1,0 +1,72 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file tooltips.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+@use "../shared.scss";
+
+:root {
+	--tooltip-caption-background: var( --color-primary-a70 );
+	--tooltip-caption-color: white;
+
+	--tooltip-icon-background: white;
+	--tooltip-icon-color: var( --color-primary-a70 );
+
+	--tooltip-background: var( --color-primary-a10 );	//white;
+	--tooltip-color: var( --color-primary-a90 );
+	--tooltip-border: var( --color-primary-a20 );
+}
+
+.x4tooltip {
+	@extend .shadow-xl;
+	
+	display: flex;
+	flex-direction: row;
+	border: none;
+	font-size: 90%;
+	position: absolute;
+
+	border: 1px solid var( --tooltip-border ); 
+	background-color: var( --tooltip-background );
+
+	.x4icon {
+		padding: 2px 4px;
+		svg {
+			max-height: 100%;
+		}
+
+		.fa-primary,
+		.fa-secondary {
+			fill: var( --tooltip-icon-color );	
+		}
+
+		//background-color: var( --tooltip-caption-background );
+		color: var( --tooltip-icon-color );
+		width: 2em;
+		height: 2em;
+	}
+
+	#text {
+		background-color: var( --tooltip-background );
+		color: var( --tooltip-color );
+		padding: 4px;
+	}
+
+	img {
+		max-width: 100px;
+		max-height: 50px;
+		background-color: white;
+		margin: 4px;
+	}
+}
