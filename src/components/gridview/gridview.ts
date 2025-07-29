@@ -828,7 +828,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 		}
 
-		const maxr = this._dataview.getCount();
+		const maxr = this._dataview ? this._dataview.getCount() : 0;
 		let maxh = maxr;
 
 		if (maxr < SCROLL_LIMIT) {
