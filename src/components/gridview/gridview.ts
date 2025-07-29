@@ -1032,7 +1032,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			const rc = this.getBoundingRect();
 
 			// rows
-			const rowc = this._dataview.getCount();
+			const rowc = this._dataview ? this._dataview.getCount() : 0;
 			const mul = rowc < SCROLL_LIMIT ? this._row_height : 1;
 
 			const start = Math.floor(this._top / mul);
