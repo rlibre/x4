@@ -14,10 +14,10 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
 import { EventCallback } from "../../core/core_events"
-import { CanvasEx, createPainter } from './canvas_ex.js';
+import { CanvasEx, createPainter } from './canvas_ex';
 
 import './canvas.module.scss'
 
@@ -29,7 +29,7 @@ interface CanvasEventMap extends ComponentEvents {
 	paint: EvPaint;
 }
 
-interface CanvasProps extends ComponentProps {
+export interface CanvasProps extends ComponentProps {
 	paint: EventCallback<EvPaint>
 	clear?: boolean;
 }

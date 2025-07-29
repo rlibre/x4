@@ -15,10 +15,10 @@
  **/
 
 
-import { EvChange } from '@core/component.js';
-import { CoreElement } from '@core/core_element.js';
-import { CoreEvent, EventCallback, EventMap, EventSource } from '@core/core_events.js';
-import { isArray, isString } from '@core/core_tools.js';
+import { EvChange } from './component';
+import { CoreElement } from './core_element';
+import { CoreEvent, EventCallback, EventMap, EventSource } from './core_events';
+import { isArray, isString } from './core_tools';
 
 export type DataRecordID = any;
 export type DataFieldValue = string | Date | number | boolean;

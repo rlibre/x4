@@ -6,9 +6,6 @@
 		"strictNullChecks": false,
 		"target": "ES2022",
 		"experimentalDecorators": true,
-		"lib": [ "es2022", "DOM" ],
-		"paths": {
-			"@core/*": ["./src/core/*"]
-		}
+		"lib": [ "es2022", "DOM" ]
 	}
 }
