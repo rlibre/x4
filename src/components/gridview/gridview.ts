@@ -828,7 +828,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 		}
 
-		const maxr = this._dataview.getCount();
+		const maxr = this._dataview ? this._dataview.getCount() : 0;
 		let maxh = maxr;
 
 		if (maxr < SCROLL_LIMIT) {
@@ -874,7 +874,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		// WHEEL
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
+			if (ev.deltaY && this._dataview && this._dataview.getCount() >= SCROLL_LIMIT) {
 				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
 				ev.stopPropagation();
 				ev.preventDefault();
@@ -1032,7 +1032,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			const rc = this.getBoundingRect();
 
 			// rows
-			const rowc = this._dataview.getCount();
+			const rowc = this._dataview ? this._dataview.getCount() : 0;
 			const mul = rowc < SCROLL_LIMIT ? this._row_height : 1;
 
 			const start = Math.floor(this._top / mul);

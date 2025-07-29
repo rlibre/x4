@@ -1039,15 +1039,6 @@ export interface EvContextMenu extends ComponentEvent {
 }
 
 /**
- * Simple message
- */
-
-export interface EvMessage extends ComponentEvent {
-	readonly msg: string;
-	readonly params?: any;
-}
-
-/**
  * Drag/Drop event
  */
 

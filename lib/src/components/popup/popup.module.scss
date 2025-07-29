@@ -1,0 +1,51 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file popup.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--modal-mask-background: rgb(0 0 0 / 60% );
+}
+
+.x4popup {
+	position: absolute !important;
+	background-color: var(--fill-color);
+	border: 1px solid var(--border-color);
+	overflow: hidden;
+	z-index: 1000;
+	border-radius: var(--bradius);
+
+	&.popup-caption,
+	.popup-caption {
+		cursor: move;
+	}
+}
+
+.x4popup.center {
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+::backdrop,
+.x4modal-mask {
+	background-color: var( --modal-mask-background );
+	backdrop-filter: blur(8px);
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+}

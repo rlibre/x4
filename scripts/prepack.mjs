@@ -309,15 +309,14 @@ async function main() {
 
 	console.log(chalk.yellow("-- prepack ------------------------"))
 
-	fs.mkdirSync('lib/src', { recursive: true });
 	fs.mkdirSync('lib/styles', { recursive: true });
 	fs.mkdirSync('lib/types', { recursive: true });
 
 	console.log(chalk.green("building esm..."));
-	execSync("node scripts/build.mjs --release --outdir=lib/esm");
+	execSync("npx x4build --release --outdir=lib/esm");
 
 	console.log(chalk.green("building cjs..."));
-	execSync("node scripts/build.mjs --release --cjs --outdir=lib/cjs");
+	execSync("npx x4build --release --cjs --outdir=lib/cjs");
 
 	console.log(chalk.green("creating .d.ts..."));
 	
@@ -328,9 +327,6 @@ async function main() {
 
 	fs.cpSync('lib/esm/x4.css', 'lib/styles/x4.css');
 	fs.renameSync('lib/esm/x4.js', 'lib/esm/x4.mjs');
-
-	fs.cpSync('src/', 'lib/src/', { recursive: true });
-	fs.cpSync('README.md', 'lib/README.txt');
 
 	console.log(chalk.yellow("-----------------------------------"))
 }
