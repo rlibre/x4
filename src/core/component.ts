@@ -1022,11 +1022,10 @@ export interface EvFocus extends ComponentEvent {
  * value is the new selection or null
  */
 
-interface ISelection {
-}
+type ISelection = number | string;
 
 export interface EvSelectionChange extends ComponentEvent {
-	readonly selection: ISelection;
+	readonly selection: ISelection[];
 	readonly empty: boolean;
 }
 
