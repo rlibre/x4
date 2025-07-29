@@ -874,7 +874,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		// WHEEL
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
+			if (ev.deltaY && this._dataview && this._dataview.getCount() >= SCROLL_LIMIT) {
 				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
 				ev.stopPropagation();
 				ev.preventDefault();
