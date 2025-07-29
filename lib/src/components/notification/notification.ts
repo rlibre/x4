@@ -72,7 +72,7 @@ export class Notification extends Popup {
 		const _icon = new Icon( { iconId: icon } );
 		if( props.loading ) {
 			_icon.addClass( "rotate" );
-			this.props.modal = true;
+			//this.props.modal = true;
 		}
 
 		this.setContent( new HBox( { 

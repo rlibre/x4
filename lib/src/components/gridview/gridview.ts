@@ -1132,7 +1132,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		});
 
 		const rec = this._dataview.getByIndex( rowid );
-		this.fire("selectionChange", { selection: rec, empty: false } );
+		this.fire("selectionChange", { selection: [rec], empty: false } );
 	}
 
 	/**

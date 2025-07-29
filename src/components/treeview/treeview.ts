@@ -19,7 +19,7 @@ import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvSelection
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label } from '../label/label';
-import { ListboxID, ListItem, kbNav } from '../listbox/listbox';
+import { ListboxID, ListItem } from '../listbox/listbox';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
 
@@ -413,7 +413,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		const itm = this._findItem( id );
-		this.fire( "selectionChange", { selection: itm, empty: false } );
+		this.fire( "selectionChange", { selection: [itm], empty: false } );
 	}
 
 	private _findItem( id: ListboxID ) {
@@ -432,7 +432,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		this._selection = undefined;
-		this.fire( "selectionChange", { selection: undefined, empty: true } );
+		this.fire( "selectionChange", { selection: [], empty: true } );
 	}
 
 	/**

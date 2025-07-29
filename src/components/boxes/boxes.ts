@@ -143,7 +143,7 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 				sel.setClass( "selected", true );
 			}
 
-			asap( ( ) => this.fire( "pageChange", { selection: pg.name, empty: !sel } ) );
+			asap( ( ) => this.fire( "pageChange", { selection: [pg.name], empty: !sel } ) );
 		}
 
 		return pg?.page;

@@ -57,6 +57,6 @@ export class StateManager {
 		current[parts[parts.length - 1]] = value;
 
 		// Notify subscribers
-		this._notifySubscribers(path, value);
+		//this._notifySubscribers(path, value);
 	}
 }
