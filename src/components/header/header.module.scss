@@ -3,10 +3,10 @@
 :root {
 	--header-background-hover: rgba(100,100,100,0.1);
 	--header-sizer-hover: var( --border-hover );
+	--header-color: var( --text-primary );
 }
 
 .x4header {
-	@extend .flex;
 	width: 100%;
 
 	overflow: hidden;
@@ -26,6 +26,7 @@
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
+			color: var( --header-color );
 		}
 		
 		&:hover {

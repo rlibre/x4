@@ -385,8 +385,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return this;
 	}
 
-	getInternalData( name: string|symbol ): any {
-		return this.#store?.get(name);
+	getInternalData<T = any>( name: string|symbol ): T {
+		return this.#store?.get(name) as T;
 	}
 
 	

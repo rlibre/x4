@@ -19,6 +19,8 @@ import { EventCallback } from '../../core/core_events';
 import { kbNav, class_ns, isArray, UnsafeHtml } from '../../core/core_tools';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
+import { Header } from '../header/header';
+
 import { HBox } from '../boxes/boxes';
 import { Label } from '../label/label';
 
@@ -55,7 +57,7 @@ interface ListboxEvents extends ComponentEvents {
 interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
-	//header?: Header;
+	header?: Header;
 	footer?: Component,
 	checkable?: true,
 	multisel?: true,
@@ -98,8 +100,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			props.footer.setAttribute( "id", "footer" );
 		}
 
+		if( props.header ) {
+			props.header.setAttribute( "id", "header" );
+		}
+
 		this.setContent( [
-			//props.header ? props.header : null,
+			props.header ? props.header : null,
 			scroller,
 			props.footer,
 		] );

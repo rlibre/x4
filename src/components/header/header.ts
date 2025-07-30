@@ -15,10 +15,18 @@ interface HeaderItem {
 
 interface HeaderProps extends Omit<ComponentProps,"content"> {
 	items: HeaderItem[]
+	target?: Component;	// target element to set header col variable width var( --hdr-item-{name}-width )
 }
 
 /**
+ * by default when a header item is resized, the 'target' style '--{name}-width' is updated
+ * if you listbox has a header and 3 cols named A, B, C then in your css, use
  * 
+ * .my-listbox {
+ *    --A-width: 10px;
+ *    --B-width: 50px;
+ *    --C-width: 100px;
+ * }
  */
 
 @class_ns( "x4" )
@@ -94,13 +102,13 @@ export class Header extends HBox<HeaderProps> {
 
 		const rc = this.getBoundingRect( );
 		
-		let rest = (rc.width-filled);
+		let   rest = (rc.width-filled-10);
 		const unit = Math.ceil( rest/count );
 
-		console.log( "filled", filled );
-		console.log( "count", count );
-		console.log( "rest", rest );
-		console.log( "unit", unit );
+		//console.log( "filled", filled );
+		//console.log( "count", count );
+		//console.log( "rest", rest );
+		//console.log( "unit", unit );
 		
 		let fullw = 0;
 		this._els.forEach( c => {
@@ -116,6 +124,10 @@ export class Header extends HBox<HeaderProps> {
 			}
 
 			c.setWidth( width );
+
+			const item = c.getInternalData<HeaderItem>( 'data' );
+			this.props.target?.setStyleVariable( `--${item.name}-width`, width + "px");
+			
 			fullw += width;
 		} );
 
