@@ -33,7 +33,7 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
-type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" ;
 
 /**
  * 
@@ -117,11 +117,11 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 		}
 
 		if( this._type.includes("right") ) {
-			//nr.left = rc.left;
 			nr.width = (pt.x-rc.left);
-		}
+			}
 
 		this._ref.setStyle( nr );
+		//this._ref.setStyleValue( "flexGrow", 0 );
 
 		const nrc = this._ref.getBoundingRect( );
 		this.fire( "resize", { size: horz ? nrc.width : nrc.height })

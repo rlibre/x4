@@ -15,6 +15,7 @@
  **/
 
 import { class_ns } from '../../core/core_tools';
+import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvSelectionChange, componentFromDOM } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
@@ -52,10 +53,7 @@ export interface TreeItem extends ListItem {
 interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
 	footer?: Component;
-}
-
-interface ChangeEvent extends ComponentEvent {
-	selection: TreeItem;
+	selectionChange?: EventCallback<EvSelectionChange>;
 }
 
 interface TreeviewEvents extends ComponentEvents {
@@ -84,6 +82,10 @@ class CTreeViewItem extends Box {
 				this._icon = new Icon( { iconId: item.children ? folder_icon : undefined } ),
 				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
+
+			if( item.cls ) {
+				this._label.addClass( item.cls );
+			}
 
 			this._label.setData( "id", item.id+"" );
 				
@@ -158,6 +160,8 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 	constructor( props: TreeviewProps ) {
 		super( props );
+
+		this.mapPropEvents( props, "selectionChange" );
 
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
