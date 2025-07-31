@@ -446,4 +446,21 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	getSelection( ) {
 		return this._selection;
 	}
+
+	/**
+	 * 
+	 */
+
+	selectItem( id: ListboxID ) {
+		const itm = this._findItem( id );
+		if( itm ) {
+			this.visitChildren( ( c ) => {
+				const cid = c.getInternalData( "id" );
+				if( cid == id ) {
+					this._selectItem( id, c );
+					return true;
+				}
+			} );
+		}
+	}
 }

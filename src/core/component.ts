@@ -883,6 +883,33 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
+	visitChildren( cb: ( el: Component ) => boolean ) {
+
+		const visit = ( p: Element ) => {
+			for( let d=p.firstElementChild; d; d=d.nextElementSibling ) {
+				const comp = componentFromDOM( d as Element );
+				if( comp ) {
+					if( cb( comp ) ) {
+						return true;
+					}
+				}
+
+				// avoid visit of svg elements
+				if( d.firstElementChild && d.tagName!="svg" && d.tagName!="SVG" ) {
+					if( visit( d ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		visit( this.dom );
+	}
+
+	/**
+	 * 
+	 */
+
 	animate( keyframes: Keyframe[], duration: number ) {
 		this.dom.animate(keyframes,duration);
 	}
