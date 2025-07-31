@@ -19,6 +19,7 @@ import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
+import { Application, EvMessage } from './core_application';
 
 interface RefType<T extends Component> {
 	dom: T;
@@ -216,6 +217,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		}
 
 		(this.dom as any)[COMPONENT] = this;
+	}
+
+
+	onGlobalEvent( cb: ( ev: EvMessage ) => void ) {
+		
+		const off = Application.instance().on( "global", ev => {
+			cb( ev );
+		})
+
+		this.addDOMEvent( "removed", ( ) => off.off() );
 	}
 
 

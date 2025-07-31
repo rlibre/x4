@@ -87,7 +87,7 @@ class CTreeViewItem extends Box {
 				this._label.addClass( item.cls );
 			}
 
-			this._label.setData( "id", item.id+"" );
+			this._label.setInternalData( "id", item.id );
 				
 			if( item.children ) {
 				this. _childs = new VBox( { cls: "body" } );
@@ -209,7 +209,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			const c = componentFromDOM( target );
 			
 			if( c && c.hasClass("item") ) {
-				const id = c.getData( "id" );
+				const id = c.getInternalData( "id" );
 				this._selectItem( id, c );
 				return;
 			}
