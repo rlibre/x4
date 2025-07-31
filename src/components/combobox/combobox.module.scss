@@ -33,6 +33,8 @@
 	@extend .hbox;
 
 	max-height: 250px;
+	max-width: 50vw;
+	
 	position: absolute;
 	background-color: var( --dropdown-background );
 	border: 1px solid var( --dropdown-border );
