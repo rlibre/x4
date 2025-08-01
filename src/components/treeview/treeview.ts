@@ -16,7 +16,7 @@
 
 import { class_ns } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label } from '../label/label';
@@ -54,10 +54,14 @@ interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
 	footer?: Component;
 	selectionChange?: EventCallback<EvSelectionChange>;
+	dblClick?: EventCallback<EvDblClick>;
+	click?: EventCallback<EvClick>;
 }
 
 interface TreeviewEvents extends ComponentEvents {
 	selectionChange?: EvSelectionChange;
+	dblClick?: EvDblClick;
+	click?: EvClick;
 }
 
 /**
@@ -161,7 +165,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	constructor( props: TreeviewProps ) {
 		super( props );
 
-		this.mapPropEvents( props, "selectionChange" );
+		this.mapPropEvents( props, "selectionChange", "dblClick", "click" );
 
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
@@ -177,7 +181,8 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 		this.setAttribute( "tabindex", 0 );
 		this.setDOMEvents( {
-			click: ( ev ) => this._onclick( ev ),
+			click: ( ev ) => this._on_click( ev ),
+			dblclick: (e) => this._on_click(e),
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
@@ -203,14 +208,27 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 	}
 
-	private _onclick( ev: UIEvent ) {
+	private _on_click( ev: UIEvent ) {
 		let target = ev.target as HTMLElement;
+		
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 			
 			if( c && c.hasClass("item") ) {
 				const id = c.getInternalData( "id" );
-				this._selectItem( id, c );
+
+				const fev: ComponentEvent = { context:id };
+				if (ev.type == 'click') {
+					this.fire('click', fev );
+				}
+				else {
+					this.fire('dblClick', fev );
+				}
+
+				if (!fev.defaultPrevented) {
+					this._selectItem( id, c );
+				}
+
 				return;
 			}
 
