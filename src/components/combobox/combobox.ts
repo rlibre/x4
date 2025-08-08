@@ -128,6 +128,9 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 		const _select = ( sel: ListboxID ) => {
 			const itm = list.getItem(sel);
+			if( itm ) {
+				list.select( sel, false );
+			}
 
 			//TODO: unsafehtml
 			//@ts-ignore
