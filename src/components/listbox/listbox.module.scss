@@ -138,6 +138,10 @@
 				&:focus {
 					background-color: var( --ol-button-background-hover );
 				}
+
+				&:disabled {
+					color: var( --disabled-color-dark );
+				}
 			}
 		}
 	}		

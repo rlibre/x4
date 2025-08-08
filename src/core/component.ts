@@ -93,8 +93,8 @@ export interface ComponentProps {
 	// shortcuts
 	width?: string | number;
 	height?: string | number;
-	disabled?: true,
-	hidden?: true,
+	disabled?: boolean,
+	hidden?: boolean,
 	flex?: boolean | number;
 
 	tooltip?: string;
