@@ -348,7 +348,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 		if( !ids.length ) {
 			if( this._multisel.size ) {
-				this.clearSelection( );
+				if( notify ) {
+					this.clearSelection( );
+				}
+				else {
+					this._clearSelection( );
+				}
 			}
 
 			return;
@@ -367,7 +372,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 				}
 			});
 
-			this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+			if( notify ) {
+				this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+			}
 		}
 	}
 	
