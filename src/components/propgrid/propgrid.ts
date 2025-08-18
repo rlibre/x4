@@ -81,7 +81,7 @@ export class PropertyGrid extends VBox {
 
 	setItems( _grps: PropertyGroup[] ) {
 
-		this.groups = _grps;
+		this.groups = _grps.filter( x => !!x );
 		//this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
 
 		let items: Component[] = [];
@@ -89,7 +89,9 @@ export class PropertyGrid extends VBox {
 		for( const g of this.groups ) {
 			items.push( this.makeGroupHeader(g) );
 			g.items.forEach( i => {
-				items.push( this.makePropertyRow(i) );
+				if( i ) {
+					items.push( this.makePropertyRow(i) );
+				}
 			});
 		}
 
