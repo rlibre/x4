@@ -889,31 +889,31 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 					filterValue = filterValue.toUpperCase( );
 				}
 				
-				function _lt( recval: string ) : boolean {
+				const _lt = ( recval: string ) : boolean => {
 					return recval < filterValue;
 				}
 
-				function _le( recval: string ) : boolean {
+				const _le = ( recval: string ) : boolean => {
 					return recval <= filterValue;
 				}
 
-				function _eq( recval: string ) : boolean {
+				const _eq = ( recval: string ) : boolean => {
 					return recval == filterValue;
 				}
 
-				function _neq( recval: string ) : boolean {
+				const _neq = ( recval: string ) : boolean => {
 					return recval != filterValue;
 				}
 
-				function _ge( recval: string ) : boolean {
+				const _ge = ( recval: string ) : boolean => {
 					return recval >= filterValue;
 				}
 
-				function _gt( recval: string ) : boolean {
+				const _gt = ( recval: string ) : boolean => {
 					return recval > filterValue;
 				}
 
-				function _re( recval: string ) : boolean {
+				const _re = ( recval: string ) : boolean => {
 					filterRe.lastIndex = -1;
 					return filterRe.test( recval );
 				}
@@ -959,7 +959,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 					let keep  = filterFn( field );
 					if( keep ) {
 						index[iidx++] = idx;
-					};
+					}
 				});
 			}
 		}

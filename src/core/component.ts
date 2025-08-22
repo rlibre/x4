@@ -107,7 +107,7 @@ export interface ComponentProps {
 	//	because all memebers here are optional.
 	//	this allow TS to recongnize derived props as ComponentProps
 	//[key: string]: any; 
-};
+}
 
 
 /**
@@ -339,7 +339,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 	
 	setAttribute( name: string, value: string | number | boolean ) {
-		if( value===null || value===undefined ) {
+		if( value===null || value===undefined || value===false ) {
 			this.dom.removeAttribute( name );
 		}
 		else {

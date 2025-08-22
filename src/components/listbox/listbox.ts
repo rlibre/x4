@@ -465,7 +465,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 * 
 	 */
 
-	filter( filter: string ) {
+	filter( filter: string | RegExp ) {
 		const childs = this._view.enumChildComponents( false );
 		
 		if( !filter ) {
@@ -473,13 +473,24 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 		else {
 			// get list of visible items
-			const filtred = this._items
-					.filter( x => x.text.includes(filter) )
-					.map( x => x.id+'' );
+			let filtred: Set<ListboxID>;
+
+			if( filter instanceof RegExp ) {
+				const f = filter as RegExp;
+				filtred = new Set( this._items
+						.filter( x => f.test(x.text as string) )
+						.map( x => x.id ) ); 
+			}
+			else {
+				const f = filter.toUpperCase( );
+				filtred = new Set( this._items
+					.filter( x => x.text.toUpperCase().includes(f) )
+					.map( x => x.id ) );
+			}
 
 			// now hide all elements not in list
 			childs.forEach( x => {
-				x.show( filtred.includes( x.getInternalData( "id" ) ) );
+				x.show( filtred.has( x.getInternalData( "id" ) ) );
 			});
 		}
 	}
