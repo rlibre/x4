@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { kbNav, class_ns, isArray, UnsafeHtml } from '../../core/core_tools';
+import { kbNav, class_ns, isArray, UnsafeHtml, asap } from '../../core/core_tools';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Header } from '../header/header';
@@ -424,15 +424,29 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 		this.clearSelection( );
 		this._view.clearContent( );
-		this._items = items;
+		this._items = items ?? [];
 
-		if( items ) {
+		let upsel = false;
+
+		if( this._items.length ) {
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
 
 			if( keepSel ) {
 				this.select( oldSel );
 			}
+			else {
+				upsel = true;
+			}
+		}
+		else {
+			upsel = true;
+		}
+		
+		if( upsel ) {
+			this.setTimeout( "sel", 100, ( ) => {
+				this.fire( "selectionChange", { selection: [], empty: true } );
+			} );
 		}
 	}
 
