@@ -506,7 +506,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			let asc = true;
 
 			// already sorted ?
-			const scol = this.query(`.col-header [data-col="${col}"`);
+			const scol = this.query(`.col-header .cell[data-col="${col}"]`);
+			if( !scol ) {
+				return;
+			}
 
 			if( ascending===undefined ) {
 				if (scol.hasClass("sorted")) {
