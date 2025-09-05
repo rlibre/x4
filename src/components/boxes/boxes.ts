@@ -122,6 +122,18 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		});
 	}
 
+	removeItem( name: string ) {
+		const index = this._items.findIndex( x => x.name==name );
+		if( index>=0 ) {
+			const pg = this._items[index];
+			if( pg ) {
+				this.removeChild( pg.page );
+			}
+
+			this._items.splice( index, 1 );
+		}
+	}
+
 	select( name: string ) {
 		let sel = this.query( `:scope > .selected` );
 		if( sel ) {
@@ -176,6 +188,18 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		const pg = this._items.find( x => x.name==name );
 		return pg ? pg.content : null;
 	}
+
+	/**
+	 * 
+	 */
+
+	getPageCount( ) {
+		return this._items.length;
+	}
+
+	/**
+	 * 
+	 */
 
 	getItem( name: string ) {
 		const pg = this._items.find( x => x.name==name );

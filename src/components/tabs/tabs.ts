@@ -100,7 +100,6 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 		}
 	}
 
-
 	setItems( items: TabItem[ ] ) {
 		this.clearContent( );
 		items.forEach( tab => {
@@ -114,8 +113,11 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 		}, tab ) );
 	}
 
-	getTabCount( ) {
-		return this.dom.children.length;
+	removeItem( name: string ) {
+		const tab = this.query<Button>( `[data-tabname="${name}"]` );
+		if( tab ) {
+			this.removeChild( tab );
+		}
 	}
 }
 
@@ -139,10 +141,12 @@ export class Tabs extends VBox<TabsProps> {
 	private _list: CTabList;
 	private _stack: StackBox;
 	private _current: string;
+	private _items: TabItem[];
 
 	constructor( props: TabsProps ) {
 		super( props );
 
+		this._items = [...props.items];
 		const pages = props.items?.map( x => {
 			return {
 				name: x.name,
@@ -197,9 +201,26 @@ export class Tabs extends VBox<TabsProps> {
 		this._list.addItem( item );
 		this._stack.addItem( { name: item.name, content: item.content } );
 
-		if( this._list.getTabCount( )==1 ) {
+		if( this._stack.getPageCount( )==1 ) {
 			this.selectTab( item.name );
 		}
+	}
+
+	/**
+	 * 
+	 */
+
+	removeTab( name: string ) {
+		this._list.removeItem( name );
+		this._stack.removeItem( name );
+	}
+
+	/**
+	 * 
+	 */
+
+	enumTabs( ): string[] {
+		return this._items.map( x => x.name );
 	}
 }
 
