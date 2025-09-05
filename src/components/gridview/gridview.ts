@@ -499,8 +499,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 	private _sortCol(col: number, ascending?: boolean ) {
 
-		setWaitCursor(true);
-
 		// to allow cursor
 		this.setTimeout("sort", 50, () => {
 			let asc = true;
@@ -543,6 +541,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					num = true;
 				}
 			}
+
+			setWaitCursor(true);
 
 			this._dataview.sort([{
 				field: cdata.id,
