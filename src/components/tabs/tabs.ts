@@ -32,6 +32,7 @@ export interface TabItem {
 	title: string;
 	icon?: string;
 	content: Component;
+	cls?: string;	// button class
 }
 
 /**
@@ -44,6 +45,10 @@ class CTab extends Button {
 		super( props );
 
 		this.addClass( "outline" );
+		if( item.cls ) {
+			this.addClass( item.cls );
+		}
+		
 		this.setIcon( item.icon );
 		this.setText( item.title );
 		this.setData( "tabname", item.name );
