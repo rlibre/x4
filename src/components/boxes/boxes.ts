@@ -126,7 +126,7 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		const index = this._items.findIndex( x => x.name==name );
 		if( index>=0 ) {
 			const pg = this._items[index];
-			if( pg ) {
+			if( pg?.page ) {
 				this.removeChild( pg.page );
 			}
 
