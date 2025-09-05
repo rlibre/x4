@@ -201,6 +201,14 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 	 * 
 	 */
 
+	enumPageNames( ) {
+		return this._items.map( x => x.name );
+	}
+
+	/**
+	 * 
+	 */
+
 	getItem( name: string ) {
 		const pg = this._items.find( x => x.name==name );
 		return pg;

@@ -141,12 +141,10 @@ export class Tabs extends VBox<TabsProps> {
 	private _list: CTabList;
 	private _stack: StackBox;
 	private _current: string;
-	private _items: TabItem[];
 
 	constructor( props: TabsProps ) {
 		super( props );
 
-		this._items = [...props.items];
 		const pages = props.items?.map( x => {
 			return {
 				name: x.name,
@@ -220,7 +218,7 @@ export class Tabs extends VBox<TabsProps> {
 	 */
 
 	enumTabs( ): string[] {
-		return this._items.map( x => x.name );
+		return this._stack.enumPageNames( );
 	}
 }
 
