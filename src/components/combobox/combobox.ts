@@ -273,6 +273,10 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		
 		return super.queryInterface( name );
 	}
+
+	getInput( ) {
+		return this._input;
+	}
 }
 
 

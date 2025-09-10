@@ -17,7 +17,7 @@
 
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools';
-import { DataModel, DataStore, DataView, DataRecord, DataFieldValue, EvViewChange } from '../../core/core_data';
+import { DataModel, DataStore, DataView, DataRecord, EvViewChange } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -43,7 +43,7 @@ const SCROLL_LIMIT = 200;
  * 
  */
 
-interface GridColumn {
+export interface GridColumn {
 	id: any;
 	title: string;
 	width: number;

@@ -23,7 +23,7 @@ import "./sizer.module.scss"
  * 
  */
 
-interface EvSizeChange extends ComponentEvent {
+export interface EvSizeChange extends ComponentEvent {
 	size: number;
 }
 

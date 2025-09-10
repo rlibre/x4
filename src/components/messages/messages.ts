@@ -209,7 +209,21 @@ export class PromptBox extends Dialog<DialogProps>
 
 			box.show();
 		} );
+	}
 
+	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean ) {
+
+		const box = this._create( msg, editor, title );
+	
+		box.on( "btnclick", ( ev ) => {
+			asap( ( ) => {
+				if( callback( ev.button )!==false ) {
+					box.close() 
+				}
+			});
+		});
+
+		box.show();
 	}
 }
 

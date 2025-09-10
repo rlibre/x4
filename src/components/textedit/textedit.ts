@@ -41,7 +41,7 @@ interface TextEditBase {
 	inputAttrs?: any;
 }
 
-type TextEditProps = TextEditInputs & TextEditBase;
+export type TextEditProps = TextEditInputs & TextEditBase;
 
 /*
 not enougth precise
