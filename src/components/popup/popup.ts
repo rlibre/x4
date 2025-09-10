@@ -184,7 +184,12 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			if( modal_stack[modal_stack.length-1]!=this ) {
 				debugger;
 				const idx = modal_stack.findIndex( x => x===this );
-				modal_stack.splice( idx );
+				if( idx>=0 ) {
+					modal_stack.splice( idx, 1 );
+				}
+				else {
+					debugger;
+				}
 			}
 			else {
 				modal_stack.pop( );
