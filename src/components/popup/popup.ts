@@ -178,8 +178,18 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		this.__remove( );
 
 		if( this._ismodal ) {
-			modal_stack.pop( );
-			this._hideModalMask( );
+			// modal1.show()
+			// modal2.show()
+			// modal1.hide()
+			if( modal_stack[modal_stack.length-1]!=this ) {
+				debugger;
+				const idx = modal_stack.findIndex( x => x===this );
+				modal_stack.splice( idx );
+			}
+			else {
+				modal_stack.pop( );
+				this._hideModalMask( );
+			}
 		}
 
 		// remove from popup list
