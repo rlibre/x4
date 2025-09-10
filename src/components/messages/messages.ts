@@ -211,7 +211,7 @@ export class PromptBox extends Dialog<DialogProps>
 		} );
 	}
 
-	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean | Promise<boolean> ) {
+	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean | Promise<boolean> | Promise<void> ) {
 
 		const box = this._create( msg, editor, title );
 	
