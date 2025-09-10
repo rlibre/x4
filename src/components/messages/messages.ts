@@ -211,13 +211,13 @@ export class PromptBox extends Dialog<DialogProps>
 		} );
 	}
 
-	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean ) {
+	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean | Promise<boolean> ) {
 
 		const box = this._create( msg, editor, title );
 	
 		box.on( "btnclick", ( ev ) => {
-			asap( ( ) => {
-				if( callback( ev.button )!==false ) {
+			asap( async ( ) => {
+				if( await callback( ev.button )!==false ) {
 					box.close() 
 				}
 			});
