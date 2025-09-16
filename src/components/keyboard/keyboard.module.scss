@@ -25,7 +25,6 @@
     width: 100vw;
 	height: 14rem;
 	bottom: 0;
-	display: contents;
 	justify-content: center;
 
 	background-color: rgba(0,0,0,0.9);
@@ -36,6 +35,7 @@
 	#kb {
 		width: 100vw;
 		max-width: 800px;
+		zoom: 120%;
 	}
 	
 	.line {
