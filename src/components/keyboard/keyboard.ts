@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps, Flex } from '../../core/component';
+import { Component } from '../../core/component';
 import { Box, BoxProps, Button, HBox, VBox } from '../components';
 import { _tr } from '../../core/core_i18n';
 
@@ -240,13 +240,11 @@ export class Keyboard extends HBox<KeyboardProps>
 
     _redraw( ) {
 		this.setContent( [
-			new Flex( ),
 			this.keyboard = new VBox( {
 				id: "kb",
 				cls: this.mode,
 				content: this._createContent( ),
 			}),
-			new Flex( ),
         ] );
     }
 
