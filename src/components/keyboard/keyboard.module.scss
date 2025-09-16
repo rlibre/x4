@@ -17,6 +17,7 @@
 :root {
 	--keyboard-key-background: #33302d;
 	--keyboard-hilite-color: #5ba921;
+	--keyboard-zoom: 100%;
 }
 
 .x4keyboard {
@@ -34,7 +35,7 @@
 	#kb {
 		width: 100vw;
 		max-width: 800px;
-		zoom: 120%;
+		zoom: var( --keyboard-zoom );
 	}
 	
 	.line {

@@ -107,7 +107,7 @@ export class Keyboard extends HBox<KeyboardProps>
 	keyboard: Box;
 	visible: boolean;
 	input: HTMLInputElement;
-	
+		
     constructor( props: KeyboardProps )  {
         super( { ...props, id: 'v-keyboard' } );
 
@@ -140,11 +140,15 @@ export class Keyboard extends HBox<KeyboardProps>
 		});
     }
 
+	setZoom( perc: number ) {
+		this.setStyleVariable( '--keyboard-zoom', perc+'%' );
+	}
+
 	/**
 	 * 
 	 */
 
-    handleKey( e: UIEvent ) {
+    private handleKey( e: UIEvent ) {
         let target = e.target as HTMLElement;
         let key;
 
@@ -238,7 +242,7 @@ export class Keyboard extends HBox<KeyboardProps>
 	 * 
 	 */
 
-    _redraw( ) {
+    private _redraw( ) {
 		this.setContent( [
 			this.keyboard = new VBox( {
 				id: "kb",
@@ -248,7 +252,7 @@ export class Keyboard extends HBox<KeyboardProps>
         ] );
     }
 
-    _scrollIntoView( el: HTMLElement ) {
+    private _scrollIntoView( el: HTMLElement ) {
         
         let parent = el.parentElement ;
 
@@ -273,7 +277,7 @@ export class Keyboard extends HBox<KeyboardProps>
         //el.scrollIntoView( false );
     }
 
-    _updateVis = ( ) => {
+    private _updateVis = ( ) => {
         
         if( this.visible ) {
             if( this.input ) {
