@@ -125,8 +125,13 @@ export class PropertyGrid extends VBox {
 			}
 		}
 
+		let cls = "group";
+		if( g.cls ) {
+			cls += ' '+g.cls;
+		}
+
 		const tr = new HBox({
-			cls: 'group ' + g.cls,
+			cls,
 			content: [
 				g.icon ? new Icon({ id: "icon", iconId: g.icon }) : null,
 				new VBox( { content: [
@@ -240,9 +245,14 @@ export class PropertyGrid extends VBox {
 				}
 			});
 		}
+		
+		let cls = 'row';
+		if( item.cls ) {
+			cls += ' ' + item.cls;
+		}
 
 		return new HBox({
-			cls: 'row',
+			cls,
 			content: [
 				use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
 				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })
