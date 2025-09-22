@@ -126,7 +126,7 @@ export class PropertyGrid extends VBox {
 		}
 
 		const tr = new HBox({
-			cls: 'group',
+			cls: 'group ' + g.cls,
 			content: [
 				g.icon ? new Icon({ id: "icon", iconId: g.icon }) : null,
 				new VBox( { content: [
