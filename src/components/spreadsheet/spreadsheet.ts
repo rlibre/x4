@@ -606,7 +606,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		const col = column.id;
 		const type = column.type;
 
-		let data = this._store.getData(col, row);
+		let data = this._store.getData( row, col );
 		if (data === undefined || data === null) {
 			return null;
 		}
@@ -702,18 +702,17 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			const extra: string[] = []
 			const content = this._renderCell(rowid, cdata, extra);
 
-			let align = "start";
-			switch (cdata.align) {
-				default: align = "start"; break;
-				case "center": align = "center"; break;
-				case "right": align = "end"; break;
-			}
-
 			const el = new Component({
 				cls: "cell",
-				style: { width: cdata?.width ? cdata.width + "px" : undefined, justifyContent: align },
+				attrs: { "data-col": col },
+				style: { width: cdata?.width ? cdata.width + "px" : undefined },
 				content
 			});
+
+			switch (cdata.align) {
+				case "center": 	el.addClass( "align-center" ); break;
+				case "right": 	el.addClass( "align-right" ); break;
+			}
 
 			if (extra.length) {
 				el.addClass(extra.join(' '));
