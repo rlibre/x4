@@ -607,6 +607,8 @@ export class SvgGroup extends SvgItem {
 		icon.setAttr( 'y', num(y)+'' );
 		icon.setAttr( 'width', num(w)+'' );
 		icon.setAttr( 'height', num(h)+'' );
+		icon.setStyle( 'width', num(w)+'px' );
+		icon.setStyle( 'height', num(h)+'px' );
 		return this.append( icon );
 	}
 

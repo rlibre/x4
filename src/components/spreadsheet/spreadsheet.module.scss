@@ -87,6 +87,16 @@
 			border-radius: 8px;
 			margin: 0 auto;
 		}
+
+		justify-content: start;
+
+		&.align-center {
+			justify-content: center;
+		}
+
+		&.align-right {
+			justify-content: end;
+		}
 	}
 
 	.x4viewport {
