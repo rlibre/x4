@@ -30,8 +30,9 @@ interface CanvasEventMap extends ComponentEvents {
 }
 
 export interface CanvasProps extends ComponentProps {
-	paint: EventCallback<EvPaint>
-	clear?: boolean;
+	paint_cb?: (ctx: CanvasEx ) => void;// simple callback
+	paint?: EventCallback<EvPaint>		// or standard event (slower)
+	clear?: boolean;					// clear background before painting
 }
 
 
@@ -179,7 +180,12 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 
 	protected paint(ctx: CanvasEx ) {
 		try {
-			this.fire('paint', { ctx } );
+			if( this.props.paint_cb ) {
+				this.props.paint_cb( ctx );
+			}
+			else {
+				this.fire('paint', { ctx } );
+			}
 		}
 		catch (x) {
 			console.assert(false, x);

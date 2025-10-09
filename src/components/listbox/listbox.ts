@@ -42,8 +42,7 @@ export interface ListItem {
  * 
  */
 
-interface ListboxEvents extends ComponentEvents {
-	//change: EvChange;
+export interface ListboxEvents extends ComponentEvents {
 	click?: EvClick;
 	dblClick?: EvDblClick;
 	contextMenu?: EvContextMenu;
@@ -54,7 +53,7 @@ interface ListboxEvents extends ComponentEvents {
  * 
  */
 
-interface ListboxProps extends Omit<ComponentProps,'content'> {
+export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
 	header?: Header;

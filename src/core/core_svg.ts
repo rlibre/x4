@@ -149,11 +149,17 @@ class SvgItem {
 	 */
 
 	getAttr( name: string ) : string {
-		return this._dom.getAttribute( name );
+		const a = this._dom.getAttribute( name ) || '';
+		return a;
 	}
 
 	getNumAttr( name: string ) {
-		return parseInt( this._dom.getAttribute( name ) );
+		const a = this._dom.getAttribute( name )
+		if( a=='' ) {
+			return 0;
+		}
+
+		return parseInt( a );
 	}
 
 	/**
@@ -164,7 +170,12 @@ class SvgItem {
 	 */
 
 	setAttr( name: string, value: string ) : this {
-		this._dom.setAttribute( name, value );
+		if( value===null || value===undefined ) {
+			this._dom.removeAttribute( name );
+		}
+		else {
+			this._dom.setAttribute( name, value );
+		}
 		return this;
 	}
 
@@ -238,12 +249,18 @@ class SvgItem {
 		return this;
 	}
 
+	
 	/**
 	 * 
 	 */
 
 	transform( tr: string ): this {
-		const t = this.getAttr( "transform" ) ?? "";
+		this.setAttr( "transform", tr );
+		return this;
+	}
+
+	add_transformation( tr: string ): this {
+		const t = this.getAttr( "transform" );
 		this.setAttr( "transform", t+' '+tr );
 		return this;
 	}
@@ -262,8 +279,18 @@ class SvgItem {
 		return this;
 	}
 
+	add_rotation( deg: number, cx: number, cy: number ): this {
+		this.add_transformation( `rotate( ${deg} ${cx} ${cy} )` );
+		return this;
+	}
+
 	translate( dx: number, dy: number ): this {
 		this.transform( `translate( ${dx} ${dy} )` );
+		return this;
+	}
+
+	add_translation( dx: number, dy: number ): this {
+		this.add_transformation( `translate( ${dx} ${dy} )` );
 		return this;
 	}
 
@@ -271,6 +298,12 @@ class SvgItem {
 		this.transform( `scale( ${x} )` );
 		return this;
 	}
+
+	add_scale( x: number ): this {
+		this.add_transformation( `scale( ${x} )` );
+		return this;
+	}
+
 
 	/**
 	 * 

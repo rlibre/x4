@@ -145,3 +145,19 @@
 		}
 	}
 }
+
+.x4radio.square {
+	padding: 5px;
+	border: 1px solid rgba(255,255,255,0.3);
+	margin: 0;
+		
+	.inner {
+		display: none;
+	}
+
+	&:has(input:checked) {
+		background-color: var( --accent-background-active );
+		border-color: white;
+		font-weight: 700;
+	}
+}
