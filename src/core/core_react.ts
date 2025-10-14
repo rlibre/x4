@@ -34,8 +34,8 @@
  * 
  */
 
-import { Component } from './component.js';
-import { Constructor, isString } from './core_tools.js';
+import { Component } from './component';
+import { Constructor, isString } from './core_tools';
 
 
 /**

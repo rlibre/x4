@@ -16,7 +16,7 @@ import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
 import pen_icon from "./pen-field.svg";
-import { Component } from '@core/component.js';
+import { Component } from '../../core/component';
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -209,7 +209,21 @@ export class PromptBox extends Dialog<DialogProps>
 
 			box.show();
 		} );
+	}
 
+	static show(  msg: string | UnsafeHtml, editor: Component, title: string, callback: ( btn: string ) => boolean | Promise<boolean> | Promise<void> ) {
+
+		const box = this._create( msg, editor, title );
+	
+		box.on( "btnclick", ( ev ) => {
+			asap( async ( ) => {
+				if( await callback( ev.button )!==false ) {
+					box.close() 
+				}
+			});
+		});
+
+		box.show();
 	}
 }
 

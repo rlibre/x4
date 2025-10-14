@@ -14,13 +14,13 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps, Flex } from '@core/component.js';
-import { Box, BoxProps, Button, HBox, VBox } from '../components.js';
-import { _tr } from '@core/core_i18n.js';
+import { Component } from '../../core/component';
+import { Box, BoxProps, Button, HBox, VBox } from '../components';
+import { _tr } from '../../core/core_i18n';
 
 import "./keyboard.module.scss"
-import { class_ns } from '@core/core_tools.js';
-import { Application } from '@core/core_application.js';
+import { class_ns } from '../../core/core_tools';
+import { Application } from '../../core/core_application';
 
 import icon_bksp from "./delete-left.svg";
 import icon_shift from "./arrow-up.svg";
@@ -107,7 +107,7 @@ export class Keyboard extends HBox<KeyboardProps>
 	keyboard: Box;
 	visible: boolean;
 	input: HTMLInputElement;
-	
+		
     constructor( props: KeyboardProps )  {
         super( { ...props, id: 'v-keyboard' } );
 
@@ -140,11 +140,15 @@ export class Keyboard extends HBox<KeyboardProps>
 		});
     }
 
+	setZoom( perc: number ) {
+		this.setStyleVariable( '--keyboard-zoom', perc+'%' );
+	}
+
 	/**
 	 * 
 	 */
 
-    handleKey( e: UIEvent ) {
+    private handleKey( e: UIEvent ) {
         let target = e.target as HTMLElement;
         let key;
 
@@ -238,19 +242,17 @@ export class Keyboard extends HBox<KeyboardProps>
 	 * 
 	 */
 
-    _redraw( ) {
+    private _redraw( ) {
 		this.setContent( [
-			new Flex( ),
 			this.keyboard = new VBox( {
 				id: "kb",
 				cls: this.mode,
 				content: this._createContent( ),
 			}),
-			new Flex( ),
         ] );
     }
 
-    _scrollIntoView( el: HTMLElement ) {
+    private _scrollIntoView( el: HTMLElement ) {
         
         let parent = el.parentElement ;
 
@@ -275,7 +277,7 @@ export class Keyboard extends HBox<KeyboardProps>
         //el.scrollIntoView( false );
     }
 
-    _updateVis = ( ) => {
+    private _updateVis = ( ) => {
         
         if( this.visible ) {
             if( this.input ) {

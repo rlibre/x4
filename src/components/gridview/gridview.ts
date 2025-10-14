@@ -16,8 +16,8 @@
 
 
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
-import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools';
-import { DataModel, DataStore, DataView, DataRecord, DataFieldValue, EvViewChange } from '../../core/core_data';
+import { class_ns, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
+import { DataModel, DataStore, DataView, DataRecord, EvViewChange } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -43,9 +43,9 @@ const SCROLL_LIMIT = 200;
  * 
  */
 
-interface GridColumn {
+export interface GridColumn {
 	id: any;
-	title: string;
+	title: string | UnsafeHtml;
 	width: number;
 	fixed?: boolean;
 	flex?: number;
@@ -499,14 +499,15 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 	private _sortCol(col: number, ascending?: boolean ) {
 
-		setWaitCursor(true);
-
 		// to allow cursor
 		this.setTimeout("sort", 50, () => {
 			let asc = true;
 
 			// already sorted ?
-			const scol = this.query(`.col-header [data-col="${col}"`);
+			const scol = this.query(`.col-header .cell[data-col="${col}"]`);
+			if( !scol ) {
+				return;
+			}
 
 			if( ascending===undefined ) {
 				if (scol.hasClass("sorted")) {
@@ -540,6 +541,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					num = true;
 				}
 			}
+
+			setWaitCursor(true);
 
 			this._dataview.sort([{
 				field: cdata.id,
@@ -828,7 +831,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 		}
 
-		const maxr = this._dataview.getCount();
+		const maxr = this._dataview ? this._dataview.getCount() : 0;
 		let maxh = maxr;
 
 		if (maxr < SCROLL_LIMIT) {
@@ -874,7 +877,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		// WHEEL
 		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if (ev.deltaY && this._dataview.getCount() >= SCROLL_LIMIT) {
+			if (ev.deltaY && this._dataview && this._dataview.getCount() >= SCROLL_LIMIT) {
 				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
 				ev.stopPropagation();
 				ev.preventDefault();
@@ -1032,7 +1035,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			const rc = this.getBoundingRect();
 
 			// rows
-			const rowc = this._dataview.getCount();
+			const rowc = this._dataview ? this._dataview.getCount() : 0;
 			const mul = rowc < SCROLL_LIMIT ? this._row_height : 1;
 
 			const start = Math.floor(this._top / mul);
@@ -1132,7 +1135,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		});
 
 		const rec = this._dataview.getByIndex( rowid );
-		this.fire("selectionChange", { selection: rec, empty: false } );
+		this.fire("selectionChange", { selection: [rec], empty: false } );
 	}
 
 	/**

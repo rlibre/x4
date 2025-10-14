@@ -14,8 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { EvChange, EvError } from './component.js';
-import { EventMap, EventSource } from './core_events.js';
+import { EvChange, EvError } from './component';
+import { EventMap, EventSource } from './core_events';
 
 type RouteHandler = ( params: any, path: string ) => void;
 

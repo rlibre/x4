@@ -19,6 +19,7 @@ import { CoreElement } from './core_element';
 import { ariaValues, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
+import { Application, EvMessage } from './core_application';
 
 interface RefType<T extends Component> {
 	dom: T;
@@ -92,8 +93,8 @@ export interface ComponentProps {
 	// shortcuts
 	width?: string | number;
 	height?: string | number;
-	disabled?: true,
-	hidden?: true,
+	disabled?: boolean,
+	hidden?: boolean,
 	flex?: boolean | number;
 
 	tooltip?: string;
@@ -106,7 +107,7 @@ export interface ComponentProps {
 	//	because all memebers here are optional.
 	//	this allow TS to recongnize derived props as ComponentProps
 	//[key: string]: any; 
-};
+}
 
 
 /**
@@ -219,6 +220,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 
+	onGlobalEvent( cb: ( ev: EvMessage ) => void ) {
+		
+		const off = Application.instance().on( "global", ev => {
+			cb( ev );
+		})
+
+		this.addDOMEvent( "removed", ( ) => off.off() );
+	}
+
+
 	// :: CLASSES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
@@ -328,7 +339,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 	
 	setAttribute( name: string, value: string | number | boolean ) {
-		if( value===null || value===undefined ) {
+		if( value===null || value===undefined || value===false ) {
 			this.dom.removeAttribute( name );
 		}
 		else {
@@ -385,8 +396,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		return this;
 	}
 
-	getInternalData( name: string|symbol ): any {
-		return this.#store?.get(name);
+	getInternalData<T = any>( name: string|symbol ): T {
+		return this.#store?.get(name) as T;
 	}
 
 	
@@ -872,6 +883,33 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * 
 	 */
 
+	visitChildren( cb: ( el: Component ) => boolean ) {
+
+		const visit = ( p: Element ) => {
+			for( let d=p.firstElementChild; d; d=d.nextElementSibling ) {
+				const comp = componentFromDOM( d as Element );
+				if( comp ) {
+					if( cb( comp ) ) {
+						return true;
+					}
+				}
+
+				// avoid visit of svg elements
+				if( d.firstElementChild && d.tagName!="svg" && d.tagName!="SVG" ) {
+					if( visit( d ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		visit( this.dom );
+	}
+
+	/**
+	 * 
+	 */
+
 	animate( keyframes: Keyframe[], duration: number ) {
 		this.dom.animate(keyframes,duration);
 	}
@@ -1022,11 +1060,10 @@ export interface EvFocus extends ComponentEvent {
  * value is the new selection or null
  */
 
-interface ISelection {
-}
+type ISelection = number | string | any;
 
 export interface EvSelectionChange extends ComponentEvent {
-	readonly selection: ISelection;
+	readonly selection: ISelection[];
 	readonly empty: boolean;
 }
 
@@ -1037,15 +1074,6 @@ export interface EvSelectionChange extends ComponentEvent {
 
 export interface EvContextMenu extends ComponentEvent {
 	uievent: UIEvent;	// UI event that fire this event
-}
-
-/**
- * Simple message
- */
-
-export interface EvMessage extends ComponentEvent {
-	readonly msg: string;
-	readonly params?: any;
 }
 
 /**

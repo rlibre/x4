@@ -15,7 +15,7 @@
  **/
 
 
-import { EventCallback } from '../../core/core_events.js';
+import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus  } from '../../core/component';
 import { class_ns } from '../../core/core_tools';
 

@@ -20,7 +20,7 @@ import { Button, ButtonProps } from '../button/button';
 import { HBox, VBox, StackBox } from '../boxes/boxes';
 
 import "./tabs.module.scss"
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 
 /**
  * 
@@ -32,6 +32,7 @@ export interface TabItem {
 	title: string;
 	icon?: string;
 	content: Component;
+	cls?: string;	// button class
 }
 
 /**
@@ -44,6 +45,10 @@ class CTab extends Button {
 		super( props );
 
 		this.addClass( "outline" );
+		if( item.cls ) {
+			this.addClass( item.cls );
+		}
+		
 		this.setIcon( item.icon );
 		this.setText( item.title );
 		this.setData( "tabname", item.name );
@@ -100,7 +105,6 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 		}
 	}
 
-
 	setItems( items: TabItem[ ] ) {
 		this.clearContent( );
 		items.forEach( tab => {
@@ -114,8 +118,11 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 		}, tab ) );
 	}
 
-	getTabCount( ) {
-		return this.dom.children.length;
+	removeItem( name: string ) {
+		const tab = this.query<Button>( `[data-tabname="${name}"]` );
+		if( tab ) {
+			this.removeChild( tab );
+		}
 	}
 }
 
@@ -197,9 +204,26 @@ export class Tabs extends VBox<TabsProps> {
 		this._list.addItem( item );
 		this._stack.addItem( { name: item.name, content: item.content } );
 
-		if( this._list.getTabCount( )==1 ) {
+		if( this._stack.getPageCount( )==1 ) {
 			this.selectTab( item.name );
 		}
+	}
+
+	/**
+	 * 
+	 */
+
+	removeTab( name: string ) {
+		this._list.removeItem( name );
+		this._stack.removeItem( name );
+	}
+
+	/**
+	 * 
+	 */
+
+	enumTabs( ): string[] {
+		return this._stack.enumPageNames( );
 	}
 }
 

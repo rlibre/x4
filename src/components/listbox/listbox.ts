@@ -15,12 +15,14 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
-import { EventCallback } from '../../core/core_events.js';
-import { kbNav, class_ns, isArray, UnsafeHtml } from '@core/core_tools.js';
+import { EventCallback } from '../../core/core_events';
+import { kbNav, class_ns, isArray, UnsafeHtml, asap } from '../../core/core_tools';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
-import { HBox } from '../boxes/boxes.js';
-import { Label } from '../label/label.js';
+import { Header } from '../header/header';
+
+import { HBox } from '../boxes/boxes';
+import { Label } from '../label/label';
 
 import "./listbox.module.scss"
 
@@ -40,8 +42,7 @@ export interface ListItem {
  * 
  */
 
-interface ListboxEvents extends ComponentEvents {
-	//change: EvChange;
+export interface ListboxEvents extends ComponentEvents {
 	click?: EvClick;
 	dblClick?: EvDblClick;
 	contextMenu?: EvContextMenu;
@@ -52,10 +53,10 @@ interface ListboxEvents extends ComponentEvents {
  * 
  */
 
-interface ListboxProps extends Omit<ComponentProps,'content'> {
+export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
-	//header?: Header;
+	header?: Header;
 	footer?: Component,
 	checkable?: true,
 	multisel?: true,
@@ -98,8 +99,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			props.footer.setAttribute( "id", "footer" );
 		}
 
+		if( props.header ) {
+			props.header.setAttribute( "id", "header" );
+		}
+
 		this.setContent( [
-			//props.header ? props.header : null,
+			props.header ? props.header : null,
 			scroller,
 			props.footer,
 		] );
@@ -342,7 +347,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 		if( !ids.length ) {
 			if( this._multisel.size ) {
-				this.clearSelection( );
+				if( notify ) {
+					this.clearSelection( );
+				}
+				else {
+					this._clearSelection( );
+				}
 			}
 
 			return;
@@ -361,7 +371,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 				}
 			});
 
-			this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+			if( notify ) {
+				this.fire( "selectionChange", { selection: this.getSelection(), empty: this._multisel.size==0 } );
+			}
 		}
 	}
 	
@@ -411,15 +423,29 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 		this.clearSelection( );
 		this._view.clearContent( );
-		this._items = items;
+		this._items = items ?? [];
 
-		if( items ) {
+		let upsel = false;
+
+		if( this._items.length ) {
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
 
 			if( keepSel ) {
 				this.select( oldSel );
 			}
+			else {
+				upsel = true;
+			}
+		}
+		else {
+			upsel = true;
+		}
+		
+		if( upsel ) {
+			this.setTimeout( "sel", 100, ( ) => {
+				this.fire( "selectionChange", { selection: [], empty: true } );
+			} );
 		}
 	}
 
@@ -452,7 +478,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 * 
 	 */
 
-	filter( filter: string ) {
+	filter( filter: string | RegExp ) {
 		const childs = this._view.enumChildComponents( false );
 		
 		if( !filter ) {
@@ -460,13 +486,24 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 		else {
 			// get list of visible items
-			const filtred = this._items
-					.filter( x => x.text.includes(filter) )
-					.map( x => x.id+'' );
+			let filtred: Set<ListboxID>;
+
+			if( filter instanceof RegExp ) {
+				const f = filter as RegExp;
+				filtred = new Set( this._items
+						.filter( x => f.test(x.text as string) )
+						.map( x => x.id ) ); 
+			}
+			else {
+				const f = filter.toUpperCase( );
+				filtred = new Set( this._items
+					.filter( x => x.text.toUpperCase().includes(f) )
+					.map( x => x.id ) );
+			}
 
 			// now hide all elements not in list
 			childs.forEach( x => {
-				x.show( filtred.includes( x.getInternalData( "id" ) ) );
+				x.show( filtred.has( x.getInternalData( "id" ) ) );
 			});
 		}
 	}

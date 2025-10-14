@@ -14,9 +14,9 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { EventCallback } from '@core/core_events.js';
-import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
-import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools.js';
+import { EventCallback } from '../../core/core_events';
+import { Component, ComponentEvent, componentFromDOM, ComponentProps, EvChange, EvFocus } from '../../core/component';
+import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools';
 
 import "./input.module.scss"
 
@@ -403,8 +403,38 @@ export class Input extends Component<InputProps,InputEvents> {
 	override queryInterface<T extends IComponentInterface>( name: string ): T {
 		if( name=="form-element" ) {
 			const i: IFormElement = {
-				getRawValue: ( ): any => { return this.getValue(); },
-				setRawValue: ( v: any ) => { this.setValue(v); },
+				getRawValue: ( ): any => { 
+					if( this.props.type=='checkbox' ) {
+						return this.getCheck( );
+					}
+					else if( this.props.type=='radio' ) {
+						const owner = getRadioOwner( this.dom );
+						const checked = owner.querySelector( `input[name="${this.props.name}"]:checked` )
+						return checked ? (checked as HTMLInputElement).value : undefined;
+					}
+					else if( this.props.type=='number' ) {
+						return this.getNumValue( 0 );
+					}
+					else {
+						return this.getValue(); 
+					}
+				},
+				setRawValue: ( v: any ) => { 
+					if( this.props.type=='checkbox' ) {
+						this.setCheck( !!v );
+					}
+					else if( this.props.type=='radio' ) {
+						if( this.props.value==v ) {
+							this.setCheck( true ) ;
+						}
+					}
+					else if( this.props.type=='number' ) {
+						return this.setNumValue( v, -2 );
+					}
+					else {
+						this.setValue(v); 
+					}
+				},
 				isValid: ( ) => { return this.isValid(); }
 			};
 
@@ -417,6 +447,19 @@ export class Input extends Component<InputProps,InputEvents> {
 }
 
 
+function getRadioOwner( el: Element )  {
 
+	while( el!=document.body ) {
+		const comp = componentFromDOM(el);
+		const ifx = comp.queryInterface( "tab-handler");
+		if( ifx ) {
+			return el;
+		}
+
+		el = el.parentElement;
+	}
+
+	return document;
+}
 
 

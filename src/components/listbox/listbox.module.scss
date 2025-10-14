@@ -46,7 +46,7 @@
 	outline: none;
 
 	&>.x4header {
-		border-bottom: 1px solid var( --color-gray-3 );
+		border-bottom: 1px solid var( --border );
 	}
 
 	&>.body {
@@ -59,45 +59,45 @@
 
 		&> .x4viewport {
 			display: table;
+		}
+
+		.x4item {
+			@extend .flex;
 			
-			.x4item {
-				@extend .flex;
-				
-				padding: 4px;
-				background-color: transparent;
-				color: var( --color-gray-9 );
+			padding: 4px;
+			background-color: transparent;
+			color: var( --text-primary );
+
+			&> .x4label {
+				color: inherit;
+				padding: 2px 6px;
+			
+				#icon {
+					color: var( --listbox-icon-color );
+					fill: var( --listbox-icon-color );
+				}
+			}
+
+			&:hover {
+				background-color: var( --listbox-item-background-hover );
+			}
+
+			&.selected {
+				background-color: var( --listbox-item-background-sel );
+				color: var( --listbox-item-color-sel );
 
 				&> .x4label {
-					color: inherit;
-					padding: 2px 6px;
-				
 					#icon {
-						color: var( --listbox-icon-color );
-						fill: var( --listbox-icon-color );
+						color: var( --listbox-item-color-sel );
+						fill: var( --listbox-item-color-sel );
 					}
 				}
-
-				&:hover {
-					background-color: var( --listbox-item-background-hover );
-				}
-
-				&.selected {
-					background-color: var( --listbox-item-background-sel );
-					color: var( --listbox-item-color-sel );
-
-					&> .x4label {
-						#icon {
-							color: var( --listbox-item-color-sel );
-							fill: var( --listbox-item-color-sel );
-						}
-					}
-				}
-
-				//&:active{
-					//background-color: var( --color-80 );
-					//color: var(--color-0);
-				//}	
 			}
+
+			//&:active{
+				//background-color: var( --color-80 );
+				//color: var(--color-0);
+			//}	
 		}
 	}
 
@@ -137,6 +137,10 @@
 
 				&:focus {
 					background-color: var( --ol-button-background-hover );
+				}
+
+				&:disabled {
+					color: var( --disabled-color-dark );
 				}
 			}
 		}

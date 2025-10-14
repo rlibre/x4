@@ -20,6 +20,7 @@
 	--label-background: transparent;
 	--label-color: var( --text-ternary );
 	--label-icon-color: rgb(0 0 0 / 44%);
+	--label-color-disa: var( --disabled-color-dark );
 }
 
 .x4label {
@@ -66,11 +67,15 @@
 	}
 }
 
-
 .x4simpletext {
 	text-align: left;
 	&.al-center { text-align: center; }
 	&.al-right { text-align: right; }
+}
+
+[disabled] .x4label,
+[disabled] .x4simpletext {
+	color: var(--label-color-disa);
 }
 
 

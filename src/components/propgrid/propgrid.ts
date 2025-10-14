@@ -22,7 +22,7 @@ import { Input, InputProps } from "../input/input"
 import { ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
 import { class_ns, isFunction } from '../../core/core_tools';
-import { Icon } from '../components.js'
+import { Icon } from '../components'
 
 import "./progrid.module.scss"
 import updown_icon from "./updown.svg"
@@ -81,7 +81,7 @@ export class PropertyGrid extends VBox {
 
 	setItems( _grps: PropertyGroup[] ) {
 
-		this.groups = _grps;
+		this.groups = _grps.filter( x => !!x );
 		//this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
 
 		let items: Component[] = [];
@@ -89,7 +89,9 @@ export class PropertyGrid extends VBox {
 		for( const g of this.groups ) {
 			items.push( this.makeGroupHeader(g) );
 			g.items.forEach( i => {
-				items.push( this.makePropertyRow(i) );
+				if( i ) {
+					items.push( this.makePropertyRow(i) );
+				}
 			});
 		}
 
@@ -123,8 +125,13 @@ export class PropertyGrid extends VBox {
 			}
 		}
 
+		let cls = "group";
+		if( g.cls ) {
+			cls += ' '+g.cls;
+		}
+
 		const tr = new HBox({
-			cls: 'group',
+			cls,
 			content: [
 				g.icon ? new Icon({ id: "icon", iconId: g.icon }) : null,
 				new VBox( { content: [
@@ -238,9 +245,14 @@ export class PropertyGrid extends VBox {
 				}
 			});
 		}
+		
+		let cls = 'row';
+		if( item.cls ) {
+			cls += ' ' + item.cls;
+		}
 
 		return new HBox({
-			cls: 'row',
+			cls,
 			content: [
 				use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
 				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })

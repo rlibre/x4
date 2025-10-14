@@ -1,14 +1,14 @@
-import { Component, ComponentEvents, ComponentProps, EvChange, makeUniqueComponentId } from '../../core/component.js';
-import { EventCallback } from '../../core/core_events.js';
+import { Component, ComponentEvents, ComponentProps, EvChange, makeUniqueComponentId } from '../../core/component';
+import { EventCallback } from '../../core/core_events';
 
 import { Input } from '../input/input';
 import { Label } from '../label/label';
 
-import { svgLoader } from '../icon/icon.js';
+import { svgLoader } from '../icon/icon';
 
 import "./checkbox.module.scss"
 import icon from "./check.svg";
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 
 /**
  * Checkbox events

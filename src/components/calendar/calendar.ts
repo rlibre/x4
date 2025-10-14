@@ -17,7 +17,7 @@
 import { Component, ComponentEvents, ComponentProps, EvChange, Flex } from '../../core/component'
 import { class_ns, date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
 import { _tr } from '../../core/core_i18n';
-import { EventCallback } from '../../core/core_events.js';
+import { EventCallback } from '../../core/core_events';
 
 import { Button } from '../button/button';
 import { Label } from '../label/label';

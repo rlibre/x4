@@ -15,8 +15,8 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns } from '@core/core_tools';
-import { EventCallback } from '@core/core_events';
+import { class_ns } from '../../core/core_tools';
+import { EventCallback } from '../../core/core_events';
 
 import { Label } from '../label/label';
 import { Input } from '../input/input'

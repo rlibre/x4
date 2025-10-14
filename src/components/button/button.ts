@@ -15,8 +15,8 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
-import { EventCallback } from '../../core/core_events.js';
-import { class_ns, UnsafeHtml } from '../../core/core_tools.js';
+import { EventCallback } from '../../core/core_events';
+import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
 import { Icon } from "../icon/icon"
 

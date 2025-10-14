@@ -902,5 +902,7 @@ export enum kbNav {
 	pgup,
 	next,
 	last,
+	left,
+	right,
 }
 

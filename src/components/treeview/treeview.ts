@@ -14,12 +14,13 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools';
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { class_ns } from '../../core/core_tools';
+import { EventCallback } from '../../core/core_events';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label } from '../label/label';
-import { ListboxID, ListItem, kbNav } from '../listbox/listbox';
+import { ListboxID, ListItem } from '../listbox/listbox';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
 
@@ -52,14 +53,15 @@ export interface TreeItem extends ListItem {
 interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
 	footer?: Component;
-}
-
-interface ChangeEvent extends ComponentEvent {
-	selection: TreeItem;
+	selectionChange?: EventCallback<EvSelectionChange>;
+	dblClick?: EventCallback<EvDblClick>;
+	click?: EventCallback<EvClick>;
 }
 
 interface TreeviewEvents extends ComponentEvents {
 	selectionChange?: EvSelectionChange;
+	dblClick?: EvDblClick;
+	click?: EvClick;
 }
 
 /**
@@ -85,7 +87,11 @@ class CTreeViewItem extends Box {
 				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
 
-			this._label.setData( "id", item.id+"" );
+			if( item.cls ) {
+				this._label.addClass( item.cls );
+			}
+
+			this._label.setInternalData( "id", item.id );
 				
 			if( item.children ) {
 				this. _childs = new VBox( { cls: "body" } );
@@ -159,6 +165,8 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	constructor( props: TreeviewProps ) {
 		super( props );
 
+		this.mapPropEvents( props, "selectionChange", "dblClick", "click" );
+
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
 
@@ -173,7 +181,8 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 		this.setAttribute( "tabindex", 0 );
 		this.setDOMEvents( {
-			click: ( ev ) => this._onclick( ev ),
+			click: ( ev ) => this._on_click( ev ),
+			dblclick: (e) => this._on_click(e),
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
@@ -199,14 +208,27 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 	}
 
-	private _onclick( ev: UIEvent ) {
+	private _on_click( ev: UIEvent ) {
 		let target = ev.target as HTMLElement;
+		
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 			
 			if( c && c.hasClass("item") ) {
-				const id = c.getData( "id" );
-				this._selectItem( id, c );
+				const id = c.getInternalData( "id" );
+
+				const fev: ComponentEvent = { context:id };
+				if (ev.type == 'click') {
+					this.fire('click', fev );
+				}
+				else {
+					this.fire('dblClick', fev );
+				}
+
+				if (!fev.defaultPrevented) {
+					this._selectItem( id, c );
+				}
+
 				return;
 			}
 
@@ -413,7 +435,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		const itm = this._findItem( id );
-		this.fire( "selectionChange", { selection: itm, empty: false } );
+		this.fire( "selectionChange", { selection: [itm], empty: false } );
 	}
 
 	private _findItem( id: ListboxID ) {
@@ -432,7 +454,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		this._selection = undefined;
-		this.fire( "selectionChange", { selection: undefined, empty: true } );
+		this.fire( "selectionChange", { selection: [], empty: true } );
 	}
 
 	/**
@@ -441,5 +463,22 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 	getSelection( ) {
 		return this._selection;
+	}
+
+	/**
+	 * 
+	 */
+
+	selectItem( id: ListboxID ) {
+		const itm = this._findItem( id );
+		if( itm ) {
+			this.visitChildren( ( c ) => {
+				const cid = c.getInternalData( "id" );
+				if( cid == id ) {
+					this._selectItem( id, c );
+					return true;
+				}
+			} );
+		}
 	}
 }

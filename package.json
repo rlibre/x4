@@ -1,13 +1,8 @@
 {
 	"name": "x4js",
-	"version": "2.0.13",
+	"version": "2.0.27",
 	"description": "X4 framework",
 	"author": "etienne cochard",
-	"main": "src/x4.ts",
-	"typess": "lib/types/x4js.d.ts",
-	"filess": [
-		"lib/**/*"
-	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -25,37 +20,32 @@
 		"application"
 	],
 	"scripts": {
-		"build": "node scripts/build.mjs --watch --hmr --serve",
-		"build-release": "node scripts/build.mjs --release",
+		"build": "x4build --watch --hmr --serve",
+		"build-release": "x4build --release",
 		"prepack": "node scripts/prepack.mjs"
 	},
 	"homepage": "https://x4js.org",
-	"module": "lib/esm/x4.mjs",
-	"exportss": {
+	"files": ["lib","src"],
+	"types": "./src/x4.ts",
+	"module": "./lib/esm/x4.mjs",
+	"main": "./lib/cjs/x4.js",
+	"exports": {
 		".": {
-			"import": {
-				"types": "./lib/types/x4.d.ts",
-				"default": "./lib/esm/x4.mjs"
-			},
-			"require": {
-				"types": "./lib/types/x4.d.ts",
-				"default": "./lib/cjs/x4.js"
-			}
+			"types": "./src/x4.ts",
+			"module": "./lib/esm/x4.mjs",
+			"require": "./lib/cjs/x4.js"
 		}
-	},
-	"devDependencies": {
-		"chalk": "^5.3",
-		"esbuild": "^0.24",
-		"esbuild-plugin-d.ts": "^1.3",
-		"esbuild-sass-plugin": "^3.3",
-		"typescript": "^5.6.3",
-		"watcher": "^2.3",
-		"ws": "^8.18"
 	},
 	"x4build": {
 		"entryPoints": [
 			"src/x4.ts"
 		],
-		"outdir": "build"
+		"outdir": "lib"
+	},
+	"devDependencies": {
+		"typescript": "^5.8.3",
+		"x4build": "^1.6.8",
+		"esbuild-plugin-d.ts": "^1.3",
+		"esbuild-sass-plugin": "^3.3"
 	}
 }

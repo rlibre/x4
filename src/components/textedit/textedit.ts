@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-//import { EventCallback } from '@core/core_events.js';
+//import { EventCallback } from '../../core/core_events';
 import { Component, makeUniqueComponentId } from '../../core/component';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
@@ -41,7 +41,7 @@ interface TextEditBase {
 	inputAttrs?: any;
 }
 
-type TextEditProps = TextEditInputs & TextEditBase;
+export type TextEditProps = TextEditInputs & TextEditBase;
 
 /*
 not enougth precise

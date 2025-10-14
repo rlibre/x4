@@ -21,7 +21,7 @@ import { Label } from '../label/label';
 import { VBox } from '../boxes/boxes';
 
 import "./textarea.module.scss";
-import { class_ns, IFormElement } from '@core/core_tools.js';
+import { class_ns, IFormElement } from '../../core/core_tools';
 
 /**
  * 

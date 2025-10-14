@@ -18,8 +18,8 @@ import { Component, componentFromDOM, wrapDOM } from '../../core/component';
 import { class_ns, ITipHandler, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
-import { Popup, PopupProps } from '../popup/popup.js';
-import { Icon } from '../icon/icon.js';
+import { Popup, PopupProps } from '../popup/popup';
+import { Icon } from '../icon/icon';
 
 import "./tooltips.scss"
 

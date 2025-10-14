@@ -1,0 +1,40 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file gauge.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2025 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--gauge-base-color: var( --color-primary-a70 );
+	--gauge-needle-back: black;
+	--gauge-needle-dot: rgb(58, 58, 58);
+}
+
+.x4gauge {
+	min-width: 200px;
+	min-height: 100px;
+	width: 200px;
+	height: 100px;
+	overflow: hidden;
+
+	border: 1px solid var( --border );
+	
+	.needle {
+		fill: var( --gauge-needle-back );
+	}
+
+	.needle-dot {
+		fill: var(--gauge-needle-dot);
+		filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+	}
+}

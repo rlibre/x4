@@ -14,11 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { asap, class_ns, isArray, isNumber, isString } from '@core/core_tools.js';
+import { asap, class_ns, isArray, isNumber, isString } from '../../core/core_tools';
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 
 import "./boxes.module.scss";
-import { EventCallback } from '@core/core_events.js';
+import { EventCallback } from '../../core/core_events';
 
 export interface BoxProps extends ComponentProps {
 	tag?: string;
@@ -122,6 +122,18 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		});
 	}
 
+	removeItem( name: string ) {
+		const index = this._items.findIndex( x => x.name==name );
+		if( index>=0 ) {
+			const pg = this._items[index];
+			if( pg?.page ) {
+				this.removeChild( pg.page );
+			}
+
+			this._items.splice( index, 1 );
+		}
+	}
+
 	select( name: string ) {
 		let sel = this.query( `:scope > .selected` );
 		if( sel ) {
@@ -143,7 +155,7 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 				sel.setClass( "selected", true );
 			}
 
-			asap( ( ) => this.fire( "pageChange", { selection: pg.name, empty: !sel } ) );
+			asap( ( ) => this.fire( "pageChange", { selection: [pg.name], empty: !sel } ) );
 		}
 
 		return pg?.page;
@@ -176,6 +188,26 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		const pg = this._items.find( x => x.name==name );
 		return pg ? pg.content : null;
 	}
+
+	/**
+	 * 
+	 */
+
+	getPageCount( ) {
+		return this._items.length;
+	}
+
+	/**
+	 * 
+	 */
+
+	enumPageNames( ) {
+		return this._items.map( x => x.name );
+	}
+
+	/**
+	 * 
+	 */
 
 	getItem( name: string ) {
 		const pg = this._items.find( x => x.name==name );

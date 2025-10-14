@@ -14,15 +14,15 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, componentFromDOM, ComponentProps, EvChange } from '../../core/component.js';
-import { EventCallback } from '../../core/core_events.js';
-import { HBox } from '../boxes/boxes.js';
-import { Input } from '../input/input.js';
-import { Icon } from '../icon/icon.js';
+import { Component, ComponentEvents, componentFromDOM, ComponentProps, EvChange } from '../../core/component';
+import { EventCallback } from '../../core/core_events';
+import { HBox } from '../boxes/boxes';
+import { Input } from '../input/input';
+import { Icon } from '../icon/icon';
 
 import "./rating.module.scss"
 import star_icon from "./star-sharp-solid.svg"
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 
 interface RatingEventMap extends ComponentEvents {
 	change: EvChange;

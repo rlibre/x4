@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isString } from './core_tools.js';
+import { isString } from './core_tools';
 
 export const unitless: Record<string,1> = {
 	animationIterationCount: 1,

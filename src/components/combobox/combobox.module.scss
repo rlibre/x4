@@ -26,6 +26,8 @@
 	--combobox-btn-background: inherit;
 	--combobox-btn-color: var( --text-secondary );
 	--combobox-btn-color-hover: var( --text-primary );
+
+	--combo-tree-indent: 1em;
 }
 
 .x4dropdownlist {
@@ -33,6 +35,8 @@
 	@extend .hbox;
 
 	max-height: 250px;
+	max-width: 50vw;
+	
 	position: absolute;
 	background-color: var( --dropdown-background );
 	border: 1px solid var( --dropdown-border );
@@ -47,6 +51,15 @@
 
 		.x4item {
 			white-space: nowrap;
+			
+			&.level-1 { padding-left: calc(var(--combo-tree-indent) * 1 ); }
+			&.level-2 { padding-left: calc(var(--combo-tree-indent) * 2 ); }
+			&.level-3 { padding-left: calc(var(--combo-tree-indent) * 3 ); }
+			&.level-4 { padding-left: calc(var(--combo-tree-indent) * 4 ); }
+			&.level-5 { padding-left: calc(var(--combo-tree-indent) * 5 ); }
+			&.level-6 { padding-left: calc(var(--combo-tree-indent) * 6 ); }
+			&.level-7 { padding-left: calc(var(--combo-tree-indent) * 7 ); }
+			&.level-8 { padding-left: calc(var(--combo-tree-indent) * 8 ); }
 		}
 	}
 }

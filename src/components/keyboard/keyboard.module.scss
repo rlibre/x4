@@ -17,23 +17,25 @@
 :root {
 	--keyboard-key-background: #33302d;
 	--keyboard-hilite-color: #5ba921;
+	--keyboard-zoom: 100%;
 }
 
 .x4keyboard {
 	z-index: 2000;
     position: absolute !important;
     width: 100vw;
-	height: 14rem;
 	bottom: 0;
+	justify-content: center;
 
 	background-color: rgba(0,0,0,0.9);
 	
 	box-sizing: border-box;
-	padding: 4px;
+	padding: 8px;
 
 	#kb {
 		width: 100vw;
 		max-width: 800px;
+		zoom: var( --keyboard-zoom );
 	}
 	
 	.line {

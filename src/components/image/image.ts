@@ -16,8 +16,8 @@
 
 import { class_ns } from '../../core/core_tools';
 import { Component, ComponentEvents, ComponentProps } from '../../core/component';
-import { EventCallback, CoreEvent } from '../../core/core_events.js';
-import { dragManager } from '../../core/core_dragdrop.js';
+import { EventCallback, CoreEvent } from '../../core/core_events';
+import { dragManager } from '../../core/core_dragdrop';
 
 import { EvDropChange, FileDialog } from '../filedrop/filedrop';
 import { Menu } from '../menu/menu';
@@ -25,7 +25,7 @@ import { Menu } from '../menu/menu';
 
 
 import "./image.module.scss"
-import { _tr } from '@core/core_i18n.js';
+import { _tr } from '../../core/core_i18n';
 
 
 interface ImageEvents extends ComponentEvents {

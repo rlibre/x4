@@ -19,6 +19,7 @@
 .x4icon {
 	@extend .hbox;	
 
+	flex-shrink: 0;
 	min-width: 10px;
 	height: 10px;
     overflow: hidden;

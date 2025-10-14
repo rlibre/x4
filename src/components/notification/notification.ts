@@ -14,14 +14,14 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { ComponentProps } from '../../core/component.js';
-import { class_ns, Rect, UnsafeHtml } from '../../core/core_tools.js';
+import { ComponentProps } from '../../core/component';
+import { class_ns, Rect, UnsafeHtml } from '../../core/core_tools';
 
-import { Popup } from '../popup/popup.js';
-import { HBox, VBox } from '../boxes/boxes.js';
-import { Icon } from '../icon/icon.js';
-import { Label } from '../label/label.js';
-import { Button } from '../button/button.js';
+import { Popup } from '../popup/popup';
+import { HBox, VBox } from '../boxes/boxes';
+import { Icon } from '../icon/icon';
+import { Label } from '../label/label';
+import { Button } from '../button/button';
 
 import "./notification.module.scss";
 
@@ -72,7 +72,7 @@ export class Notification extends Popup {
 		const _icon = new Icon( { iconId: icon } );
 		if( props.loading ) {
 			_icon.addClass( "rotate" );
-			this.props.modal = true;
+			//this.props.modal = true;
 		}
 
 		this.setContent( new HBox( { 

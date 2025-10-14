@@ -16,13 +16,13 @@
 
 import { Component, ComponentProps, makeUniqueComponentId } from '../../core/component';
 
-//import { Checkbox } from '@controls/controls.js';
+//import { Checkbox } from '@controls/controls';
 import { Input } from '../input/input';
 import { Label } from '../label/label';
-import { HBox } from '../boxes/boxes.js';
+import { HBox } from '../boxes/boxes';
 
 import "./switch.module.scss";
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 
 interface SwitchProps extends ComponentProps {
 	label: string;

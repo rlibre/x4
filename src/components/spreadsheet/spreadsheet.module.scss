@@ -1,0 +1,308 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file spreadsheet.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2024 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+
+:root {
+	--spreadsheet-background: white;
+	--spreadsheet-border: var( --border );
+	
+	--spreadsheet-header-cell-background: white;
+	--spreadsheet-header-cell-color: black;
+	--spreadsheet-header-cell-vline: #f0f0f0;
+	--spreadsheet-header-cell-border: #cccccc;
+
+	--spreadsheet-check-background: var( --accent-background );
+	--spreadsheet-check-color: white;
+	--spreadsheet-check-background-hover: white;
+	--spreadsheet-check-color-hover: var( --accent-background );
+
+	--spreadsheet-perc-background: var( --accent-background );
+	--spreadsheet-perc-color: white;
+	--spreadsheet-perc-background-hover: white;
+	--spreadsheet-perc-color-hover: var( --accent-background );
+
+	--spreadsheet-cell-color: black;
+	--spreadsheet-cell-color-sel: white;
+	--spreadsheet-cell-vline: var( --border );
+
+	--spreadsheet-row-background: white;
+	--spreadsheet-row-odd-background: white;
+	--spreadsheet-row-border: var( --border );
+
+	--spreadsheet-row-background-hover: var( --background-secondary );
+	--spreadsheet-row-background-hover-sel: var(--color-primary-a50);
+	--spreadsheet-row-background-sel: var( --accent-background );
+	--spreadsheet-row-color-sel: var( --accent-color );
+
+	--spreadsheet-fix-border: var( --accent-background );
+}
+
+
+
+.x4spreadsheet {
+
+	--left: 0px;
+	--top: 0px;
+	
+	--fixed-width: 0;
+	--fixed-height: 30px;
+	--footer-height: 24px;
+
+	--row-height: 30px;
+	
+	position: relative;
+	overflow: hidden;
+	margin: 5px;
+	outline: none;
+
+	background-color: var( --spreadsheet-background );
+	border: 1px solid var( --spreadsheet-border );
+		
+	.cell {
+		padding: 4px;
+		display: flex;
+		align-items: center;
+		transition: border-bottom-color 0.3s ease, background-color 0.3s ease;
+		min-width: 16px;
+
+		.cell-check {
+			width: 16px;
+			height: 16px;
+			background-color: var( --spreadsheet-check-background );
+			color: var( --spreadsheet-check-color );
+			padding: 4px;
+			border-radius: 8px;
+			margin: 0 auto;
+		}
+
+		justify-content: start;
+
+		&.align-center {
+			justify-content: center;
+		}
+
+		&.align-right {
+			justify-content: end;
+		}
+	}
+
+	.x4viewport {
+		position: absolute;
+		overflow: auto;
+		right: 0;
+		bottom: var( --footer-height );	
+		left: var( --fixed-width );
+		top: var( --fixed-height );	
+		width: unset;
+	}
+
+	.body {
+		position: absolute;
+		overflow: hidden;
+
+		right: var( --scrollbar-size );
+		bottom: var( --scrollbar-size );
+		left: 0;
+		top: 0;
+	}
+
+	.row {
+		position: absolute;
+		left: 0;
+		top: 0;
+		display: flex;
+
+		overflow: hidden;
+		height: var( --row-height );
+		border-bottom: 1px solid var( --spreadsheet-row-border );
+
+		.cell {
+			height: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+
+			border-right: 1px solid var( --spreadsheet-cell-vline );
+
+			&> .x4icon:not(.cell-check) {
+				height: 100%;
+			}
+
+			&> .x4image {
+				width: 100%;
+				height: 100%;
+			}
+
+			.percent {
+				width: 100%;
+				border: 1px solid var( --border );
+				height: 8px;
+				background-color: white;
+				overflow: hidden;
+
+				div {
+					background-color: var(--spreadsheet-perc-background);
+					height: 100%;
+				}
+			}
+
+
+		}
+	}
+
+	.cell.selected {
+		background-color: var( --spreadsheet-row-background-sel );
+		color: var( --spreadsheet-cell-color-sel );
+		
+		.cell-check {
+			background-color: var( --spreadsheet-check-background-hover );
+			color: var( --spreadsheet-check-color-hover );
+		}
+	}
+
+	.cell:hover:not(.selected) {
+		background-color: var( --spreadsheet-row-background-hover );
+		.cell-check {
+			background-color: var( --spreadsheet-check-background-hover );
+			color: var( --spreadsheet-check-color-hover );
+		}
+	}
+
+	.cell:hover.selected {
+		background-color: var( --spreadsheet-row-background-hover-sel );
+	//	color: var( --spreadsheet-cell-color );
+	}
+
+	.col-header,
+	.col-footer {
+		position: absolute;
+		background-color: var( --spreadsheet-header-cell-background );
+		touch-action: none;
+
+		
+		left: calc( var( --fixed-width ) + var( --left ) );
+		&.fixed {
+			left: 0;
+			z-index: 2;
+		}
+		
+		z-index: 1;
+
+		display: inline-flex;
+		align-items: center;
+
+		color: black;
+		font-weight: 500;
+		justify-content: center;
+
+		.cell {
+			position: relative;
+			height: 100%;
+			display: flex;
+
+			justify-content: center;
+			border-right: 1px solid var( --spreadsheet-header-cell-vline );
+
+			&> .x4simpletext {
+				flex-grow: 1;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			.x-c-sizer:hover {
+				width: 8px;
+			}
+		}
+
+		&.fixed .cell:last-child {
+			border-right-color: var( --spreadsheet-fix-border );
+		}
+
+		&:hover .cell {
+			border-right-color: var( --border-hover );
+		}
+	}
+
+	.col-header {
+		top: 0;
+		height: var( --fixed-height );
+		
+		border-bottom: 1px solid var( --spreadsheet-header-cell-border );
+		
+		.cell {
+			overflow: hidden;
+			border-bottom: 1px solid transparent;
+			
+			&:hover {
+				//background-color: var( --color-10 );
+				border-bottom-color: var( --spreadsheet-row-background-hover );
+			}
+		}
+	}
+	
+	.col-footer {
+		border-top: 1px solid var( --spreadsheet-header-cell-border );
+		height: var( --footer-height );
+		
+		bottom: 0;
+
+		.cell {
+			border-top: 1px solid transparent;
+			
+			&:hover {
+				//background-color: var( --color-10 );
+				//border-top-color: var( --spreadsheet-row-background-hover );
+				background-color: var( --spreadsheet-row-background-hover );
+			}
+		}
+	}
+
+	.row-header {
+		position: absolute;
+		left: 0;
+		top: calc( var( --fixed-height ) + var( --top ) );
+		width: var( --fixed-width );
+		bottom: 0;
+		
+		background-color: white;
+		z-index: 1;
+
+		.row {
+			position: absolute;
+			display: inline-flex;
+		}
+
+		.cell {
+			border-right: 1px solid var( --spreadsheet-cell-vline );
+			border-bottom: 1px solid var(--spreadsheet-row-border );
+			height: var( --row-height );
+
+			&> .x4simpletext {
+				margin: 0 auto;
+			}
+
+			&:last-child {
+				border-right: 1px solid var( --spreadsheet-fix-border );
+			}
+		}
+
+		.cell-out {
+			position: absolute;
+			background-color: var( --color-gray-0 );
+			width: 100%;
+			height: var( --row-height );
+		}
+	}
+}

@@ -15,12 +15,12 @@
  **/
 
 import { Component } from '../../core/component';
-import { isFeatureAvailable, class_ns } from '../../core/core_tools.js';
+import { isFeatureAvailable, class_ns } from '../../core/core_tools';
 import { Color } from '../../core/core_colors';
 
 import { BoxProps, HBox } from '../boxes/boxes';
-import { Input } from '../input/input.js';
-import { Button } from '../button/button.js';
+import { Input } from '../input/input';
+import { Button } from '../button/button';
 
 
 import "./colorinput.module.scss"

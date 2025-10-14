@@ -20,12 +20,12 @@ import { class_ns, isString } from '../../core/core_tools';
 import { _tr } from '../../core/core_i18n'
 
 import { Button } from '../button/button';
-import { Box } from '../boxes/boxes.js';
-import { Label } from '../label/label.js';
-import { EvBtnClick } from '../dialog/dialog.js';
+import { Box } from '../boxes/boxes';
+import { Label } from '../label/label';
+import { EvBtnClick } from '../dialog/dialog';
 
 import "./btngroup.module.scss"
-import { Input } from '../components.js';
+import { Input } from '../components';
 
 /**
  * accept "ok" or "ok.<classname>"

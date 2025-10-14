@@ -15,11 +15,11 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, kbNav } from '@core/core_tools';
-import { EventCallback } from '@core/core_events';
+import { class_ns, IComponentInterface, IFormElement, kbNav } from '../../core/core_tools';
+import { EventCallback } from '../../core/core_events';
 
 import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
-import { Popup, PopupEvents, PopupProps } from '../popup/popup.js';
+import { Popup, PopupEvents, PopupProps } from '../popup/popup';
 import { Label } from '../label/label';
 import { Input } from '../input/input';
 import { Button } from '../button/button';
@@ -128,6 +128,9 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 
 		const _select = ( sel: ListboxID ) => {
 			const itm = list.getItem(sel);
+			if( itm ) {
+				list.select( sel, false );
+			}
 
 			//TODO: unsafehtml
 			//@ts-ignore
@@ -269,6 +272,10 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		}
 		
 		return super.queryInterface( name );
+	}
+
+	getInput( ) {
+		return this._input;
 	}
 }
 

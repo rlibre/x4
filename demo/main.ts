@@ -10,37 +10,37 @@
  **/
 
 import { wrapDOM, Component } from "../src/core/component.ts";
-import { unsafeHtml } from '../src/core/core_tools.js'
-import { SvgBuilder, SvgComponent } from '../src/core/core_svg.js'
+import { unsafeHtml } from '../src/core/core_tools'
+import { SvgBuilder, SvgComponent } from '../src/core/core_svg'
 
 import { Button } from "../src/components/button/button.js"
 import { Label } from "../src/components/label/label.js"
 import { Checkbox } from "../src/components/checkbox/checkbox.js"
 import { HBox, VBox } from "../src/components/boxes/boxes.js"
 
-import { Listbox, ListItem } from '../src/components/listbox/listbox.js'
-import { Panel } from '../src/components/panel/panel.js'
-import { TextEdit } from '../src/components/textedit/textedit.js'
-import { TextArea } from '../src/components/textarea/textarea.js'
-import { Switch } from '../src/components/switch/switch.js'
-import { Combobox } from '../src/components/combobox/combobox.js'
-import { Slider } from '../src/components/slider/slider.js'
-import { Progress } from '../src/components/progress/progress.js'
-import { BtnGroup } from '../src/components/btngroup/btngroup.js'
-import { Image } from '../src/components/image/image.js'
-import { ColorInput } from '../src/components/colorinput/colorinput.js'
-import { ColorPicker } from '../src/components/colorpicker/colorpicker.js'
-import { Menu } from '../src/components/menu/menu.js'
-import { initTooltips } from '../src/components/tooltips/tooltips.js'
-import { Treeview, TreeItem } from '../src/components/treeview/treeview.js'
-import { Dialog } from '../src/components/dialog/dialog.js'
-import { Form } from '../src/components/form/form.js'
-import { MessageBox } from '../src/components/messages/messages.js'
-import { Calendar } from '../src/components/calendar/calendar.js'
-import { Notification } from '../src/components/notification/notification.js'
-import { Header } from '../src/components/header/header.js'
-import { Tabs } from '../src/components/tabs/tabs.js'
-import { Rating } from '../src/components/rating/rating.js'
+import { Listbox, ListItem } from '../src/components/listbox/listbox'
+import { Panel } from '../src/components/panel/panel'
+import { TextEdit } from '../src/components/textedit/textedit'
+import { TextArea } from '../src/components/textarea/textarea'
+import { Switch } from '../src/components/switch/switch'
+import { Combobox } from '../src/components/combobox/combobox'
+import { Slider } from '../src/components/slider/slider'
+import { Progress } from '../src/components/progress/progress'
+import { BtnGroup } from '../src/components/btngroup/btngroup'
+import { Image } from '../src/components/image/image'
+import { ColorInput } from '../src/components/colorinput/colorinput'
+import { ColorPicker } from '../src/components/colorpicker/colorpicker'
+import { Menu } from '../src/components/menu/menu'
+import { initTooltips } from '../src/components/tooltips/tooltips'
+import { Treeview, TreeItem } from '../src/components/treeview/treeview'
+import { Dialog } from '../src/components/dialog/dialog'
+import { Form } from '../src/components/form/form'
+import { MessageBox } from '../src/components/messages/messages'
+import { Calendar } from '../src/components/calendar/calendar'
+import { Notification } from '../src/components/notification/notification'
+import { Header } from '../src/components/header/header'
+import { Tabs } from '../src/components/tabs/tabs'
+import { Rating } from '../src/components/rating/rating'
 
 import "@fontsource/montserrat"
 import "./main.scss"

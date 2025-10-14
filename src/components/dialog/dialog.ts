@@ -15,14 +15,14 @@
  **/
 
 import { Form } from "../form/form.js"
-import { PopupEvents, PopupProps, Popup } from '../popup/popup.js';
+import { PopupEvents, PopupProps, Popup } from '../popup/popup';
 import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
-import { HBox } from '../boxes/boxes.js';
-import { Label } from '../label/label.js';
-import { CoreEvent, EventCallback } from '@core/core_events.js';
-import { class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '@core/core_tools.js';
-import { ComponentEvent } from '../../core/component.js';
-import { Button } from '../button/button.js';
+import { HBox } from '../boxes/boxes';
+import { Label } from '../label/label';
+import { CoreEvent, EventCallback } from '../../core/core_events';
+import { class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
+import { ComponentEvent } from '../../core/component';
+import { Button } from '../button/button';
 
 import "./dialog.module.scss"
 import close_icon from "./xmark-sharp-light.svg";

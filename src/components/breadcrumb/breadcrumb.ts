@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
-import { parseRoute, Router } from '@core/core_router.js';
+import { class_ns } from '../../core/core_tools';
+import { parseRoute, Router } from '../../core/core_router';
 
 import { BoxProps, Button, HBox, Icon } from '../components';
-import { Component, ComponentEvents, EvClick } from '@core/component.js';
-import { EventCallback } from '@core/core_events.js';
+import { Component, ComponentEvents, EvClick } from '../../core/component';
+import { EventCallback } from '../../core/core_events';
 
 import "./breadcrumb.scss"
 

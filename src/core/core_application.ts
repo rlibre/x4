@@ -14,10 +14,10 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, componentFromDOM } from './component.js';
-import { CoreElement } from './core_element.js';
+import { Component, componentFromDOM } from './component';
+import { CoreElement } from './core_element';
 import { CoreEvent, EventMap } from './core_events';
-import { getFocusableElements, ITabHandler } from './core_tools.js';
+import { getFocusableElements, ITabHandler } from './core_tools';
 
 const socket_sent = Symbol( 'socket' );
 

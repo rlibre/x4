@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { EventCallback } from '@core/core_events.js';
+import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
-import { class_ns, Rect } from '../../core/core_tools.js';
+import { class_ns, Rect } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
-import { Input } from '../input/input.js';
+import { Input } from '../input/input';
 
 import './slider.module.scss';
 

@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '../../core/component';
-import { class_ns, Point } from '../../core/core_tools.js';
+import { class_ns, Point } from '../../core/core_tools';
 
 import "./sizer.module.scss"
 
@@ -23,7 +23,7 @@ import "./sizer.module.scss"
  * 
  */
 
-interface EvSizeChange extends ComponentEvent {
+export interface EvSizeChange extends ComponentEvent {
 	size: number;
 }
 
@@ -33,7 +33,7 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
-type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" ;
 
 /**
  * 
@@ -117,11 +117,11 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 		}
 
 		if( this._type.includes("right") ) {
-			//nr.left = rc.left;
 			nr.width = (pt.x-rc.left);
-		}
+			}
 
 		this._ref.setStyle( nr );
+		//this._ref.setStyleValue( "flexGrow", 0 );
 
 		const nrc = this._ref.getBoundingRect( );
 		this.fire( "resize", { size: horz ? nrc.width : nrc.height })

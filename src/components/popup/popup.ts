@@ -17,7 +17,7 @@
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "../../core/component"
 
 import { CSizer } from '../sizers/sizer';
-import { Rect, Point, class_ns, asap } from '../../core/core_tools.js';
+import { Rect, Point, class_ns, asap } from '../../core/core_tools';
 import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
@@ -178,8 +178,19 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		this.__remove( );
 
 		if( this._ismodal ) {
-			modal_stack.pop( );
-			this._hideModalMask( );
+			// modal1.show()
+			// modal2.show()
+			// modal1.hide()
+			if( modal_stack[modal_stack.length-1]!=this ) {
+				const idx = modal_stack.findIndex( x => x===this );
+				if( idx>=0 ) {
+					modal_stack.splice( idx, 1 );
+				}
+			}
+			else {
+				modal_stack.pop( );
+				this._hideModalMask( );
+			}
 		}
 
 		// remove from popup list

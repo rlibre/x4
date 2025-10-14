@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '@core/core_tools.js';
+import { class_ns } from '../../core/core_tools';
 import { Component, ComponentProps } from "../../core/component"
 
 import "./viewport.module.scss"

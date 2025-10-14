@@ -14,13 +14,13 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns, IFormElement } from '@core/core_tools.js';
+import { class_ns, IFormElement } from '../../core/core_tools';
 import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
 
 //type FormValue = string | number | boolean;
-export type FormValues = Record<string,string>;
+export type FormValues = Record<string,any>;
 
 export interface FormProps extends BoxProps {
 	autoComplete?: boolean;
@@ -81,8 +81,8 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	 * 
 	 */
 
-	getValues( ): FormValues {
-		const result: FormValues = {}
+	getValues<T extends FormValues = FormValues>( ): T {
+		const result: any = {}
 		const items = this._get_inputs( );
 
 		items.forEach( x => {
@@ -94,7 +94,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 			}
 		});
 
-		return result;
+		return result as T;
 	}
 
 	/**

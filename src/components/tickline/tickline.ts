@@ -1,6 +1,6 @@
 import { SvgBuilder, SvgComponent } from '../../core/core_svg';
 import { Color } from '../../core/core_colors';
-import { Component, ComponentProps } from '@core/component.js';
+import { Component, ComponentProps } from '../../core/component';
 
 import "./tickline.module.scss"
 
