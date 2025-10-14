@@ -324,11 +324,16 @@ export class Keyboard extends HBox<KeyboardProps>
     private handleFocus( target: Element, enter: boolean ) {
 		
         if( enter ) {
-            if( target.tagName=='INPUT' && !(target as HTMLInputElement).readOnly ) {
-                this.input = target as HTMLInputElement;
-                this.visible = true;
-				this.setTimeout( "vis", 200, this._updateVis );
-				return;
+            if( target.tagName=='INPUT' ) {
+				const input = target as HTMLInputElement;
+				if( !input.readOnly && 
+					input.type!='checkbox' && input.type!='radio' && 
+					input.type!='range' && input.type!='file' && ) {
+					this.input = input;
+					this.visible = true;
+					this.setTimeout( "vis", 200, this._updateVis );
+					return;
+				}
             }
 		}
 		
