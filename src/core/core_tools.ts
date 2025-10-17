@@ -175,6 +175,17 @@ export class Rect implements IRect {
 
 		return this;
 	}
+
+	inflate( dx: number, dy?: number ) {
+		if( dy===undefined ) {
+			dy = dx;
+		}
+
+		this.left -= dx;
+		this.width += dx+dx;
+		this.top -= dy;
+		this.width += dy+dy;
+	}
 }
 
 /**
