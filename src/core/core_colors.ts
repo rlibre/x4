@@ -247,4 +247,27 @@ export class Color {
 	isInvalid( ) {
 		return this.invalid;
 	}
+
+	lighten( percent: number) {
+		
+		if( percent<0 ) {
+			percent = 0;
+		}
+		else if( percent>100 ) {
+			percent = 100;
+		}
+
+		const factor = percent / 100;
+		
+		const adj = (value: number): number => {
+			value = (value + (255 - value) * factor) | 0;
+			if( value>255 ) {
+				value = 255;
+			}
+			return value;
+		};
+
+		const _  = this.rgb;
+		this.rgb = [adj(_[0]),adj(_[1]),adj(_[2]),_[3]];
+	}
 }
