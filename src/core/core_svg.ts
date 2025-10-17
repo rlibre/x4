@@ -713,7 +713,7 @@ export class SvgBuilder extends SvgGroup {
 
 export interface SvgProps extends ComponentProps {
 	viewbox?: string;
-	svg: SvgBuilder;
+	svg?: SvgBuilder;
 }
 
 /**
