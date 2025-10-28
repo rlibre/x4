@@ -259,7 +259,7 @@ export class Color {
 		return this.invalid;
 	}
 
-	lighten(percent: number) {
+	lighten(percent: number) : this {
 
 		if (percent < 0) {
 			percent = 0;
@@ -280,6 +280,8 @@ export class Color {
 
 		const _ = this.rgb;
 		this.rgb = [adj(_[0]), adj(_[1]), adj(_[2]), _[3]];
+
+		return this;
 	}
 }
 
