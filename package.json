@@ -1,51 +1,43 @@
 {
-	"name": "x4js",
-	"version": "2.0.27",
-	"description": "X4 framework",
-	"author": "etienne cochard",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/rlibre/x4.git"
-	},
-	"bugs": {
-		"url": "https://github.com/rlibre/x4/issues"
-	},
-	"keywords": [
-		"typescript",
-		"framework",
-		"sap",
-		"web",
-		"desktop",
-		"application"
-	],
-	"scripts": {
-		"build": "x4build --watch --hmr --serve",
-		"build-release": "x4build --release",
-		"prepack": "node scripts/prepack.mjs"
-	},
-	"homepage": "https://x4js.org",
-	"files": ["lib","src"],
-	"types": "./src/x4.ts",
-	"module": "./lib/esm/x4.mjs",
-	"main": "./lib/cjs/x4.js",
-	"exports": {
-		".": {
-			"types": "./src/x4.ts",
-			"module": "./lib/esm/x4.mjs",
-			"require": "./lib/cjs/x4.js"
-		}
-	},
-	"x4build": {
-		"entryPoints": [
-			"src/x4.ts"
-		],
-		"outdir": "lib"
-	},
-	"devDependencies": {
-		"typescript": "^5.8.3",
-		"x4build": "^1.6.8",
-		"esbuild-plugin-d.ts": "^1.3",
-		"esbuild-sass-plugin": "^3.3"
-	}
+  "name": "x4js",
+  "version": "2.0.29",
+  "description": "X4 framework",
+  "author": "etienne cochard",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": true,
+
+  "main": "./src/x4.ts",
+  "module": "./src/x4.ts",
+  "types": "./src/x4.ts",
+
+  "exports": {
+    ".": "./src/x4.ts",
+    "./*": "./src/*.ts"
+  },
+
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+
+  "scripts": {
+    "build": "x4build --watch --hmr --serve",
+    "build-release": "x4build --release",
+    "prepack": "node scripts/prepack.mjs"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlibre/x4.git"
+  },
+  "homepage": "https://x4js.org",
+  "keywords": ["typescript","framework","sap","web","desktop","application"],
+
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "x4build": "^1.6.8",
+    "esbuild-sass-plugin": "^3.3"
+  }
 }

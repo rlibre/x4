@@ -49,26 +49,42 @@ class Process {
 	}
 }
 
-
+interface AppProps {
+	mountPoint?: string;
+}
 
 export class Application<E extends ApplicationEvents = ApplicationEvents> extends CoreElement<E> {
 
 	private env = new Map<string,any>( );
 	private mainview: Component;
+	private props: AppProps;
+	private mounted = false;
 	
 	static readonly process = new Process( );
 
-	constructor( ) {
+	constructor( props: AppProps = {} ) {
 		super( );
 
 		console.assert( main_app==null, "Application must be a singleton." );
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		main_app = this;
+
+		if( props.mountPoint ) {
+			window.addEventListener( "load", ( ) => this.mount( props.mountPoint ) )
+		}
+	}
+
+	private mount( mountPoint = 'body' ) {
+		if( !this.mainview ) {
+			const ev = document.querySelector( mountPoint );
+			if( ev ) {
+				ev.appendChild( this.mainview.dom );
+			}
+		}
 	}
 
 	setMainView( view: Component ) {
 		this.mainview = view;
-		document.body.appendChild( view.dom );
 		this._setupKeyboard( );
 	}
 
@@ -129,14 +145,16 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 		while( act!=document.body ) {
 			const comp = componentFromDOM(act);
-			const ifx = comp.queryInterface( "tab-handler") as ITabHandler;
+			if( comp {
+				const ifx = comp.queryInterface( "tab-handler") as ITabHandler;
 
-			if( ifx ) {
-				return ifx.focusNext( next );
-			}
+				if( ifx ) {
+					return ifx.focusNext( next );
+				}
 
-			if( act.classList.contains("x4box") ) {	// todo: that is too dirty
-				topmost = act as HTMLElement;
+				if( act.classList.contains("x4box") ) {	// todo: that is too dirty
+					topmost = act as HTMLElement;
+				}
 			}
 
 			act = act.parentElement;
