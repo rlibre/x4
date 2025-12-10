@@ -40,6 +40,7 @@
 	&> .body {
 		padding: 8px;
 		border: 1px solid var( --border );
+		min-height: 0;
 	}
 }
 

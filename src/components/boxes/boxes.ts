@@ -138,6 +138,7 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		let sel = this.query( `:scope > .selected` );
 		if( sel ) {
 			sel.setClass( "selected", false );
+			(sel as any).deactivate?.( );
 		}
 
 		this._cur = this._items.findIndex( x => x.name==name );

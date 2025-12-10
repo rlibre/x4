@@ -246,11 +246,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	addClass( cls: string ) {
 		if( !cls ) return;
-				
-		if( cls.indexOf(' ')>=0 ) {
-			cls = cls.trim( );
+			
+		cls = cls.trim( );
+			
+		if( cls.includes(' ') ) {
 			const ccs = cls.split( " " );
-			this.dom.classList.add(...ccs);
+			this.dom.classList.add( ...ccs.filter(x=>x) );
 		}
 		else {
 			this.dom.classList.add(cls);
@@ -493,7 +494,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 			}
 		}
 		else {
-			const fragment = document.createDocumentFragment( );
+			const fragment = document.createDocumentFragment( ) as any;
+
+			// polyfill
+			fragment.insertAdjacentHTML = ( position: string, html: string ) => {
+				const temp = document.createElement('div');
+    			temp.innerHTML = html;
+    			const nodes = Array.from(temp.childNodes);
+				fragment.append( ...nodes );
+			}
+
 			for (const child of content ) {
 				set( fragment, child );
 			}

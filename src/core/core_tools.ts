@@ -46,6 +46,10 @@ export function isFunction(val: any): val is Function {
 	return val instanceof Function;
 }
 
+export function isDate(v: unknown): v is Date {
+    return v instanceof Date && !isNaN(v.getTime());
+}
+
 /**
  * generic constructor
  */
@@ -170,6 +174,17 @@ export class Rect implements IRect {
 		}
 
 		return this;
+	}
+
+	inflate( dx: number, dy?: number ) {
+		if( dy===undefined ) {
+			dy = dx;
+		}
+
+		this.left -= dx;
+		this.width += dx+dx;
+		this.top -= dy;
+		this.width += dy+dy;
 	}
 }
 
@@ -696,21 +711,21 @@ export function parseIntlDate(value: string, fmts: string = _tr.global.date_inpu
  * "this is my demo date formatter: 11-25*january"
  */
 
-export function formatIntlDate(date: Date, fmt: string = _tr.global.date_format) {
+export function formatIntlDate(date: Date, fmt: string = _tr.global.date_format, utc = false) {
 
 	if (!date) {
 		return '';
 	}
 
 	let now = {
-		year: date.getFullYear(),
-		month: date.getMonth() + 1,
-		day: date.getDate(),
-		wday: date.getDay(),
-		hours: date.getHours(),
-		minutes: date.getMinutes(),
-		seconds: date.getSeconds(),
-		milli: date.getMilliseconds()
+		year: 		utc ? date.getUTCFullYear() : date.getFullYear(),
+		month: 		utc ? date.getUTCMonth() + 1 : date.getMonth() + 1,
+		day: 		utc ? date.getUTCDate() : date.getDate(),
+		wday: 		utc ? date.getUTCDay() : date.getDay(),
+		hours: 		utc ? date.getUTCHours() : date.getHours(),
+		minutes: 	utc ? date.getUTCMinutes() : date.getMinutes(),
+		seconds: 	utc ? date.getUTCSeconds() : date.getSeconds(),
+		milli: 		utc ? date.getUTCMilliseconds() : date.getMilliseconds()
 	};
 
 
