@@ -25,6 +25,7 @@ export class StateManager {
 		if (this._currentTracking) {
 			this._currentTracking.add(path);
 		}
+		
 		// Fast path-based access
 		const parts = path.split('.');
 		let current = this._state;

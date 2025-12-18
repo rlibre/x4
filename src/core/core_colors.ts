@@ -47,7 +47,18 @@ export class Color {
 	private rgb: [red: number, green: number, blue: number, alpha: number] = [0, 0, 0, 1];
 	private invalid = false;
 
+	/**
+	 * Creates a new Color instance from a string.
+	 * @param value - The color string (e.g. "#ff0000", "rgb(255,0,0)").
+	 */
 	constructor(value: string);
+	/**
+	 * Creates a new Color instance from RGB values.
+	 * @param r - Red component (0-255).
+	 * @param g - Green component (0-255).
+	 * @param b - Blue component (0-255).
+	 * @param a - Alpha component (0-1).
+	 */
 	constructor(r: number, g: number, b: number, a?: number);
 	constructor(...args: any[]) {
 		if (isString(args[0])) {
@@ -59,13 +70,15 @@ export class Color {
 	}
 
 	/**
-	 * accepts:
-	 * 	#aaa
-	 *  #ababab
-	 *  #ababab55
-	 *  rgb(a,b,c)
-	 *  rgba(a,b,c,d)
-	 *  var( --color-5 )
+	 * Sets the color value from a string.
+	 * Accepts:
+	 * - #aaa, #ababab, #ababab55
+	 * - rgb(a,b,c), rgba(a,b,c,d)
+	 * - var( --color-5 )
+	 * - Named colors (e.g. "red", "transparent")
+	 * 
+	 * @param value - The color string to parse.
+	 * @returns The current Color instance.
 	 */
 
 	setValue(value: string): this {
@@ -141,6 +154,15 @@ export class Color {
 		return this.setRgb(255, 0, 0, 1);
 	}
 
+	/**
+	 * Sets the color using HSV (Hue, Saturation, Value) components.
+	 * 
+	 * @param h - Hue (0-1).
+	 * @param s - Saturation (0-1).
+	 * @param v - Value (0-1).
+	 * @param a - Alpha (0-1, default 1.0).
+	 * @returns The current Color instance.
+	 */
 	setHsv(h: number, s: number, v: number, a = 1.0): this {
 
 		let i = Math.min(5, Math.floor(h * 6)),
@@ -188,26 +210,56 @@ export class Color {
 	}
 
 
+	/**
+	 * Sets the color using RGB (Red, Green, Blue) components.
+	 * 
+	 * @param r - Red component (0-255).
+	 * @param g - Green component (0-255).
+	 * @param b - Blue component (0-255).
+	 * @param a - Alpha component (0-1).
+	 * @returns The current Color instance.
+	 */
 	setRgb(r: number, g: number, b: number, a: number): this {
 		this.rgb = [clamp(r | 0, 0, 255), clamp(g | 0, 0, 255), clamp(b | 0, 0, 255), clamp(a, 0, 1)];
 		return this;
 	}
 
+	/**
+	 * Returns the CSS string representation of the color.
+	 * 
+	 * @param withAlpha - Whether to include the alpha channel (default: true if alpha < 1).
+	 * @returns The CSS color string (e.g. "rgb(255,0,0)" or "rgba(255,0,0,0.5)").
+	 */
 	toRgbString(withAlpha?: boolean): string {
 		const _ = this.rgb;
 		return withAlpha === false || _[3] == 1 ? `rgb(${round(_[0])},${round(_[1])},${round(_[2])})` : `rgba(${round(_[0])},${round(_[1])},${round(_[2])},${_[3].toFixed(3)})`
 	}
 
+	/**
+	 * Returns the Hex string representation of the color.
+	 * 
+	 * @returns The hex color string (e.g. "#ff0000" or "#ff000080").
+	 */
 	toHexString(): string {
 		const _ = this.rgb;
 		return _[3] == 1 ? `#${hx(_[0])}${hx(_[1])}${hx(_[2])}` : `#${hx(_[0])}${hx(_[1])}${hx(_[2])}${(hx((_[3] * 255) | 0))}`
 	}
 
+	/**
+	 * Returns the color as an RGB object.
+	 * 
+	 * @returns An object containing red, green, blue, and alpha properties.
+	 */
 	toRgb(): Rgb {
 		const _ = this.rgb;
 		return { red: _[0], green: _[1], blue: _[2], alpha: _[3] };
 	}
 
+	/**
+	 * Converts the color to HSV representation.
+	 * 
+	 * @returns An object containing hue, saturation, value, and alpha properties.
+	 */
 	toHsv(): Hsv {
 
 		let el = this.toRgb();
@@ -246,19 +298,41 @@ export class Color {
 		return { hue, saturation, value, alpha: el.alpha };
 	}
 
+	/**
+	 * Gets the alpha (transparency) value of the color.
+	 * 
+	 * @returns The alpha value (0-1).
+	 */
 	getAlpha() {
 		return this.rgb[3];
 	}
 
+	/**
+	 * Sets the alpha (transparency) value of the color.
+	 * 
+	 * @param a - The new alpha value (0-1).
+	 * @returns The current Color instance.
+	 */
 	setAlpha(a: number): this {
 		this.rgb[3] = clamp(a, 0, 1);
 		return this;
 	}
 
+	/**
+	 * Checks if the color is invalid (e.g. failed parsing).
+	 * 
+	 * @returns True if the color is invalid, false otherwise.
+	 */
 	isInvalid() {
 		return this.invalid;
 	}
 
+	/**
+	 * Lightens the color by a given percentage.
+	 * 
+	 * @param percent - The percentage to lighten (0-100).
+	 * @returns The current Color instance.
+	 */
 	lighten(percent: number) : this {
 
 		if (percent < 0) {

@@ -14,8 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
-import { Component, ComponentProps } from '../../core/component';
+import { class_ns } from '../../core/core_tools.ts';
+import { Component, ComponentProps } from '../../core/component.ts';
 
 import "./icon.module.scss"
 
@@ -68,19 +68,43 @@ class SvgLoader {
 export const svgLoader = new SvgLoader( );
 
 /**
- * 
+ * Icon component properties.
+ *
+ * @property {string} [iconId] - Identifier or path of the icon to display.
  */
 
 export interface IconProps extends ComponentProps {
+	/**
+     * Identifier for the icon.
+     * Can be a URL, a CSS variable (prefixed with `var:`), or inline SVG data.
+     * @example
+     * // Using a CSS variable
+     * { iconId: "var:home" }
+     * @example
+     * // Using an imported SVG
+     * import myicon from "./myicon.svg";
+     * { iconId: myicon }
+     */
 	iconId?: string;
 }
 
 /**
- * 
+ * A component for rendering icons.
+ * Supports inline SVG, external SVG files, and CSS variables for icon paths.
+ * The CSS class for this component is automatically generated as `x4icon`.
  */
 
 @class_ns( "x4" )
 export class Icon extends Component<IconProps> {
+
+	/**
+	 * Create a new Icon.
+	 *
+	 * @param {IconProps} props - Optional initial icon identifier.
+	 *
+	 * @example
+	 * const icon = new Icon({ iconId: "check" });
+	 */
 
 	constructor( props: IconProps ) {
 		super( props );
@@ -89,16 +113,20 @@ export class Icon extends Component<IconProps> {
 	}
 
 	/**
-	 * change the icon content
-	 * @param iconId if name is starting with var: then we use css variable name a path
-	 * @example
-	 * 
-	 * setIcon( "var:home" )
-	 * 
-	 * import myicon from "./myicon.svg"
-	 * setIcon( myicon );
-	 * 
-	 */
+     * Sets or updates the icon content.
+     * @param iconId - Identifier for the icon.
+     *                 If it starts with `var:`, the value is treated as a CSS variable name.
+     *                 If it is a data URL (e.g., `data:image/svg+xml,<svg...`), the SVG is rendered directly.
+     *                 If it ends with `.svg`, the file is loaded asynchronously.
+     *                 Otherwise, it is treated as an image URL.
+     * @example
+     * // Using a CSS variable
+     * setIcon("var:home");
+     * @example
+     * // Using an imported SVG
+     * import myicon from "./myicon.svg";
+     * setIcon(myicon);
+     */
 
 	setIcon( iconId: string ) {
 		this.clearContent( );

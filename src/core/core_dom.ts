@@ -93,7 +93,10 @@ function observeSize(entries: ResizeObserverEntry[]) {
 }
 
 /**
+ * Manually dispatches an event through the custom event system.
+ * Simulates bubbling unless the event type is in the unbubbleEvents list.
  * 
+ * @param ev - The event to dispatch.
  */
 
 export function dispatchEvent(ev: Event) {
@@ -129,7 +132,14 @@ export function dispatchEvent(ev: Event) {
 }
 
 /**
+ * Registers an event handler for a specific node.
+ * Automatically initializes MutationObserver or ResizeObserver if special events 
+ * ('created', 'removed', 'resized') are requested.
  * 
+ * @param node - The target DOM node.
+ * @param name - The name of the event to listen for.
+ * @param handler - The function to call when the event occurs.
+ * @param prepend - Whether to prepend the handler to the list (default: false).
  */
 
 export function addEvent( node: Node, name: string, handler: DOMEventHandler, prepend = false ) {

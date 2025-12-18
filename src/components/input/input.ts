@@ -20,74 +20,154 @@ import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString }
 
 import "./input.module.scss"
 
-export interface BaseProps extends ComponentProps {
-	name?: string;
-	autofocus?: boolean;
-	required?: boolean;
-	readonly?: boolean;
-	placeholder?: string;
-	
-	focus?: EventCallback<EvFocus>;
-	change?: EventCallback<EvChange>;
+
+function getRadioOwner( el: Element )  {
+
+	while( el!=document.body ) {
+		const comp = componentFromDOM(el);
+		const ifx = comp.queryInterface( "tab-handler");
+		if( ifx ) {
+			return el;
+		}
+
+		el = el.parentElement;
+	}
+
+	return document;
 }
+
+
+/**
+ * Base properties for all input types.
+ */
+
+export interface BaseProps extends ComponentProps {
+	/** 
+	 * Input field name. 
+	 * required if you want to use form getValues/setValues
+	 */
+
+	name?: string;
+	/** Automatically focus the input on page load. */
+	autofocus?: boolean;
+	/** Marks the input as required. */
+	required?: boolean;
+	/** Makes the input read-only. */
+	readonly?: boolean;
+	/** Placeholder text displayed when empty. */
+    placeholder?: string;
+	/** Fired when the input receives/loses focus. */
+    focus?: EventCallback<EvFocus>;
+	/** Fired when the input value changes. */
+    change?: EventCallback<EvChange>;
+}
+
+/**
+ * Checkbox-specific input properties.
+ */
 
 interface CheckboxProps extends BaseProps {
 	type: "checkbox";
+	/** Checkbox value (submitted when checked). */
 	value?: boolean | number | string;
+	/** Initial checked state. */
 	checked?: boolean;
 }
+
+/**
+ * Radio button-specific input properties.
+ */
 
 interface RadioProps extends BaseProps {
 	type: "radio";
+	/** Radio value (submitted when selected). */
 	value?: boolean | number | string;
+	/** Initial checked state. */
 	checked?: boolean;
 }
 
+/**
+ * Range slider input properties.
+ */
+
 export interface RangeProps extends BaseProps {
 	type: "range";
+	/** Current slider value. */
 	value?: number;
+	/** Minimum allowed value. */
 	min: number;
+	/** Maximum allowed value. */
 	max: number;
+	/** Step increment. */
 	step?: number;
 }
 
+/**
+ * File upload input properties.
+ */
 export interface FileProps extends BaseProps {
 	type: "file";
+	/** Allowed file types (e.g., `"image/*"` or `[".pdf", ".doc"]`). */
 	accept: string | string[];
 	value?: never;
 }
 
-
+/**
+ * Date picker input properties.
+ */
 export interface DateProps extends BaseProps {
 	type: "date";
-	value?: Date | string;
+	/** Current date value (Date object or ISO string). */
+    value?: Date | string;
 }
+
+/**
+ * Time picker input properties.
+ */
 
 export interface TimeProps extends BaseProps {
 	type: "time";
 	readonly?: boolean;
 	required?: boolean;
-	value?: string;
+	/** Current time value (e.g., `"12:30"`). */
+    value?: string;
 }
+
+/**
+ * Numeric input properties.
+ */
 
 export interface NumberProps extends BaseProps {
 	type: "number";
 	readonly?: boolean;
 	required?: boolean;
-	value?: number | string;
-	min?: number;
-	max?: number;
-	step?: number;
+	/** Current numeric value. */
+    value?: number | string;
+	/** Minimum allowed value. */
+    min?: number;
+	/** Maximum allowed value. */
+    max?: number;
+	/** Step increment. */
+    step?: number;
 }
+
+/**
+ * Text/email/password input properties.
+ */
 
 export interface TextInputProps extends BaseProps {
 	type?: "text" | "email" | "password";
 	readonly?: boolean;
 	required?: boolean;
+	/** Regex pattern for validation. */
 	pattern?: string;
+	/** Input value. */
 	value?: string | number;
+	/** Enables/disables spellcheck. */
 	spellcheck?: boolean;
+	/** Minimum input length. */
 	minlength?: number;
+	/** Maximum input length. */
 	maxlength?: number;
 }
 
@@ -102,7 +182,21 @@ interface InputEvents extends ComponentEvent {
 
 
 /**
- * 
+ * Customizable input component supporting multiple types (text, number, date, etc.).
+ * Auto-generates CSS class: `x4input`.
+ *
+ * @example
+ * ```ts
+ * // Text input
+ * const nameInput = new Input({ type: "text", placeholder: "Enter name" });
+ *
+ * // Checkbox
+ * const agreeCheckbox = new Input({
+ *   type: "checkbox",
+ *   checked: true,
+ *   change: (e) => console.log("Checked:", e.value)
+ * });
+ * ```
  */
 
 @class_ns( "x4" )
@@ -262,27 +356,26 @@ export class Input extends Component<InputProps,InputEvents> {
 		}
 	}
 
-	/**
-	 * @returns 
-	 */
-
+	/** Gets the current input value as a string. */
+    
 	public getValue( ) {
 		return (this.dom as HTMLInputElement).value;
 	}
 	
 	/**
-	 * 
-	 * @param value 
-	 */
+     * Sets the input value.
+     * @param value - New value (converted to string).
+     */
 	
 	public setValue( value: string ) {
 		(this.dom as HTMLInputElement).value = value+"";
 	}
 
 	/**
-	 * 
-	 * @returns 
-	 */
+     * Gets the numeric value (for `type="number"` or `type="range"`).
+     * @param defNan - Default value if parsing fails (default: `NaN`).
+     * @returns Parsed number or `defNan`.
+     */
 	
 	public getNumValue( defNan?: number ) {
 		const v = parseFloat( this.getValue() );
@@ -293,11 +386,13 @@ export class Input extends Component<InputProps,InputEvents> {
 	}
 
 	/**
-	 * 
-	 * @param value 
-	 * @param ndec number of decimals or -1 for auto, -2 as prop.step
-	 * 
-	 */
+     * Sets a numeric value with optional decimal precision.
+     * @param value - Numeric value to set.
+     * @param ndec - Decimal places:
+     *               `-1` = auto,
+     *               `-2` = use `step` prop,
+     *               `≥0` = fixed decimals.
+     */
 
 	public setNumValue( value: number, ndec = -1 ) {
 		
@@ -319,48 +414,38 @@ export class Input extends Component<InputProps,InputEvents> {
 		this.setValue( value+"" );
 	}
 
-	/**
-	 * @return the checked value
-	 */
-
-	public getCheck() {
+	/** Gets the checked state (for checkboxes/radio buttons). */
+    public getCheck() {
 		const d = this.dom as HTMLInputElement;
 		return d.checked;
 	}
 
-	/**
-	 * change the checked value
-	 * @param {boolean} ck new checked value	
-	 */
-
+	/** Sets the checked state (for checkboxes/radio buttons). */
+    
 	public setCheck(ck: boolean) {
 		const d = this.dom as HTMLInputElement;
 		d.checked = ck;
 	}
 
-	/**
-	 * 
-	 */
-
+	/** Toggles read-only mode. */
+    
 	public setReadOnly( ro: boolean ) {
 		const d = this.dom as HTMLInputElement;
 		d.readOnly = ro;
 	}
 
-	/**
-	 * select all the text
-	 */
-
+	/** Selects all text in the input. */
+    
 	public selectAll( ) {
 		const d = this.dom as HTMLInputElement;
         d.select(); 
 	}
 
 	/**
-	 * select a part of the text
-	 * @param start 
-	 * @param length 
-	 */
+     * Selects a text range.
+     * @param start - Start position 
+     * @param length - Length of selection
+     */
 
 	public select( start: number, length: number = 9999 ) : void {
 		const d = this.dom as HTMLInputElement;
@@ -368,9 +453,9 @@ export class Input extends Component<InputProps,InputEvents> {
 	}
 
 	/**
-	 * get the selection as { start, length }
-	 */
-
+     * Gets the current text selection.
+     * @returns Object with `start` and `length` properties.
+     */
 	public getSelection( ) {
 		const d = this.dom as HTMLInputElement;
 
@@ -380,10 +465,8 @@ export class Input extends Component<InputProps,InputEvents> {
 		};
 	}
 
-	/**
-	 * 
-	 */
-
+	/** Validates the input (checks `required` constraint). */
+    
 	public isValid( ) {
 
 		if( (this.props as any).required ) {
@@ -445,21 +528,4 @@ export class Input extends Component<InputProps,InputEvents> {
 		return super.queryInterface( name );
 	}
 }
-
-
-function getRadioOwner( el: Element )  {
-
-	while( el!=document.body ) {
-		const comp = componentFromDOM(el);
-		const ifx = comp.queryInterface( "tab-handler");
-		if( ifx ) {
-			return el;
-		}
-
-		el = el.parentElement;
-	}
-
-	return document;
-}
-
 

@@ -82,11 +82,11 @@ export function isUnitLess( name: string ) {
 
 export class Stylesheet {
 
-	readonly m_sheet: CSSStyleSheet;
-	readonly m_rules: Map<string, number> = new Map( );
+	readonly _sheet: CSSStyleSheet;
+	readonly _rules: Map<string, number> = new Map( );
 
 	constructor() {
-		
+
 		function getStyleSheet( name: string ) : CSSStyleSheet {
 			for(let i=0; i<document.styleSheets.length; i++) {
 			  	let sheet = document.styleSheets[i];
@@ -96,12 +96,12 @@ export class Stylesheet {
 			}
 		}
 
-		this.m_sheet = getStyleSheet( 'x4-dynamic-css' );
-		if( !this.m_sheet ) {
+		this._sheet = getStyleSheet( 'x4-dynamic-css' );
+		if( !this._sheet ) {
 			const dom = document.createElement( 'style' );
 			dom.setAttribute('id', 'x4-dynamic-css' );
 			document.head.appendChild(dom);
-			this.m_sheet = dom.sheet
+			this._sheet = dom.sheet
 		}
 	}
 
@@ -116,15 +116,15 @@ export class Stylesheet {
 	public setRule(name: string, definition: any ) {
 
 		if( isString(definition) ) {
-			let index = this.m_rules.get( name );
+			let index = this._rules.get( name );
 			if (index !== undefined) {
-				this.m_sheet.deleteRule(index);
+				this._sheet.deleteRule(index);
 			}
 			else {
-				index = this.m_sheet.cssRules.length;
+				index = this._sheet.cssRules.length;
 			}
 
-			this.m_rules.set( name, this.m_sheet.insertRule( definition, index) );
+			this._rules.set( name, this._sheet.insertRule( definition, index) );
 		}
 		else {
 			let idx = 1;
@@ -152,7 +152,7 @@ export class Stylesheet {
 	}
 
 	/**
-	 * return the style variable value
+	 * Returns the computed value of a CSS custom property (CSS variable) from the document's root element.
 	 * @param name - variable name 
 	 * @example
 	 * ```
@@ -211,4 +211,3 @@ export class ComputedStyle {
 		return this.m_style;
 	}
 }
-

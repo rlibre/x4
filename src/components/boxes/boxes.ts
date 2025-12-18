@@ -14,18 +14,20 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { asap, class_ns, isArray, isNumber, isString } from '../../core/core_tools';
-import { Component, ComponentContent, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
-
-import "./boxes.module.scss";
+import { asap, class_ns, isArray, isNumber } from '../../core/core_tools';
+import { Component, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
 
+import "./boxes.module.scss";
+
 export interface BoxProps extends ComponentProps {
+	/** Optional HTML tag to use for the box. */
 	tag?: string;
 }
 
 /**
- * 
+ * A generic container component for grouping and laying out child components.
+ * The CSS class for this component is automatically generated as `x4box`.
  */
 
 @class_ns( "x4" )
@@ -34,7 +36,9 @@ export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=Component
 
 
 /**
- * 
+ * A horizontal box layout component.
+ * Arranges child components in a horizontal line.
+ * The CSS class for this component is automatically generated as `x4hbox`.
  */
 
 @class_ns( "x4" )
@@ -42,7 +46,9 @@ export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
 }
 
 /**
- * 
+ * A vertical box layout component.
+ * Arranges child components in a vertical stack.
+ * The CSS class for this component is automatically generated as `x4vbox`.
  */
 
 @class_ns( "x4" )
@@ -53,42 +59,53 @@ export class VBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
 }
 
 
-/**
- * stack of widgets where only one widget is visible at a time
- */
-
 type ContentBuilder = ( ) => Component;
 
+
+/**
+ * Represents an item in a {@link StackBox}.
+ */
+
 interface StackItem {
+	/** Unique name for the stack item. */
 	name: string;
+	/** Content of the stack item, either a component or a builder function. */
 	content: Component | ContentBuilder;
 	title?: string;
 }
 
 /**
- * 
+ * Events specific to the {@link StackBox} component.
  */
 
 interface StackeBoxEvents extends ComponentEvents {
+	/** Fired when the current page changes. */
 	pageChange?: EvSelectionChange;
 }
 
+/**
+ * Properties for the {@link StackBox} component.
+ */
+
 export interface StackBoxProps extends Omit<ComponentProps,"content"> {
+	/** Name of the default page to display. */
 	default: string;
+
+	/** List of stack items. */
 	items: StackItem[];
+
+	/** Callback for page change events. */
 	pageChange?: EventCallback<EvSelectionChange>;
 }
 
-/**
- * 
- */
 
 interface StackItemEx extends StackItem {
 	page: Component;
 }
 
 /**
- * 
+ * A stack of widgets where only one widget is visible at a time.
+ * The CSS class for this component is automatically generated as `x4stackbox`.
  */
 
 @class_ns( "x4" )
@@ -114,6 +131,11 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		}
 	}
 
+	/**
+     * Adds a new item to the stack.
+     * @param item - The item to add.
+     */
+
 	addItem( item: StackItem ) {
 		this._items.push( {
 			name: item.name,
@@ -121,6 +143,11 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 			page: null
 		});
 	}
+
+	/**
+     * Removes an item from the stack by its name.
+     * @param name - The name of the item to remove.
+     */
 
 	removeItem( name: string ) {
 		const index = this._items.findIndex( x => x.name==name );
@@ -134,6 +161,12 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 		}
 	}
 
+	/**
+     * Selects a page by its name.
+     * @param name - The name of the page to select.
+     * @returns The selected page component, if any.
+     */
+	
 	select( name: string ) {
 		let sel = this.query( `:scope > .selected` );
 		if( sel ) {
@@ -182,8 +215,10 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 	}
 
 	/**
-	 * 
-	 */
+     * Retrieves a page by its name.
+     * @param name - The name of the page to retrieve.
+     * @returns The page content, if found.
+     */
 	
 	getPage( name: string ) {
 		const pg = this._items.find( x => x.name==name );
@@ -191,24 +226,28 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 	}
 
 	/**
-	 * 
-	 */
+     * Gets the total number of pages in the stack.
+     * @returns The number of pages.
+     */
 
 	getPageCount( ) {
 		return this._items.length;
 	}
 
 	/**
-	 * 
-	 */
+     * Enumerates the names of all pages in the stack.
+     * @returns An array of page names.
+     */
 
 	enumPageNames( ) {
 		return this._items.map( x => x.name );
 	}
 
 	/**
-	 * 
-	 */
+     * Retrieves a stack item by its name.
+     * @param name - The name of the item to retrieve.
+     * @returns The stack item, if found.
+     */
 
 	getItem( name: string ) {
 		const pg = this._items.find( x => x.name==name );
@@ -216,8 +255,9 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 	}
 
 	/**
-	 * 
-	 */
+     * Gets the name of the currently selected page.
+     * @returns The name of the current page, if any.
+     */
 
 	getCurPage( ) {
 		const c = this._items[this._cur];
@@ -228,8 +268,19 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
 // :: ASSIST BOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
+/**
+ * A specialized stack box for assisted navigation, such as wizards or carousels.
+ * The CSS class for this component is automatically generated as `x4assistbox`.
+ */
+
 @class_ns( "x4" )
 export class AssistBox extends StackBox {
+
+	/**
+     * Selects the next or previous page in the stack.
+     * @param nxt - If `true`, selects the next page; otherwise, selects the previous page.
+     */
+
 	selectNextPage( nxt = true ) {
 		let p;
 		if( nxt && this._cur<this._items.length-1 ) {
@@ -244,9 +295,19 @@ export class AssistBox extends StackBox {
 		}
 	}
 
+	/**
+     * Checks if the current page is the first page.
+     * @returns `true` if the current page is the first page.
+     */
+
 	isFirstPage( ) {
 		return this._cur==0;
 	}
+
+	/**
+     * Checks if the current page is the last page.
+     * @returns `true` if the current page is the last page.
+     */
 
 	isLastPage( ) {
 		return this._cur==this._items.length-1;
@@ -269,6 +330,11 @@ export interface GridBoxProps extends Omit<BoxProps,"content"> {
 	items?: GridBoxItem[];
 }
 
+/**
+ * Grid-based layout container.
+ * Auto-generates CSS class: `x4gridbox`.
+ */
+
 @class_ns("x4")
 export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 
@@ -288,6 +354,11 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
 		}
 	}
 
+	/**
+     * Sets grid rows (e.g., `2`, `"1fr 2fr"`, `["1fr", "2fr"]`).
+     * @param r - Rows definition.
+     */
+
 	setRows( r: number | string | string[] ) {
 		if( isArray(r) ) {
 			r = r.join( " " );
@@ -298,6 +369,11 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
 
 		this.setStyleValue( "gridTemplateRows", r );
 	}
+
+	/**
+     * Sets grid columns (e.g., `3`, `"1fr 1fr"`, `["auto", "1fr"]`).
+     * @param r - Columns definition.
+     */
 
 	setCols( r: number | string | string[] ) {
 		if( isArray(r) ) {
@@ -310,22 +386,37 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
 		this.setStyleValue( "gridTemplateColumns", r );
 	}
 
+	/**
+     * Sets the number of rows.
+     * @param n - Row count.
+     */
+
 	setRowCount( n: number ) {
 		this.setStyleValue( "gridTemplateRows", `repeat(${n})` );
 	}
+
+	/**
+     * Sets the number of columns.
+     * @param n - Column count.
+     */
 
 	setColCount( n: number ) {
 		this.setStyleValue( "gridTemplateColumns", `repeat(${n})` );
 	}
 
 	/**
-	 * @param t "a a a" "b c c" "b c c"
-	 * user item.setAttribute( "grid-area", "a" );
-	 */
+     * Sets grid template areas (e.g., `["a a", "b c"]`).
+     * @param t - Template strings.
+     */
 
 	setTemplate( t: string[] ) {
 		this.setAttribute( "grid-template-area", t.map( x => '"' + x + '"' ).join(" ") );
 	}
+
+	/**
+     * Places items at specific grid positions.
+     * @param items - Array of `{row, col, item}`.
+     */
 
 	setItems( items: GridBoxItem[] ) {
 		items.forEach( x => {
@@ -349,6 +440,11 @@ interface MasonryProps extends Omit<BoxProps,"content"> {
 	items: Component[];
 }
 
+/**
+ * Masonry-style layout (Pinterest-like).
+ * Auto-generates CSS class: `x4masonrybox`.
+ */
+
 @class_ns("x4")
 export class MasonryBox extends Box<MasonryProps> {
 
@@ -363,6 +459,11 @@ export class MasonryBox extends Box<MasonryProps> {
 			this.setItems( props.items );
 		}
 	}
+
+	/**
+     * Resizes a single masonry item.
+     * @param item - Item to resize.
+     */
 
 	resizeItem(item: Component) {
 		const style = this.getComputedStyle();
@@ -382,12 +483,21 @@ export class MasonryBox extends Box<MasonryProps> {
 		}
 	}
 	  
+	/**
+     * Resizes all items to fit the grid.
+     */
+
 	resizeAllItems( ) {
 		const els = this.queryAll( ".item" );
 		els.forEach( itm => {;
 			this.resizeItem( itm );
 		} );
 	}
+
+	/**
+     * Sets masonry items.
+     * @param items - Array of components.
+     */
 
 	setItems( items: Component[] ) {
 		const els = items.map( x => {

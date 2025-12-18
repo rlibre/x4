@@ -14,11 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
-import { EventCallback } from '../../core/core_events';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component.ts"
+import { EventCallback } from '../../core/core_events.ts';
+import { class_ns, UnsafeHtml } from '../../core/core_tools.ts';
 
-import { Icon } from "../icon/icon"
+import { Icon } from "../icon/icon.ts"
 
 import "./button.module.scss";
 
@@ -28,6 +28,11 @@ import "./button.module.scss";
  */
 
 interface ButtonEvents extends ComponentEvents {
+	/** 
+	 * Fired when the button is clicked 
+	 * ex: myButton.on( "click", ( e: EvClick ) => { console.log( "click") } );
+	 */
+
 	click: EvClick;
 }
 
@@ -36,16 +41,44 @@ interface ButtonEvents extends ComponentEvents {
  */
 
 export interface ButtonProps extends ComponentProps {
-	label?: string;
+	/** Text or HTML content of the button */
+	label?: string | UnsafeHtml;	
+
+	/** Icon identifier to display */
 	icon?: string;
+
+	/** 
+	 * Tab index for keyboard navigation.
+	 * - `false` to exclude from tab order
+	 * - `number` to set specific tab index
+	 */
 	tabindex?: boolean | number;
+	
+	/** 
+	 * Enable auto-repeat behavior when button is held down.
+	 * - `true` uses default 200ms repeat interval
+	 * - `number` specifies custom repeat interval in milliseconds
+	 * 
+	 * First click triggers after 500ms, then repeats at specified interval.
+	 */
 	autorepeat?: number | boolean;
+
+	/**
+	 * Callback function invoked when button is clicked 
+	 * cf. ButtonEvents
+	 */
 	click?: EventCallback<EvClick>;
 }
 
 /**
- * Button component.
+ * Represents a clickable button component.
+ * 
+ * Generates the CSS class **x4button** based on the class name.
+ * The button can contain an optional icon and label, supports keyboard activation,
+ * and may trigger auto-repeated click events while pointer is held down.
+ * 
  */
+
 
 @class_ns( "x4" )
 export class Button extends Component<ButtonProps,ButtonEvents> {
@@ -53,12 +86,17 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	#text: Component;
 
 	/**
-     * Creates an instance of Button.
-     * 
-     * @param props - The properties for the button component, including label and icon.
-     * @example
-     * const button = new Button({ label: 'Submit', icon: 'check-icon' });
-     */
+	 * Create a new Button.
+	 *
+	 * @param {ButtonProps} props - Configuration options such as `label`, `icon`, `tabindex`, `autorepeat`, and `click`.
+	 *
+	 * @example
+	 * const btn = new Button({
+	 *   label: "Save",
+	 *   icon: "check",
+	 *   click: () => console.log("clicked"),
+	 * });
+	 */
 
 	constructor( props: ButtonProps ) {
 		super( { ...props, tag: 'button', content: null } );
@@ -88,7 +126,7 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	}
 
 	/**
-	 * called by the system on click event
+	 * @internal 
 	 */
 
 	protected _on_click( ev: MouseEvent ) {
@@ -108,6 +146,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 		ev.preventDefault();
 		ev.stopPropagation();
 	}
+
+	/**
+	 * @internal
+	 */
 
 	protected _on_mouse( e: PointerEvent ) {
 
@@ -137,7 +179,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	}
 
 	/**
-	 * simulate a click
+	 * Activate the button as if it was clicked by a user.
+	 *
+	 * @example
+	 * button.click();
 	 */
 
 	click( ) {
@@ -145,7 +190,7 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	}
 
 	/**
-	 * called on key down
+	 * @internal
 	 */
 
 	protected _on_keydown( e: KeyboardEvent ) {
@@ -156,13 +201,15 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	}
 
 	/**
-     * Sets the text content of the button's label.
-     * 
-     * @param text - The new text or HTML content for the label.
-     * @example
-     * button.setText('Click Me');
-     * button.setText(new UnsafeHtml('<b>Bold Text</b>'));
-     */
+	 * Set or change the button label.
+	 *
+	 * @param {string | UnsafeHtml} text - Text content or unsafe HTML.
+	 *
+	 * @example
+	 * button.setText("Confirm");
+	 * button.setText(new UnsafeHtml("<strong>OK</strong>"));
+	 * button.setText( unsafe`<strong>OK</strong>` );
+	 */
 
 	public setText( text: string | UnsafeHtml ) {
 		this.#text.setContent( text );
@@ -170,12 +217,13 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	}
 	
 	/**
-     * Sets the icon of the button.
-     * 
-     * @param icon - The new icon ID to set on the button.
-     * @example
-     * button.setIcon('new-icon-id');
-     */
+	 * Set or change the icon displayed by the button.
+	 *
+	 * @param {string} icon - Icon identifier to associate with the button.
+	 *
+	 * @example
+	 * button.setIcon("arrow-right");
+	 */
 
 	public setIcon( icon: string ) {
 		this.query<Icon>( "#icon" ).setIcon( icon );

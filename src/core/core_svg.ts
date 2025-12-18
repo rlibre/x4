@@ -56,11 +56,45 @@ function clean( a: any, ...b: any ) {
 
 
 
-
-
-
-
-
+/**
+ * Represents a lightweight wrapper around an SVG DOM element that provides
+ * convenient, chainable helpers for common SVG manipulations (attributes,
+ * styles, transforms, classes and events).
+ *
+ * The class encapsulates an underlying SVGElement and
+ * exposes methods that operate directly on that element while allowing fluent chaining.
+ *
+ * Key behaviors:
+ * - Creation: instances are constructed with the local name of the SVG tag
+ *   (e.g. "rect", "circle", "g") and internally create the element in the
+ *   SVG namespace.
+ * - Attribute management: `getAttr`, `getNumAttr`, and `setAttr` let you read
+ *   and write attributes. Passing `null` or `undefined` to `setAttr` removes
+ *   the attribute.
+ * - Styling: `setStyle` assigns CSS properties on the element. When a numeric
+ *   value is provided, a "px" unit is appended unless the property is known
+ *   to be unitless (the implementation relies on a small helper to detect
+ *   unitless properties).
+ * - Geometry & transforms: helpers exist for setting or appending transforms
+ *   (`transform`, `add_transformation`, `clear_transform`), and higher-level
+ *   helpers for rotate, translate and scale (both replace and append forms).
+ * - Stroke & fill helpers: `stroke`, `strokeWidth`, `strokeCap`, `strokeOpacity`,
+ *   `fill`, and `no_fill` provide convenient setters for common paint
+ *   properties. These methods return `this` so they can be chained.
+ * - Classes & clipping: `addClass` / `removeClass` manipulate the element's
+ *   class list (supporting space-separated lists) and `clip` sets a clip-path
+ *   reference using an id.
+ * - Reset: `reset` removes all attributes from the element (but does not
+ *   remove the element itself).
+ * - Events: `addDOMEvent` attaches DOM events to the underlying element.
+ *
+ * Notes and caveats:
+ * - This class is not a full DOM abstraction; it intentionally focuses on a
+ *   small, ergonomic surface for building and manipulating SVG elements.
+ * - Some behaviors depend on small utility helpers (e.g. numeric/unit detection
+ *   and event-attachment helpers) provided elsewhere in the codebase.
+ *
+ */
 
 class SvgItem {
 	protected _dom : SVGElement;
@@ -81,6 +115,10 @@ class SvgItem {
 	 * 
 	 */
 
+	/**
+	 * Remove all attributes from the underlying DOM element.
+	 * @returns The current instance (this) to allow method chaining.
+	 */
 	reset( ) {
 		const attrs = this._dom.attributes;
 		for (let i = attrs.length - 1; i >= 0; i--) {
@@ -113,16 +151,34 @@ class SvgItem {
 		return this;
 	}
 
+	/**
+	 * change the stroke cap
+	 * @param cap 
+	 */
+
 	strokeCap( cap: "butt" | "round" | "sqaure" ) {
 		return this.setAttr( "stroke-linecap", cap );
 	}
+
+	/**
+	 * change the stroke opacity attribute on the element.
+	 * @param opacity - Opacity value where 0 is fully transparent and 1 is fully opaque.
+	 * @returns The current instance to allow method chaining.
+	 */
 
 	strokeOpacity( opacity: number ) {
 		return this.setAttr( "stroke-opacity", opacity+"" );
 	}
 
 	/**
-	 * 
+	 * Set the shape rendering attribute to control anti-aliasing for shapes.
+	 *
+	 * When enabled, the attribute is set to "auto" to allow smoothing/anti-aliasing.
+	 * When disabled, the attribute is set to "crispEdges" to favor pixel-aligned,
+	 * non-anti-aliased rendering.
+	 *
+	 * @param set - True to enable anti-aliasing ("auto"), false to disable ("crispEdges").
+	 * @returns the current instance to allow chaining).
 	 */
 
 	antiAlias( set: boolean ) {
@@ -139,6 +195,10 @@ class SvgItem {
 		return this;
 	}
 
+	/**
+	 * the element is not filled
+	 */
+	
 	no_fill( ): this {
 		this.setAttr( 'fill', "transparent" );
 		return this;
@@ -152,6 +212,10 @@ class SvgItem {
 		const a = this._dom.getAttribute( name ) || '';
 		return a;
 	}
+
+	/**
+	 * return the attribute as number
+	 */
 
 	getNumAttr( name: string ) {
 		const a = this._dom.getAttribute( name )
@@ -180,7 +244,7 @@ class SvgItem {
 	}
 
 	/**
-	 * 
+	 * change one style value
 	 */
 
 	setStyle<K extends keyof CSSStyleDeclaration>( name: K, value: string | number ) : this {
@@ -248,10 +312,9 @@ class SvgItem {
 		this.setAttr( "clip-path", `url(#${id})` );
 		return this;
 	}
-
 	
 	/**
-	 * 
+	 * define the whole transformation
 	 */
 
 	transform( tr: string ): this {
@@ -259,11 +322,19 @@ class SvgItem {
 		return this;
 	}
 
+	/**
+	 * add a transformation to the current transformation
+	 */
+
 	add_transformation( tr: string ): this {
 		const t = this.getAttr( "transform" );
 		this.setAttr( "transform", t+' '+tr );
 		return this;
 	}
+
+	/**
+	 * remove all transformations
+	 */
 
 	clear_transform( ) {
 		this.setAttr( "transform", null );
@@ -271,7 +342,7 @@ class SvgItem {
 	}
 
 	/**
-	 * 
+	 * rotation
 	 */
 
 	rotate( deg: number, cx: number, cy: number ): this {
@@ -284,6 +355,10 @@ class SvgItem {
 		return this;
 	}
 
+	/**
+	 * translation
+	 */
+
 	translate( dx: number, dy: number ): this {
 		this.transform( `translate( ${dx} ${dy} )` );
 		return this;
@@ -293,6 +368,10 @@ class SvgItem {
 		this.add_transformation( `translate( ${dx} ${dy} )` );
 		return this;
 	}
+
+	/**
+	 * scaling
+	 */
 
 	scale( x: number ): this {
 		this.transform( `scale( ${x} )` );
@@ -304,9 +383,8 @@ class SvgItem {
 		return this;
 	}
 
-
 	/**
-	 * 
+	 * handle SVG DOM event
 	 */
 
 	addDOMEvent<K extends keyof GlobalDOMEvents>( name: K, listener: GlobalDOMEvents[K], prepend = false ) {
@@ -318,7 +396,8 @@ class SvgItem {
 
 
 /**
- * 
+ * Represents an SVG path element, providing methods for constructing and manipulating SVG paths.
+ * It extends `SvgItem` to inherit common SVG element functionalities.
  */
 
 export class SvgPath extends SvgItem {
@@ -334,6 +413,10 @@ export class SvgPath extends SvgItem {
 		return this;
 	}
 
+	/**
+	 * Resets the path data and all attributes of the SVG path element.
+	 * @returns The current `SvgPath` instance for chaining.
+	 */
 	reset( ) {
 		this._path = "";
 		super.reset( );
@@ -341,9 +424,11 @@ export class SvgPath extends SvgItem {
 	}
 
 	/**
-	 * move the current pos
-	 * @param x new pos x
-	 * @param y new pos y
+	 * Moves the current drawing position to the specified coordinates without drawing a line.
+	 * This is typically the first command in a path.
+	 *
+	 * @param x - The x-coordinate to move to.
+	 * @param y - The y-coordinate to move to.
 	 * @returns this
 	 */
 
@@ -353,9 +438,10 @@ export class SvgPath extends SvgItem {
 	}
 
 	/**
-	 * draw aline to the given point
-	 * @param x end x
-	 * @param y end y
+	 * Draws a straight line from the current position to the specified coordinates.
+	 *
+	 * @param x - The x-coordinate of the end point.
+	 * @param y - The y-coordinate of the end point.
 	 * @returns this
 	 */
 
@@ -365,7 +451,18 @@ export class SvgPath extends SvgItem {
 	}
 
 	/**
-	 * draw a curve
+	 * Draws a cubic Bézier curve from the current point to `(x3, y3)` using `(x1, y1)`
+	 * as the control point at the beginning of the curve and `(x2, y2)` as the
+	 * control point at the end of the curve.
+	 *
+	 * @param x1 - The x-coordinate of the first control point.
+	 * @param y1 - The y-coordinate of the first control point.
+	 * @param x2 - The x-coordinate of the second control point.
+	 * @param y2 - The y-coordinate of the second control point.
+	 * @param x3 - The x-coordinate of the end point of the curve.
+	 * @param y3 - The y-coordinate of the end point of the curve.
+	 *
+	 * @returns The current `SvgPath` instance for chaining.
 	 */
 
 	curveTo( x1: number, y1: number, x2: number, y2: number, x3: number, y3: number ) {
@@ -375,7 +472,9 @@ export class SvgPath extends SvgItem {
 
 
 	/**
-	 * close the currentPath
+	 * Closes the current subpath by drawing a straight line from the current position
+	 * to the initial point of the current subpath.
+	 * @returns The current `SvgPath` instance for chaining.
 	 */
 
 	closePath( ): this {
@@ -385,11 +484,15 @@ export class SvgPath extends SvgItem {
 
 	/**
 	 * draw an arc
-	 * @param x center x
-	 * @param y center y
-	 * @param r radius
-	 * @param start angle start in degrees
-	 * @param end angle end in degrees
+	 * Draws an elliptical arc from the current point to a new point.
+	 *
+	 * @param x - The x-coordinate of the center of the ellipse.
+	 * @param y - The y-coordinate of the center of the ellipse.
+	 * @param r - The radius of the arc.
+	 * @param start - The start angle of the arc in degrees (0 is right, 90 is down).
+	 * @param end - The end angle of the arc in degrees.
+	 * @param clockwise - If `true`, the arc is drawn clockwise; otherwise, counter-clockwise. Defaults to `true`.
+	 *
 	 * @returns this
 	 */
 
@@ -406,11 +509,17 @@ export class SvgPath extends SvgItem {
 }
 
 /**
- * 
+ * Represents an SVG text element, providing methods for positioning and styling text.
+ * It extends `SvgItem` to inherit common SVG element functionalities.
  */
 
 export class SvgText extends SvgItem {
-
+	/**
+	 * Creates an instance of `SvgText`.
+	 * @param x - The x-coordinate for the text's starting position.
+	 * @param y - The y-coordinate for the text's starting position.
+	 * @param txt - The text content.
+	 */
 	constructor( x: number, y: number, txt: string ) {
 		super( 'text' );
 		
@@ -420,18 +529,38 @@ export class SvgText extends SvgItem {
 		this._dom.innerHTML = txt;
 	}
 
+	/**
+	 * Sets the font family for the text.
+	 * @param font - The font family name (e.g., "Arial", "sans-serif").
+	 * @returns The current `SvgText` instance for chaining.
+	 */
 	font( font: string ): this {
 		return this.setAttr( 'font-family', font );
 	}
 
+	/**
+	 * Sets the font size for the text.
+	 * @param size - The font size, either as a number (e.g., 12) or a string (e.g., "1.2em").
+	 * @returns The current `SvgText` instance for chaining.
+	 */
 	fontSize( size: number | string ): this {
 		return this.setAttr( 'font-size', size+'' );
 	}
 
+	/**
+	 * Sets the font weight for the text.
+	 * @param weight - The font weight ("light", "normal", or "bold").
+	 * @returns The current `SvgText` instance for chaining.
+	 */
 	fontWeight( weight: 'light' | 'normal' | 'bold' ): this {
 		return this.setAttr( 'font-weight', weight );
 	}
 
+	/**
+	 * Sets the horizontal text alignment.
+	 * @param align - The horizontal alignment ("left", "center", or "right").
+	 * @returns The current `SvgText` instance for chaining.
+	 */
 	textAlign( align: 'left' | 'center' | 'right' ): this {
 
 		let al;
@@ -439,12 +568,19 @@ export class SvgText extends SvgItem {
 			case 'left': al = 'start'; break;
 			case 'center': al = 'middle'; break;
 			case 'right': al = 'end'; break;
-			default: return this;
+			default:
+				// If an invalid alignment is provided, do nothing and return this for chaining.
+				// This prevents setting an invalid attribute value.
+				console.warn(`Invalid textAlign value: ${align}. Must be 'left', 'center', or 'right'.`);
+				return this;
 		}
 
 		return this.setAttr( 'text-anchor', al );
 	}
 
+	/**
+	 * change the vertical alignment
+	 */
 	verticalAlign( align: 'top' | 'center' | 'bottom' | 'baseline' ): this {
 
 		let al;
@@ -453,7 +589,10 @@ export class SvgText extends SvgItem {
 			case 'center': al = 'middle'; break;
 			case 'bottom': al = 'baseline'; break;
 			case 'baseline': al = 'mathematical'; break;
-			default: return;
+			default:
+				// If an invalid alignment is provided, do nothing and return this for chaining.
+				console.warn(`Invalid verticalAlign value: ${align}. Must be 'top', 'center', 'bottom', or 'baseline'.`);
+				return this;
 		}
 
 		return this.setAttr( 'alignment-baseline', al );
@@ -461,10 +600,15 @@ export class SvgText extends SvgItem {
 }
 
 /**
- * 
+ * Represents an SVG icon, which is essentially an SVG element embedded within another.
+ * It extends `SvgItem` to inherit common SVG element functionalities.
  */
 
 export class SvgIcon extends SvgItem {
+	/**
+	 * Creates an instance of `SvgIcon` from an SVG string.
+	 * @param svg - The SVG string, optionally prefixed with "data:image/svg+xml,".
+	 */
 	constructor( svg: string ) {
 		super( "svg" );
 
@@ -497,7 +641,8 @@ export class SvgIcon extends SvgItem {
 
 
 /**
- * 
+ * Represents a generic SVG shape element.
+ * It extends `SvgItem` to inherit common SVG element functionalities.
  */
 
 export class SvgShape extends SvgItem {
@@ -508,10 +653,15 @@ export class SvgShape extends SvgItem {
 
 /**
  * 
+ * Type alias for a number or a percentage string.
  */
 
 type number_or_perc = number | `${string}%`
 
+/**
+ * Represents an SVG linear gradient element.
+ * It extends `SvgItem` to inherit common SVG element functionalities.
+ */
 export class SvgGradient extends SvgItem {
 
 	private static g_id = 1;
@@ -519,6 +669,14 @@ export class SvgGradient extends SvgItem {
 	private _id: string;
 	private _stops: { offset: number_or_perc, color: string } [];
 
+	/**
+	 * Creates an instance of `SvgGradient`.
+	 * @param x1 - The x-coordinate of the starting point of the gradient vector.
+	 * @param y1 - The y-coordinate of the starting point of the gradient vector.
+	 * @param x2 - The x-coordinate of the ending point of the gradient vector.
+	 * @param y2 - The y-coordinate of the ending point of the gradient vector.
+	 * @returns The current `SvgGradient` instance for chaining.
+	 */
 	constructor( x1: number_or_perc, y1: number_or_perc, x2: number_or_perc, y2: number_or_perc ) {
 		super( 'linearGradient')
 		
@@ -534,10 +692,20 @@ export class SvgGradient extends SvgItem {
 		this._stops = [];
 	}
 
+	/**
+	 * Gets the URL reference to this gradient, suitable for use in `fill` or `stroke` attributes.
+	 * @returns A string in the format `url(#<gradient_id>)`.
+	 */
 	get id( ) {
 		return 'url(#'+this._id+')';
 	}
 
+	/**
+	 * Adds a color stop to the gradient.
+	 * @param offset - The offset of the color stop, either as a number (0-100) or a percentage string.
+	 * @param color - The color at this stop.
+	 * @returns The current `SvgGradient` instance for chaining.
+	 */
 	addStop( offset: number_or_perc, color: string ): this {
 		this._dom.insertAdjacentHTML( "beforeend", `<stop offset="${offset}%" stop-color="${color}"></stop>`);
 		return this;
@@ -545,18 +713,29 @@ export class SvgGradient extends SvgItem {
 }
 
 /**
- * 
+ * Represents an SVG group element (`<g>`), which can contain other SVG elements.
+ * It extends `SvgItem` and provides methods for appending various SVG shapes and gradients.
  */
 
 export class SvgGroup extends SvgItem {
 	
+	/**
+	 * Creates an instance of `SvgGroup`.
+	 * @param tag - The SVG tag name for the group element (defaults to "g").
+	 */
 	constructor( tag = "g" ) {
 		super( tag )
 	}
 
 	/**
-	 * 
+	 * Appends an `SvgItem` to this group.
+	 *
+	 * @template K - The type of the `SvgItem` being appended.
+	 * @param item - The `SvgItem` instance to append.
+	 *
+	 * @returns The appended `SvgItem` instance.
 	 */
+	
 
 	append<K extends SvgItem>( item: K ): K  {
 		this._dom.appendChild( item.getDom() );
@@ -570,7 +749,8 @@ export class SvgGroup extends SvgItem {
 	}
 
 	/**
-	 * 
+	 * Creates and appends an `SvgPath` element to this group.
+	 * @returns The newly created `SvgPath` instance.
 	 */
 
 	path( ): SvgPath {
@@ -578,11 +758,28 @@ export class SvgGroup extends SvgItem {
 		return this.append( path );
 	}
 
+	/**
+	 * Creates and appends an `SvgText` element to this group.
+	 * @param x - The x-coordinate for the text.
+	 * @param y - The y-coordinate for the text.
+	 * @param txt - The text content.
+	 * @returns The newly created `SvgText` instance.
+	 */
 	text( x: number, y: number, txt: string ) {
 		const text = new SvgText( x, y, txt );
 		return this.append( text );
 	}
 
+	/**
+	 * Creates and appends an SVG ellipse element to this group.
+	 *
+	 * @param x - The x-coordinate of the center of the ellipse.
+	 * @param y - The y-coordinate of the center of the ellipse.
+	 * @param r1 - The x-radius of the ellipse.
+	 * @param r2 - The y-radius of the ellipse.
+	 *
+	 * @returns The newly created `SvgShape` instance representing the ellipse.
+	 */
 	ellipse( x: number, y: number, r1: number, r2: number ): SvgShape {
 		const shape = new SvgShape( 'ellipse' );
 		shape.setAttr( 'cx', num(x)+'' );
@@ -592,6 +789,15 @@ export class SvgGroup extends SvgItem {
 		return this.append( shape );
 	}
 
+	/**
+	 * Creates and appends an SVG circle element to this group.
+	 * (Internally uses an ellipse with equal x and y radii).
+	 *
+	 * @param x - The x-coordinate of the center of the circle.
+	 * @param y - The y-coordinate of the center of the circle.
+	 * @param r1 - The radius of the circle.
+	 * @returns The newly created `SvgShape` instance representing the circle.
+	 */
 	circle( x: number, y: number, r1: number ): SvgShape {
 		const shape = new SvgShape( 'ellipse' );
 		shape.setAttr( 'cx', num(x)+'' );
@@ -601,6 +807,16 @@ export class SvgGroup extends SvgItem {
 		return this.append( shape );
 	}
 
+	/**
+	 * Creates and appends an `SvgIcon` element to this group.
+	 *
+	 * @param svg - The SVG string content for the icon.
+	 * @param x - The x-coordinate for the icon's position.
+	 * @param y - The y-coordinate for the icon's position.
+	 * @param w - The width of the icon.
+	 * @param h - The height of the icon.
+	 * @returns The newly created `SvgIcon` instance.
+	 */
 	icon( svg: string, x: number, y: number, w: number, h: number ): SvgIcon {
 		const icon = new SvgIcon( svg );
 		icon.setAttr( 'x', num(x)+'' );
@@ -612,6 +828,16 @@ export class SvgGroup extends SvgItem {
 		return this.append( icon );
 	}
 
+	/**
+	 * Creates and appends an SVG rectangle element to this group.
+	 * Handles negative height by adjusting `y` and `h` accordingly.
+	 *
+	 * @param x - The x-coordinate of the top-left corner of the rectangle.
+	 * @param y - The y-coordinate of the top-left corner of the rectangle.
+	 * @param w - The width of the rectangle.
+	 * @param h - The height of the rectangle.
+	 * @returns The newly created `SvgShape` instance representing the rectangle.
+	 */
 	rect( x: number, y: number, w: number, h: number ): SvgShape {
 
 		if( h<0 ) {
@@ -627,6 +853,11 @@ export class SvgGroup extends SvgItem {
 		return this.append( shape );
 	}
 
+	/**
+	 * Creates and appends an SVG group element (`<g>`) to this group.
+	 * @param id - Optional. An ID for the new group.
+	 * @returns The newly created `SvgGroup` instance.
+	 */
 	group( id?: string ) {
 		const group = new SvgGroup( );
 		if( id ) {
@@ -638,16 +869,20 @@ export class SvgGroup extends SvgItem {
 
 	/**
 	 * 
-	 * example
-	 * ```ts
-	 * const g = c.linear_gradient( '0%', '0%', '0%', '100%' )
-	 * 				.addStop( 0, 'red' )
-	 * 				.addStop( 100, 'green' );
-	 * 
-	 * p.rect( 0, 0, 100, 100 )
-	 * 		.stroke( g.id );
-	 * 
+	 * Creates and appends an SVG linear gradient definition to this group.
+	 *
+	 * @example
+	 * ```typescript
+	 * const gradient = svgGroup.linear_gradient('0%', '0%', '0%', '100%')
+	 *                          .addStop(0, 'red')
+	 *                          .addStop(100, 'green');
+	 * svgGroup.rect(0, 0, 100, 100).fill(gradient.id);
 	 * ```
+	 * @param x1 - The x-coordinate of the starting point of the gradient vector.
+	 * @param y1 - The y-coordinate of the starting point of the gradient vector.
+	 * @param x2 - The x-coordinate of the ending point of the gradient vector.
+	 * @param y2 - The y-coordinate of the ending point of the gradient vector.
+	 * @returns The newly created `SvgGradient` instance.
 	 */
 
 	linear_gradient( x1: number_or_perc, y1: number_or_perc, x2: number_or_perc, y2: number_or_perc ) {
@@ -656,7 +891,9 @@ export class SvgGroup extends SvgItem {
 	}
 
 	/**
-	 * clear 
+	 * Clears all child elements from this SVG group.
+	 *
+	 * @returns void
 	 */
 
 	clear( ) {
@@ -671,15 +908,40 @@ export class SvgGroup extends SvgItem {
 
 
 
+/**
+ * A specialized `SvgGroup` that provides methods for adding SVG definitions like clip paths and patterns.
+ * It extends `SvgGroup` to inherit common SVG element functionalities and acts as a container for definitions.
+ */
 export class SvgBuilder extends SvgGroup {
 	private static g_clip_id = 1;
 	private static g_pat_id = 1;
 	
+	/**
+	 * Creates an instance of `SvgBuilder`.
+	 */
 	constructor( ) {
 		super(  );
 	}
 
+	/**
+	 * Adds an SVG clip path definition to the builder.
+	 *
+	 * @param x - The x-coordinate of the top-left corner of the clipping rectangle.
+	 * @param y - The y-coordinate of the top-left corner of the clipping rectangle.
+	 * @param w - The width of the clipping rectangle.
+	 * @param h - The height of the clipping rectangle.
+	 * @returns An object containing the generated `id` for the clip path and the `SvgGroup` instance representing the clip path.
+	 */
 	addClip( x: number, y: number, w: number, h: number ) {
+		/**
+		 * Adds an SVG clip path definition to the builder.
+		 *
+		 * @param x - The x-coordinate of the top-left corner of the clipping rectangle.
+		 * @param y - The y-coordinate of the top-left corner of the clipping rectangle.
+		 * @param w - The width of the clipping rectangle.
+		 * @param h - The height of the clipping rectangle.
+		 * @returns An object containing the generated `id` for the clip path and the `SvgGroup` instance representing the clip path.
+		 */
 		const id = 'clip-'+SvgBuilder.g_clip_id++;
 		const clip = new SvgGroup( 'clipPath' );
 		clip.setAttr('id', id );
@@ -689,7 +951,25 @@ export class SvgBuilder extends SvgGroup {
         return {id,clip};
     }
 
+	/**
+	 * Adds an SVG pattern definition to the builder.
+	 *
+	 * @param x - The x-coordinate of the pattern tile's top-left corner.
+	 * @param y - The y-coordinate of the pattern tile's top-left corner.
+	 * @param w - The width of the pattern tile.
+	 * @param h - The height of the pattern tile.
+	 * @returns An object containing the generated `id` for the pattern and the `SvgGroup` instance representing the pattern.
+	 */
 	addPattern( x: number, y: number, w: number, h: number ) {
+		/**
+		 * Adds an SVG pattern definition to the builder.
+		 *
+		 * @param x - The x-coordinate of the pattern tile's top-left corner.
+		 * @param y - The y-coordinate of the pattern tile's top-left corner.
+		 * @param w - The width of the pattern tile.
+		 * @param h - The height of the pattern tile.
+		 * @returns An object containing the generated `id` for the pattern and the `SvgGroup` instance representing the pattern.
+		 */
 		const id = 'pat-'+SvgBuilder.g_pat_id++;
 
 		const pat = new SvgGroup( 'pattern' );
@@ -708,7 +988,7 @@ export class SvgBuilder extends SvgGroup {
 
 
 /**
- * 
+ * Properties for the `SvgComponent`.
  */
 
 export interface SvgProps extends ComponentProps {
@@ -717,11 +997,16 @@ export interface SvgProps extends ComponentProps {
 }
 
 /**
- * 
+ * A component that renders an SVG element, acting as a container for SVG graphics.
+ * It extends `Component` and provides methods for setting SVG content.
  */
 
 export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 
+	/**
+	 * Creates an instance of `SvgComponent`.
+	 * @param props - The properties for the SVG component.
+	 */
 	constructor( props: P ) {
 		super( { ...props, tag: "svg", ns: SVG_NS } );
 
@@ -736,11 +1021,21 @@ export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
 		}
 	}
 
+	/**
+	 * Sets the entire SVG content of the component using an `SvgBuilder`.
+	 * Any existing content will be cleared.
+	 * @param bld - The `SvgBuilder` instance containing the SVG elements to render.
+	 */
 	setSvg( bld: SvgBuilder ) {
 		this.clearContent( );
 		this.dom.appendChild( bld.getDom() );
 	}
 
+	/**
+	 * Appends one or more `SvgItem` instances directly to the SVG component's DOM.
+	 *
+	 * @param items - A spread array of `SvgItem` instances to append.
+	 */
 	addItems( ...items: SvgItem[] ) {
 		items.forEach( item => this.dom.appendChild( item.getDom() ) );
 	}

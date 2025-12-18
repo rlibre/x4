@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools';
-import { CoreElement } from './core_element';
-import { ariaValues, unitless } from './core_styles';
-import { CoreEvent, EventMap } from './core_events';
-import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
-import { Application, EvMessage } from './core_application';
+import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools.ts';
+import { CoreElement } from './core_element.ts';
+import { ariaValues, unitless } from './core_styles.ts';
+import { CoreEvent, EventMap } from './core_events.ts';
+import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom.ts';
+import { Application, EvMessage } from './core_application.ts';
 
 interface RefType<T extends Component> {
 	dom: T;
@@ -75,31 +75,43 @@ export const makeUniqueComponentId = ( ) => {
 }
 
 /**
- * 
+ * Base properties for all components.
  */
 
 export interface ComponentProps {
-	tag?: string;
-	ns?: string;
+	/** HTML tag name (default: `"div"`). */
+    tag?: string;
+	/** Namespace for SVG/MathML elements. */
+    ns?: string;
+	/** Inline CSS styles. */
+    style?: Partial<CSSStyleDeclaration>;
+	/** HTML attributes. */
+    attrs?: Record<string,string|number|boolean>;
+	/** Child content (components, strings, or HTML). */
+    content?: ComponentContent;
+	/** DOM event listeners. */
+    dom_events?: GlobalDOMEvents;
+	/** Additional CSS classes. */
+    cls?: string;
+	/** Element ID. */
+    id?: string;
+	/** Reference to the component instance. */
+    ref?: RefType<any>;
 	
-	style?: Partial<CSSStyleDeclaration>;
-	attrs?: Record<string,string|number|boolean>;
-	content?: ComponentContent;
-	dom_events?: GlobalDOMEvents;
-	cls?: string;
-	id?: string;
-	ref?: RefType<any>;
-
 	// shortcuts
-	width?: string | number;
+	/** Width (px or string like `"50%"` or `"3em"`). */
+    width?: string | number;
+	/** Height (px or string like `"50%"`). */
 	height?: string | number;
+	/** Component is initialy disabled. */
 	disabled?: boolean,
+	/** Component is initialy hidden. */
 	hidden?: boolean,
+	/** Enables flex layout (boolean) or sets flex-grow (number). */
 	flex?: boolean | number;
-
+	/** Tooltip text. */
 	tooltip?: string;
-
-    // wrapper
+	/** Existing DOM element to wrap. */
 	existingDOM?: HTMLElement;
 
 	//  index signature 
@@ -125,19 +137,35 @@ export interface ComponentEvents extends EventMap {
 }
 
 /**
- * 
+ * Base component class with DOM integration and event handling.
+ * Auto-generates CSS class: `x4comp` + derived class names (e.g., `x4button`).
+ *
+ * @example
+ * ```ts
+ * // Basic div
+ * const div = new Component({ tag: "div", content: "Hello" });
+ *
+ * // Custom element
+ * class MyComponent extends Component {}
+ * const inst = new MyComponent({ cls: "my-class" });
+ * ```
  */
 
 @class_ns( "x4" )
 export class Component<P extends ComponentProps = ComponentProps, E extends ComponentEvents = ComponentEvents> 
 		extends CoreElement<E> {
 
-	readonly dom: Element;
-	readonly props: P;
+	/** The underlying DOM element of the component. */
+    readonly dom: Element;
+
+	/** The properties passed to the component's constructor. */
+    readonly props: P;
+	
 	protected readonly clsprefix: string;	// internal class name prefix (x4 internal)
 
 	#store: Map<string|symbol,any>;
 
+	
 	constructor( props: P ) {
 		super( );
 
@@ -219,6 +247,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		(this.dom as any)[COMPONENT] = this;
 	}
 
+	/**
+     * Attaches a listener for global messages dispatched by the application.
+     * The listener is automatically removed when the component's DOM element is removed.
+     * @param cb - The callback function to execute when a global message is received.
+     */
 
 	onGlobalEvent( cb: ( ev: EvMessage ) => void ) {
 		
@@ -233,17 +266,21 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: CLASSES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * 
-	 */
-
+     * Checks if the component's DOM element has a specific CSS class.
+     * @param cls - The CSS class name to check.
+     * @returns `true` if the class is present, `false` otherwise.
+     */
+    
 	hasClass( cls: string ) {
 		return this.dom.classList.contains( cls );
 	}
 
 	/**
-	 * 
-	 */
-
+     * Adds one or more CSS classes to the component's DOM element.
+     * Multiple classes can be provided as a space-separated string.
+     * @param cls - The CSS class(es) to add.
+     */
+    
 	addClass( cls: string ) {
 		if( !cls ) return;
 			
@@ -259,9 +296,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * special case: '*' mean clear class list
-	 */
-
+     * Removes one or more CSS classes from the component's DOM element.
+     * If `*` is passed as the class name, all classes will be removed.
+     * Multiple classes can be provided as a space-separated string.
+     * @param cls - The CSS class(es) to remove, or `*` to clear all.
+     */
+    
 	removeClass( cls: string ) {
 		if( !cls ) return;
 
@@ -280,9 +320,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-
+     * Removes all CSS classes from the component's DOM element that match a given regular expression.
+     * @param re - The regular expression to match against class names.
+     */
+    
 	removeClassEx( re: RegExp ) {
 		const all = Array.from( this.dom.classList );
 		all.forEach( x => {
@@ -293,9 +334,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-
+     * Toggles the presence of one or more CSS classes on the component's DOM element.
+     * If a class is present, it's removed; otherwise, it's added.
+     * Multiple classes can be provided as a space-separated string.
+     * @param cls - The CSS class(es) to toggle.
+     */
+    
 	toggleClass( cls: string ) {
 		if( !cls ) return;
 		
@@ -313,9 +357,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-
+     * Sets or removes a CSS class based on a boolean condition.
+     * @param cls - The CSS class to manage.
+     * @param set - If `true`, the class is added; if `false`, it's removed. Defaults to `true`.
+     * @returns The component instance for chaining.
+     */
+    
 	setClass( cls: string, set: boolean = true ) : this {
 		if( set ) this.addClass(cls);
 		else this.removeClass( cls );
@@ -325,9 +372,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: ATTRIBUTES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * attributes
-	 */
-
+     * Sets multiple HTML attributes on the component's DOM element.
+     * @param attrs - An object where keys are attribute names and values are their corresponding values.
+     * @returns The component instance for chaining.
+     */
+    
 	setAttributes( attrs: ComponentAttributes ): this {
 		for( const name in attrs ) {
 			this.setAttribute( name, attrs[name] );
@@ -336,9 +385,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-	
+     * Sets a single HTML attribute on the component's DOM element.
+     * If `value` is `null`, `undefined`, or `false`, the attribute will be removed.
+     * @param name - The name of the attribute.
+     * @param value - The value of the attribute.
+     */
+    
 	setAttribute( name: string, value: string | number | boolean ) {
 		if( value===null || value===undefined || value===false ) {
 			this.dom.removeAttribute( name );
@@ -349,24 +401,35 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-
+     * Retrieves the value of an HTML attribute from the component's DOM element.
+     * @param name - The name of the attribute.
+     * @returns The string value of the attribute, or `null` if not present.
+     */
+    
 	getAttribute( name: string ): string {
 		return this.dom.getAttribute( name );
 	}
 
 	/**
+     * Retrieves the value of a `data-*` attribute from the component's DOM element.
+     * @param name - The suffix of the `data-` attribute (e.g., for `data-foo`, use `"foo"`).
+     * @returns The string value of the `data-*` attribute, or `null` if not present.
 	 * 
-	 */
-
+	 * @cf setIntData/getIntData (number)
+	 * @cf setInternalData/getInternalData (typed data)
+     */
+    
 	getData( name: string ) : string {
 		return this.getAttribute( "data-"+name );
 	}
 
 	/**
-	 * @returns undefined if not a number
-	 */
+     * Retrieves the integer value of a `data-*` attribute from the component's DOM element.
+     * Returns `undefined` if the attribute is not present or cannot be parsed as a number.
+     * @param name - The suffix of the `data-` attribute.
+     * @returns The integer value of the `data-*` attribute, or `undefined`.
+     */
+
 	getIntData( name: string ) : number {
 		const v = parseInt( this.getAttribute( "data-"+name ) );
 		if( Number.isFinite(v) ) {
@@ -377,9 +440,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
-
+     * Sets the value of a `data-*` attribute on the component's DOM element.
+     * @param name - The suffix of the `data-` attribute.
+     * @param value - The string value to set.
+     */
+    
 	setData( name: string, value: string ) {
 		return this.setAttribute( "data-"+name, value );
 	}
@@ -388,7 +453,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * idem as setData but onot on dom, you can store anything 
 	 */
 
-	setInternalData( name: string|symbol, value: any ): this {
+	setInternalData<T>( name: string|symbol, value: T ): this {
 		if( !this.#store ) {
 			this.#store = new Map( );
 		}
@@ -405,16 +470,20 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: DOM EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * 
-	 */
+     * Adds a DOM event listener to the component's DOM element.
+     * @param name - The name of the DOM event (e.g., `'click'`, `'mouseover'`).
+     * @param listener - The event handler function.
+     * @param prepend - If `true`, the listener is added to the beginning of the event listener list. Defaults to `false`.
+     */
 
 	addDOMEvent<K extends keyof GlobalDOMEvents>( name: K, listener: GlobalDOMEvents[K], prepend = false ) {
 		addEvent( this.dom, name, listener as DOMEventHandler, prepend );
 	}
 
 	/**
-	 * 
-	 */
+     * Sets multiple DOM event listeners on the component's DOM element.
+     * @param events - An object where keys are event names and values are their corresponding handler functions.
+     */
 
 	setDOMEvents( events: GlobalDOMEvents ) {
 		for( const name in events ) {
@@ -441,8 +510,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: CONTENT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * remove all content from component
-	 */
+     * Removes all child nodes from the component's DOM element.
+     */
 
 	clearContent( ) {
 		const d = this.dom;
@@ -452,10 +521,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * change the whole content of the component
-	 * clear the content before
-	 * @param content new content
-	 */
+     * Replaces the entire content of the component's DOM element with new content.
+     * Any existing content will be cleared before the new content is added.
+     * @param content - The new content to set. Can be a single item or an array of items.
+     */
 
 	setContent( content: ComponentContent ) {
 		this.clearContent( );
@@ -463,9 +532,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * cf. appendContent
-	 * @param content content to append
-	 */
+     * Appends content to the end of the component's DOM element.
+     * Content can be a single Component, an array of Components, a string, an array of strings,
+     * raw HTML, an array of raw HTML, a number, or a boolean.
+     * @param content - The content to append.
+     */
 
 	appendContent( content: ComponentContent ) {
 		const set = ( d: any, c: Component | string | UnsafeHtml | number | boolean ) => {
@@ -513,9 +584,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}		
 
 	/**
-	 * cf. appendContent
-	 * @param content content to append
-	 */
+     * Prepends content to the beginning of the component's DOM element.
+     * Content can be a single Component, an array of Components, a string, an array of strings,
+     * raw HTML, an array of raw HTML, a number, or a boolean.
+     * @param content - The content to prepend.
+     */
 
 	prependContent( content: ComponentContent ) {
 		const d = this.dom;
@@ -548,9 +621,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * remove a single child
-	 * @see clearContent
-	 */
+     * Removes a specific child component from this component's DOM element.
+     * @param child - The child component instance to remove.
+	 * @cf clearContent
+     */
 
 	removeChild( child: Component ) {
 		this.dom.removeChild( child.dom );
@@ -558,8 +632,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	
 	/**
-	 * query all elements by selector
-	 */
+     * Queries all descendant DOM elements matching a CSS selector and wraps them as Component instances.
+     * @param selector - The CSS selector string.
+     * @returns An array of Component instances.
+     */
 
 	queryAll( selector: string ): Component[] {
 		const all = this.dom.querySelectorAll( selector );
@@ -569,8 +645,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Queries the first descendant DOM element matching a CSS selector and wraps it as a Component instance.
+     * @param selector - The CSS selector string.
+     * @returns The first matching Component instance, or `null` if no match is found.
+     */
 	
 	query<T extends Component = Component>( selector: string ): T {
 		const r = this.dom.querySelector( selector );
@@ -582,8 +660,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	
 	/**
-	 * 
-	 */
+     * Sets an ARIA attribute on the component's DOM element.
+     * @param name - The name of the ARIA attribute (e.g., `'aria-label'`).
+     * @param value - The value of the ARIA attribute.
+     * @returns The component instance for chaining.
+     */
 	
 	setAria( name: keyof ariaValues, value: string | number | boolean ): this {
 		this.setAttribute( name, value );
@@ -592,8 +673,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 
 	/**
-	 * 
-	 */
+     * Sets multiple inline CSS styles on the component's DOM element.
+     * Numeric values for properties like `width` or `height` will automatically append `"px"` unless they are unitless.
+     * @param style - An object where keys are CSS property names and values are their corresponding styles.
+     * @returns The component instance for chaining.
+     */
 
 	setStyle( style: Partial<CSSStyleDeclaration> ): this {
 		const _style = (this.dom as HTMLElement).style;
@@ -612,8 +696,12 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Sets a single inline CSS style property on the component's DOM element.
+     * Numeric values for properties like `width` or `height` will automatically append `"px"` unless they are unitless.
+     * @param name - The name of the CSS property.
+     * @param value - The value of the CSS property.
+     * @returns The component instance for chaining.
+     */
 
 	setStyleValue<K extends keyof CSSStyleDeclaration>( name: K, value: CSSStyleDeclaration[K] | number ): this {
 		
@@ -635,35 +723,51 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @param name 
-	 * @returns 
-	 */
+     * Retrieves the computed inline CSS style value for a specific property.
+     * This only returns styles explicitly set via `setStyle` or `setStyleValue`, not inherited or stylesheet-defined styles.
+     * @param name - The name of the CSS property.
+     * @returns The value of the inline CSS property.
+     */
 
 	getStyleValue<K extends keyof CSSStyleDeclaration>( name: K ) {
 		const _style = (this.dom as HTMLElement).style;
 		return _style[name];
 	}
 
+	/**
+     * Sets the width of the component.
+     * @param w - The width value. Can be a number (interpreted as pixels) or a string (e.g., `"100px"`, `"50%"`).
+     */
+
 	setWidth( w: number | string ) {
 		this.setStyleValue( "width", isNumber(w) ? w+"px" : w );
 	}
+
+	/**
+     * Sets the height of the component.
+     * @param h - The height value. Can be a number (interpreted as pixels) or a string (e.g., `"100px"`, `"50%"`).
+     */
 
 	setHeight( h: number | string ) {
 		this.setStyleValue( "height", isNumber(h) ? h+"px" : h );
 	}
 
 	/**
-	 * 
-	 */
+     * Sets a CSS custom property (CSS variable) on the component's DOM element.
+     * @param name - The name of the CSS variable (e.g., `'--my-color'`).
+     * @param value - The value to set for the CSS variable.
+     */
 
 	setStyleVariable( name: string, value: string ) {
 		(this.dom as HTMLElement).style.setProperty( name, value );
 	}
 
 	/**
-	 * 
-	 */
+     * Retrieves the value of a CSS custom property (CSS variable) for the component.
+     * The computed style of the element is used.
+     * @param name - The name of the CSS variable.
+     * @returns The string value of the CSS variable.
+     */
 
 	getStyleVariable( name: string ) {
 		const style = this.getComputedStyle( );
@@ -671,33 +775,42 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @returns 
-	 */
+     * Retrieves the computed style for the component's DOM element.
+     * @returns A `CSSStyleDeclaration` object representing the computed styles.
+     */
 
 	getComputedStyle( ) {
 		return getComputedStyle( this.dom );
 	}
 
 	/**
-	 * 
-	 */
+     * Sets pointer capture on the component's DOM element for a specific pointer.
+     * @param pointerId - The unique ID of the pointer.
+	 *
+	 * @ex
+	 * control.on("pointerdown", (ev) => {
+	 * 	ev.preventDefault(); // Prevent default browser actions
+	 * 	control.setCapture(ev.pointerId);
+	 * }
+     */
 
 	setCapture( pointerId: number ) {
 		this.dom.setPointerCapture( pointerId );
 	}
 
 	/**
-	 * 
-	 */
+     * Releases pointer capture on the component's DOM element for a specific pointer.
+     * @param pointerId - The unique ID of the pointer.
+     */
 
 	releaseCapture( pointerId: number ) {
 		this.dom.releasePointerCapture( pointerId );
 	}
 
 	/**
-	 * 
-	 */
+     * Returns the size and position of the component's DOM element relative to the viewport.
+     * @returns A `Rect` object containing the bounding rectangle.
+     */
 
 	getBoundingRect( ): Rect {
 		const rc = this.dom.getBoundingClientRect( );
@@ -707,37 +820,48 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: MISC ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * 
-	 */
+     * Gives focus to the component's DOM element.
+     * @returns The component instance for chaining.
+     */
 
 	focus( ): this {
 		(this.dom as HTMLElement).focus( );
 		return this;
 	}
 
+	/**
+     * Checks if the component's DOM element currently has focus.
+     * @returns `true` if the component is focused, `false` otherwise.
+     */
+
 	hasFocus( ) {
 		return document.activeElement==this.dom;
 	}
 
 	/**
-	 * 
-	 */
+     * Scrolls the component's DOM element into the visible area of the browser window.
+     * @param arg - Optional. A boolean (`true` for smooth scroll) or an object specifying scroll options.
+     */
 
 	scrollIntoView(arg?: boolean | ScrollIntoViewOptions) {
 		this.dom.scrollIntoView(arg);
 	}
 
 	/**
-	 * 
-	 */
+     * Checks if the component's DOM element is currently visible (i.e., not hidden by `display: none`).
+     * @returns `true` if the component is visible, `false` otherwise.
+     */
 
 	isVisible( ) {
 		return (this.dom as HTMLElement).offsetParent !== null;
 	}
 
 	/**
-	 * 
-	 */
+     * Shows or hides the component.
+     * It toggles the `x4hidden` CSS class.
+     * @param vis - If `true`, the component is shown; if `false`, it's hidden. Defaults to `true`.
+     * @returns The component instance for chaining.
+     */
 
 	show( vis = true ): this {
 		this.setClass( 'x4hidden', !vis );
@@ -745,8 +869,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Hides the component by applying the `x4hidden` CSS class.
+     * @returns The component instance for chaining.
+     */
 
 	hide( ): this {
 		this.show( false );
@@ -754,8 +879,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * enable or disable a component (all sub HTMLElement will be also disabled)
-	 */
+     * Enables or disables the component.
+     * This sets the `disabled` attribute and also propagates the disabled state to child input elements.
+     * @param ena - If `true`, the component is enabled; if `false`, it's disabled. Defaults to `true`.
+     * @returns The component instance for chaining.
+     */
 
 	enable( ena = true ): this {
 		this.setAttribute( "disabled", !ena ? 'true' : null );
@@ -776,8 +904,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Disables the component.
+     * @returns The component instance for chaining.
+     */
 
 	disable( ): this {
 		this.enable( false );
@@ -785,16 +914,19 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * check if element is marked disabled
-	 */
+     * Checks if the component is marked as disabled.
+     * This checks for the presence of the `disabled` attribute.
+     * @returns The string value of the `disabled` attribute, or `null` if not present.
+     */
 
 	isDisabled( ) {
 		return this.getAttribute('disabled');
 	}
 
 	/**
-	 * 
-	 */
+     * Returns the next sibling element as a Component instance.
+     * @returns The next sibling component, or `null` if none exists.
+     */
 
 	nextElement<T extends Component = Component>( ): T {
 		const nxt = this.dom.nextElementSibling;
@@ -802,9 +934,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @returns 
-	 */
+     * Returns the previous sibling element as a Component instance.
+     * @returns The previous sibling component, or `null` if none exists.
+     */
 
 	prevElement<T extends Component = Component>( ): T {
 		const nxt = this.dom.previousElementSibling;
@@ -812,16 +944,21 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * search for parent that match the given contructor 
-	 */
+     * Searches up the DOM tree for a parent element that is a Component and optionally matches a specific constructor.
+     * @param cls - Optional. The constructor of the Component type to match.
+     * @returns The matching parent Component instance, or `null` if not found.
+     */
 
 	parentElement<T extends Component>( cls?: Constructor<T> ): T {
 		return Component.parentElement<T>( this.dom, cls );	
 	}
 
 	/**
-	 * search for parent that match the given contructor 
-	 */
+     * Static method to search up the DOM tree for a parent element that is a Component and optionally matches a specific constructor.
+     * @param dom - The starting DOM node from which to search upwards.
+     * @param cls - Optional. The constructor of the Component type to match.
+     * @returns The matching parent Component instance, or `null` if not found.
+     */
 	
 	static parentElement<T extends Component>( dom: Node, cls?: Constructor<T> ): T {
 
@@ -842,9 +979,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @returns 
-	 */
+     * Returns the first child element as a Component instance.
+     * @returns The first child component, or `null` if none exists.
+     */
 
 	firstChild<T extends Component = Component>( ) : T {
 		const nxt = this.dom.firstElementChild;
@@ -852,9 +989,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 * @returns 
-	 */
+     * Returns the last child element as a Component instance.
+     * @returns The last child component, or `null` if none exists.
+     */
 
 	lastChild<T extends Component = Component>( ) : T {
 		const nxt = this.dom.lastElementChild;
@@ -862,8 +999,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * renvoie la liste des Composants enfants
-	 */
+     * Enumerates all child components of this component.
+     * @param recursive - If `true`, searches all descendants; otherwise, only direct children.
+     * @returns An array of child Component instances.
+     */
 
 	enumChildComponents( recursive: boolean ) {
 
@@ -881,8 +1020,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * return children list of node (not all should be components)
-	 */
+     * Enumerates all child DOM nodes of this component.
+     * Not all nodes may be components.
+     * @param recursive - If `true`, searches all descendant nodes; otherwise, only direct children.
+     * @returns An array of child DOM nodes.
+     */
 
 	enumChildNodes( recursive: boolean ) {
 		const children: Node[] = Array.from( recursive ? this.dom.querySelectorAll( '*' ) : this.dom.children );
@@ -890,8 +1032,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Visits all descendant components of this component, executing a callback function for each.
+     * The traversal stops if the callback returns `true`.
+     * @param cb - The callback function to execute for each component.
+     */
 
 	visitChildren( cb: ( el: Component ) => boolean ) {
 
@@ -917,8 +1061,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Animates the component's DOM element using the Web Animations API.
+     * @param keyframes - An array of keyframe objects or a `Keyframe` object.
+     * @param duration - The duration of the animation in milliseconds, or a `KeyframeAnimationOptions` object.
+     */
 
 	animate( keyframes: Keyframe[], duration: number ) {
 		this.dom.animate(keyframes,duration);
@@ -928,8 +1074,13 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: TSX/REACT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * called by the compiler when a jsx element is seen
-	 */
+     * Creates a new Component or an array of Components from JSX elements.
+     * This method is typically called by the TypeScript/JavaScript compiler when JSX is transpiled.
+     * @param clsOrTag - The class constructor of the component, an HTML tag name string, a symbol for fragments, or a callback.
+     * @param attrs - An object containing attributes and properties for the component.
+     * @param children - Any child components or content passed within the JSX.
+     * @returns A Component instance or an array of Components.
+     */
 
 	static createElement( clsOrTag: string | ComponentConstructor | symbol | CreateComponentCallBack, attrs: any, ...children: Component[] ): Component | Component[] {
 
@@ -966,8 +1117,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-	 * 
-	 */
+     * Creates a fragment, which is an array of components without a parent DOM element.
+     * Used for grouping multiple children in JSX without introducing an extra DOM node.
+     * @returns An array of components.
+     */
 
 	static createFragment( ): Component[] {
 		return this.createElement( FRAGMENT, null ) as Component[];
@@ -976,11 +1129,14 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	// :: SPECIALS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * system interfaces:
-	 * 	"form-element"
-	 * 	"tab-handler"
+     * Queries for a specific system or application-defined interface on the component.
+     * Common system interfaces include "form-element" and "tab-handler".
+     * @param name - The name of the interface to query.
+     * @returns An object conforming to the requested interface, or `null` if not supported.
 	 * 
-	 * each app can create it's own interface
+	 * 	system interfaces:
+	 * 		"form-element"
+	 * 		"tab-handler"
 	 */
 
 	queryInterface<T>( name: string ): T {
@@ -990,7 +1146,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 
 /**
- * 
+ * Type definition for a constructor that creates a Component instance.
  */
 
 type ComponentConstructor = {
@@ -998,7 +1154,10 @@ type ComponentConstructor = {
 };
 
 /**
- * get a component element from it's DOM counterpart
+ * Retrieves a Component instance associated with a given DOM element.
+ * Components created by this library internally store a reference to their instance on their `dom` property.
+ * @param node - The DOM element to check.
+ * @returns The Component instance if found, otherwise `null`.
  */
 
 export function componentFromDOM<T extends Component = Component>( node: Element ) {
@@ -1006,7 +1165,11 @@ export function componentFromDOM<T extends Component = Component>( node: Element
 }
 
 /**
- * create a component from an existing DOM
+ * Wraps an existing HTMLElement with a new Component instance.
+ * If the HTMLElement already has an associated Component, that instance is returned.
+ * Otherwise, a new `Component` is created to manage the existing DOM element.
+ * @param el - The HTMLElement to wrap.
+ * @returns A Component instance managing the provided HTMLElement.
  */
 
 export function wrapDOM( el: HTMLElement ): Component {
@@ -1021,14 +1184,27 @@ export function wrapDOM( el: HTMLElement ): Component {
 
 // :: Special components ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-// just a flexible element that push other
+/**
+ * A basic component class that provides flexible sizing, typically used in flex layouts.
+ * Automatically generates CSS class: `x4flex`.
+ */
+
 export class Flex extends Component {
 	constructor( ) {
 		super({})
 	}
 }
 
-// just a spacer element that push other
+/**
+ * A simple spacer component used for creating empty space, often in flex containers.
+ * @example
+ * ```ts
+ * new Space(); // default spacer
+ * new Space(10); // 10px wide spacer
+ * new Space("1em", "my-spacer-class");
+ * ```
+ */
+
 export class Space extends Component {
 	constructor( width?: number|string, cls?: string ) {
 		super( { width, cls } )

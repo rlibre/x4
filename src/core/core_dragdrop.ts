@@ -27,8 +27,10 @@ interface DropInfo {
 type DropCallback = ( command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo ) => void;
 type FilterCallback = ( el: Component, data: DataTransfer ) => boolean;
 
-/**
- * 
+/** 
+ * Manages drag and drop operations within the application.
+ * This class handles the registration of draggable elements and drop targets, 
+ * and orchestrates the visual feedback and event dispatching during drag operations.
  */
 
 
@@ -43,9 +45,13 @@ class DragManager {
 	timer: any; // pb with name of settimeout return
 
 	/**
-	 * 
+	 * Registers a component as a draggable element.
+	 * This sets up DOM event listeners for `dragstart`, `drag`, and `dragend`
+	 * to manage the drag operation, including creating a drag ghost and applying CSS classes.
+	 *
+	 * @param el - The component to make draggable.
 	 */
-
+	// TODO: Add support for custom drag data beyond 'text/string'.
 	registerDraggableElement(el: Component) {
 
 		el.addDOMEvent('dragstart', (ev: DragEvent) => {
@@ -78,7 +84,14 @@ class DragManager {
 	}
 
 	/**
-	 * 
+	 * Registers a component as a drop target.
+	 * This sets up DOM event listeners for `dragenter`, `dragover`, `dragleave`, and `drop`.
+	 * It uses a `DropCallback` to notify the component about drag events and an optional `FilterCallback`
+	 * to determine if the target should accept the dragged item.
+	 *
+	 * @param el - The component to make a drop target.
+	 * @param cb - The callback function to execute on drag events.
+	 * @param filterCB - An optional callback to filter which draggable items can be dropped.
 	 */
 
 	registerDropTarget(el: Component, cb: DropCallback, filterCB?: FilterCallback ) {
@@ -151,7 +164,11 @@ class DragManager {
 		el.setInternalData( x_drag_cb, cb );
 	}
 
-	_startCheck() {
+	/**
+	 * @internal
+	 */
+
+	private _startCheck() {
 
 		if (this.timer) {
 			clearInterval(this.timer);
@@ -161,7 +178,11 @@ class DragManager {
 		this.timer = setInterval( () => this._check(), 300 );
 	}
 
-	_check( ) {
+	/**
+	 * @internal
+	 */
+
+	private _check( ) {
 
 		const leaving = ( x: Component ) => {
 			x.removeClass('drop-over');
@@ -197,5 +218,9 @@ class DragManager {
 		}
 	}
 }
+
+/**
+ * Singleton instance of the DragManager for global access.
+ */
 
 export const dragManager = new DragManager();

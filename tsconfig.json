@@ -1,11 +1,12 @@
 {
 	"compilerOptions": {
 		"strict": true,
-		"moduleResolution": "nodenext",
-		"module": "NodeNext",
+		"moduleResolution": "bundler",
+		"module": "preserve",
 		"strictNullChecks": false,
 		"target": "ES2022",
 		"experimentalDecorators": true,
+		"allowImportingTsExtensions": true,
 		"lib": [ "es2022", "DOM" ]
 	}
 }
