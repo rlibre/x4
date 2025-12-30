@@ -145,7 +145,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 		while( act!=document.body ) {
 			const comp = componentFromDOM(act);
-			if( comp {
+			if( comp ) {
 				const ifx = comp.queryInterface( "tab-handler") as ITabHandler;
 
 				if( ifx ) {
