@@ -435,6 +435,7 @@ export class Keyboard extends HBox<KeyboardProps>
                 let content = line[i];
                 let key;
 				let icon = null;
+				let repeat = false;
 
                 if( content.length>2 && content[0]=='{' && content[content.length-1]=='}') {
                     
@@ -457,6 +458,7 @@ export class Keyboard extends HBox<KeyboardProps>
 
 						case 2:
 						{
+							repeat = true;
 							content = undefined;
 							icon = icon_bksp;
 							cls += ' cdel'; 
@@ -521,7 +523,7 @@ export class Keyboard extends HBox<KeyboardProps>
                     key = line[i].charCodeAt(0);
                 }
 
-                let el = new Button( { cls, label: content, attrs: {'data-key': key}, icon } );
+                let el = new Button( { cls, label: content, attrs: {'data-key': key}, icon, autorepeat: repeat } );
                 tl.push( el );
             }
 
