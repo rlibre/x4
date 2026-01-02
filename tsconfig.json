@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"strict": true,
-		"moduleResolution": "nodenext",
-		"module": "NodeNext",
+		"moduleResolution": "bundler",
+		"module": "es2015",
 		"strictNullChecks": false,
 		"target": "ES2022",
 		"experimentalDecorators": true,
