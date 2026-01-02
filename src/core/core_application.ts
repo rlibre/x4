@@ -70,11 +70,15 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		main_app = this;
 
 		const loaded = ( ) => {
-			this.mount( props.mountPoint ?? 'body' );
-			window.removeEventListener( "load", loaded );
-	 	} 
+			this.mount( props.mountPoint ?? 'body' )
+		}
 
-		window.addEventListener( "load", loaded );
+		if( document.readyState=='complete' ) {
+			loaded( );
+		}
+		else {
+			window.addEventListener( "load", loaded, { once: true } );
+		}
 	}
 
 	private mount( mountPoint = 'body' ) {
