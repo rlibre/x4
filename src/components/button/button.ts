@@ -121,9 +121,9 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 			this.setTimeout( 'repeat', 500, ( ) => {
 				count++;
 
-				this.fire('click', {} );
+				this.click( );
 				this.setInterval( 'repeat', rt, ( ) => {
-					this.fire('click', {} );
+					this.click( );
 				})
 			} );
 		}
