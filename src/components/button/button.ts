@@ -131,7 +131,7 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 			this.clearTimeout( 'repeat' );
 
 			if( !count ) {
-				this.fire('click', {} );
+				this.click( );
 			}
 		}
 	}
