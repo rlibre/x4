@@ -69,13 +69,16 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		main_app = this;
 
-		if( props.mountPoint ) {
-			window.addEventListener( "load", ( ) => this.mount( props.mountPoint ) )
-		}
+		const loaded = ( ) => {
+			this.mount( props.mountPoint ?? 'body' );
+			window.removeEventListener( "load", loaded );
+	 	} 
+
+		window.addEventListener( "load", loaded );
 	}
 
 	private mount( mountPoint = 'body' ) {
-		if( !this.mainview ) {
+		if( !this.mounted && this.mainview ) {
 			const ev = document.querySelector( mountPoint );
 			if( ev ) {
 				ev.appendChild( this.mainview.dom );
