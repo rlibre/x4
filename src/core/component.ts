@@ -820,6 +820,14 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
+	 * 
+	 */
+
+	childCount( ) {
+		return this.dom.childElementCount;
+	}
+
+	/**
 	 * search for parent that match the given contructor 
 	 */
 	
