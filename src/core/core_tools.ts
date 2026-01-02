@@ -872,7 +872,16 @@ export function getScrollbarSize() {
 
 export function getGlobalZoom( ) {
 	if( window_zoom<0 ) {
-		window_zoom = parseFloat( getComputedStyle(document.documentElement).zoom) || 1;
+		const style = window.getComputedStyle(document.body);
+		const matrix = style.transform;
+
+		if (matrix !== 'none') {
+			const values = matrix.split('(')[1].split(')')[0].split(',');
+			window_zoom = parseFloat(values[0]); 
+		} 
+		else {
+			window_zoom = parseFloat( style.zoom) || 1;
+		}
 	}
 
 	return window_zoom;

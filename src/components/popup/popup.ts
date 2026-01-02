@@ -144,16 +144,17 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	 */
 
 	displayAt( x: number, y: number ) {
+		const zm = getGlobalZoom( );
+		
 		//TODO: check is already visible
 		this.setStyle( {
-			left: x+"px",
-			top: y+"px",
+			left: (x/zm)+"px",
+			top: (y/zm)+"px",
 		})
 
 		this._do_show( );	// to compute size
 
 		const rc = this.getBoundingRect( );
-		const zm = getGlobalZoom( );
 		const sbw = getScrollbarSize( );
 
 
