@@ -185,6 +185,17 @@ export class Rect implements IRect {
 		this.width += dx+dx;
 		this.top -= dy;
 		this.width += dy+dy;
+
+		return this;
+	}
+
+	scale( scale: number ) {
+		this.left *= scale;
+		this.top *= scale;
+		this.width *= scale;
+		this.height *= scale;
+
+		return this;
 	}
 }
 

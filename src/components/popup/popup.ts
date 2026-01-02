@@ -154,19 +154,17 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 
 		this._do_show( );	// to compute size
 
-		const rc = this.getBoundingRect( );
+		const rc = this.getBoundingRect( ).scale( 1/zm );
 		const sbw = getScrollbarSize( );
 
-
-		const width  = window.innerWidth/zm - sbw;
-		const height = window.innerHeight/zm - sbw;
-		
-		if( rc.right>width ) {
-			this.setStyleValue( "left", width-rc.width );
+		const screen_width  = window.innerWidth - sbw;
+		if( rc.right>screen_width ) {
+			this.setStyleValue( "left", screen_width-rc.width );
 		}
 
-		if( rc.bottom>height ) {
-			this.setStyleValue( "top", height-rc.height );
+		const screen_height = window.innerHeight - sbw;
+		if( rc.bottom>screen_height ) {
+			this.setStyleValue( "top", screen_height-rc.height );
 		}
 	}
 
