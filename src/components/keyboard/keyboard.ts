@@ -535,7 +535,7 @@ export class Keyboard extends HBox<KeyboardProps>
 					autorepeat: repeat, 
 					click: ( e ) => {
 						if( e.repeat ) {
-							this.handleKeyEvent( key )
+							this._handleKey( key )
 						}
 					}
 				} );
