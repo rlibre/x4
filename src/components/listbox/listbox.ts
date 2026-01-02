@@ -191,8 +191,15 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 		else {
 			const selitem = this._itemWithID( this._lastsel );
-			let nel = sens==kbNav.next ? selitem.nextElement() : selitem.prevElement();
-			nel = next_visible( nel, sens==kbNav.next );
+
+			let nel;
+			if( selitem ) {
+				nel = sens==kbNav.next ? selitem.nextElement() : selitem.prevElement();
+				nel = next_visible( nel, sens==kbNav.next );
+			}
+			else {
+				nel = sens==kbNav.next ? this._view.firstChild() : this._view.lastChild( );
+			}
 
 			if( nel ) {
 				const id = nel.getInternalData( "id" );
