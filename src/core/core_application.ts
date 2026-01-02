@@ -17,7 +17,7 @@
 import { Component, componentFromDOM } from './component';
 import { CoreElement } from './core_element';
 import { CoreEvent, EventMap } from './core_events';
-import { getFocusableElements, ITabHandler } from './core_tools';
+import { asap, getFocusableElements, ITabHandler } from './core_tools';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -74,7 +74,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		}
 
 		if( document.readyState=='complete' ) {
-			loaded( );
+			asap( loaded );
 		}
 		else {
 			window.addEventListener( "load", loaded, { once: true } );
