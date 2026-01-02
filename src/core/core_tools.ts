@@ -844,6 +844,7 @@ export function beep() {
 }
 
 let sb_width_cache = -1;
+let window_zoom = -1;
 
 /**
  * compute scrollbar size
@@ -868,6 +869,29 @@ export function getScrollbarSize() {
 
 	return sb_width_cache;
 }
+
+export function getGlobalZoom( ) {
+	if( window_zoom<0 ) {
+		window_zoom = parseFloat( getComputedStyle(document.documentElement).zoom) || 1;
+	}
+
+	return window_zoom;
+}
+
+export function getSystemMetrics( part: "scrollbar" | "zoom" ) {
+	switch( part ) {
+		case "scrollbar": return getScrollbarSize( );
+		case "zoom": return getGlobalZoom( );
+	}
+
+	return 0;
+}
+
+
+
+
+
+
 
 /**
  * 

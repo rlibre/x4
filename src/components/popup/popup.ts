@@ -21,6 +21,7 @@ import { Rect, Point, class_ns, asap } from '../../core/core_tools';
 import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
+import { getGlobalZoom, getScrollbarSize } from '../../core/core_tools.js';
 
 export interface PopupEvents extends ComponentEvents {
 	closed: ComponentEvent;
@@ -152,8 +153,12 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		this._do_show( );	// to compute size
 
 		const rc = this.getBoundingRect( );
-		const width = window.innerWidth - 16;
-		const height = window.innerHeight - 16;
+		const zm = getGlobalZoom( );
+		const sbw = getScrollbarSize( );
+
+
+		const width  = window.innerWidth/zm - sbw;
+		const height = window.innerHeight/zm - sbw;
 		
 		if( rc.right>width ) {
 			this.setStyleValue( "left", width-rc.width );
