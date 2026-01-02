@@ -1046,6 +1046,7 @@ export class Space extends Component {
  */
 
 export interface EvClick extends ComponentEvent {
+	repeat?: number;
 }
 
 /**

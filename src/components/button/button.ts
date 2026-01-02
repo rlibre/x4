@@ -119,11 +119,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 			const rt = this.props.autorepeat===true ? 200 : this.props.autorepeat as number;
 
 			this.setTimeout( 'repeat', 500, ( ) => {
-				count++;
-
-				this.click( );
+				this.fire( "click", {} );
 				this.setInterval( 'repeat', rt, ( ) => {
-					this.click( );
+					count++;
+					this.fire( "click", {repeat:count} );
 				})
 			} );
 		}
@@ -131,7 +130,7 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 			this.clearTimeout( 'repeat' );
 
 			if( !count ) {
-				this.click( );
+				this.fire("click", {} );
 			}
 		}
 	}
