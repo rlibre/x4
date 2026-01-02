@@ -120,15 +120,15 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		this.hide( );
 
-		this.addDOMEvent( "click", (e) => {
-			this.handleKey( e ); 	
+		this.addDOMEvent( "mousedown", (e) => {
+			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
 
 		// for rapid people
 		this.addDOMEvent( "dblclick", (e) => {
-			this.handleKey( e ); 	
+			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
@@ -148,7 +148,7 @@ export class Keyboard extends HBox<KeyboardProps>
 	 * 
 	 */
 
-    private handleKey( e: UIEvent ) {
+    private handleKeyEvent( e: UIEvent ) {
         let target = e.target as HTMLElement;
         let key;
 
@@ -165,6 +165,10 @@ export class Keyboard extends HBox<KeyboardProps>
 			return;
 		}
 
+		this._handleKey( key );
+	}
+
+	private _handleKey( key: number ) {
         switch( key ) {
             // bk space
             case 2: {
@@ -523,7 +527,18 @@ export class Keyboard extends HBox<KeyboardProps>
                     key = line[i].charCodeAt(0);
                 }
 
-                let el = new Button( { cls, label: content, attrs: {'data-key': key}, icon, autorepeat: repeat } );
+                let el = new Button( { 
+					cls, 
+					label: content, 
+					attrs: {'data-key': key}, 
+					icon, 
+					autorepeat: repeat, 
+					click: ( e ) => {
+						if( e.repeat ) {
+							this.handleKeyEvent( key )
+						}
+					}
+				} );
                 tl.push( el );
             }
 
