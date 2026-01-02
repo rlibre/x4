@@ -120,7 +120,7 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		this.hide( );
 
-		this.addDOMEvent( "mousedown", (e) => {
+		this.addDOMEvent( "click", (e) => {
 			this.handleKey( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
