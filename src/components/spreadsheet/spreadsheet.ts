@@ -85,6 +85,7 @@ export class Store extends CoreElement<StoreEvents> {
 					n.set(k, v);
 				}
 			});
+			this._data = n;
 		}
 
 		this._maxrows = rows;
@@ -119,6 +120,29 @@ export class Store extends CoreElement<StoreEvents> {
 				this._changed();
 			}
 		}
+	}
+
+	removeRow( row_num: number ) {
+
+		if( row_num>=this._maxrows ) {
+			return;
+		}
+
+		const n = new Map<number, any>();
+		this._data.forEach( (v, k) => {
+			const row = k >> 12;
+			if (row != row_num) {
+				if( row>row_num ) {
+					k = mkid(row-1,k&0xfff) 
+				}
+				
+				n.set(k, v);
+			}
+		} );
+		this._data = n;
+
+		this._maxrows--;
+		this._changed( );
 	}
 
 	private _changed() {
@@ -968,7 +992,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this._addSelection(ref.ref,true);
 				}
 
-				this._on_dblclk(e, ref.row, ref.col);
+				this.fire( "dblClick", { context: { row: ref.row, col: ref.col } } );
 			}
 		});
 
@@ -982,9 +1006,10 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this._addSelection(ref.ref, true );
 				}
 
-				debugger;
-				//const rec = this._dataview.getByIndex( row );
-				//this.fire( "contextMenu", { uievent: e, context: rec } );
+				this.fire( "contextMenu", { uievent: e, context: { row: ref.row, col: ref.col } } );
+			}
+			else {
+				this.fire( "contextMenu", { uievent: e, context: null } );
 			}
 
 			e.preventDefault();
@@ -1011,14 +1036,6 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 
 		this._computeFullSize();
-	}
-
-	/**
-	 * 
-	 */
-
-	protected _on_dblclk(e: UIEvent, row: number, col: number) {
-		this.fire( "dblClick", { context: { row, col } } );
 	}
 
 	/**

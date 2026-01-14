@@ -1092,7 +1092,7 @@ export interface EvSelectionChange extends ComponentEvent {
  */
 
 export interface EvContextMenu extends ComponentEvent {
-	uievent: UIEvent;	// UI event that fire this event
+	uievent: MouseEvent;	// UI event that fire this event
 }
 
 /**

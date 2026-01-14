@@ -17,7 +17,7 @@
 @use "../shared.scss";
 
 :root {
-	--menu-background: var( --background-primary );
+	--menu-background: var( --background-ternary );
 	--menu-border: var( --border-hover );
 
 	--menuitem-color: var( --text-ternary );;
@@ -28,7 +28,7 @@
 }
 
 .x4menu {
-	@extend .shadow-lg;
+	@extend .shadow-xxl;
 
 	position: absolute;
 	overflow-y: auto;
@@ -39,6 +39,7 @@
 	
 	background-color: var(--menu-background);
 	border: 1px solid var(--menu-border);
+	border-left: 4px solid var( --accent-background );
 
 	max-height: calc( 100vh - 32px );
 	
@@ -65,6 +66,17 @@
 
 			.fa-secondary {
 				fill: var( --color-primary-a30 );
+				opacity: 1;
+			}
+		}
+
+		&.danger #icon {
+			.fa-primary {
+				fill: var( --color-danger-a50 );
+			}
+
+			.fa-secondary {
+				fill: var( --color-danger-a30 );
 				opacity: 1;
 			}
 		}
