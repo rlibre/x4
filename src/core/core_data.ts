@@ -80,24 +80,26 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 	let mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
 	
 	if( mfld===undefined ) {
-		if( !create ) {
+		if( !create && ctor!=DataModel ) {
 			console.assert( mfld!==undefined );
 		}
 		
 		// construct our metas
 		mfld = new MetaInfos( ctor.name );
 
-		// merge with parent class metas
-		let pctor = Object.getPrototypeOf(ctor);
-		if( pctor!=DataModel ) {
-			let pmetas = pctor[metaFields];
-			mfld.fields = [...pmetas.fields, ...mfld.fields ]
-			
-			console.assert( mfld.id===undefined, 'cannot define mutiple record id' );
-			if( !mfld.id ) {
-				mfld.id = pmetas.id;
-			}
-		}	
+        if( ctor!=DataModel ) { //<eco: allow addFields on DataModel
+            // merge with parent class metas
+            let pctor = Object.getPrototypeOf(ctor);
+            if( pctor!=DataModel ) {
+                let pmetas = pctor[metaFields];
+                mfld.fields = [...pmetas.fields, ...mfld.fields ]
+                
+                console.assert( mfld.id===undefined, 'cannot define mutiple record id' );
+                if( !mfld.id ) {
+                    mfld.id = pmetas.id;
+                }
+            }	
+        }
 
 		(obj.constructor as any)[metaFields] = mfld;
 	}
@@ -250,6 +252,23 @@ export namespace data {
  */
 
 export class DataModel {
+
+    /**
+     * dynamic DataModel
+     */
+
+    addField( ...fields: FieldInfo[] ) {
+        if( fields.length==0 ) {
+            return;
+        }
+
+        let metas = _getMetas( this, false );
+        if( metas.fields.length==0 ) {
+            metas.id = fields[0].name;
+        }
+
+        metas.fields.push( ...fields );
+    }
 
 	/**
 	 * MUST IMPLEMENT

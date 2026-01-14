@@ -345,6 +345,65 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 	}
 
+	setColumns( columns: GridColumn[] ) {
+		this._columns = columns.map(x => x);
+		if( this.dom ) {
+			
+			this._updateFlexs( );
+			
+			// Rebuild headers
+			if (this._fheader) {
+				const newFixedHeader = this._buildColHeader(true);
+				this._fheader.setContent(newFixedHeader.getChildren());
+				// On doit remplacer _fheader dans le DOM ou mettre à jour son contenu
+				// La méthode _buildColHeader retourne une Box.
+				// Ici, je vais simplifier en vidant et remplissant si possible, 
+				// mais Box n'a pas forcément de méthode simple pour remplacer tout le DOM interne sans casser les events.
+				// Le plus simple est de remplacer les composants header dans le DOM global du gridview.
+				
+				// Approche : on recrée les headers et on remplace les anciens
+				this._fheader.destroy();
+				this._hheader.destroy();
+				
+				this._fheader = this._buildColHeader(true);
+				this._hheader = this._buildColHeader(false);
+				
+				// Il faut réinsérer ces headers au bon endroit dans le DOM du Gridview.
+				// _init fait: 
+				// 		this.setContent([
+				//			this._fheader,
+				//			this._hheader,
+				//			this._vheader,
+				//			this._viewport,
+				//			this._ffooter,
+				//			this._footer,
+				//		]);
+				
+				// Donc on peut reconstruire le content complet
+				const content = [
+					this._fheader,
+					this._hheader,
+					this._vheader,
+					this._viewport
+				];
+				
+				if (this._has_footer) {
+					this._ffooter.destroy();
+					this._footer.destroy();
+					this._ffooter = this._buildColFooter(true);
+					this._footer = this._buildColFooter(false);
+					content.push(this._ffooter);
+					content.push(this._footer);
+				}
+				
+				this.setContent(content);
+			}
+
+			this._computeFullSize( );
+			this._update( true );
+		}
+	}
+
 	getView( ): DataView {
 		return this._dataview;
 	}

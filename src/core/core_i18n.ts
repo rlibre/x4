@@ -289,6 +289,7 @@ let fr = {
 
 		date_input_formats: 'd/m/y|d.m.y|d m y|d-m-y|dmy',
 		date_format: 'D/M/Y',
+        date_time_format: 'D/M/Y H:I:S',
 
 		day_short: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
 		day_long: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
@@ -353,6 +354,7 @@ let en = {
 
 		date_input_formats: 'm/d/y|m.d.y|m d y|m-d-y|mdy',
 		date_format: 'M/D/Y',
+        date_time_format: 'M/D/Y H:I:S',
 
 		day_short: [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ],
 		day_long: [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
