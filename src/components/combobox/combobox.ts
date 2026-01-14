@@ -52,7 +52,6 @@ export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
 		this.setContent( this._list );
 
 		this.addDOMEvent( "mousedown", ( ev: Event ) => { 
-			console.log( "trap" );
 			ev.stopImmediatePropagation( );
 			ev.stopPropagation( );
 			ev.preventDefault( );

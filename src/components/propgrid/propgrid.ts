@@ -73,7 +73,7 @@ export class PropertyGrid extends VBox {
 		if( props.groups ) {
 			this.setItems( props.groups );
 		}
-	};
+	}
 
 	/**
 	 * 

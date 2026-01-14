@@ -969,10 +969,6 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 				}
 
 				this._on_dblclk(e, ref.row, ref.col);
-
-				debugger;
-				//const rec = this._dataview.getByIndex( row );
-				//this.fire( "dblClick", { context: rec } );
 			}
 		});
 
@@ -1022,7 +1018,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 	 */
 
 	protected _on_dblclk(e: UIEvent, row: number, col: number) {
-
+		this.fire( "dblClick", { context: { row, col } } );
 	}
 
 	/**

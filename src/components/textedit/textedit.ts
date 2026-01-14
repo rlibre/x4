@@ -88,6 +88,11 @@ export class TextEdit extends HBox {
 		}
 
 		const gadgets = props.inputGadgets ?? [];
+		gadgets.forEach( g => {
+			g.addClass( "gadget" );
+		})
+
+
 		const iprops: InputProps = { ...props, id: props.inputId, attrs: props.inputAttrs, width: props.inputWidth };
 
 		this.setContent( [

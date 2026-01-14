@@ -353,6 +353,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			
 			// Rebuild headers
 			if (this._fheader) {
+				/*
 				const newFixedHeader = this._buildColHeader(true);
 				this._fheader.setContent(newFixedHeader.getChildren());
 				// On doit remplacer _fheader dans le DOM ou mettre à jour son contenu
@@ -397,6 +398,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				}
 				
 				this.setContent(content);
+				*/
+				console.assert( false, "TODO" );
 			}
 
 			this._computeFullSize( );
@@ -1227,10 +1230,13 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	selectItem( id: any ) {
+	selectItem( id: any, ensureVisible = true ) {
 		const index = this._dataview.indexOfId( id );
 		if( index>=0 ) {
 			this._addSelection( index );
+			if( ensureVisible ) {
+				this._scrollToIndex( index );
+			}
 		}
 	}
 }
