@@ -66,76 +66,67 @@ export class Color {
 	 *  rgb(a,b,c)
 	 *  rgba(a,b,c,d)
 	 *  var( --color-5 )
+	 *  cyan
+	 *  transparent
 	 */
 
 	setValue(value: string): this {
 
 		this.invalid = false;
 
-		if (value.length == 4 && /#[0-9a-fA-F]{3}/.test(value)) {
-			const r1 = parseInt(value[1], 16);
-			const g1 = parseInt(value[2], 16);
-			const b1 = parseInt(value[3], 16);
-			return this.setRgb(r1 << 4 | r1, g1 << 4 | g1, b1 << 4 | b1, 1.0);
-		}
-
-		if (value.length == 7 && /#[0-9a-fA-F]{6}/.test(value)) {
-			const r1 = parseInt(value[1], 16);
-			const r2 = parseInt(value[2], 16);
-			const g1 = parseInt(value[3], 16);
-			const g2 = parseInt(value[4], 16);
-			const b1 = parseInt(value[5], 16);
-			const b2 = parseInt(value[6], 16);
-			return this.setRgb(r1 << 4 | r2, g1 << 4 | g2, b1 << 4 | b2, 1.0);
-		}
-
-		if (value.length == 9 && /#[0-9a-fA-F]{8}/.test(value)) {
-			const r1 = parseInt(value[1], 16);
-			const r2 = parseInt(value[2], 16);
-			const g1 = parseInt(value[3], 16);
-			const g2 = parseInt(value[4], 16);
-			const b1 = parseInt(value[5], 16);
-			const b2 = parseInt(value[6], 16);
-			const a1 = parseInt(value[7], 16);
-			const a2 = parseInt(value[8], 16);
-			return this.setRgb(r1 << 4 | r2, g1 << 4 | g2, b1 << 4 | b2, (a1 << 4 | a2) / 255.0);
-		}
-
-		if (value.startsWith('rgba')) {
-			const re = /rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*((\d+)|(\d*\.\d+)|(\.\d+))\s*\)/;
-			const m = re.exec(value);
-			if (m) {
-				return this.setRgb(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]), parseFloat(m[4]));
+		if( value.startsWith('#') ) {
+			if (value.length == 7 && /#[0-9a-fA-F]{6}/.test(value)) {
+				const hex = parseInt(value.slice(1), 16);
+				return this.setRgb( hex >> 16, hex >> 8, hex, 1.0 );
 			}
-		}
-		else if (value.startsWith('rgb')) {
-			const re = /rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/;
-			const m = re.exec(value);
-			if (m) {
-				return this.setRgb(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]), 1.0);
+	
+			if (value.length == 4 && /#[0-9a-fA-F]{3}/.test(value)) {
+				const hex = parseInt(value.slice(1), 16);
+				return this.setRgb( ((hex >> 8)&0xf)*17, ((hex >> 4)&0xf) * 17, (hex & 0x0F)*17, 1.0 );
 			}
-		}
-		else if (value.startsWith("var")) {
-			const re = /var\s*\(([^)]*)\)/;
-			const m = re.exec(value);
-			if (m) {
-				const expr = m[1].trim();
-				const style = getComputedStyle(document.documentElement);
-				const value = style.getPropertyValue(expr);
-				return this.setValue(value);
+
+			if (value.length == 9 && /#[0-9a-fA-F]{8}/.test(value)) {
+				const hex = parseInt(value.slice(1), 16) >>> 0;
+				return this.setRgb( hex >> 24, hex >> 16, hex >> 8, (hex & 0xFF) / 255.0 );
 			}
 		}
 		else {
-			const nm = value.toLowerCase();
-			const xx = CSS_COLORS[nm];
-			if( xx!==undefined ) {
-				return this.setRgb( xx[0], xx[1], xx[2], 1.0 );
+			value = value.toLowerCase();
+			
+			if (value.startsWith('rgba')) {
+				const re = /rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*((\d+)|(\d*\.\d+)|(\.\d+))\s*\)/;
+				const m = re.exec(value);
+				if (m) {
+					return this.setRgb(+m[1], +m[2], +m[3], +m[4]);
+				}
 			}
-			else if( nm=="transparent" ) {
-				return this.setRgb( 0, 0, 0, 0 );
+			else if (value.startsWith('rgb')) {
+				const re = /rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/;
+				const m = re.exec(value);
+				if (m) {
+					return this.setRgb(+m[1], +m[2], +m[3], 1.0);
+				}
+			}
+			else if (value.startsWith("var")) {
+				const re = /var\s*\(([^)]*)\)/;
+				const m = re.exec(value);
+				if (m) {
+					const expr = m[1].trim();
+					const style = getComputedStyle(document.documentElement);
+					const value = style.getPropertyValue(expr);
+					return this.setValue(value);
+				}
+			}
+			else {
+				const xx = CSS_COLORS[value];
+				if( xx!==undefined ) {
+					return this.setRgb( xx>>16, xx>>8, xx, 1.0 );
+				}
+				else if( value=="transparent" ) {
+					return this.setRgb( 0, 0, 0, 0 );
+				}
 			}
 		}
-
 
 		this.invalid = true;
 		return this.setRgb(255, 0, 0, 1);
@@ -246,6 +237,11 @@ export class Color {
 		return { hue, saturation, value, alpha: el.alpha };
 	}
 
+	toNumber(): number {
+        const _ = this.rgb;
+        return ((_[0] << 16) | (_[1] << 8) | _[2]) >>> 0;
+    }
+
 	getAlpha() {
 		return this.rgb[3];
 	}
@@ -288,153 +284,153 @@ export class Color {
 
 
 
-const CSS_COLORS: Record<string, number[]> = {
-	aliceblue: [240, 248, 255],
-	antiquewhite: [250, 235, 215],
-	aqua: [0, 255, 255],
-	aquamarine: [127, 255, 212],
-	azure: [240, 255, 255],
-	beige: [245, 245, 220],
-	bisque: [255, 228, 196],
-	black: [0, 0, 0],
-	blanchedalmond: [255, 235, 205],
-	blue: [0, 0, 255],
-	blueviolet: [138, 43, 226],
-	brown: [165, 42, 42],
-	burlywood: [222, 184, 135],
-	cadetblue: [95, 158, 160],
-	chartreuse: [127, 255, 0],
-	chocolate: [210, 105, 30],
-	coral: [255, 127, 80],
-	cornflowerblue: [100, 149, 237],
-	cornsilk: [255, 248, 220],
-	crimson: [220, 20, 60],
-	cyan: [0, 255, 255],
-	darkblue: [0, 0, 139],
-	darkcyan: [0, 139, 139],
-	darkgoldenrod: [184, 134, 11],
-	darkgray: [169, 169, 169],
-	darkgreen: [0, 100, 0],
-	darkgrey: [169, 169, 169],
-	darkkhaki: [189, 183, 107],
-	darkmagenta: [139, 0, 139],
-	darkolivegreen: [85, 107, 47],
-	darkorange: [255, 140, 0],
-	darkorchid: [153, 50, 204],
-	darkred: [139, 0, 0],
-	darksalmon: [233, 150, 122],
-	darkseagreen: [143, 188, 143],
-	darkslateblue: [72, 61, 139],
-	darkslategray: [47, 79, 79],
-	darkslategrey: [47, 79, 79],
-	darkturquoise: [0, 206, 209],
-	darkviolet: [148, 0, 211],
-	deeppink: [255, 20, 147],
-	deepskyblue: [0, 191, 255],
-	dimgray: [105, 105, 105],
-	dimgrey: [105, 105, 105],
-	dodgerblue: [30, 144, 255],
-	firebrick: [178, 34, 34],
-	floralwhite: [255, 250, 240],
-	forestgreen: [34, 139, 34],
-	fuchsia: [255, 0, 255],
-	gainsboro: [220, 220, 220],
-	ghostwhite: [248, 248, 255],
-	gold: [255, 215, 0],
-	goldenrod: [218, 165, 32],
-	gray: [128, 128, 128],
-	green: [0, 128, 0],
-	greenyellow: [173, 255, 47],
-	grey: [128, 128, 128],
-	honeydew: [240, 255, 240],
-	hotpink: [255, 105, 180],
-	indianred: [205, 92, 92],
-	indigo: [75, 0, 130],
-	ivory: [255, 255, 240],
-	khaki: [240, 230, 140],
-	lavender: [230, 230, 250],
-	lavenderblush: [255, 240, 245],
-	lawngreen: [124, 252, 0],
-	lemonchiffon: [255, 250, 205],
-	lightblue: [173, 216, 230],
-	lightcoral: [240, 128, 128],
-	lightcyan: [224, 255, 255],
-	lightgoldenrodyellow: [250, 250, 210],
-	lightgray: [211, 211, 211],
-	lightgreen: [144, 238, 144],
-	lightgrey: [211, 211, 211],
-	lightpink: [255, 182, 193],
-	lightsalmon: [255, 160, 122],
-	lightseagreen: [32, 178, 170],
-	lightskyblue: [135, 206, 250],
-	lightslategray: [119, 136, 153],
-	lightslategrey: [119, 136, 153],
-	lightsteelblue: [176, 196, 222],
-	lightyellow: [255, 255, 224],
-	lime: [0, 255, 0],
-	limegreen: [50, 205, 50],
-	linen: [250, 240, 230],
-	magenta: [255, 0, 255],
-	maroon: [128, 0, 0],
-	mediumaquamarine: [102, 205, 170],
-	mediumblue: [0, 0, 205],
-	mediumorchid: [186, 85, 211],
-	mediumpurple: [147, 112, 219],
-	mediumseagreen: [60, 179, 113],
-	mediumslateblue: [123, 104, 238],
-	mediumspringgreen: [0, 250, 154],
-	mediumturquoise: [72, 209, 204],
-	mediumvioletred: [199, 21, 133],
-	midnightblue: [25, 25, 112],
-	mintcream: [245, 255, 250],
-	mistyrose: [255, 228, 225],
-	moccasin: [255, 228, 181],
-	navajowhite: [255, 222, 173],
-	navy: [0, 0, 128],
-	oldlace: [253, 245, 230],
-	olive: [128, 128, 0],
-	olivedrab: [107, 142, 35],
-	orange: [255, 165, 0],
-	orangered: [255, 69, 0],
-	orchid: [218, 112, 214],
-	palegoldenrod: [238, 232, 170],
-	palegreen: [152, 251, 152],
-	paleturquoise: [175, 238, 238],
-	palevioletred: [219, 112, 147],
-	papayawhip: [255, 239, 213],
-	peachpuff: [255, 218, 185],
-	peru: [205, 133, 63],
-	pink: [255, 192, 203],
-	plum: [221, 160, 221],
-	powderblue: [176, 224, 230],
-	purple: [128, 0, 128],
-	rebeccapurple: [102, 51, 153],
-	red: [255, 0, 0],
-	rosybrown: [188, 143, 143],
-	royalblue: [65, 105, 225],
-	saddlebrown: [139, 69, 19],
-	salmon: [250, 128, 114],
-	sandybrown: [244, 164, 96],
-	seagreen: [46, 139, 87],
-	seashell: [255, 245, 238],
-	sienna: [160, 82, 45],
-	silver: [192, 192, 192],
-	skyblue: [135, 206, 235],
-	slateblue: [106, 90, 205],
-	slategray: [112, 128, 144],
-	slategrey: [112, 128, 144],
-	snow: [255, 250, 250],
-	springgreen: [0, 255, 127],
-	steelblue: [70, 130, 180],
-	tan: [210, 180, 140],
-	teal: [0, 128, 128],
-	thistle: [216, 191, 216],
-	tomato: [255, 99, 71],
-	turquoise: [64, 224, 208],
-	violet: [238, 130, 238],
-	wheat: [245, 222, 179],
-	white: [255, 255, 255],
-	whitesmoke: [245, 245, 245],
-	yellow: [255, 255, 0],
-	yellowgreen: [154, 205, 50]
+const CSS_COLORS: Record<string, number> = {
+    aliceblue: 0xF0F8FF,
+    antiquewhite: 0xFAEBD7,
+    aqua: 0x00FFFF,
+    aquamarine: 0x7FFFD4,
+    azure: 0xF0FFFF,
+    beige: 0xF5F5DC,
+    bisque: 0xFFE4C4,
+    black: 0x000000,
+    blanchedalmond: 0xFFEBCD,
+    blue: 0x0000FF,
+    blueviolet: 0x8A2BE2,
+    brown: 0xA52A2A,
+    burlywood: 0xDEB887,
+    cadetblue: 0x5F9EA0,
+    chartreuse: 0x7FFF00,
+    chocolate: 0xD2691E,
+    coral: 0xFF7F50,
+    cornflowerblue: 0x6495ED,
+    cornsilk: 0xFFF8DC,
+    crimson: 0xDC143C,
+    cyan: 0x00FFFF,
+    darkblue: 0x00008B,
+    darkcyan: 0x008B8B,
+    darkgoldenrod: 0xB8860B,
+    darkgray: 0xA9A9A9,
+    darkgreen: 0x006400,
+    darkgrey: 0xA9A9A9,
+    darkkhaki: 0xBDB76B,
+    darkmagenta: 0x8B008B,
+    darkolivegreen: 0x556B2F,
+    darkorange: 0xFF8C00,
+    darkorchid: 0x9932CC,
+    darkred: 0x8B0000,
+    darksalmon: 0xE9967A,
+    darkseagreen: 0x8FBC8F,
+    darkslateblue: 0x483D8B,
+    darkslategray: 0x2F4F4F,
+    darkslategrey: 0x2F4F4F,
+    darkturquoise: 0x00CED1,
+    darkviolet: 0x9400D3,
+    deeppink: 0xFF1493,
+    deepskyblue: 0x00BFFF,
+    dimgray: 0x696969,
+    dimgrey: 0x696969,
+    dodgerblue: 0x1E90FF,
+    firebrick: 0xB22222,
+    floralwhite: 0xFFFAF0,
+    forestgreen: 0x228B22,
+    fuchsia: 0xFF00FF,
+    gainsboro: 0xDCDCDC,
+    ghostwhite: 0xF8F8FF,
+    gold: 0xFFD700,
+    goldenrod: 0xDAA520,
+    gray: 0x808080,
+    green: 0x008000,
+    greenyellow: 0xADFF2F,
+    grey: 0x808080,
+    honeydew: 0xF0FFF0,
+    hotpink: 0xFF69B4,
+    indianred: 0xCD5C5C,
+    indigo: 0x4B0082,
+    ivory: 0xFFFFF0,
+    khaki: 0xF0E68C,
+    lavender: 0xE6E6FA,
+    lavenderblush: 0xFFF0F5,
+    lawngreen: 0x7CFC00,
+    lemonchiffon: 0xFFFACD,
+    lightblue: 0xADD8E6,
+    lightcoral: 0xF08080,
+    lightcyan: 0xE0FFFF,
+    lightgoldenrodyellow: 0xFAFAD2,
+    lightgray: 0xD3D3D3,
+    lightgreen: 0x90EE90,
+    lightgrey: 0xD3D3D3,
+    lightpink: 0xFFB6C1,
+    lightsalmon: 0xFFA07A,
+    lightseagreen: 0x20B2AA,
+    lightskyblue: 0x87CEFA,
+    lightslategray: 0x778899,
+    lightslategrey: 0x778899,
+    lightsteelblue: 0xB0C4DE,
+    lightyellow: 0xFFFFE0,
+    lime: 0x00FF00,
+    limegreen: 0x32CD32,
+    linen: 0xFAF0E6,
+    magenta: 0xFF00FF,
+    maroon: 0x800000,
+    mediumaquamarine: 0x66CDAA,
+    mediumblue: 0x0000CD,
+    mediumorchid: 0xBA55D3,
+    mediumpurple: 0x9370DB,
+    mediumseagreen: 0x3CB371,
+    mediumslateblue: 0x7B68EE,
+    mediumspringgreen: 0x00FA9A,
+    mediumturquoise: 0x48D1CC,
+    mediumvioletred: 0xC71585,
+    midnightblue: 0x191970,
+    mintcream: 0xF5FFFA,
+    mistyrose: 0xFFE4E1,
+    moccasin: 0xFFE4B5,
+    navajowhite: 0xFFDEAD,
+    navy: 0x000080,
+    oldlace: 0xFDF5E6,
+    olive: 0x808000,
+    olivedrab: 0x6B8E23,
+    orange: 0xFFA500,
+    orangered: 0xFF4500,
+    orchid: 0xDA70D6,
+    palegoldenrod: 0xEEE8AA,
+    palegreen: 0x98FB98,
+    paleturquoise: 0xAFEEEE,
+    palevioletred: 0xDB7093,
+    papayawhip: 0xFFEFD5,
+    peachpuff: 0xFFDAB9,
+    peru: 0xCD853F,
+    pink: 0xFFC0CB,
+    plum: 0xDDA0DD,
+    powderblue: 0xB0E0E6,
+    purple: 0x800080,
+    rebeccapurple: 0x663399,
+    red: 0xFF0000,
+    rosybrown: 0xBC8F8F,
+    royalblue: 0x4169E1,
+    saddlebrown: 0x8B4513,
+    salmon: 0xFA8072,
+    sandybrown: 0xF4A460,
+    seagreen: 0x2E8B57,
+    seashell: 0xFFF5EE,
+    sienna: 0xA0522D,
+    silver: 0xC0C0C0,
+    skyblue: 0x87CEEB,
+    slateblue: 0x6A5ACD,
+    slategray: 0x708090,
+    slategrey: 0x708090,
+    snow: 0xFFFAFA,
+    springgreen: 0x00FF7F,
+    steelblue: 0x4682B4,
+    tan: 0xD2B48C,
+    teal: 0x008080,
+    thistle: 0xD8BFD8,
+    tomato: 0xFF6347,
+    turquoise: 0x40E0D0,
+    violet: 0xEE82EE,
+    wheat: 0xF5DEB3,
+    white: 0xFFFFFF,
+    whitesmoke: 0xF5F5F5,
+    yellow: 0xFFFF00,
+    yellowgreen: 0x9ACD32
 };
