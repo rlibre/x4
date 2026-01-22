@@ -109,6 +109,10 @@ export class Store extends CoreElement<StoreEvents> {
 		return this._data.get(mkid(row, col));
 	}
 
+	hasData( row: number, col?: number ) {
+		return this._data.has( col===undefined ? row : mkid(row, col));
+	}
+
 	lock() {
 		this._lock++;
 	}
@@ -153,6 +157,12 @@ export class Store extends CoreElement<StoreEvents> {
 		else {
 			this._change = true;
 		}
+	}
+
+	clear( ) {
+		this._data = new Map();
+		this._maxrows = 0;
+		this._changed( );
 	}
 }
 
@@ -451,9 +461,17 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 				return;
 			}
 
-			//if (ev.change_type == 'change') {
-			this._selection.clear();
-			//}
+			// try to keep selection
+			if (ev.type == 'changed' && this._selection.size ) {
+				const nsel = new Set<number>();
+				this._selection.forEach(x => {
+					if( this._store.hasData( x ) ) {
+						nsel.add( x );
+					}
+				});
+
+				this._selection = nsel;
+			}
 
 			this._updateFlexs();
 			this._computeFullSize();
