@@ -18,7 +18,7 @@
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { GridColumn } from '../gridview/gridview'
 
-import { class_ns, isNumber, isString, setWaitCursor } from '../../core/core_tools';
+import { class_ns, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
 import { CoreEvent, EventCallback, EventMap } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -31,14 +31,19 @@ import { SimpleText } from '../label/label';
 
 import check_icon from "../checkbox/check.svg";
 import "./spreadsheet.module.scss"
-import { CoreElement, EvViewChange } from '../../x4.js';
+import { CoreElement } from '../../x4.js';
 
 interface CellRef {
 	col: number;
 	row: number;
 }
 
+export type CellClassifier = (data: any, row: number, col: number ) => string;	    // return the cell computed class
 export type CellRenderer = (row: number, col: number, content: any) => Component;
+
+export interface SpreadsheetColumn extends Omit<GridColumn,"classifier"> {
+    classifier?: CellClassifier;
+}
 
 
 function mkid(row: number, col: number) {
@@ -183,7 +188,7 @@ export interface SpreadsheetEvents extends ComponentEvents {
 export interface SpreadsheetProps extends ComponentProps {
 	footer?: boolean;
 	store: Store;
-	columns: GridColumn[];
+	columns: SpreadsheetColumn[];
 
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
@@ -203,7 +208,7 @@ export interface SpreadsheetProps extends ComponentProps {
 @class_ns("x4")
 export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extends SpreadsheetEvents = SpreadsheetEvents> extends Component<P, E> {
 
-	private _columns: GridColumn[];
+	private _columns: SpreadsheetColumn[];
 	private _store: Store;
 
 	private _lock: number;
@@ -640,10 +645,10 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		return header;
 	}
 	/**
-	 * 
+	 * extra_cls est input/output
 	 */
 
-	private _renderCell(row: number, column: GridColumn, extra_cls: string[]): ComponentContent {
+	private _renderCell(row: number, column: SpreadsheetColumn, extra_cls: string[]): ComponentContent {
 
 		const col = column.id;
 		const type = column.type;
@@ -653,14 +658,14 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			return null;
 		}
 
-		let cls = "";
-		//if( column.classifier ) {
-		//	extra_cls.push( column.classifier( data, rec, col ) );
-		//}
+        let cls = "";
+		if( column.classifier ) {
+			extra_cls.push( column.classifier( data, row, col ) );
+		}
 
-		//if (data instanceof Function) {
-		//	return data(rec, col);
-		//}
+        if( data instanceof UnsafeHtml ) {
+            return data;
+        }
 
 		if (column.formatter) {
 			return column.formatter(data);
@@ -703,7 +708,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			case "percent": {
 				return new Box({
-					cls: "percent" + cls,
+					cls: "percent " + cls,
 					content: new Component({ cls: "bar", width: data + "%" })
 				});
 			}
