@@ -38,11 +38,12 @@ interface CellRef {
 	row: number;
 }
 
-export type CellClassifier = (data: any, row: number, col: number ) => string;	    // return the cell computed class
+export type CellClassifier = ( row: number, col: number ) => string;	    // return the cell computed class
+export type RowClassifier = (row: number ) => string;	    				// return the row computed class
 export type CellRenderer = (row: number, col: number, content: any) => Component;
 
 export interface SpreadsheetColumn extends Omit<GridColumn,"classifier"> {
-    classifier?: CellClassifier;
+    cellClassifier?: CellClassifier;
 }
 
 
@@ -189,6 +190,8 @@ export interface SpreadsheetProps extends ComponentProps {
 	footer?: boolean;
 	store: Store;
 	columns: SpreadsheetColumn[];
+	rowClassifier?: RowClassifier;
+
 
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
@@ -659,8 +662,8 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 
         let cls = "";
-		if( column.classifier ) {
-			extra_cls.push( column.classifier( data, row, col ) );
+		if( column.cellClassifier ) {
+			extra_cls.push( column.cellClassifier( row, col ) );
 		}
 
         if( data instanceof UnsafeHtml ) {
@@ -780,8 +783,16 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			els.push(el);
 		}
+		
+		let row_cls = 'row';
+		if( this.props.rowClassifier ) {
+			const xtra = this.props.rowClassifier( rowid );
+			if( xtra ) {
+				row_cls += ' ' + xtra.trim();
+			}
+		}
 
-		return new Box({ cls: "row", style: { top: top.toFixed(2) + "px" }, content: els });
+		return new Box({ cls: row_cls, style: { top: top.toFixed(2) + "px" }, content: els });
 	}
 
 	/**

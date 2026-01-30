@@ -227,6 +227,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		const rc = this._edit.getBoundingRect( );
 		this._popup.setStyleValue( "minWidth", rc.width+"px" );
 		this._popup.displayNear( rc, "top left", "bottom left", {x:0,y:6} );
+		this._popup.getList().ensureSelectionVisible( );
 	}
 
 	setItems( items: ListItem[] ) {

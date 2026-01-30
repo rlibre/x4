@@ -580,4 +580,15 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	getSelection( ) {
 		return Array.from( this._multisel );
 	}
+
+	ensureSelectionVisible( ) {
+		const sels = Array.from( this._multisel.values() );
+		if( sels.length) {
+			const item = this._itemWithID( sels[0] );
+			item?.scrollIntoView( {
+				behavior: "instant",
+				block: "nearest"
+			} )
+		}
+	}
 }
