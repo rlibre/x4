@@ -34,7 +34,7 @@ import "./gridview.module.scss"
 export type CellRenderer = (rec: DataRecord) => Component;
 export type CellClassifier = (data: any, rec: DataRecord, col: string ) => string;	// return the cell computed class
 
-type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
+type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon" | "date-time";
 
 const SCROLL_LIMIT = 200;
 
@@ -121,9 +121,12 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	private _end: number;
 
 	private _selection: Set<number>;
-	private _num_fmt = new Intl.NumberFormat('fr-FR');
-	private _mny_fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-	private _dte_fmt = new Intl.DateTimeFormat('fr-FR', {});
+
+	// TODO: that
+	private _num_fmt 	= new Intl.NumberFormat('fr-FR');
+	private _mny_fmt 	= new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+	private _dte_fmt 	= new Intl.DateTimeFormat('fr-FR', {});
+	private _dtetme_fmt = new Intl.DateTimeFormat('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:"2-digit"});
 
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
@@ -704,7 +707,20 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 
 			case "date": {
+				if( isString(data) ) {
+					data = new Date( data );
+				}
+				
 				data = this._dte_fmt.format(data as Date);
+				break;
+			}
+
+			case "date-time": {
+				if( isString(data) ) {
+					data = new Date( data );
+				}
+				
+				data = this._dtetme_fmt.format(data as Date);
 				break;
 			}
 
