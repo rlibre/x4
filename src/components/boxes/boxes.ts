@@ -14,8 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { asap, class_ns, isArray, isNumber, isString } from '../../core/core_tools';
-import { Component, ComponentContent, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
+import { asap, class_ns, isArray, isNumber } from '../../core/core_tools';
+import { Component, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 
 import "./boxes.module.scss";
 import { EventCallback } from '../../core/core_events';
