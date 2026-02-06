@@ -39,14 +39,18 @@
 	border: 1px solid var( --listbox-border );
 	background-color: var( --listbox-background );
 
-	&:focus-within {
-		border-color: var( --listbox-border-focus );
-	}
-
 	outline: none;
 
 	&>.x4header {
 		border-bottom: 1px solid var( --border );
+	}
+
+	&>.title {
+	    background: white;
+		padding: 4px;
+		font-weight: bold;
+		color: black;
+		border-bottom: 1px solid var(--border);
 	}
 
 	&>.body {
@@ -167,5 +171,9 @@
 				}
 			}
 		}
+	}
+
+	&:focus-within {
+		border-color: var( --listbox-border-focus );
 	}
 }

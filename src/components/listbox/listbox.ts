@@ -56,6 +56,8 @@ export interface ListboxEvents extends ComponentEvents {
 export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
+	title?: string;
+	icon?: string;
 	header?: Header;
 	footer?: Component,
 	checkable?: true,
@@ -104,6 +106,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 
 		this.setContent( [
+			(props.title || props.icon) ? new Label( { cls: 'title', text: props.title, icon: props.icon }) : null,
 			props.header ? props.header : null,
 			scroller,
 			props.footer,
