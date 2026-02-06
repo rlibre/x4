@@ -89,6 +89,7 @@ export interface TextInputProps extends BaseProps {
 	spellcheck?: boolean;
 	minlength?: number;
 	maxlength?: number;
+	trim?: boolean;
 }
 
 
@@ -267,7 +268,12 @@ export class Input extends Component<InputProps,InputEvents> {
 	 */
 
 	public getValue( ) {
-		return (this.dom as HTMLInputElement).value;
+		let v = (this.dom as HTMLInputElement).value;
+		if( (this.props as any).trim!==false ) {
+			v = v.trim( );	
+		}
+
+		return v;
 	}
 	
 	/**
