@@ -1,0 +1,44 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file link.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+.x4link {
+	cursor: pointer;		
+
+	#text {
+		text-decoration: underline;
+	}
+
+	&[disabled] {
+		cursor: not-allowed;
+		border-color: var( --border );
+		color: var( --listbox-item-color-disabled );
+
+		&>.body {
+			.x4viewport {
+				pointer-events: none;
+				.x4item {
+					&.selected {
+						background-color: var( --listbox-item-color-sel-disabled );
+					}
+				}
+			}
+		}
+	}
+
+	&:focus-within {
+		border-color: var( --listbox-border-focus );
+	}
+}
