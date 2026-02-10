@@ -120,7 +120,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		} );
 
 		if( props.items ) {
-			this.setItems( props.items );
+			this.setItems( props.items, false );
 		}
 	}
 
@@ -437,24 +437,21 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._view.clearContent( );
 		this._items = items ?? [];
 
-		let upsel = false;
+		let update_sel = false;
 
 		if( this._items.length ) {
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
 
-			if( keepSel ) {
+			if( keepSel && oldSel.length>0 ) {
 				this.select( oldSel );
-			}
-			else {
-				upsel = true;
 			}
 		}
 		else {
-			upsel = true;
+			update_sel = oldSel.length>0;
 		}
 		
-		if( upsel ) {
+		if( update_sel ) {
 			this.setTimeout( "sel", 100, ( ) => {
 				this.fire( "selectionChange", { selection: [], empty: true } );
 			} );
