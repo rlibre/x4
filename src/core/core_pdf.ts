@@ -180,7 +180,7 @@ export class X4PDFBuilder {
 			ops.push('BT')
 			ops.push(`/F1 ${size} Tf`)
 			ops.push(`${fx(tx,2)} ${fx(y,2)} Td`)
-			ops.push(`${pdfString(str)} Tj`)
+			ops.push(`${str.startsWith('(') ? str : pdfString(str)} Tj`)
 			ops.push('ET')
 		}
 		
@@ -307,7 +307,8 @@ export class X4PDFBuilder {
 		const fontRef = this._addObject({
 			Type: '/Font',
 			Subtype: '/Type1',
-			BaseFont: '/Helvetica'
+			BaseFont: '/Helvetica',
+			Encoding: '/WinAnsiEncoding'
 		})
 
 		const pagesRef = this._addObject({

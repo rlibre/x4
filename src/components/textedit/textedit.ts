@@ -94,6 +94,8 @@ export class TextEdit extends HBox {
 
 
 		const iprops: InputProps = { ...props, id: props.inputId, attrs: props.inputAttrs, width: props.inputWidth };
+		// no propagation...
+		delete iprops.cls;
 
 		this.setContent( [
 			props.label ? new HBox( { id: "label", width: props.labelWidth, content: [

@@ -482,7 +482,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				attrs: { "data-col": col },
 				style: { width: cdata.width ? cdata.width + "px" : undefined },
 				content: [
-					new SimpleText({ text: cdata.title, align: cdata.header_align ?? "left" }),
+					new SimpleText({ cls: 'title', text: cdata.title, align: cdata.header_align ?? "left" }),
 					new Component({ cls: "sorter" }),
 					sizer
 				]
@@ -1189,6 +1189,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
+	clearSelection( ) {
+		this._clearSelection( );
+	}
+
 	private _clearSelection() {
 		for (const ref of this._selection.keys()) {
 			const els = this.queryAll(`.row[data-row="${ref}"]`)
@@ -1253,6 +1257,19 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			if( ensureVisible ) {
 				this._scrollToIndex( index );
 			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	setColTitle( col_name: any, title: string ) {
+		const col = this._columns.findIndex( x => x.id==col_name );
+		if( col>=0 ) {
+			this._columns[col].title = title;
+			const el = this._hheader.query<SimpleText>(`[data-col="${col}"] .title` )
+			el.setText( title );
 		}
 	}
 }

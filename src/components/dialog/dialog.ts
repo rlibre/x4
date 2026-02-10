@@ -183,6 +183,10 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 		return this.form.getValues();
 	}
 
+	validate( ) {
+		return this.form.validate( );
+	}
+
 	/**
 	 * 
 	 */
