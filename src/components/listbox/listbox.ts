@@ -416,10 +416,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._multisel.clear( );
 	}
 
-	clearSelection( ) {
+	clearSelection( fireEvent = true ) {
 		if( this._multisel.size ) {
 			this._clearSelection( );
-			this.fire( "selectionChange", { selection: [], empty: true } );
+			if( fireEvent ) {
+				this.fire( "selectionChange", { selection: [], empty: true } );
+			}
 		}
 	}
 	
