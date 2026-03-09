@@ -56,6 +56,8 @@ export interface ListboxEvents extends ComponentEvents {
 export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	items?: ListItem[];
 	renderer?: ( item: ListItem ) => Component;
+	title?: string;
+	icon?: string;
 	header?: Header;
 	footer?: Component,
 	checkable?: true,
@@ -104,6 +106,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 
 		this.setContent( [
+			(props.title || props.icon) ? new Label( { cls: 'title', text: props.title, icon: props.icon }) : null,
 			props.header ? props.header : null,
 			scroller,
 			props.footer,
@@ -117,7 +120,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		} );
 
 		if( props.items ) {
-			this.setItems( props.items );
+			this.setItems( props.items, false );
 		}
 	}
 
@@ -191,8 +194,15 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 		else {
 			const selitem = this._itemWithID( this._lastsel );
-			let nel = sens==kbNav.next ? selitem.nextElement() : selitem.prevElement();
-			nel = next_visible( nel, sens==kbNav.next );
+
+			let nel;
+			if( selitem ) {
+				nel = sens==kbNav.next ? selitem.nextElement() : selitem.prevElement();
+				nel = next_visible( nel, sens==kbNav.next );
+			}
+			else {
+				nel = sens==kbNav.next ? this._view.firstChild() : this._view.lastChild( );
+			}
 
 			if( nel ) {
 				const id = nel.getInternalData( "id" );
@@ -406,10 +416,12 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._multisel.clear( );
 	}
 
-	clearSelection( ) {
+	clearSelection( fireEvent = true ) {
 		if( this._multisel.size ) {
 			this._clearSelection( );
-			this.fire( "selectionChange", { selection: [], empty: true } );
+			if( fireEvent ) {
+				this.fire( "selectionChange", { selection: [], empty: true } );
+			}
 		}
 	}
 	
@@ -425,24 +437,21 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		this._view.clearContent( );
 		this._items = items ?? [];
 
-		let upsel = false;
+		let update_sel = false;
 
 		if( this._items.length ) {
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
 
-			if( keepSel ) {
+			if( keepSel && oldSel.length>0 ) {
 				this.select( oldSel );
-			}
-			else {
-				upsel = true;
 			}
 		}
 		else {
-			upsel = true;
+			update_sel = oldSel.length>0;
 		}
 		
-		if( upsel ) {
+		if( update_sel ) {
 			this.setTimeout( "sel", 100, ( ) => {
 				this.fire( "selectionChange", { selection: [], empty: true } );
 			} );
@@ -572,5 +581,16 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	getSelection( ) {
 		return Array.from( this._multisel );
+	}
+
+	ensureSelectionVisible( ) {
+		const sels = Array.from( this._multisel.values() );
+		if( sels.length) {
+			const item = this._itemWithID( sels[0] );
+			item?.scrollIntoView( {
+				behavior: "instant",
+				block: "nearest"
+			} )
+		}
 	}
 }

@@ -51,10 +51,17 @@
 	border: none;
 	border-top: 1px solid var( --border );
 	margin-top: 1.5em;
+	border-radius: 0;
+	
+	padding: 0;
 
 	legend {
 		background: none;
 		top: -1.4em;
 		left: 0;
+	}
+
+	& >.body {
+		padding: 0;
 	}
 }

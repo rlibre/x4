@@ -98,6 +98,11 @@ export class MessageBox extends Dialog<DialogProps>
 }
 
 
+interface InputOptions {
+	password?: boolean;
+	trim?: boolean;
+}
+
 @class_ns( "x4" )
 export class InputBox extends Dialog<DialogProps>
 {
@@ -110,7 +115,10 @@ export class InputBox extends Dialog<DialogProps>
 		return input.getValue( );
 	}
 
-	private static _create( msg: string | UnsafeHtml, value: string, title: string ) {
+	private static _create( msg: string | UnsafeHtml, value: string, title: string, options?: InputOptions ) {
+
+		options = {trim: true, password: false, ...options };
+
 		const box = new InputBox({ 
 			modal: true,
 			title,
@@ -122,7 +130,7 @@ export class InputBox extends Dialog<DialogProps>
 							new Icon( { iconId: pen_icon }),
 							new VBox( { flex: 1, content: [
 								new Label( { text: msg } ),
-								new Input( { value, type: "text" } )
+								new Input( { value, type: options.password ? "password" : "text", trim: options.trim } )
 							]})
 						]
 					}),
@@ -138,11 +146,11 @@ export class InputBox extends Dialog<DialogProps>
 	 * idem with promise
 	 */
 
-	static async showAsync( msg: string | UnsafeHtml, value: string, title?: string ) : Promise<string> {
+	static async showAsync( msg: string | UnsafeHtml, value: string, title?: string, options?: InputOptions ) : Promise<string> {
 
-		return new Promise( (resolve, reject ) => {
+		return new Promise( (resolve, _reject ) => {
 
-			const box = this._create( msg, value, title );
+			const box = this._create( msg, value, title, options );
 		
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {

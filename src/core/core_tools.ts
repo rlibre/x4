@@ -54,6 +54,15 @@ export function isDate(v: unknown): v is Date {
     return v instanceof Date && !isNaN(v.getTime());
 }
 
+
+export function isPlainObject(value: unknown): value is Record<string, any> {
+  	if (typeof value !== 'object' || value === null) {
+		return false;
+	}
+
+    return Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null;
+}
+
 /**
  * generic constructor definition
  */
@@ -82,7 +91,7 @@ export function unsafeHtml(x: string): UnsafeHtml {
 
 export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
 	const result = strings.reduce((acc, str, i) => {
-		return acc + str + (values[i] || '');
+		return acc + str + (values[i] ?? '');
 	}, '');
 	return unsafeHtml(result);
 }
@@ -189,6 +198,17 @@ export class Rect implements IRect {
 		this.width += dx+dx;
 		this.top -= dy;
 		this.width += dy+dy;
+
+		return this;
+	}
+
+	scale( scale: number ) {
+		this.left *= scale;
+		this.top *= scale;
+		this.width *= scale;
+		this.height *= scale;
+
+		return this;
 	}
 }
 
@@ -864,6 +884,7 @@ export function beep() {
 
 
 let sb_width_cache = -1;
+let window_zoom = -1;
 
 /**
  * compute scrollbar size
@@ -888,6 +909,38 @@ export function getScrollbarSize() {
 
 	return sb_width_cache;
 }
+
+export function getGlobalZoom( ) {
+	if( window_zoom<0 ) {
+		const style = window.getComputedStyle(document.body);
+		const matrix = style.transform;
+
+		if (matrix !== 'none') {
+			const values = matrix.split('(')[1].split(')')[0].split(',');
+			window_zoom = parseFloat(values[0]); 
+		} 
+		else {
+			window_zoom = parseFloat( style.zoom) || 1;
+		}
+	}
+
+	return window_zoom;
+}
+
+export function getSystemMetrics( part: "scrollbar" | "zoom" ) {
+	switch( part ) {
+		case "scrollbar": return getScrollbarSize( );
+		case "zoom": return getGlobalZoom( );
+	}
+
+	return 0;
+}
+
+
+
+
+
+
 
 /**
  * 

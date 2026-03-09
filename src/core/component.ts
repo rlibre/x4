@@ -954,11 +954,20 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-     * Static method to search up the DOM tree for a parent element that is a Component and optionally matches a specific constructor.
+     * 
+	 */
+
+	childCount( ) {
+		return this.dom.childElementCount;
+	}
+
+	/**
+	 * Static method to search up the DOM tree for a parent element that is a Component and optionally matches a specific constructor.
      * @param dom - The starting DOM node from which to search upwards.
      * @param cls - Optional. The constructor of the Component type to match.
      * @returns The matching parent Component instance, or `null` if not found.
      */
+	
 	
 	static parentElement<T extends Component>( dom: Node, cls?: Constructor<T> ): T {
 
@@ -1222,6 +1231,7 @@ export class Space extends Component {
  */
 
 export interface EvClick extends ComponentEvent {
+	repeat?: number;
 }
 
 /**
@@ -1259,7 +1269,7 @@ export interface EvSelectionChange extends ComponentEvent {
  */
 
 export interface EvContextMenu extends ComponentEvent {
-	uievent: UIEvent;	// UI event that fire this event
+	uievent: MouseEvent;	// UI event that fire this event
 }
 
 /**

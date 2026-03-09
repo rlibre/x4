@@ -34,7 +34,7 @@ import "./gridview.module.scss"
 export type CellRenderer = (rec: DataRecord) => Component;
 export type CellClassifier = (data: any, rec: DataRecord, col: string ) => string;	// return the cell computed class
 
-type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon";
+type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon" | "date-time";
 
 const SCROLL_LIMIT = 200;
 
@@ -121,9 +121,12 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	private _end: number;
 
 	private _selection: Set<number>;
-	private _num_fmt = new Intl.NumberFormat('fr-FR');
-	private _mny_fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-	private _dte_fmt = new Intl.DateTimeFormat('fr-FR', {});
+
+	// TODO: that
+	private _num_fmt 	= new Intl.NumberFormat('fr-FR');
+	private _mny_fmt 	= new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+	private _dte_fmt 	= new Intl.DateTimeFormat('fr-FR', {});
+	private _dtetme_fmt = new Intl.DateTimeFormat('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:"2-digit"});
 
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
@@ -345,6 +348,68 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 	}
 
+	setColumns( columns: GridColumn[] ) {
+		this._columns = columns.map(x => x);
+		if( this.dom ) {
+			
+			this._updateFlexs( );
+			
+			// Rebuild headers
+			if (this._fheader) {
+				/*
+				const newFixedHeader = this._buildColHeader(true);
+				this._fheader.setContent(newFixedHeader.getChildren());
+				// On doit remplacer _fheader dans le DOM ou mettre à jour son contenu
+				// La méthode _buildColHeader retourne une Box.
+				// Ici, je vais simplifier en vidant et remplissant si possible, 
+				// mais Box n'a pas forcément de méthode simple pour remplacer tout le DOM interne sans casser les events.
+				// Le plus simple est de remplacer les composants header dans le DOM global du gridview.
+				
+				// Approche : on recrée les headers et on remplace les anciens
+				this._fheader.destroy();
+				this._hheader.destroy();
+				
+				this._fheader = this._buildColHeader(true);
+				this._hheader = this._buildColHeader(false);
+				
+				// Il faut réinsérer ces headers au bon endroit dans le DOM du Gridview.
+				// _init fait: 
+				// 		this.setContent([
+				//			this._fheader,
+				//			this._hheader,
+				//			this._vheader,
+				//			this._viewport,
+				//			this._ffooter,
+				//			this._footer,
+				//		]);
+				
+				// Donc on peut reconstruire le content complet
+				const content = [
+					this._fheader,
+					this._hheader,
+					this._vheader,
+					this._viewport
+				];
+				
+				if (this._has_footer) {
+					this._ffooter.destroy();
+					this._footer.destroy();
+					this._ffooter = this._buildColFooter(true);
+					this._footer = this._buildColFooter(false);
+					content.push(this._ffooter);
+					content.push(this._footer);
+				}
+				
+				this.setContent(content);
+				*/
+				console.assert( false, "TODO" );
+			}
+
+			this._computeFullSize( );
+			this._update( true );
+		}
+	}
+
 	getView( ): DataView {
 		return this._dataview;
 	}
@@ -417,7 +482,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				attrs: { "data-col": col },
 				style: { width: cdata.width ? cdata.width + "px" : undefined },
 				content: [
-					new SimpleText({ text: cdata.title, align: cdata.header_align ?? "left" }),
+					new SimpleText({ cls: 'title', text: cdata.title, align: cdata.header_align ?? "left" }),
 					new Component({ cls: "sorter" }),
 					sizer
 				]
@@ -642,7 +707,20 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 
 			case "date": {
+				if( isString(data) ) {
+					data = new Date( data );
+				}
+				
 				data = this._dte_fmt.format(data as Date);
+				break;
+			}
+
+			case "date-time": {
+				if( isString(data) ) {
+					data = new Date( data );
+				}
+				
+				data = this._dtetme_fmt.format(data as Date);
 				break;
 			}
 
@@ -1111,6 +1189,10 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
+	clearSelection( ) {
+		this._clearSelection( );
+	}
+
 	private _clearSelection() {
 		for (const ref of this._selection.keys()) {
 			const els = this.queryAll(`.row[data-row="${ref}"]`)
@@ -1168,10 +1250,26 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	selectItem( id: any ) {
+	selectItem( id: any, ensureVisible = true ) {
 		const index = this._dataview.indexOfId( id );
 		if( index>=0 ) {
 			this._addSelection( index );
+			if( ensureVisible ) {
+				this._scrollToIndex( index );
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+
+	setColTitle( col_name: any, title: string ) {
+		const col = this._columns.findIndex( x => x.id==col_name );
+		if( col>=0 ) {
+			this._columns[col].title = title;
+			const el = this._hheader.query<SimpleText>(`[data-col="${col}"] .title` )
+			el.setText( title );
 		}
 	}
 }

@@ -34,7 +34,7 @@ export interface MenuItem {
 	icon?: string;
 	text: string | UnsafeHtml;
 	menu?: Menu;
-	disabled?: true;
+	disabled?: boolean;
 	click?: DOMEventHandler;
 }
 

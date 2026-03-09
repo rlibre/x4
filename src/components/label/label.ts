@@ -24,6 +24,7 @@ export interface LabelProps extends ComponentProps {
 	text?: string | UnsafeHtml;
 	icon?: string;
 	labelFor?: string;
+	align?: "left" | "center" | "right";
 }
 
 /**
@@ -32,29 +33,32 @@ export interface LabelProps extends ComponentProps {
 
 @class_ns( "x4" )
 export class Label extends Component<LabelProps> {
-	#text: Component;
 	
 	constructor( p: LabelProps ) {
 		super( { ...p, content: null } );
 
 		this.setContent( [
 			new Icon( { id:"icon", iconId: this.props.icon } ),
-			this.#text = new Component( { tag: 'span', id: 'text' } )
+			new Component( { tag: 'span', id: 'text' } )
 		] );
 
 		// small hack for react:
 		//	p.content may be the text
-		const text = this.props.text;
-		this.setText( text );
+		this.setText( this.props.text );
 	
 		if( p.labelFor ) {
 			this.setAttribute( "for", p.labelFor );
 		}
+
+		if( p.align ) {
+			this.addClass( "al-"+p.align );
+		}
 	}
 
 	setText( text: string | UnsafeHtml ) {
-		this.#text.setContent( text );
-		this.#text.setClass( "empty", !text );
+		const lab = this.query<Icon>( "#text" );
+		lab.setContent( text );
+		lab.setClass( "empty", !text );
 	}
 
 	setIcon( icon: string ) {

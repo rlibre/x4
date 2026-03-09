@@ -121,14 +121,14 @@ export class Keyboard extends HBox<KeyboardProps>
 		this.hide( );
 
 		this.addDOMEvent( "mousedown", (e) => {
-			this.handleKey( e ); 	
+			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
 
 		// for rapid people
 		this.addDOMEvent( "dblclick", (e) => {
-			this.handleKey( e ); 	
+			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
@@ -148,7 +148,7 @@ export class Keyboard extends HBox<KeyboardProps>
 	 * 
 	 */
 
-    private handleKey( e: UIEvent ) {
+    private handleKeyEvent( e: UIEvent ) {
         let target = e.target as HTMLElement;
         let key;
 
@@ -165,6 +165,10 @@ export class Keyboard extends HBox<KeyboardProps>
 			return;
 		}
 
+		this._handleKey( key );
+	}
+
+	private _handleKey( key: number ) {
         switch( key ) {
             // bk space
             case 2: {
@@ -435,6 +439,7 @@ export class Keyboard extends HBox<KeyboardProps>
                 let content = line[i];
                 let key;
 				let icon = null;
+				let repeat = false;
 
                 if( content.length>2 && content[0]=='{' && content[content.length-1]=='}') {
                     
@@ -457,6 +462,7 @@ export class Keyboard extends HBox<KeyboardProps>
 
 						case 2:
 						{
+							repeat = true;
 							content = undefined;
 							icon = icon_bksp;
 							cls += ' cdel'; 
@@ -521,7 +527,18 @@ export class Keyboard extends HBox<KeyboardProps>
                     key = line[i].charCodeAt(0);
                 }
 
-                let el = new Button( { cls, label: content, attrs: {'data-key': key}, icon } );
+                let el = new Button( { 
+					cls, 
+					label: content, 
+					attrs: {'data-key': key}, 
+					icon, 
+					autorepeat: repeat, 
+					click: ( e ) => {
+						if( e.repeat ) {
+							this._handleKey( key )
+						}
+					}
+				} );
                 tl.push( el );
             }
 

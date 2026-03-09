@@ -489,7 +489,7 @@ export class MasonryBox extends Box<MasonryProps> {
 
 	resizeAllItems( ) {
 		const els = this.queryAll( ".item" );
-		els.forEach( itm => {;
+		els.forEach( itm => {
 			this.resizeItem( itm );
 		} );
 	}

@@ -17,7 +17,7 @@
 
 import { EvChange } from './component';
 import { CoreElement } from './core_element';
-import { CoreEvent, EventCallback, EventMap, EventSource } from './core_events';
+import { CoreEvent, EventMap, EventSource } from './core_events';
 import { isArray, isString } from './core_tools';
 
 export type DataRecordID = any;
@@ -80,24 +80,26 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 	let mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
 	
 	if( mfld===undefined ) {
-		if( !create ) {
+		if( !create && ctor!=DataModel ) {
 			console.assert( mfld!==undefined );
 		}
 		
 		// construct our metas
 		mfld = new MetaInfos( ctor.name );
 
-		// merge with parent class metas
-		let pctor = Object.getPrototypeOf(ctor);
-		if( pctor!=DataModel ) {
-			let pmetas = pctor[metaFields];
-			mfld.fields = [...pmetas.fields, ...mfld.fields ]
-			
-			console.assert( mfld.id===undefined, 'cannot define mutiple record id' );
-			if( !mfld.id ) {
-				mfld.id = pmetas.id;
-			}
-		}	
+        if( ctor!=DataModel ) { //<eco: allow addFields on DataModel
+            // merge with parent class metas
+            let pctor = Object.getPrototypeOf(ctor);
+            if( pctor!=DataModel ) {
+                let pmetas = pctor[metaFields];
+                mfld.fields = [...pmetas.fields, ...mfld.fields ]
+                
+                console.assert( mfld.id===undefined, 'cannot define mutiple record id' );
+                if( !mfld.id ) {
+                    mfld.id = pmetas.id;
+                }
+            }	
+        }
 
 		(obj.constructor as any)[metaFields] = mfld;
 	}
@@ -249,7 +251,24 @@ export namespace data {
  * record model
  */
 
-export class DataModel {
+export class DataModel<T = any> {
+
+    /**
+     * dynamic DataModel
+     */
+
+    addField( ...fields: FieldInfo[] ) {
+        if( fields.length==0 ) {
+            return;
+        }
+
+        let metas = _getMetas( this, false );
+        if( metas.fields.length==0 ) {
+            metas.id = fields[0].name;
+        }
+
+        metas.fields.push( ...fields );
+    }
 
 	/**
 	 * MUST IMPLEMENT
@@ -309,8 +328,6 @@ export class DataModel {
 
 		return rec as T;
 	}
-
-
 	
 	/**
 	 * default unserializer
@@ -318,10 +335,10 @@ export class DataModel {
 	 * @returns a new Record
 	 */
 
-	unSerialize(data: any, id?: DataRecordID ) : DataRecord { 
+	unSerialize(data: any, id?: DataRecordID ) : DataRecord<T> { 
 
 		const fields = this.getFields();
-		const rec = new DataRecord( );
+		const rec: any = {};
 
 		fields.forEach( (sf) => {
 			let value = data[sf.name];
@@ -457,63 +474,9 @@ export class DataModel {
  * 
  */
 
-export class DataRecord {
-	[ key: string ]: DataFieldValue;
-
-	/*
-	/ **
-	 * @returns fields descriptors
-	 * /
-
-	getFields(): FieldInfo[] { 
-		let metas = _getMetas( this, false );
-		return metas.fields;
-	}
-
-	
-
-	/ **
-	 * 
-	 * @param name 
-	 * @param data 
-	 * /
-
-	setRaw( name: string, data: string ) {
-		this[name] = data;
-	}
-
-	
-
-	/ **
-	 * set field value
-	 * @param name - field name
-	 * @param value - value to set
-	 * @example
-	 * record.set( 'field1', 7 );
-	 * /
-
-	setField(name: string, value: any) {
-		let fields = this.getFields( );
-		let idx = fields.findIndex( fi => fi.name == name );
-
-		if( idx < 0 ) {
-			console.assert( false, 'unknown field: '+name);
-			return;
-		}
-
-		let fld = fields[idx];
-		if( fld.calc!==undefined ) {
-			console.assert( false, 'cannot set calc field: '+name);
-			return;
-		}
-		
-		this.setRaw( fld.name, value );
-	}
-	*/
-
-	
-}
-
+export type DataRecord<T = any> = Partial<T> & {
+    [key: string]: any;
+};
 
 /**
  * 
@@ -591,11 +554,11 @@ interface DataStoreEventMap extends EventMap {
  * 
  */
 
-export class DataStore extends EventSource<DataStoreEventMap> {
+export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 	
-	protected m_model: DataModel;
+	protected m_model: DataModel<T>;
 	protected m_fields: FieldInfo[];
-	protected m_records: DataRecord[];
+	protected m_records: DataRecord<T>[];
 
 	protected m_proxy: DataProxy;
 	protected m_rec_index: DataIndex;
@@ -648,7 +611,7 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 
 	public setData( records: any[] ) {
 
-		const realRecords: DataRecord[] = new Array( records.length );
+		const realRecords: DataRecord<T>[] = new Array( records.length );
 
 		records.forEach( (rec,idx) => {
 			realRecords[idx] = this.m_model.unSerialize(rec);
@@ -697,11 +660,11 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @param data 
 	 */
 
-	public append( rec: DataRecord | any ) {
+	public appendRaw( rec: T ) {
+		return this.append( this.m_model.unSerialize( rec ) );
+	}
 
-		if( !(rec instanceof DataRecord) ) {
-			rec = this.m_model.unSerialize( rec );
-		}
+	public append( rec: DataRecord ) {
 
 		const id = this.m_model.getID(rec);
 		console.assert( id!==undefined );
@@ -797,12 +760,13 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 		return -1;
 	}
 
+
 	/**
 	 * return the record by it's id 
 	 * @returns record or null
 	 */
 
-	public getById(id: DataRecordID): DataRecord {
+	public getById(id: DataRecordID): DataRecord<T> {
 		let idx = this.indexOfId( id );
 		if( idx<0 ) {
 			return null;
@@ -817,12 +781,12 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 	 * @returns record or null
 	 */
 
-	public getByIndex( index: number ): DataRecord {
+	public getByIndex( index: number ): DataRecord<T> {
 		let idx = this.m_rec_index[index];
 		return this._getRecord( idx );
 	}
 
-	private _getRecord( index: number ) : DataRecord {
+	private _getRecord( index: number ) : DataRecord<T> {
 		return this.m_records[index] ?? null;
 	}
 
@@ -1063,6 +1027,29 @@ export class DataStore extends EventSource<DataStoreEventMap> {
 				}
 			} );
 		}
+	}
+
+	find( cb: ( rec: DataRecord ) => boolean ) {
+		let result;
+
+		if( this.m_rec_index ) {
+			result = this.m_rec_index.find( ri => {
+				if( cb( this.m_records[ri] ) ) {
+					return true;
+				}
+			});
+		}
+		else {
+			result = this.m_records.findIndex( rec => {
+				if( rec ) {
+					if( cb( rec ) ) {
+						return true;
+					}
+				}
+			} );
+		}
+
+		return result>=0 ? this.getByIndex(result) : null;
 	}
 
 	export( ) {

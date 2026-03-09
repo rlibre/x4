@@ -17,7 +17,7 @@
 import { Component, componentFromDOM } from './component';
 import { CoreElement } from './core_element';
 import { CoreEvent, EventMap } from './core_events';
-import { getFocusableElements, ITabHandler } from './core_tools';
+import { asap, getFocusableElements, ITabHandler } from './core_tools';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -94,8 +94,15 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		main_app = this;
 
-		if( props.mountPoint ) {
-			window.addEventListener( "load", ( ) => this.mount( props.mountPoint ) )
+		const loaded = ( ) => {
+			this.mount( props.mountPoint ?? 'body' )
+		}
+
+		if( document.readyState=='complete' ) {
+			asap( loaded );
+		}
+		else {
+			window.addEventListener( "load", loaded, { once: true } );
 		}
 	}
 
@@ -104,7 +111,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	 */
 
 	private mount( mountPoint = 'body' ) {
-		if( !this.mainview ) {
+		if( !this.mounted && this.mainview ) {
 			const ev = document.querySelector( mountPoint );
 			if( ev ) {
 				ev.appendChild( this.mainview.dom );

@@ -28,6 +28,7 @@ import icon from "./comments-question.svg"
 
 let last_hit: HTMLElement = null;
 let tooltip: Tooltip = null;
+let mouse_pos: Point = {x:0, y:0 };
 
 const timer = new Timer( );
 
@@ -53,15 +54,20 @@ export function initTooltips( ) {
 
 	}, true );
 
-	document.addEventListener( "mouseleave", ( ev: Event ) => {
+	document.addEventListener( "mouseleave", ( ev: MouseEvent ) => {
 		//console.log( "leave", ev.target );
-
 		if( last_hit && ev.target==last_hit ) {
 			last_hit = null;
 			closeTT( );
 		}
 
 	}, true );
+
+	document.addEventListener( "mousemove", ( ev: MouseEvent ) => {
+		if( last_hit ) {
+			mouse_pos = { x:ev.pageX, y:ev.pageY }
+		}
+	});
 }
 
 function showTT( text: string, rc: Rect, pt: Point ) {
@@ -71,8 +77,14 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 
 	timer.setTimeout( null, 300, ( ) => {
 		tooltip.setText( unsafeHtml(text) );
+
+		let y = mouse_pos.y;
+		if( rc.contains(mouse_pos) ) {
+			y = rc.bottom;
+		}
+
 		//tooltip.displayNear( rc, "top left", "bottom left", {x:0,y:4} );
-		tooltip.displayAt( pt.x+17, pt.y+17 );
+		tooltip.displayAt( mouse_pos.x+17, y+5 );
 	} );
 }
 

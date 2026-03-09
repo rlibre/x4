@@ -32,6 +32,7 @@ interface TextAreaProps extends BaseProps {
 	value?: string;
 	resize?: boolean;
 	readonly?: boolean;
+	trim?: boolean;
 }
 
 
@@ -39,7 +40,7 @@ interface TextAreaProps extends BaseProps {
  * 
  */
 
-class SimpleTextArea extends Component {
+class SimpleTextArea extends Component<TextAreaProps> {
 
 	constructor( props: TextAreaProps ) {
 		super( { ...props, tag: "textarea" } );
@@ -61,7 +62,12 @@ class SimpleTextArea extends Component {
 	}
 
 	getText( ) {
-		return (this.dom as HTMLTextAreaElement).value;
+		let text = (this.dom as HTMLTextAreaElement).value;
+		if( this.props.trim!==false ) {
+			text = text.trim();
+		}
+
+		return text;
 	}
 
 	queryInterface<T>(name: string): T {

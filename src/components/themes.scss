@@ -33,6 +33,7 @@ $color--interval: 8.4%;
 	--color-primary-a90: #{darken($color--base, $color--interval * 4)};
 	--color-primary-a100: #000000;
 
+	--color-danger-a30: #{lighten(#c01010,30%)};
 	--color-danger-a50: #c01010;
 	--color-danger-a60: #{darken(#c01010,10%)};
 
@@ -46,6 +47,7 @@ $color--interval: 8.4%;
 	// Backgrounds
 	--background-primary: var(--color-primary-a0); // Fond principal
 	--background-secondary: var(--color-primary-a10); // Fond secondaire
+	--background-ternary: #f4f4f4; // Fond secondaire
 
 	// Texts
 	--text-primary: var(--color-primary-a100); // Texte principal

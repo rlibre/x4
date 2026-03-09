@@ -2,11 +2,10 @@
 	"compilerOptions": {
 		"strict": true,
 		"moduleResolution": "bundler",
-		"module": "preserve",
+		"module": "es2022",
 		"strictNullChecks": false,
 		"target": "ES2022",
 		"experimentalDecorators": true,
-		"allowImportingTsExtensions": true,
 		"lib": [ "es2022", "DOM" ]
 	}
 }

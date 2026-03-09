@@ -169,6 +169,7 @@ export interface TextInputProps extends BaseProps {
 	minlength?: number;
 	/** Maximum input length. */
 	maxlength?: number;
+	trim?: boolean;
 }
 
 
@@ -359,7 +360,12 @@ export class Input extends Component<InputProps,InputEvents> {
 	/** Gets the current input value as a string. */
     
 	public getValue( ) {
-		return (this.dom as HTMLInputElement).value;
+		let v = (this.dom as HTMLInputElement).value;
+		if( (this.props as any).trim!==false ) {
+			v = v.trim( );	
+		}
+
+		return v;
 	}
 	
 	/**

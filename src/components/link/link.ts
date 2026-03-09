@@ -19,6 +19,7 @@ import { EventCallback } from '../../core/core_events';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 import { Label } from '../label/label';
 
+import "./link.module.scss"
 
 /**
  * Link events
@@ -36,6 +37,7 @@ interface LinkProps extends ComponentProps {
 	href: string;
 	text?: string | UnsafeHtml;	// you can also use content for complexe content
 	icon?: string;
+	align?: "left" | "center" | "right";
 	click?: EventCallback<EvClick>;
 }
 
@@ -44,12 +46,16 @@ export class Link extends Component<LinkProps,LinkEvents> {
 	constructor( props: LinkProps ) {
 		super( { tag: "a", ...props} );
 
-		this.setAttribute( "href", props.href );
+		if( props.href ) {
+			this.setAttribute( "href", props.href );
+		}
+
 		this.mapPropEvents( props, "click" );
 
 		this.setContent( new Label( {
 			text: props.text,
 			icon: props.icon,
+			align: props.align,
 		} ) );
 
 		this.addDOMEvent('click', (e) => this._on_click(e));

@@ -9,7 +9,7 @@
  * 
  **/
 
-import { wrapDOM, Component } from "../src/core/component.ts";
+import { wrapDOM, Component } from "../src/core/component";
 import { unsafeHtml } from '../src/core/core_tools'
 import { SvgBuilder, SvgComponent } from '../src/core/core_svg'
 
