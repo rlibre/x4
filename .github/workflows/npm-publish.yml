@@ -29,8 +29,13 @@ jobs:
 
       - name: Sync version from Tag
         run: |
-          TAG_VERSION=${GITHUB_REF#refs/tags/v}
-          npm version $TAG_VERSION --no-git-tag-version
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            # GITHUB_REF_NAME contient le tag (ex: 1.0.0)
+            VERSION="${{ github.ref_name }}"
+          fi
+          npm version $VERSION --no-git-tag-version
 
       - name: Publish
         run: npm publish --access public --provenance
