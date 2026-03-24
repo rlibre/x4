@@ -23,7 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
@@ -52,3 +51,15 @@ jobs:
           else
             npm publish --access public --provenance
           fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION_TO_PUBLISH }}
+          name: Release ${{ env.VERSION_TO_PUBLISH }}
+          generate_release_notes: true
+          prerelease: ${{ contains(env.VERSION_TO_PUBLISH, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
