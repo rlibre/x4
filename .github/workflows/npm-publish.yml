@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version ex: 1.2.3'
+        description: 'Version à publier (ex: 1.2.3 ou 1.0.0-beta)'
         required: true
-        default: '0.0.0-manual'
+        default: '2.1.0-manual'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -18,26 +18,47 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  
-      contents: read   
+      id-token: write
+      contents: read 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
         with:
           node-version: 24
+          registry-url: https://registry.npmjs.org/
 
-      - name: Sync version from Tag
+      - name: Sync version
+        id: get_version
         run: |
           if [ "${{ github.event.inputs.version }}" != "" ]; then
             VERSION="${{ github.event.inputs.version }}"
           else
-            # GITHUB_REF_NAME contient le tag (ex: 1.0.0)
             VERSION="${{ github.ref_name }}"
           fi
-          npm version $VERSION --no-git-tag-version
+          
+          echo "VERSION_TO_PUBLISH=$VERSION" >> $GITHUB_ENV
+          echo "Publication de la version : $VERSION"
+          
+          if [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            npm version $VERSION --no-git-tag-version
+          else
+            echo "Erreur : '$VERSION' n'est pas un format de version valide."
+            exit 1
+          fi
 
-      - name: Publish
-        run: npm publish --access public --provenance
+      - name: Publish to NPM
+        run: |
+          if [[ "$VERSION_TO_PUBLISH" == *"-"* ]]; then
+            echo "Détection d'une version de pré-publication. Tag: --tag next"
+            npm publish --access public --provenance --tag next
+          else
+            echo "Publication standard sur le canal latest."
+            npm publish --access public --provenance
+          fi
         env:
+          # Toujours nécessaire pour s'authentifier via OIDC
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
