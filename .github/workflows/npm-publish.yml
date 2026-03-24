@@ -59,6 +59,14 @@ jobs:
             npm publish --access public --provenance
           fi
         env:
-          # Toujours nécessaire pour s'authentifier via OIDC
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: $VERSION_TO_PUBLISH
+          name: Release $VERSION_TO_PUBLISH
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
