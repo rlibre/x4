@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version à publier (ex: 1.2.3 ou 1.0.0-beta)'
+        description: 'Version'
         required: true
         default: '2.1.0-manual'
 
@@ -15,58 +15,40 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   
 jobs:
-  publish-npm:
+  publish-and-release:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read 
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
 
-      - name: Setup Node 24
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org/
 
       - name: Sync version
-        id: get_version
         run: |
           if [ "${{ github.event.inputs.version }}" != "" ]; then
             VERSION="${{ github.event.inputs.version }}"
           else
             VERSION="${{ github.ref_name }}"
           fi
-          
           echo "VERSION_TO_PUBLISH=$VERSION" >> $GITHUB_ENV
-          echo "Publication de la version : $VERSION"
-          
           if [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
             npm version $VERSION --no-git-tag-version
           else
-            echo "Erreur : '$VERSION' n'est pas un format de version valide."
             exit 1
           fi
 
       - name: Publish to NPM
         run: |
           if [[ "$VERSION_TO_PUBLISH" == *"-"* ]]; then
-            echo "Détection d'une version de pré-publication. Tag: --tag next"
             npm publish --access public --provenance --tag next
           else
-            echo "Publication standard sur le canal latest."
             npm publish --access public --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: $VERSION_TO_PUBLISH
-          name: Release $VERSION_TO_PUBLISH
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
