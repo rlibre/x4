@@ -12,12 +12,22 @@ env:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  
+      contents: read   
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
-      - run: npm publish --access public --provenance
+
+      - name: Sync version from Tag
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          npm version $TAG_VERSION --no-git-tag-version
+
+      - name: Publish
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
