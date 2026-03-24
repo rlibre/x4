@@ -22,12 +22,6 @@
     "LICENSE"
   ],
 
-  "scripts": {
-    "build": "x4build --watch --hmr --serve",
-    "build-release": "x4build --release",
-    "prepack": "node scripts/prepack.mjs"
-  },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rlibre/x4.git"
