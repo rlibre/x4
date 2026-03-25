@@ -81,12 +81,12 @@
 	}
 
 	.week {
-		@extend .flex;
+		@extend %flex;
 		align-items: center;
 		padding: 2px;
 				
 		.cell {
-			@extend .flex;
+			@extend %flex;
 			min-width: 28px;
 			min-height: 28px;
 			
@@ -94,7 +94,7 @@
 			text-align: center;
 			
 			.text {
-				@extend .hbox;
+				@extend %hbox;
 
 				transition: background-color 0.3s, color 0.3s;
 				justify-content: center;

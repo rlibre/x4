@@ -29,7 +29,7 @@
 }
 
 .x4textedit {
-	@extend .hbox;
+	@extend %hbox;
 	margin: 5px;
 	gap: 6px;
 
@@ -38,7 +38,7 @@
 		justify-content: end;
 
 		&> .x4label {
-			@extend .hbox;
+			@extend %hbox;
 			height: 100%;
 			padding: 0;
 			font-weight: 500;
@@ -51,12 +51,12 @@
 	}
 
 	&> #edit {
-		@extend .hbox;
-		@extend .flex;
+		@extend %hbox;
+		@extend %flex;
 		border-bottom: 1px solid var( --textedit-border );
 		
 		.x4input {
-			@extend .flex;
+			@extend %flex;
 			outline: none;
 			margin: 0;
 		}

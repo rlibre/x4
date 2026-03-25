@@ -14,11 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component.ts"
-import { EventCallback } from '../../core/core_events.ts';
-import { class_ns, UnsafeHtml } from '../../core/core_tools.ts';
+import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
+import { EventCallback } from '../../core/core_events';
+import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
-import { Icon } from "../icon/icon.ts"
+import { Icon } from "../icon/icon"
 
 import "./button.module.scss";
 

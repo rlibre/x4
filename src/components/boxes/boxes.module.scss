@@ -17,21 +17,21 @@
 @use "../shared.scss";
 
 .x4hbox {
-	@extend .hbox;
+	@extend %hbox;
 	&.align-start {
 		align-items: start;
 	}
 }
 
 .x4vbox {
-	@extend .vbox;
+	@extend %vbox;
 }
 
 .x4stackbox {
 	display: flex;
 	
 	&>* {
-		@extend .fit;
+		@extend %fit;
 		position: relative !important;
 	}
 

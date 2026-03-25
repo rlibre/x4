@@ -22,18 +22,20 @@
 }
 
 .x4dialog {
-	@extend .shadow-xl, .vbox;
+	@extend %shadow-xl;
+	@extend %vbox;
 
 	position: absolute !important;
 	background-color: white;
 	border: 1px solid var( --border-dark );
+	max-width: 99vw;
 	
 	&> .caption {
 		padding: 8px;
 		background-color: var(--color-dialog-caption);
 	
 		& > #title {
-			@extend .flex;
+			@extend %flex;
 			color: var(--color-dialog-caption-text);
 			font-weight: bold;
 			font-size: 120%;

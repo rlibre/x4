@@ -25,6 +25,7 @@ export type DataFieldValue = string | Date | number | boolean;
 
 export type ChangeCallback = (type: string, id?: DataRecordID) => void;
 export type CalcCallback = () => string;
+export type SortCallback = ( v1: any, v2: any ) => number;
 
 export type FieldType = 'string' | 'int' | 'float' | 'date' | 'bool' | 'array' | 'object' | 'any' | 'calc';
 export type DataIndex = Uint32Array;
@@ -935,7 +936,8 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		
 		interface sort_info {
 			fidx: number,
-			asc: boolean
+			asc: boolean,
+			cb: SortCallback,
 		}
 
 		let bads = 0;		// unknown fields
@@ -943,7 +945,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 		// if no fields are given, reset sort by id
 		if ( sort===null ) {
-			fidxs.push( { fidx: 0, asc: true } );
+			fidxs.push( { fidx: 0, asc: true, cb: null } );
 		}
 		else {
 			fidxs = sort.map( (si) => {
@@ -954,7 +956,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					bads++;
 				}
 
-				return { fidx: fi, asc: si.ascending };
+				return { fidx: fi, asc: si.ascending, cb: si.callback };
 			});
 		}
 
@@ -969,11 +971,17 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		if( fidxs.length==1 ) {
 
 			const field = fidxs[0].fidx;
+			const cb 	= fidxs[0].cb;
 
 			index.sort( ( ia, ib ) => {
 
 				let va = m.getRaw( field, this.getByIndex(ia) ) ?? '';
 				let vb = m.getRaw( field, this.getByIndex(ib) ) ?? '';
+
+				if( cb ) {
+					return cb( va, vb );
+				}
+
 				if (va > vb) { return 1; }
 				if (va < vb) { return -1; }
 				return 0;
@@ -987,13 +995,17 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		else {
 			index.sort( ( ia, ib ) => {
 
-				for( let fi=0; fi<fidxs.length; fi++ ) {
-
-					let fidx = fidxs[fi].fidx;
-					let mul = fidxs[fi].asc ? 1 : -1;
+				for( const fi of fidxs ) {
+					let fidx 	= fi.fidx;
+					let mul 	= fi.asc ? 1 : -1;
 
 					let va = m.getRaw( fidx, this.getByIndex(ia) ) ?? '';
 					let vb = m.getRaw( fidx, this.getByIndex(ib) ) ?? '';
+
+					if( fi.cb ) {
+						return fi.cb( va, vb );
+					}
+
 					if (va > vb) { return mul; }
 					if (va < vb) { return -mul; }
 				}
@@ -1096,6 +1108,7 @@ export interface SortProp {
 	field: string; 			// 
 	ascending: boolean;		// 
 	numeric?: boolean;		// numeric sort
+	callback?: SortCallback;
 }
 
 

@@ -33,7 +33,7 @@
 }
 
 .x4listbox {
-	@extend .vbox;
+	@extend %vbox;
 
 	margin: 5px;
 	border: 1px solid var( --listbox-border );
@@ -66,7 +66,7 @@
 		}
 
 		.x4item {
-			@extend .flex;
+			@extend %flex;
 			
 			padding: 4px;
 			background-color: transparent;

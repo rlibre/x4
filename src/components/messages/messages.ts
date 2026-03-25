@@ -2,21 +2,23 @@
 // :: MESSAGEBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 import { _tr } from '../../core/core_i18n';
-import { asap, class_ns, UnsafeHtml } from '../../core/core_tools';
+import { asap, class_ns, unsafeHtml, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
-import { Label } from '../label/label';
+import { Label, SimpleText } from '../label/label';
 import { Dialog, DialogProps } from "../dialog/dialog"
 import { Form } from '../form/form';
 import { BtnGroupItem } from '../btngroup/btngroup';
 import { Input } from '../input/input';
+import { Component } from '../../core/component';
+import { Progress } from '../components.js';
 
 import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
 import pen_icon from "./pen-field.svg";
-import { Component } from '../../core/component';
+import spinner from "./spinner.svg"
 
 export interface MessageBoxProps extends DialogProps {
 	message: string;
@@ -235,3 +237,67 @@ export class PromptBox extends Dialog<DialogProps>
 	}
 }
 
+@class_ns( "x4" )
+export class ProgressionBox  extends Dialog {
+
+	#has_errors = false;
+
+	constructor( title: string ) {
+		super( { 
+			modal: true,
+			title: null,
+			sizable: true,
+			movable: true,
+			form: new Form( {
+				content: [
+					new HBox( {
+						content: [
+							new Icon( { iconId: spinner }),
+							new VBox( { flex: 1, cls: "right", content: [
+								new SimpleText( { id: "title", text: title } ),
+								new Progress( { id:"prog", min: 0, max: 100, value: 0 } ),
+								new VBox( { id: "sub-text" } ),
+							]})
+						]
+					}),
+				]
+			}),
+			buttons: [ "ok.outline.default" ]
+		});
+
+		this.query("#btnbar").show( false );
+
+		this.on("btnclick", ( ) => this.show( false ) );
+	}
+
+	addText( text: string | UnsafeHtml, perc: number ) {
+		this.query<Label>( "#sub-text").appendContent( new SimpleText( { text } ) );
+		this.query<Progress>( "#prog").setValue( perc );
+	}
+
+	addError( text: string | UnsafeHtml, perc: number ) {
+		this.query<Label>( "#sub-text").appendContent( new SimpleText( { cls:"error", text } ) );
+		this.query<Progress>( "#prog").setValue( perc );
+
+		this.#has_errors = true;
+	}
+
+	setText( text: string | UnsafeHtml, perc: number ) {
+		this.query<Label>( "#sub-text").setContent( new SimpleText( { text } ) );
+		this.query<Progress>( "#prog").setValue( perc );
+	}
+
+	clear( ) {
+		this.#has_errors = true;
+		this.query<Label>( "#sub-text").clearContent( );
+	}
+
+	done( ) {
+		if( this.#has_errors ) {
+			this.query("#btnbar").show( true );
+		}
+		else {
+			this.setTimeout( "close", 5000, ( ) => { this.show(false);} );
+		}
+	}
+}

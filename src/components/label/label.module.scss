@@ -24,7 +24,7 @@
 }
 
 .x4label {
-	@extend .hbox;
+	@extend %hbox;
 
 	color: var( --label-color );
 	background-color: var( --label-background );
@@ -72,11 +72,12 @@
 	}
 
 	&.vertical {
-		@extend .vbox;
+		@extend %vbox;
 	}
 }
 
 .x4simpletext {
+	color: var(--label-color);
 	text-align: left;
 	&.al-center { text-align: center; }
 	&.al-right { text-align: right; }

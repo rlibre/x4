@@ -39,7 +39,7 @@
 	}
 
 	textarea {
-		@extend .flex;
+		@extend %flex;
 
 		padding: 4px;
 		outline: none;

@@ -34,7 +34,7 @@
 }
 
 .x4treeview {
-	@extend .vbox;
+	@extend %vbox;
 
 	overflow-y: auto;
 	height: 100%;

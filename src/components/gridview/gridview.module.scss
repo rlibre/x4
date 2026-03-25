@@ -109,7 +109,21 @@
 		bottom: var( --scrollbar-size );
 		left: 0;
 		top: 0;
+
+		.empty {
+			position: relative;
+			left: 50%;
+			top: 20%;
+			width: fit-content;
+
+			#icon {
+				height: 64px;
+				fill: var( --accent-background );
+				opacity: 50%;
+			}
+		}
 	}
+
 	.row {
 		position: absolute;
 		left: 0;

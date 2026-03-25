@@ -304,7 +304,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 			msg_socket = null;
 
 			if( opened ) {
-				looseCallback( );
+				looseCallback?.( );
 				opened = 0;
 			}
 		}

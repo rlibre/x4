@@ -33,7 +33,7 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
-type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" ;
+type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" | "hsize" | "vsize";
 
 /**
  * 
@@ -52,22 +52,28 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 		this._type = type;
 		this.addClass( type );
-
+		
 		this.addDOMEvent( "pointerdown", ( e: PointerEvent ) => {
 			this.setCapture( e.pointerId );
-			this._ref = target ?? componentFromDOM( this.dom.parentElement );
+
+			let targ = target;
+			if( !targ && (type=='hsize' || type=='vsize') ) {
+				targ = this.nextElement( );
+			}
+
+			this._ref = targ ?? componentFromDOM( this.dom.parentElement );
 
 			this._delta = {x:0,y:0};
 			const rc = this._ref.getBoundingRect();
 
-			if( this._type.includes("left") ) {
+			if( this._type=="hsize" || this._type.includes("left") ) {
 				this._delta.x = e.pageX-rc.left;
 			}
 			else {
 				this._delta.x = e.pageX-(rc.left+rc.width);
 			}
 
-			if( this._type.includes("top") ) {
+			if( this._type=="vsize" || this._type.includes("top") ) {
 				this._delta.y = e.pageY-rc.top;
 			}
 			else {
@@ -104,21 +110,25 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
-
-		if( this._type.includes("bottom") ) {
+		else if( this._type=="vsize" ) {
+			nr.height = (rc.top+rc.height)-pt.y;
+			horz = false;
+		}
+		else if( this._type.includes("bottom") ) {
 			//nr.top = rc.top;
 			nr.height = (pt.y-rc.top);
 			horz = false;
 		}
-
-		if( this._type.includes("left") ) {
+		else if( this._type.includes("left") ) {
 			nr.left = pt.x;
 			nr.width = ((rc.left+rc.width)-pt.x);
 		}
-
-		if( this._type.includes("right") ) {
+		else if( this._type=="hsize" ) {
+			nr.width = ((rc.left+rc.width)-pt.x);
+		}
+		else if( this._type.includes("right") ) {
 			nr.width = (pt.x-rc.left);
-			}
+		}
 
 		this._ref.setStyle( nr );
 		//this._ref.setStyleValue( "flexGrow", 0 );
@@ -128,5 +138,19 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 		e.preventDefault( );
 		e.stopPropagation( );
+	}
+}
+
+@class_ns( "x4" )
+export class HSizer extends CSizer {
+	constructor( ) {
+		super( "hsize" );
+	}
+}
+
+@class_ns( "x4" )
+export class VSizer extends CSizer {
+	constructor( ) {
+		super( "vsize" );
 	}
 }

@@ -17,7 +17,7 @@
 @use "../shared.scss";
 
 .x4scrollview {
-	@extend .flex;
+	@extend %flex;
 
 	position: absolute;
 	height: 100%;

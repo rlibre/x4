@@ -27,7 +27,7 @@
 }
 
 .x4checkbox {
-	@extend .hbox;
+	@extend %hbox;
 	
 	display: flex;
 	flex-direction: row;

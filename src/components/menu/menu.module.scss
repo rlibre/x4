@@ -28,7 +28,7 @@
 }
 
 .x4menu {
-	@extend .shadow-xxl;
+	@extend %shadow-xxl;
 
 	position: absolute;
 	overflow-y: auto;
@@ -44,7 +44,7 @@
 	max-height: calc( 100vh - 32px );
 	
 	.x4cmenuitem {
-		@extend .hbox;
+		@extend %hbox;
 
 		transition: background-color 0.3s, color 0.3s;
 
@@ -82,7 +82,7 @@
 		}
 
 		#text {
-			@extend .flex;
+			@extend %flex;
 		}
 
 		&.title {

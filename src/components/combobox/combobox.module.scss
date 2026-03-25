@@ -31,8 +31,8 @@
 }
 
 .x4dropdownlist {
-	@extend .shadow-xl;
-	@extend .hbox;
+	@extend %shadow-xl;
+	@extend %hbox;
 
 	max-height: 250px;
 	max-width: 50vw;
@@ -42,7 +42,7 @@
 	border: 1px solid var( --dropdown-border );
 
 	.x4listbox {
-		@extend .flex;
+		@extend %flex;
 
 		border: none;
 		margin: 0;
@@ -65,7 +65,7 @@
 }
 
 .x4combobox {
-	@extend .hbox;
+	@extend %hbox;
 	margin: 5px;
 	gap: 6px;
 
@@ -88,14 +88,14 @@
 	}
 
 	&>#edit {
-		@extend .flex;
+		@extend %flex;
 		border-bottom: 1px solid var( --combobox-border );
 		&:focus-within {
 			border-bottom-color: var( --combobox-border-focus );
 		}
 		
 		.x4input {
-			@extend .flex;
+			@extend %flex;
 
 			&[readonly] {
 				cursor: pointer;

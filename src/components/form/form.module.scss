@@ -21,8 +21,8 @@
 }
 
 .x4form {
-	@extend .vbox;
-	@extend .flex;
+	@extend %vbox;
+	@extend %flex;
 
 	padding: 16px;
 	background-color: var( --color-form );

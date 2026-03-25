@@ -29,7 +29,7 @@
 }
 
 .x4tooltip {
-	@extend .shadow-xl;
+	@extend %shadow-xl;
 	
 	display: flex;
 	flex-direction: row;

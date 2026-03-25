@@ -17,7 +17,7 @@
 @use "../shared.scss";
 
 .x4icon {
-	@extend .hbox;	
+	@extend %hbox;	
 
 	flex-shrink: 0;
 	min-width: 10px;

@@ -51,7 +51,7 @@
 }
 
 .x4button {
-	@extend .hbox;
+	@extend %hbox;
 	
 	margin: 5px;
 	gap: 4px;

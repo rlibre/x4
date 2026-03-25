@@ -90,3 +90,57 @@
 
 }
 
+
+.x4progressionbox {
+	min-height: 200px;
+	min-width: 500px;
+
+	&> .x4form {
+		min-height: unset;
+	}
+
+	& .x4form {
+		min-width: 400px;
+		gap: 8px;
+
+		&> .x4hbox {
+			flex-grow: 1;
+			align-items: stretch;
+			.right {
+				flex-grow: 1;
+				gap: 8px;
+				display: grid;
+    			grid-template-rows: auto auto 1fr;
+			}
+		}
+
+		.x4icon {
+			    height: 64px;
+				animation: rotating 3s linear infinite;
+				fill: var(--accent-background);
+				align-self: center;
+		}
+
+		#title {
+			padding: 4px 16px;
+			line-height: 1.8em;
+		}
+
+		.x4progress {
+			margin: 0 16px;
+		}
+
+		#sub-text {
+			flex-grow: 1;
+			max-height: 400px;
+			overflow: auto;
+			background-color: #f5f5f5;
+			padding: 4px 8px;
+			margin: 0 16px;
+
+			.x4simpletext {
+				white-space: nowrap;
+			}
+		}
+	}
+}

@@ -15,9 +15,9 @@
  **/
 
 
-import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 import { class_ns, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
-import { DataModel, DataStore, DataView, DataRecord, EvViewChange } from '../../core/core_data';
+import { DataModel, DataStore, DataView, DataRecord, EvViewChange, SortCallback } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -26,9 +26,13 @@ import { Image } from '../image/image'
 import { Box } from '../boxes/boxes';
 import { CSizer } from '../sizers/sizer'
 import { Viewport } from '../viewport/viewport';
-import { SimpleText } from '../label/label';
+import { Label, SimpleText } from '../label/label';
+
+import { _tr } from '../../core/core_i18n';
 
 import check_icon from "../checkbox/check.svg";
+import empty_icon from "./folder-open.svg";
+
 import "./gridview.module.scss"
 
 export type CellRenderer = (rec: DataRecord) => Component;
@@ -55,7 +59,7 @@ export interface GridColumn {
 	formatter?: (input: any) => string;	// for "custom" type
 	type?: ColType;
 	cls?: string;
-	sortable?: boolean;
+	sortable?: boolean | SortCallback;
 	footer_val?: string;
 	classifier?: CellClassifier;
 }
@@ -75,11 +79,16 @@ export interface GridviewProps extends ComponentProps {
 	footer?: boolean;
 	store: DataStore;
 	columns: GridColumn[];
+	emptyMsg?: string;
 
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
 	contextMenu?: EventCallback<EvContextMenu>;
 	selectionChange?: EventCallback<EvSelectionChange>;
+	sort?: {
+		field_id: string;
+		asc?: boolean;
+	}
 }
 
 /**
@@ -121,6 +130,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	private _end: number;
 
 	private _selection: Set<number>;
+	
 
 	// TODO: that
 	private _num_fmt 	= new Intl.NumberFormat('fr-FR');
@@ -172,8 +182,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		if (props.store) {
 			this.setStore(props.store);
-		}
 
+			if( props.sort ) {
+				this.sortCol( props.sort.field_id, props.sort.asc===true );
+			}
+		}
 	}
 
 	/**
@@ -240,7 +253,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		if( sens==kbNav.first || sens==kbNav.last ) {
 			let nel = sens==kbNav.first ? 0 : this._dataview.getCount()-1;
-			this._clearSelection();
+			this._clearSelection( false );
 			this._addSelection( nel );
 			this._scrollToIndex( nel );
 			return true;
@@ -249,7 +262,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			const fsel = this._selection.values().next().value;
 			let nel = sens==kbNav.next ? fsel+1 : fsel-1;
 			if( nel>=0 && nel<this._dataview.getCount() ) {
-				this._clearSelection();
+				this._clearSelection( false );
 				this._addSelection( nel );
 				this._scrollToIndex( nel );
 				return true;
@@ -271,7 +284,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 
 			if( nel!=fsel ) {
-				this._clearSelection();
+				this._clearSelection( false );
 				this._addSelection( nel );
 
 				if (this._dataview.getCount() < SCROLL_LIMIT) {
@@ -612,7 +625,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			this._dataview.sort([{
 				field: cdata.id,
 				ascending: asc,
-				numeric: num
+				numeric: num,
+				callback: cdata.sortable instanceof Function ? cdata.sortable : undefined,
 			}]);
 
 			this._update(true);
@@ -785,6 +799,13 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			rowel.addClass("selected");
 		}
 
+		if( rowid&1 ) {
+			rowel.addClass( "even" );
+		}
+		else {
+			rowel.addClass( "odd" );
+		}
+
 		return rowel;
 	}
 
@@ -922,7 +943,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 
 		this.setStyleVariable("--fixed-width", maxfw + "px");
-		this._body.setStyleValue("height", maxh + "px");
+		this._body.setStyleValue("height", maxh==0 ? "100%" : maxh + "px");
 		this._body.setStyleValue("width", maxw + "px");
 		this._vheader.setStyleValue("height", maxh + "px");
 	}
@@ -998,9 +1019,12 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			if (row!==undefined ) {
 				//TODO: multiselection
 				if( !this._selection.has(row) ) {
-					this._clearSelection();
+					this._clearSelection( false );
 					this._addSelection(row);
 				}
+			}
+			else {
+				this._clearSelection( true );
 			}
 		});
 
@@ -1010,7 +1034,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			if (row!==undefined ) {
 				//TODO: multiselection
 				if( !this._selection.has(row) ) {
-					this._clearSelection();
+					this._clearSelection( false );
 					this._addSelection(row);
 				}
 
@@ -1027,7 +1051,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			if (row!==undefined ) {
 				//TODO: multiselection
 				if( !this._selection.has(row) ) {
-					this._clearSelection();
+					this._clearSelection( false );
 					this._addSelection(row);
 				}
 
@@ -1114,6 +1138,14 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 			// rows
 			const rowc = this._dataview ? this._dataview.getCount() : 0;
+
+			// empty ?
+			if( rowc==0 ) {
+				this._body.setContent( new Label( { cls: "empty vertical", icon: empty_icon, text: this.props.emptyMsg ?? _tr.global.empty_list } ) );
+				return;
+			}
+
+
 			const mul = rowc < SCROLL_LIMIT ? this._row_height : 1;
 
 			const start = Math.floor(this._top / mul);
@@ -1190,10 +1222,14 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 */
 
 	clearSelection( ) {
-		this._clearSelection( );
+		this._clearSelection( false );
 	}
 
-	private _clearSelection() {
+	private _clearSelection( notify: boolean ) {
+		if( !this._selection.size ) {
+			return;
+		}
+
 		for (const ref of this._selection.keys()) {
 			const els = this.queryAll(`.row[data-row="${ref}"]`)
 			els.forEach(el => {
@@ -1202,6 +1238,9 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 
 		this._selection.clear();
+		if( notify ) {
+			this.fire("selectionChange", { selection: [], empty: true } );
+		}
 	}
 
 	/**
@@ -1273,4 +1312,5 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 	}
 }
+
 

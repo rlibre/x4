@@ -26,6 +26,22 @@
 		cursor: ns-resize;
 	}
 
+	&.vsize,
+	&.hsize {
+		position: relative;
+		align-self: stretch;
+		min-width: 4px;
+		min-height: 4px;
+
+		&:hover {
+			background-color: var( --border );
+		}
+	}
+
+	.hsize {
+		cursor: ew-resize;		
+	}
+
 	&.top {
 		@include horz;
 		top: 0;
@@ -86,5 +102,11 @@
 		right: 0;
 		bottom: 0;
 		cursor: nw-resize;
+	}
+}
+
+.x4hbox {
+	&>.x4csizer {
+		cursor: ew-resize;		
 	}
 }

@@ -17,7 +17,7 @@ import { Component, ComponentEvents, ComponentProps, EvClick } from '../../core/
 import { CoreEvent } from '../../core/core_events';
 
 import { Button, ButtonProps } from '../button/button';
-import { HBox, VBox, StackBox } from '../boxes/boxes';
+import { HBox, VBox, StackBox, Box } from '../boxes/boxes';
 
 import "./tabs.module.scss"
 import { class_ns } from '../../core/core_tools';
@@ -26,12 +26,13 @@ import { class_ns } from '../../core/core_tools';
  * 
  */
 
+type callback = ( ) => Component;
 
 export interface TabItem {
 	name: string;
 	title: string;
 	icon?: string;
-	content: Component;
+	content: Component | callback;
 	cls?: string;	// button class
 }
 
@@ -64,6 +65,7 @@ interface TablistClickEvent extends CoreEvent {
 }
 
 interface TablistProps extends ComponentProps {
+	vertical?: boolean;
 	click: ( ev: TablistClickEvent ) => void;
 }
 
@@ -133,7 +135,8 @@ class CTabList extends HBox<TablistProps,TablistEvents> {
 
 interface TabsProps extends Omit<ComponentProps,"content"> {
 	default: string;
-	items: TabItem[]
+	items: TabItem[];
+	vertical?: boolean;
 }
 
 /**
@@ -141,7 +144,7 @@ interface TabsProps extends Omit<ComponentProps,"content"> {
  */
 
 @class_ns( "x4" )
-export class Tabs extends VBox<TabsProps> {
+export class Tabs extends Box<TabsProps> {
 
 	private _list: CTabList;
 	private _stack: StackBox;
@@ -150,6 +153,8 @@ export class Tabs extends VBox<TabsProps> {
 	constructor( props: TabsProps ) {
 		super( props );
 
+		this.setClass( "vertical", props.vertical );
+		
 		const pages = props.items?.map( x => {
 			return {
 				name: x.name,
@@ -160,7 +165,7 @@ export class Tabs extends VBox<TabsProps> {
 		this.setContent( [
 			this._list = new CTabList( { 
 				click: ( ev ) => this._onclick( ev ) }, 
-				props.items 
+				props.items
 			),
 			this._stack = new StackBox( { 
 				cls: "body x4flex", 
