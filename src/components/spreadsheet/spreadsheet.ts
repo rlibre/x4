@@ -28,10 +28,10 @@ import { Box } from '../boxes/boxes';
 import { CSizer } from '../sizers/sizer'
 import { Viewport } from '../viewport/viewport';
 import { SimpleText } from '../label/label';
+import { CoreElement } from '../../x4.js';
 
 import check_icon from "../checkbox/check.svg";
 import "./spreadsheet.module.scss"
-import { CoreElement } from '../../x4.js';
 
 interface CellRef {
 	col: number;
@@ -40,7 +40,7 @@ interface CellRef {
 
 export type CellClassifier = ( row: number, col: number ) => string;	    // return the cell computed class
 export type RowClassifier = (row: number ) => string;	    				// return the row computed class
-export type CellRenderer = (row: number, col: number, content: any) => Component;
+//export type CellRenderer = (row: number, col: number, content: any) => Component;
 
 export interface SpreadsheetColumn extends Omit<GridColumn,"classifier"> {
     cellClassifier?: CellClassifier;
