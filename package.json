@@ -1,35 +1,35 @@
 {
-	"name": "x4js",
-	"version": "2.0.36",
-	"type": "module",
-	"main": "src/x4.ts",
-	"module": "src/x4.ts",
-	"types": "src/x4.ts",
-	"exports": {
-		".": "./src/x4.ts"
-	},
-	"scripts": {
-		"release": "tsx ./publish.ts"
-	},
-	"files": [
-		"src",
-		"README.md",
-		"LICENSE"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/rlibre/x4.git"
-	},
-	"homepage": "https://x4js.org",
-	"keywords": [
-		"typescript",
-		"framework",
-		"sap",
-		"web",
-		"desktop",
-		"application"
-	],
-	"devDependencies": {
-		"typescript": "^5.8.3"
-	}
+  "name": "x4js",
+  "version": "2.0.37",
+  "type": "module",
+  "main": "src/x4.ts",
+  "module": "src/x4.ts",
+  "types": "src/x4.ts",
+  "exports": {
+    ".": "./src/x4.ts"
+  },
+  "scripts": {
+    "build-publish": "tsx ./publish.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlibre/x4.git"
+  },
+  "homepage": "https://x4js.org",
+  "keywords": [
+    "typescript",
+    "framework",
+    "sap",
+    "web",
+    "desktop",
+    "application"
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }
