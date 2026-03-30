@@ -42,6 +42,10 @@
 		cursor: ew-resize;		
 	}
 
+	.vsize {
+		cursor: ns-resize;
+	}
+
 	&.top {
 		@include horz;
 		top: 0;
