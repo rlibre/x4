@@ -38,11 +38,11 @@
 		}
 	}
 
-	.hsize {
+	&.hsize {
 		cursor: ew-resize;		
 	}
 
-	.vsize {
+	&.vsize {
 		cursor: ns-resize;
 	}
 
