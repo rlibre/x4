@@ -15,8 +15,10 @@ pkg.version = version.join(".");
 writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 
 try {
-	run(`git tag ${pkg.version}`);
-	run("git push --tags");
+	run( `git commit -am "release: ${pkg.version}"` );
+	run( `git push` );
+	run( `git tag ${pkg.version}`);
+	run( "git push --tags");
 } 
 catch (e) {
 	console.error("Échec du push :", e instanceof Error ? e.message : e);
