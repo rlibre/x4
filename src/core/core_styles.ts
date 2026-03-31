@@ -8,7 +8,7 @@
  * @file core_styles.ts
  * @author Etienne Cochard 
  * 
- * @copyright (c) 2024 R-libre ingenierie
+ * @copyright (c) 2026 R-libre ingenierie
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.

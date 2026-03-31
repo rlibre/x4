@@ -8,7 +8,7 @@
  * @file sizer.ts
  * @author Etienne Cochard 
  * 
- * @copyright (c) 2024 R-libre ingenierie
+ * @copyright (c) 2026 R-libre ingenierie
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
@@ -33,7 +33,8 @@ interface CSizerEvent extends ComponentEvents {
 	stop: ComponentEvent;
 }
 
-type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" | "hsize" | "vsize";
+type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right" 
+					| "hsize-prev" | "hsize-next" | "vsize-prev" | "vsize-next";
 
 /**
  * 
@@ -57,8 +58,13 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			this.setCapture( e.pointerId );
 
 			let targ = target;
-			if( !targ && (type=='hsize' || type=='vsize') ) {
-				targ = this.nextElement( );
+			if( !targ ) {
+				if( type=='hsize-next' || type=='vsize-next' ) {
+					targ = this.nextElement( );
+				}
+				else if( type=='hsize-prev' || type=='vsize-prev' ) {
+					targ = this.prevElement( );
+				}
 			}
 
 			this._ref = targ ?? componentFromDOM( this.dom.parentElement );
@@ -66,14 +72,14 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			this._delta = {x:0,y:0};
 			const rc = this._ref.getBoundingRect();
 
-			if( this._type=="hsize" || this._type.includes("left") ) {
+			if( this._type=="hsize-next" || this._type.includes("left") ) {
 				this._delta.x = e.pageX-rc.left;
 			}
 			else {
 				this._delta.x = e.pageX-(rc.left+rc.width);
 			}
 
-			if( this._type=="vsize" || this._type.includes("top") ) {
+			if( this._type=="vsize-next" || this._type.includes("top") ) {
 				this._delta.y = e.pageY-rc.top;
 			}
 			else {
@@ -110,11 +116,11 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
-		else if( this._type=="vsize" ) {
+		else if( this._type=="vsize-next" ) {
 			nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
-		else if( this._type.includes("bottom") ) {
+		else if( this._type.includes("bottom") || this._type=='vsize-prev' ) {
 			//nr.top = rc.top;
 			nr.height = (pt.y-rc.top);
 			horz = false;
@@ -123,10 +129,10 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			nr.left = pt.x;
 			nr.width = ((rc.left+rc.width)-pt.x);
 		}
-		else if( this._type=="hsize" ) {
+		else if( this._type=="hsize-next" ) {
 			nr.width = ((rc.left+rc.width)-pt.x);
 		}
-		else if( this._type.includes("right") ) {
+		else if( this._type.includes("right") || this._type=='hsize-prev' ) {
 			nr.width = (pt.x-rc.left);
 		}
 
@@ -143,14 +149,14 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 @class_ns( "x4" )
 export class HSizer extends CSizer {
-	constructor( ) {
-		super( "hsize" );
+	constructor( next = true ) {
+		super( next ? "hsize-next" : "hsize-prev" );
 	}
 }
 
 @class_ns( "x4" )
 export class VSizer extends CSizer {
-	constructor( ) {
-		super( "vsize" );
+	constructor( next = true ) {
+		super( next ? "vsize-next" : "vsize-prev" );
 	}
 }

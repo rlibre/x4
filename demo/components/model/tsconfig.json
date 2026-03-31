@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"moduleResolution": "bundler",
+		"module": "es2022",
+		"strictNullChecks": false,
+		"target": "ES2022",
+		"lib": [ "es2022", "DOM" ],
+		"paths": {
+			"x4js/*": ["../../*"]
+		}
+	}
+}

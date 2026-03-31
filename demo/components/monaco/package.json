@@ -1,0 +1,32 @@
+{
+	"name": "demo.component.monaco",
+	"version": "1.0.0",
+	"description": "X4 framework demo",
+	"author": "etienne cochard",
+	"scripts": {
+		"build": "x4build --watch --hmr"
+	},
+	"devDependencies": {
+		"x4build": "^1.6.14"
+	},
+	"x4build": {
+		"entryPoints": ["main.ts"],
+		"outdir": "./bin",
+		"externals": [
+			"./bin/monaco"
+		],
+		"copy": [
+			{
+				"from": "../../../src/components/monaco/bin",
+				"to": "bin"
+			},
+			{
+				"from": "./index.html",
+				"to": "index.html"
+			}
+		]
+	},
+	"dependencies": {
+		"@fontsource/montserrat": "^5.1.0"
+	}
+}

@@ -8,7 +8,7 @@
  * @file icon.ts
  * @author Etienne Cochard 
  * 
- * @copyright (c) 2024 R-libre ingenierie
+ * @copyright (c) 2026 R-libre ingenierie
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
@@ -141,6 +141,9 @@ export class Icon extends Component<IconProps> {
 
 			if( iconId.startsWith("data:image/svg+xml,<svg") ) {
 				this.dom.insertAdjacentHTML('beforeend', iconId.substring(19) );
+			}
+			else if( iconId.startsWith("<svg") ) {	// raw
+				this.dom.insertAdjacentHTML('beforeend', iconId );
 			}
 			else if( iconId.endsWith(".svg") ) {
 				svgLoader.load( iconId ).then( svg => {

@@ -1,0 +1,48 @@
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|
+ * 
+ * @file main.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+body {
+	display: flex;
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.mainview {
+	flex-grow: 1;;
+	align-items: stretch;	
+	display: grid;
+	grid-template-columns: auto 4px 1fr;
+
+	.x4treeview {
+		--treeitem-background-sel:  var(--vscode-list-inactiveSelectionBackground);
+		--treeitem-backgound-hover: var(--vscode-list-hoverBackground);		
+
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: var(--vscode-editor-background);
+		color: var(--vscode-editor-foreground);
+		font-size: 11px;
+	}
+
+	.x4monacoeditor {
+		align-self: stretch;
+	}
+}
+

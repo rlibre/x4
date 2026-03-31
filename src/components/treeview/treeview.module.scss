@@ -8,7 +8,7 @@
  * @file treeview.module.scss
  * @author Etienne Cochard 
  * 
- * @copyright (c) 2024 R-libre ingenierie
+ * @copyright (c) 2026 R-libre ingenierie
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
@@ -37,7 +37,7 @@
 	@extend %vbox;
 
 	overflow-y: auto;
-	height: 100%;
+	align-self: stretch;
 	margin: 5px;
 
 	outline: none;
@@ -65,6 +65,10 @@
 
 					.x4label, .x4icon {
 						color: inherit;
+					}
+
+					>.x4icon.empty {
+						display: none;
 					}
 
 					.x4icon {

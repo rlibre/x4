@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "es2024",
+		"module": "es2022",
+		"lib": [
+			"ES2024",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"strictNullChecks": false,
+		"paths": {
+			"@x4js/*": ["../../../src/*"]
+		}
+	}
+}
