@@ -17,6 +17,8 @@ import { Progress } from '../components.js';
 import "./messages.module.scss";
 
 import error_icon from "./circle-exclamation.svg";
+import question_icon from "./circle-question.svg";
+
 import pen_icon from "./pen-field.svg";
 import spinner from "./spinner.svg"
 
@@ -40,7 +42,16 @@ export class MessageBox extends Dialog<DialogProps>
 	 * 
 	 */
 
-	private static _create( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) {
+	private static _create( msg: string | UnsafeHtml, buttons: BtnGroupItem[], title: string, icon_type: "error" | "question" ) {
+
+		let icon = error_icon;
+		switch( icon_type ) {
+			case "question": {
+				icon = question_icon;
+				break;
+			}
+		}
+
 		const box = new MessageBox({ 
 			modal: true,
 			title: title ?? _tr.global.error,
@@ -65,9 +76,9 @@ export class MessageBox extends Dialog<DialogProps>
 	 * display a messagebox
 	 */
 
-	static show( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ): MessageBox {
+	static show( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string, icon_type?: "error" | "question" ): MessageBox {
 
-		const box = this._create( msg, buttons, title );
+		const box = this._create( msg, buttons, title, icon_type );
 		box.on( "btnclick", ( ev ) => {
 			asap( ( ) => {
 				box.close() 
@@ -82,10 +93,10 @@ export class MessageBox extends Dialog<DialogProps>
 	 * idem with promise
 	 */
 
-	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string ) : Promise<string> {
+	static async showAsync( msg: string | UnsafeHtml, buttons?: BtnGroupItem[], title?: string, icon_type?: "error" | "question" ) : Promise<string> {
 
 		return new Promise( (resolve, reject ) => {
-			const box = this._create( msg, buttons, title );
+			const box = this._create( msg, buttons, title, icon_type );
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button );
@@ -99,6 +110,7 @@ export class MessageBox extends Dialog<DialogProps>
 	}
 }
 
+// :: INPUT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 interface InputOptions {
 	password?: boolean;
@@ -168,6 +180,8 @@ export class InputBox extends Dialog<DialogProps>
 }
 
 
+// :: PROMPT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 
 @class_ns( "x4" )
 export class PromptBox extends Dialog<DialogProps>
@@ -236,6 +250,9 @@ export class PromptBox extends Dialog<DialogProps>
 		box.show();
 	}
 }
+
+
+// :: PROGRESS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 @class_ns( "x4" )
 export class ProgressionBox  extends Dialog {

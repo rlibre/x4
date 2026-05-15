@@ -20,7 +20,7 @@ import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes';
 import { Label } from '../label/label';
 import { CoreEvent, EventCallback } from '../../core/core_events';
-import { class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
+import { asap, class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
 import { ComponentEvent } from '../../core/component';
 import { Button } from '../button/button';
 
@@ -228,6 +228,26 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	getBtnBar( ) {
 		return this.query<BtnGroup>("#btnbar");		
 	}
+
+	/**
+	 * ! cannot stop close action
+	 */
+
+	async showAsync( ) : Promise<string> {
+	
+		return new Promise( (resolve ) => {
+
+			this.on( "btnclick", ( ev ) => {
+				asap( ( ) => {
+					this.close( );
+					resolve( ev.button );
+				});
+			});
+
+			this.show();
+		} );
+	}
+
 }
 
 

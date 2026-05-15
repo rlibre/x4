@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools.ts';
-import { CoreElement } from './core_element.ts';
-import { ariaValues, unitless } from './core_styles.ts';
-import { CoreEvent, EventMap } from './core_events.ts';
-import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom.ts';
-import { Application, EvMessage } from './core_application.ts';
+import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools';
+import { CoreElement } from './core_element';
+import { ariaValues, unitless } from './core_styles';
+import { CoreEvent, EventMap } from './core_events';
+import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
+import { Application, EvMessage } from './core_application';
 
 interface RefType<T extends Component> {
 	dom: T;
@@ -1198,6 +1198,7 @@ export function wrapDOM( el: HTMLElement ): Component {
  * Automatically generates CSS class: `x4flex`.
  */
 
+@class_ns( "x4" )
 export class Flex extends Component {
 	constructor( ) {
 		super({})
@@ -1214,6 +1215,7 @@ export class Flex extends Component {
  * ```
  */
 
+@class_ns( "x4" )
 export class Space extends Component {
 	constructor( width?: number|string, cls?: string ) {
 		super( { width, cls } )

@@ -62,17 +62,25 @@
 		position: relative;
 
 		&> .x4viewport {
+			overflow: hidden;
 			display: table;
 		}
 
 		.x4item {
 			@extend %flex;
 			
+
 			padding: 4px;
 			background-color: transparent;
 			color: var( --text-primary );
 
-			&> .x4label {
+			// multicolumns
+			&:has( >.x4hbox ) {
+				padding: 4px 0;
+			}
+
+			.x4label,
+			.x4simpletext {
 				color: inherit;
 				padding: 2px 6px;
 			
@@ -108,6 +116,7 @@
 				//background-color: var( --color-80 );
 				//color: var(--color-0);
 			//}	
+
 		}
 	}
 
@@ -130,6 +139,31 @@
 				.x4icon {
 					height: 1.5em;
 					width: 1.5em;
+
+					.fa-primary, .fa-secondary {
+						fill:  var( --accent-background );
+					}
+				}
+
+				&.icon-danger {
+					.x4icon {
+						.fa-secondary {
+							fill: var( --disabled-color-dark);
+							opacity: 0.7;
+						}
+
+						.fa-primary {
+							fill: var( --alert-background );
+						}
+					}
+				}
+
+				&.icon-success {
+					.x4icon {
+						.fa-primary {
+							fill: var( --success-background );
+						}
+					}
 				}
 
 				&:hover{

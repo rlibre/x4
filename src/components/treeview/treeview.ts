@@ -380,7 +380,9 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			}
 
 			if( newSel ) {
-				const nsel = this.query( `[data-id="${newSel}"]`)
+				//const nsel = this.query( `[data-id="${newSel}"]`)
+				const all = this._view.enumChildComponents( true );
+				const nsel = all.find( x => x.getInternalData("id")===newSel )
 				this._selectItem( newSel, nsel );
 				return true;
 			}
@@ -393,7 +395,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		let all: { id: ListboxID, level: number }[] = [];
 		
 		const build = ( x: TreeItem, level: number ) => {
-			all.push( {id: x.id+"", level } );
+			all.push( {id: x.id, level } );
 			if( x.children && x.open ) {
 				x.children.forEach( y => build( y, level+1 ) );
 			}

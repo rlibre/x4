@@ -116,7 +116,7 @@ export class Header extends HBox<HeaderProps> {
 
 			const flex = c.getInternalData( "flex" );
 			if( flex ) {
-				width = Math.min( unit*flex, rest );
+				width = Math.floor(Math.min( unit*flex, rest ));
 				rest -= width;
 			}
 			else {

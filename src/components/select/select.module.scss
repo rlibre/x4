@@ -1,9 +1,32 @@
 
 
-.x4select {
-	padding: 4px;
+.x4select,
+::picker(select) {
+	appearance: base-select;
+
+	padding: 5px;
 	outline: none;
 
+	border-radius: 0;
 	border: 1px solid var( --border );
 	background-color: white;
+}
+
+//-- global saddly
+option {
+	padding: 5px;
+}
+
+option:checked {
+ 	background-color: var( --accent-background );
+  	color: var( --accent-color );
+}
+
+option:hover {
+ 	background-color: var( --accent-background-focus );
+  	color: var( --accent-color );
+}
+
+option::checkmark {
+    display: none;
 }

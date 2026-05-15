@@ -140,6 +140,14 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 
 				b.addClass( def.join(" ") );
 			}
+			else if( b instanceof Button ) {
+				const btn = b as Button;
+				if( !btn.props.click && btn.props.id ) {
+					btn.on( "click", ( ) => {
+						this.fire( "btnclick", { button: btn.props.id} );
+					} );
+				}
+			}
 
 			childs.push( b );
 		});

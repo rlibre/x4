@@ -24,6 +24,19 @@
 	@extend %flex;
 }
 
+.x4fit-h {
+	width: stretch;
+}
+
+.x4fit-v {
+	height: stretch;
+}
+
+.x4fit {
+	height: stretch;
+	width: stretch;
+}
+
 .fit {
 	@extend %fit;
 }
@@ -86,4 +99,9 @@
     animation-iteration-count: infinite;
     animation-timing-function: linear;
     animation-direction: reverse;
+}
+
+option:checked {
+ 	background-color: var( --accent-background );
+  	color: var( --accent-color );
 }

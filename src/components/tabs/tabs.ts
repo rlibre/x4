@@ -153,7 +153,7 @@ export class Tabs extends Box<TabsProps> {
 	constructor( props: TabsProps ) {
 		super( props );
 
-		this.setClass( "vertical", props.vertical );
+		this.setClass( "vertical", props.vertical ?? false );
 		
 		const pages = props.items?.map( x => {
 			return {
