@@ -12,6 +12,8 @@
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ * 
+ * 2026-05-26: added resize types
  **/
 
 import { BaseProps } from '../input/input';
@@ -30,7 +32,7 @@ import { class_ns, IFormElement } from '../../core/core_tools';
 interface TextAreaProps extends BaseProps {
 	label?: string;
 	value?: string;
-	resize?: boolean;
+	resize?: boolean | "none" | "vertical" | "horizontal" | "both";
 	readonly?: boolean;
 	trim?: boolean;
 }
@@ -48,8 +50,8 @@ class SimpleTextArea extends Component<TextAreaProps> {
 		this.setAttribute( "name", props.name );
 		this.setAttribute( "value", props.value+'' );
 
-		if( !props.resize ) {
-			this.setAttribute( "resize", false );
+		if( props.resize!==undefined ) {
+			this.setStyleValue( "resize", props.resize===false ? "none" : props.resize as string );
 		}
 
 		if( props.readonly ) {
