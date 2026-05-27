@@ -139,4 +139,20 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 	getValue( ) {
 		return this._input.getValue( );
 	}
+
+	/**
+	 * check the corresponding value in the item group
+	 * you can call this method on any element of the group
+	 * 
+	 * ie: A, B, C, D, E
+	 * A.checkValue( "E" ) is ok, as E.CheckValue("E" )
+	 */
+
+	checkValue( vname: string ) {
+		const grp = this.props.name;
+		const el = this.parentElement().query<Radio>( `input[name="${grp}"][value="${vname}"]` );
+		if( el ) {
+			el.setCheck( true );
+		}
+	}
 }

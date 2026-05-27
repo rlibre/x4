@@ -38,12 +38,12 @@ interface CellRef {
 	row: number;
 }
 
-export type CellClassifier = ( row: number, col: number ) => string;	    // return the cell computed class
+export type SSCellClassifier = ( row: number, col: number ) => string;	    // return the cell computed class
 export type RowClassifier = (row: number ) => string;	    				// return the row computed class
 //export type CellRenderer = (row: number, col: number, content: any) => Component;
 
 export interface SpreadsheetColumn extends Omit<GridColumn,"classifier"> {
-    cellClassifier?: CellClassifier;
+    cellClassifier?: SSCellClassifier;
 }
 
 
