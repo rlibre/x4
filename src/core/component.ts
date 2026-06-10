@@ -535,6 +535,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * Appends content to the end of the component's DOM element.
      * Content can be a single Component, an array of Components, a string, an array of strings,
      * raw HTML, an array of raw HTML, a number, or a boolean.
+	 * @note
+	 * for simplicity, null is also allowed:
+	 * setContent( [
+	 * 	optional ? myControl : null,
+	 * ])
      * @param content - The content to append.
      */
 

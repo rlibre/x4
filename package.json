@@ -9,7 +9,9 @@
     ".": "./src/x4.ts"
   },
   "scripts": {
-    "build-publish": "tsx ./publish.ts"
+    "build-publish": "tsx ./publish.ts",
+	"build-doc": "typedoc",
+	"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
   },
   "files": [
     "src",
@@ -33,6 +35,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "typedoc": "^0.28.19"
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.12.0"
   }
 }
