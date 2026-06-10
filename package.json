@@ -9,9 +9,7 @@
     ".": "./src/x4.ts"
   },
   "scripts": {
-    "build-publish": "tsx ./publish.ts",
-    "docs": "typedoc",
-    "docs:watch": "typedoc --watch"
+    "build-publish": "tsx ./publish.ts"
   },
   "files": [
     "src",
