@@ -1,0 +1,18 @@
+{
+	"entryPoints": [
+		"src/x4.ts"
+	],
+	"entryPointStrategy": "resolve",
+	"out": "docs",
+	"name": "x4js",
+	"includeVersion": true,
+	"tsconfig": "tsconfig.doc.json", 
+	"navigationLinks": {
+		"GitHub": "https://github.com/rlibre/x4"
+	},
+	"plugin": [],
+	"excludePrivate": true,
+	"excludeInternal": true,
+	"excludeExternals": true,
+	"readme": "README.md"
+}
