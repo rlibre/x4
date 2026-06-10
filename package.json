@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.2.20",
+  "version": "2.2.21",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",
@@ -10,8 +10,8 @@
   },
   "scripts": {
     "build-publish": "tsx ./publish.ts",
-	"build-doc": "typedoc",
-	"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
+    "build-doc": "typedoc",
+    "build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
   },
   "files": [
     "src",
