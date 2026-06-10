@@ -30,6 +30,15 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
 
+      - name: Generate Docs
+        run: npx typedoc 
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apidoc
+
       - name: Publish to NPM
         run: |
             if [[ "${{ github.ref_name }}" == *-* ]]; then
