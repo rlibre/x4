@@ -67,9 +67,54 @@ export const unitless: Record<string,1> = {
 	strokeWidth: 1
 }
 
-export type ariaValues = {
-	"aria-activedescendant": 1,
-	"role": 1,
+export type AriaAttributes = {
+	"role":                   1;
+	"aria-label":             1;
+	"aria-labelledby":        1;
+	"aria-describedby":       1;
+	"aria-details":           1;
+	"aria-roledescription":   1;
+	"aria-keyshortcuts":      1;
+	"aria-placeholder":       1;
+	"aria-activedescendant":  1;
+	"aria-controls":          1;
+	"aria-owns":              1;
+	"aria-flowto":            1;
+	"aria-errormessage":      1;
+	"aria-hidden":            1;
+	"aria-disabled":          1;
+	"aria-busy":              1;
+	"aria-modal":             1;
+	"aria-required":          1;
+	"aria-readonly":          1;
+	"aria-checked":           1;
+	"aria-pressed":           1;
+	"aria-selected":          1;
+	"aria-expanded":          1;
+	"aria-invalid":           1;
+	"aria-current":           1;
+	"aria-haspopup":          1;
+	"aria-multiselectable":   1;
+	"aria-multiline":         1;
+	"aria-atomic":            1;
+	"aria-live":              1;
+	"aria-relevant":          1;
+	"aria-orientation":       1;
+	"aria-sort":              1;
+	"aria-valuemin":          1;
+	"aria-valuemax":          1;
+	"aria-valuenow":          1;
+	"aria-valuetext":         1;
+	"aria-level":             1;
+	"aria-setsize":           1;
+	"aria-posinset":          1;
+	"aria-rowcount":          1;
+	"aria-colcount":          1;
+	"aria-rowindex":          1;
+	"aria-colindex":          1;
+	"aria-rowspan":           1;
+	"aria-colspan":           1;
+	"aria-autocomplete":      1;
 }
 
 export function isUnitLess( name: string ) {

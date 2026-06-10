@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, kbNav } from '../../core/core_tools';
+import { class_ns, IComponentInterface, IFormElement, kbNav, safeText, sanitizeHtml, UnsafeHtml } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
 import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
@@ -131,9 +131,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 				list.select( sel, false );
 			}
 
-			//TODO: unsafehtml
-			//@ts-ignore
-			this._input.setValue( itm ? itm.text : "" );
+			this._input.setValue( safeText(itm.text) );
 			
 			if( !this._prevent_close ) {
 				this._popup.show( false );
@@ -267,8 +265,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 				isValid: ( ) => { return this._input.isValid(); }
 			};
 
-			//@ts-ignore
-			return i as T;
+			return i as unknown as T;
 		}
 		
 		return super.queryInterface( name );

@@ -287,7 +287,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			}
 
 			default:
-				console.log( ev.key );
+				//console.log( "unhandled key:", ev.key );
 				return;
 		}
 

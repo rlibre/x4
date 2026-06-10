@@ -101,6 +101,9 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 			})
 		]);
 
+		this.setAria( "role", "dialog" );
+		this.setAria( "aria-describedby", props.title );
+
 		this.addDOMEvent("keydown", (ev) => {
 
 			if (ev.key == 'Escape') {
@@ -206,8 +209,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				focusNext: ( n: boolean ) => { return this.focusNext( n ); }
 			};
 
-			//@ts-ignore
-			return i as T;
+			return i as unknown as T;
 		}
 		
 		return super.queryInterface( name );
@@ -219,6 +221,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 
 	setTitle( title: string ) {
 		this._title.setText( title );
+		this.setAria( "aria-describedby", title );
 	}
 
 	/**

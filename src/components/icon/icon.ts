@@ -14,8 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools.ts';
-import { Component, ComponentProps } from '../../core/component.ts';
+import { class_ns } from '../../core/core_tools';
+import { Component, ComponentProps } from '../../core/component';
 
 import "./icon.module.scss"
 
@@ -52,6 +52,10 @@ class SvgLoader {
 						const ww = this.waiters.get( file );
 						ww.forEach( cb => cb(data ) );
 					})
+					.catch( e => {
+						this.cache.set( file, null );
+						reject( e );
+					} )
 			}
 		});
 	}
@@ -61,6 +65,8 @@ class SvgLoader {
 		if( res.ok ) {
 			return res.text( );
 		}
+
+		throw new Error( `file not found: ${file}` );
 	}
 
 }
@@ -149,7 +155,9 @@ export class Icon extends Component<IconProps> {
 				svgLoader.load( iconId ).then( svg => {
 					this.clearContent( );
 					this.dom.insertAdjacentHTML('beforeend', svg );
-				});
+				}).catch( _ => {
+					/*silence*/
+				} );
 			}
 			else {
 				this.setContent( new Component( { tag: "img", attrs: { src: iconId } } ) );

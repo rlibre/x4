@@ -60,6 +60,8 @@ export class ColorInput extends HBox<ColorInputProps> {
 				eyeDropper.open( ).then( ( result: any ) => {
 					color = new Color( result.sRGBHex );
 					updateColor( color );
+				}).catch( (_: any ) => {
+					/* silence */
 				});
 			} } ) : null
 		])

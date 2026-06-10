@@ -116,7 +116,7 @@ export function dispatchEvent(ev: Event) {
 					callback( ev );
 				}
 
-				if (ev.stopPropagation || ev.defaultPrevented || noup) {
+				if ( ev.defaultPrevented || noup) {
 					break;
 				}
 			}

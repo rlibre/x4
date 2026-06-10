@@ -427,7 +427,9 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 					this._sat.updateBaseColor( hsv );
 					this._hue.updateHue( hsv );
 					updateColor( );
-				});
+				}).catch( (_: any )=> {
+					/* silence */
+				} );
 			})
 		}
 

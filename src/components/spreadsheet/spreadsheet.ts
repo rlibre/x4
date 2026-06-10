@@ -15,7 +15,7 @@
  **/
 
 
-import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { Component, ComponentContent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { GridColumn } from '../gridview/gridview'
 
 import { class_ns, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
@@ -54,9 +54,6 @@ function mkid(row: number, col: number) {
 /**
  * 
  */
-
-export interface EvChange extends CoreEvent {
-}
 
 export interface StoreEvents extends EventMap {
 	changed: EvChange;
@@ -157,7 +154,7 @@ export class Store extends CoreElement<StoreEvents> {
 
 	private _changed() {
 		if (!this._lock) {
-			this.fire("changed", {});
+			this.fire("changed", {value:null});
 			this._change = false;
 		}
 		else {

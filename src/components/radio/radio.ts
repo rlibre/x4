@@ -88,6 +88,7 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 
 		svgLoader.load( icon ).then( svg => {
 			this._check.dom.insertAdjacentHTML( "beforeend", svg );
+			// no error because intenral data image
 		});
 
 		this.addDOMEvent('click', (e) => this._on_click(e));	// for outside click

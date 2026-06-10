@@ -98,12 +98,12 @@ class DragManager {
 
 		const dragEnter = (ev: DragEvent) => {
 			if( filterCB && !filterCB(this.dragSource,ev.dataTransfer) ) {
-				console.log( 'reject ', el );
+				//console.log( 'reject ', el );
 				ev.dataTransfer.dropEffect = 'none';	
 				return;
 			}
 
-			console.log( 'accepted ', el );
+			//console.log( 'accepted ', el );
 			ev.preventDefault();
 			ev.dataTransfer.dropEffect = 'copy';
 		};
@@ -112,7 +112,7 @@ class DragManager {
 			//console.log( "dragover", ev.target );
 			
 			if( filterCB && !filterCB(this.dragSource,ev.dataTransfer) ) {
-				console.log( 'reject ', el );
+				//console.log( 'reject ', el );
 				ev.dataTransfer.dropEffect = 'none';	
 				return;
 			}

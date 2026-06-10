@@ -517,16 +517,24 @@ export class DataProxy extends CoreElement<DataEventMap> {
 			url += '?' + this.m_props.params.join( '&' );
 		}
 
-		const r = await fetch( url );
-		if( r.ok ) {
-			const raw = await r.json( );
-			
-			let json = raw;
-			if( this.m_props.solver ) {
-				json = this.m_props.solver( json );
-			}
+		try {
+			const r = await fetch( url );
+			if( r.ok ) {
+				const raw = await r.json( );
+				
+				let json = raw;
+				if( this.m_props.solver ) {
+					json = this.m_props.solver( json );
+				}
 
-			this.fire( 'change', {value:json,context:raw} );
+				this.fire( 'change', {value:json,context:raw} );
+			}
+			else {
+				console.error( r.statusText );
+			}
+		}
+		catch( e ) {
+			console.error( e );
 		}
 	}
 }

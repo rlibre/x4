@@ -8,6 +8,10 @@
 type StateData = boolean | number | string | Date | any;
 type State = Record<string,StateData>;
 
+/**
+ * @experimental
+ */
+
 export class StateManager {
 	
 	private _state: StateData;

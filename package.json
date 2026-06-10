@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.2.13",
+  "version": "2.2.14",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",
@@ -9,7 +9,9 @@
     ".": "./src/x4.ts"
   },
   "scripts": {
-    "build-publish": "tsx ./publish.ts"
+    "build-publish": "tsx ./publish.ts",
+    "docs": "typedoc",
+    "docs:watch": "typedoc --watch"
   },
   "files": [
     "src",
@@ -31,5 +33,8 @@
   ],
   "devDependencies": {
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "typedoc": "^0.28.19"
   }
 }

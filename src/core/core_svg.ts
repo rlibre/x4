@@ -17,7 +17,7 @@
 import { Component, ComponentProps } from './component';
 import { isUnitLess } from "./core_styles";
 import { DOMEventHandler, GlobalDOMEvents, addEvent } from './core_dom';
-import { isNumber, isString } from './core_tools';
+import { isNumber, isString, sanitizeHtml } from './core_tools';
 
 const SVG_NS = "http://www.w3.org/2000/svg"; 
 
@@ -526,7 +526,7 @@ export class SvgText extends SvgItem {
 		this.setAttr( 'x', num(x)+'' );
 		this.setAttr( 'y', num(y)+'' );
 
-		this._dom.innerHTML = txt;
+		this._dom.innerHTML = sanitizeHtml( txt );
 	}
 
 	/**

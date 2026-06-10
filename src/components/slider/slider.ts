@@ -159,7 +159,7 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 	}
 
 	private _on_key( ev: KeyboardEvent ) {
-		console.log( ev.key );
+		//console.log( ev.key );
 
 		let stp = this.props.step ?? 1;
 		let inc = 0;

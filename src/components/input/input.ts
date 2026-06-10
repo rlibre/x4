@@ -527,8 +527,7 @@ export class Input extends Component<InputProps,InputEvents> {
 				isValid: ( ) => { return this.isValid(); }
 			};
 
-			//@ts-ignore
-			return i as T;
+			return i as unknown as T;
 		}
 		
 		return super.queryInterface( name );

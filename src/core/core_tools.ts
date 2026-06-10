@@ -213,16 +213,6 @@ export class Rect implements IRect {
 }
 
 /**
- * generic size
- */
-
-export interface Size {
-	w: number;
-	h: number;
-}
-
-
-/**
  * generic Point 
  * TODO: name it IPoint
  */
@@ -994,3 +984,38 @@ export enum kbNav {
 	right,
 }
 
+
+const _escapes: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+};
+
+const _rx_escape = /[&<>"']/g;
+
+/**
+ * Sanitizes a user-provided string against XSS injection.
+ * Escapes HTML special characters so the string is safe to display as text content.
+ */
+
+export function sanitizeHtml( input: string ): string {
+	if( !_rx_escape.test( input ) ) {
+		return input;
+	}
+
+	_rx_escape.lastIndex = 0;
+    return input.replace( _rx_escape, ch => _escapes[ch] ) 
+}
+
+
+/**
+ * Returns a safe string from user content: UnsafeHtml passes through untouched
+ * plain strings are escaped.
+ */
+
+export function safeText( v: string | UnsafeHtml ): string {
+	if( !v ) { return ""; }
+    return v instanceof UnsafeHtml ? v.toString() : sanitizeHtml( v );
+}

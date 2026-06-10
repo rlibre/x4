@@ -16,7 +16,7 @@
 
 import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools';
 import { CoreElement } from './core_element';
-import { ariaValues, unitless } from './core_styles';
+import { AriaAttributes, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
 import { Application, EvMessage } from './core_application';
@@ -666,8 +666,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * @returns The component instance for chaining.
      */
 	
-	setAria( name: keyof ariaValues, value: string | number | boolean ): this {
-		this.setAttribute( name, value );
+	setAria( name: keyof AriaAttributes, value: string | number | boolean ): this {
+		this.setAttribute( name as string, value );
 		return this;
 	}
 

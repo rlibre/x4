@@ -80,8 +80,7 @@ class SimpleTextArea extends Component<TextAreaProps> {
 				isValid: ( ) => { return true; }
 			};
 
-			//@ts-ignore
-			return i as T;
+			return i as unknown as T;
 		}
 		
 		return super.queryInterface( name );
@@ -124,8 +123,7 @@ export class TextArea extends VBox {
 				isValid: ( ) => { return true; }
 			};
 
-			//@ts-ignore
-			return i as T;
+			return i as unknown as T;
 		}
 		
 		return super.queryInterface( name );
