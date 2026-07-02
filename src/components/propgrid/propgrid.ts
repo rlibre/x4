@@ -88,9 +88,14 @@ export class PropertyGrid extends VBox {
 
 		for( const g of this.groups ) {
 			items.push( this.makeGroupHeader(g) );
-			g.items.forEach( i => {
+			g.items.forEach( (i,idx) => {
 				if( i ) {
-					items.push( this.makePropertyRow(i) );
+					const row = this.makePropertyRow(i);
+					if( idx&1 ) {
+						row.addClass( "event" )
+					}
+
+					items.push( row );
 				}
 			});
 		}
@@ -105,6 +110,10 @@ export class PropertyGrid extends VBox {
 	 */
 
 	makeGroupHeader( g: PropertyGroup ) {
+
+		if( g.title===null ) {
+			return null;
+		}
 
 		const toggle = (e: Component) => {
 
@@ -175,7 +184,7 @@ export class PropertyGrid extends VBox {
 		}
 		else if (item.type === 'options') {
 			editor = new Select( {
-				value: value as string,
+				value: value,
 				id: item.name,
 				items: item.options,
 				name: item.name,
@@ -189,7 +198,7 @@ export class PropertyGrid extends VBox {
 				type: 'password',
 				id: item.name,
 				name: item.name, 
-				value: value as string, 
+				value: String(value), 
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
 						item.callback?.( item.name, (editor as Input).getValue() );
@@ -294,6 +303,12 @@ export class PropertyGrid extends VBox {
 			if( editor ) {
 				editor.setValue( value as string );
 			}
+		}
+	}
+
+	loadProperties( props: any ) {
+		for( const p in props ) {
+			this.setPropValue( p, props[p] );
 		}
 	}
 }

@@ -74,6 +74,10 @@
 		//border-left: 1px solid var(--color-primary-a50);
 		//border-right: 1px solid var(--color-primary-a50);
 
+		&.even {
+			background-color: var(--color-primary-a5);
+		}
+
 		&:has(:focus) {
 			background-color: var(--color-primary-a20);
 		}

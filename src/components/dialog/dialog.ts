@@ -166,7 +166,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	 */
 
 	override setContent(form: Form) {
-		this.dom.replaceChild(this.form.dom, form.dom);
+		this.dom.replaceChild(form.dom,this.form.dom);
 		this.form = form;
 	}
 

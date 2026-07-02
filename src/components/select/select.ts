@@ -19,7 +19,7 @@ import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus  } from '../../core/component';
 import { class_ns } from '../../core/core_tools';
 
-import { ListItem } from '../components';
+import { ListboxID, ListItem } from '../components';
 
 import "./select.module.scss"
 
@@ -29,7 +29,7 @@ import "./select.module.scss"
 
 export interface SelectProps extends ComponentProps {
 	name?: string;
-	value: string;
+	value: ListboxID;
 	items: ListItem[];
 	multiple?: boolean;
 	change?: EventCallback<EvChange>;
@@ -48,6 +48,8 @@ interface SelectEvents extends ComponentEvent {
 
 @class_ns( "x4" )
 export class Select extends Component<SelectProps,SelectEvents> {
+
+	private _items: ListItem[];
 
 	constructor( props: SelectProps ) {
 		super( { tag: "select", ...props } );
@@ -104,6 +106,7 @@ export class Select extends Component<SelectProps,SelectEvents> {
  	 */
 
 	setItems( items: ListItem[] ) {
+		this._items = [...items];
 		this.setContent( items.map( x => {
 			return new Component( {
 				tag: "option",
@@ -117,17 +120,20 @@ export class Select extends Component<SelectProps,SelectEvents> {
 	 * @returns 
 	 */
 
-	public getValue( ) {
-		return (this.dom as HTMLSelectElement).value;
+	public getValue( ) : ListboxID {
+		const el = (this.dom as HTMLSelectElement);
+		const sel = this._items[el.selectedIndex];
+		return sel?.id;
 	}
 
 	/**
-	 * 
 	 * @param value 
 	 */
 	
-	public setValue( value: string ) {
-		(this.dom as HTMLSelectElement).value = value+"";
+	public setValue( value: ListboxID ) {
+		//(this.dom as HTMLSelectElement).value = value+"";
+		const el = (this.dom as HTMLSelectElement);
+		el.selectedIndex = this._items.findIndex( x => x.id===value );
 	}
 }
 

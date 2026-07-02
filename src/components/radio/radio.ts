@@ -21,9 +21,7 @@ import { EventCallback } from '../../core/core_events';
 import { Label } from '../label/label';
 import { Input } from '../input/input'
 import { HBox } from '../boxes/boxes';
-import { svgLoader } from '../components';
 
-import icon from "./radio.svg";
 import "./radio.module.scss";
 
 /**
@@ -86,10 +84,13 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 			} ),
 		])
 
-		svgLoader.load( icon ).then( svg => {
-			this._check.dom.insertAdjacentHTML( "beforeend", svg );
-			// no error because intenral data image
-		});
+		const drawing = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 5 5" aria-hidden="true"><circle class="fa-primary" cx="2.5" cy="2.5" r="2.5" ></circle><circle class="fa-secondary" cx="2.5" cy="2.5" r="1.25"></circle></svg>`
+		this._check.dom.insertAdjacentHTML( "beforeend", drawing );
+
+		//svgLoader.load( icon ).then( svg => {
+		//	this._check.dom.insertAdjacentHTML( "beforeend", svg );
+		//	// no error because intenral data image
+		//});
 
 		this.addDOMEvent('click', (e) => this._on_click(e));	// for outside click
 	}

@@ -16,6 +16,11 @@
 
 @use "../shared.scss";
 
+.x4box {
+	min-width: 0;
+	min-height: 0;
+}
+
 .x4hbox {
 	@extend %hbox;
 	&.align-start {

@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.2.21",
+  "version": "2.2.22",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",
@@ -35,6 +35,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "tsx": "^4.22.4",
     "typedoc": "^0.28.19",
     "typedoc-plugin-markdown": "^4.12.0"
   }
