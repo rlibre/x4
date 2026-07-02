@@ -19,7 +19,7 @@ import { Button } from "../button/button"
 import { Component, ComponentProps, EvChange, EvFocus } from "../../core/component"
 import { HBox, VBox } from "../boxes/boxes"
 import { Input, InputProps } from "../input/input"
-import { ListItem } from "../listbox/listbox"
+import { ListboxID, ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
 import { class_ns, isFunction } from '../../core/core_tools';
 import { Icon } from '../components'
@@ -184,7 +184,7 @@ export class PropertyGrid extends VBox {
 		}
 		else if (item.type === 'options') {
 			editor = new Select( {
-				value: value,
+				value: value as ListboxID,
 				id: item.name,
 				items: item.options,
 				name: item.name,
