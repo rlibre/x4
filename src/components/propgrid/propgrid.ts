@@ -211,7 +211,7 @@ export class PropertyGrid extends VBox {
 				type: 'number', 
 				id: item.name,
 				name: item.name, 
-				value: value as string,
+				value: String(value),
 				step: item.step,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
