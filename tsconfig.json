@@ -10,5 +10,5 @@
 		"rootDir": "."
 	},
 	"include": [ "src/**/*" ],
-	"exclude": [ "src/components/monaco/sources", "publish.ts" ],
+	"exclude": [ "src/components/monaco/sources/**/*", "publish.ts" ],
 }

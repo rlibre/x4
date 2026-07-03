@@ -1,7 +1,5 @@
 {
-	"entryPoints": [
-		"src/x4_for_docs.ts"
-	],
+	"exclude": [ "publish.ts" ],
 	"entryPointStrategy": "resolve",
 	"out": "docs",
 	"name": "x4js",
