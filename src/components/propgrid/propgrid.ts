@@ -18,10 +18,10 @@ import { Select } from "../select/select"
 import { Button } from "../button/button"
 import { Component, ComponentProps, EvChange, EvFocus } from "../../core/component"
 import { HBox, VBox } from "../boxes/boxes"
-import { Input, InputProps } from "../input/input"
+import { Input } from "../input/input"
 import { ListboxID, ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
-import { class_ns, isFunction } from '../../core/core_tools';
+import { asap, class_ns, isFunction, isNumber } from '../../core/core_tools';
 import { Icon } from '../components'
 
 import "./progrid.module.scss"
@@ -49,8 +49,7 @@ export interface PropertyGroup {
 	desc?: string;
 	icon?: string;
 	cls?: string;
-	collapsible?: boolean;
-
+	collapsible?: boolean | number;  // -1 for collapsible+collapsed
 	items: PropertyValue[];
 }
 
@@ -92,7 +91,7 @@ export class PropertyGrid extends VBox {
 				if( i ) {
 					const row = this.makePropertyRow(i);
 					if( idx&1 ) {
-						row.addClass( "event" )
+						row.addClass( "even" )
 					}
 
 					items.push( row );
@@ -151,7 +150,10 @@ export class PropertyGrid extends VBox {
 			]
 		});
 
-		tr.setClass("collapsible", g.collapsible );
+		tr.setClass("collapsible", !!g.collapsible );
+        if( isNumber(g.collapsible) && g.collapsible<0 ) {
+            asap( () => toggle( tr ) );
+        }
 		return tr;
 	}
 
