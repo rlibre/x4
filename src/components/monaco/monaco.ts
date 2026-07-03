@@ -15,7 +15,7 @@ interface MonacoEditorProps extends ComponentProps {
 export class MonacoEditor extends Component<MonacoEditorProps> {
 
 	static initCount = 0;
-	static basePath: string = "./monaco";
+	static basePath: string = "monaco/";
 	static monaco: typeof Monaco;
 	static initCbs: Function[] = [];
 
@@ -26,7 +26,11 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 			return;
 		}
 
-		this.monaco = (await import( this.basePath+"/monaco.js" )).default;
+        // path must be hard coded for esbuild to work
+        const dynamicImport = new Function("path", "return import('./'+path)");
+        this.monaco = (await dynamicImport(this.basePath + "monaco.js")).default;
+        //this.monaco = (await import(`${this.basePath}monaco.js`)).default;
+		//this.monaco = (await import( "./bin/monaco.js" )).default;
 		this.initCount++;
 
 		globalThis.MonacoEnvironment = {
@@ -49,7 +53,7 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 					workerPath = "editor.worker.js";
 				}
 
-				const fullpath = MonacoEditor.basePath+'/workers/'+workerPath;
+				const fullpath = MonacoEditor.basePath+'workers/'+workerPath;
 				console.log( `getting "${label} path: ${fullpath}` );
 				return fullpath;
 			}
@@ -58,7 +62,7 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
         // custom append css
 		const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = MonacoEditor.basePath+'/monaco.css';
+        link.href = MonacoEditor.basePath+'monaco.css';
         link.type = 'text/css';
         document.head.appendChild(link);
 	}
