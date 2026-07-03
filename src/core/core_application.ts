@@ -155,7 +155,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
      * @param value - The value to store for the environment variable.
      */
 
-	setEnv( name: string, value: any ) {
+	setEnv<T = any>( name: string, value: T ) {
 		this.env.set( name, value );
 	}
 
@@ -166,7 +166,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
      * @returns The value of the environment variable, or `def_value` if not found.
      */
 	
-	getEnv( name: string, def_value?: any ) {
+	getEnv<T = any>( name: string, def_value?: T ) : T {
 		return this.env.get( name ) ?? def_value;
 	}
 
