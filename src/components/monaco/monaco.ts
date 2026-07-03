@@ -15,7 +15,7 @@ interface MonacoEditorProps extends ComponentProps {
 export class MonacoEditor extends Component<MonacoEditorProps> {
 
 	static initCount = 0;
-	static basePath: string = "./bin";
+	static basePath: string = "./monaco";
 	static monaco: typeof Monaco;
 	static initCbs: Function[] = [];
 
@@ -26,7 +26,7 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 			return;
 		}
 
-		this.monaco = (await import( "./bin/monaco.js" )).default;
+		this.monaco = (await import( this.basePath+"/monaco.js" )).default;
 		this.initCount++;
 
 		globalThis.MonacoEnvironment = {
@@ -55,6 +55,7 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 			}
 		};
 
+        // custom append css
 		const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = MonacoEditor.basePath+'/monaco.css';
