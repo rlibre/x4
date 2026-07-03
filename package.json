@@ -6,7 +6,8 @@
   "module": "src/x4.ts",
   "types": "src/x4.ts",
   "exports": {
-    ".": "./src/x4.ts"
+    ".": "./src/x4.ts",
+    "./monaco": "./src/components/monaco/monaco.ts"
   },
   "scripts": {
     "build-publish": "deno run --allow-all ./publish.ts",
