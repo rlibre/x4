@@ -16,6 +16,30 @@
 
 import { _tr } from "./core_i18n.js";
 
+
+// todo: split into 2 files
+//	core_tools & core_dom_tools
+
+//		isFeatureAvailable → "EyeDropper" in window
+//		asap → requestAnimationFrame (n'existe pas en Node ; Deno l'a)
+//		beep → new Audio(...) + .play()
+//		getScrollbarSize → document.createElement, document.body
+//		getGlobalZoom → window.getComputedStyle, document.body
+//		getSystemMetrics → appelle les deux précédentes
+//		setWaitCursor → document.body.style
+//		getFocusableElements → root.querySelectorAll, HTMLElement
+//		Element en paramètre de type (DOM lib)
+
+
+
+
+
+
+
+
+
+
+
 /**
  * @returns true if object is a string
  */
