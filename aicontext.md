@@ -1358,7 +1358,9 @@ When creating a new x4js project, use these files as a base.
 
 ---
 
-## Important notes
+## Important stupid notes for IA
+
+- as possible, never use DOM function directly, search in x4, it's probably done.
 
 - `Component` stores its instance on its DOM node. Use `componentFromDOM(el)` to retrieve a component from an `HTMLElement`.
 - Numbers passed to `setStyle`/`setStyleValue` are auto-suffixed with `"px"` except for unitless properties (see the `unitless` set: `zIndex`, `opacity`, `flexGrow`...).
