@@ -1,6 +1,7 @@
 {
 	"entryPoints": [
-		"src/x4.ts"
+		"src/x4.ts",
+		"src/components/monaco/monaco.ts"
 	],
 	"entryPointStrategy": "resolve",
 	"out": "docs",
