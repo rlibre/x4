@@ -1,42 +1,42 @@
 {
-	"name": "x4js",
-	"version": "2.2.32",
-	"type": "module",
-	"main": "src/x4.ts",
-	"module": "src/x4.ts",
-	"types": "src/x4.ts",
-	"exports": {
-		".": "./src/x4.ts",
-		"./monaco": "./src/components/monaco/monaco.ts"
-	},
-	"scripts": {
-		"build-publish": "deno run --allow-all ./publish.ts",
-		"build-doc": "typedoc",
-		"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
-	},
-	"files": [
-		"src",
-		"README.md",
-		"LICENSE"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/rlibre/x4.git"
-	},
-	"homepage": "https://x4js.org",
-	"keywords": [
-		"typescript",
-		"framework",
-		"sap",
-		"web",
-		"desktop",
-		"application"
-	],
-	"devDependencies": {
-		"typescript": "^5.8.3"
-	},
-	"dependencies": {
-		"typedoc": "^0.28.19",
-		"typedoc-plugin-markdown": "^4.12.0"
-	}
+  "name": "x4js",
+  "version": "2.2.33",
+  "type": "module",
+  "main": "src/x4.ts",
+  "module": "src/x4.ts",
+  "types": "src/x4.ts",
+  "exports": {
+    ".": "./src/x4.ts",
+    "./monaco": "./src/components/monaco/monaco.ts"
+  },
+  "scripts": {
+    "build-publish": "deno run --allow-all ./publish.ts",
+    "build-doc": "typedoc",
+    "build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlibre/x4.git"
+  },
+  "homepage": "https://x4js.org",
+  "keywords": [
+    "typescript",
+    "framework",
+    "sap",
+    "web",
+    "desktop",
+    "application"
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.12.0"
+  }
 }
