@@ -97,11 +97,3 @@ Because x4js produces standard DOM from plain TypeScript — no framework-specif
 
 **Think differently. Escape the DOM. Focus on the concept, not the format.**
 
-## Ideas
-
-[x] aicontext.md
-[x] finish StateManager
-[x] review core_data
-[ ] doc doc and doc
-[ ] demo with all best practices
-
