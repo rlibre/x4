@@ -12,8 +12,7 @@
 	"scripts": {
 		"build-publish": "deno run --allow-all ./publish.ts",
 		"build-doc": "typedoc",
-		"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts",
-		"build-tst": "esbuild --watch --bundle --outfile=tst/main.js --serve=0.0.0.0:8080 --servedir=tst/ tst/main.ts"
+		"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
 	},
 	"files": [
 		"src",
