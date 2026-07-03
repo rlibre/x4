@@ -39,9 +39,11 @@ export interface PropertyValue {
 	value: IValue | IValueCB;
 	options?: ListItem[];
 	callback: ( name: string, value: any ) => void;
-	step?: number;	// for numbers
 	live?: boolean;	// for live update 
 	cls?: string;
+    step?: number;	// for numbers
+	min?: number;
+    max?: number;
 }
 
 export interface PropertyGroup {
@@ -215,6 +217,8 @@ export class PropertyGrid extends VBox {
 				name: item.name, 
 				value: String(value),
 				step: item.step,
+                min: item.min,
+                max: item.max,
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
 						item.callback?.( item.name, (editor as Input).getNumValue() );
