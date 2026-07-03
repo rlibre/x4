@@ -328,9 +328,12 @@ export class Timer {
 			this.clearTimeout(name);
 		}
 
-		const tm = setTimeout(callback, time);
-		this._timers.set(name, tm);
+		const tm = setTimeout( ( ) => {
+			this._timers?.delete( name );
+			callback( );
+		}, time);
 
+		this._timers.set(name, tm);
 		return tm;
 	}
 
@@ -372,6 +375,10 @@ export class Timer {
 		});
 
 		this._timers = null;
+	}
+
+	debounce( name: string, time: number, callback: Function ) {
+		this.setTimeout( name, time, callback );
 	}
 }
 
@@ -1019,3 +1026,97 @@ export function safeText( v: string | UnsafeHtml ): string {
 	if( !v ) { return ""; }
     return v instanceof UnsafeHtml ? v.toString() : sanitizeHtml( v );
 }
+
+
+/**
+ * split a dotted path into segments.
+ *   "user.name"      → [ "user", "name" ]
+ *   "user.tags[2]"   → [ "user", "tags", "2" ]
+ *   "items[0][1]"    → [ "items", "0", "1" ]
+ */
+function _parse_path( path: string ): string[] {
+
+	const segments: string[] = [];
+
+	for( const part of path.split( '.' ) ) {
+		// "tags[2]" → "tags" then "2" ; "name" → "name"
+		let rest = part;
+
+		const bracket = rest.indexOf( '[' );
+		if( bracket < 0 ) {
+			segments.push( rest );
+			continue;
+		}
+
+		if( bracket > 0 ) {
+			segments.push( rest.substring( 0, bracket ) );
+		}
+
+		// consume every [n] group
+		const re = /\[(\d+)\]/g;
+		let m;
+		while( ( m = re.exec( rest ) ) !== null ) {
+			segments.push( m[1] );
+		}
+	}
+
+	return segments;
+}
+
+
+/**
+ * walk down 'obj' following 'segments', stopping before the last one.
+ * returns the parent object of the final segment, or undefined if
+ * the path is broken somewhere.
+ */
+function _walk_to_parent( obj: any, segments: string[] ): any {
+
+	let current = obj;
+
+	for( let i = 0; i < segments.length - 1; i++ ) {
+		if( current === null || current === undefined ) {
+			return undefined;
+		}
+		current = current[segments[i]];
+	}
+
+	return current;
+}
+
+
+/**
+ * read the value at the given path.
+ *   getMemberValue( state, "user.tags[2]" )
+ */
+
+export function getMemberValue( obj: any, path: string ): any {
+
+	const segments = _parse_path( path );
+	const parent = _walk_to_parent( obj, segments );
+
+	if( parent === undefined || parent === null ) {
+		return undefined;
+	}
+
+	return parent[ segments[segments.length - 1] ];
+}
+
+
+/**
+ * write the value at the given path.
+ * silently does nothing if an intermediate segment is missing
+ */
+
+export function setMemberValue( obj: any, path: string, value: any ) : boolean {
+
+	const segments = _parse_path( path );
+	const parent = _walk_to_parent( obj, segments );
+
+	if( parent === undefined || parent === null ) {
+		return false;
+	}
+
+	parent[ segments[segments.length - 1] ] = value;
+	return true;
+}
+
