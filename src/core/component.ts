@@ -20,6 +20,7 @@ import { AriaAttributes, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
 import { Application, EvMessage } from './core_application';
+import { makeState } from './core_state.js';
 
 interface RefType<T extends Component> {
 	dom: T;
@@ -164,7 +165,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	protected readonly clsprefix: string;	// internal class name prefix (x4 internal)
 
 	#store: Map<string|symbol,any>;
-
+	#pstate: any;
 	
 	constructor( props: P ) {
 		super( );
@@ -1155,6 +1156,41 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	queryInterface<T>( name: string ): T {
 		return null;
+	}
+
+	// :: PERSISTENCE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	protected loadPState( name: string, defaults: Record<string, any> ): any {
+
+		if( !this.#pstate ) {
+			this.#pstate = {};
+		}
+
+		if( this.#pstate[name] ) {
+			return this.#pstate[name];
+		}
+
+		const key = `x4@persist:${name}`;
+
+		let raw: Record<string, any>;
+		try {
+			const stored = Application.instance().getStorage( key );
+			raw = stored ? { ...defaults, ...JSON.parse( stored ) } : { ...defaults };
+		}
+		catch {
+			raw = { ...defaults };
+		}
+
+		const state = makeState( raw );
+
+		state.on( "change", ( ) => {
+			this.setTimeout( key, 500, ( ) => {
+				Application.instance().setStorage( key, JSON.stringify( raw ) );
+			});
+		});
+
+		this.#pstate[name] = state;
+		return state;
 	}
 }  
 
