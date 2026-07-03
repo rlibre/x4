@@ -1,11 +1,12 @@
-import { class_ns, Component, ComponentProps } from '../../x4.js';
+import { class_ns } from '../../core/core_tools';
+import { Component, ComponentProps } from '../../core/component';
 
 import Monaco from './bin/monaco'; 
 import "./monaco.module.scss"
 
 
 interface MonacoEditorProps extends ComponentProps {
-	language: "typescript" | "javascript" | "json" | "css" | "html";
+	language: "typescript" | "javascript" | "json" | "css" | "html" | string;
 	theme?: string;
 	content?: string;
 	options?: Monaco.editor.IEditorOptions & Monaco.editor.IGlobalEditorOptions;
@@ -14,24 +15,22 @@ interface MonacoEditorProps extends ComponentProps {
 @class_ns( "x4" )
 export class MonacoEditor extends Component<MonacoEditorProps> {
 
-	static initCount = 0;
-	static basePath: string = "monaco/";
-	static monaco: typeof Monaco;
-	static initCbs: Function[] = [];
+	private static _initCount = 0;
+	private static _basePath: string = "monaco/";
+	private static _monaco: typeof Monaco;
+	private static _initCbs: Function[] = [];
 
 	private _editor: Monaco.editor.IStandaloneCodeEditor;
 
-	static async start( ) { 
-		if( this.initCount ) {
+	static async _start( ) { 
+		if( this._initCount ) {
 			return;
 		}
 
-        // path must be hard coded for esbuild to work
+        // dynamic import (without esbuild intervention)
         const dynamicImport = new Function("path", "return import('./'+path)");
-        this.monaco = (await dynamicImport(this.basePath + "monaco.js")).default;
-        //this.monaco = (await import(`${this.basePath}monaco.js`)).default;
-		//this.monaco = (await import( "./bin/monaco.js" )).default;
-		this.initCount++;
+        this._monaco = (await dynamicImport(this._basePath + "monaco.js")).default;
+		this._initCount++;
 
 		globalThis.MonacoEnvironment = {
 			getWorkerUrl: function (_moduleId, label) {
@@ -53,8 +52,8 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 					workerPath = "editor.worker.js";
 				}
 
-				const fullpath = MonacoEditor.basePath+'workers/'+workerPath;
-				console.log( `getting "${label} path: ${fullpath}` );
+				const fullpath = MonacoEditor._basePath+'workers/'+workerPath;
+				//console.log( `getting "${label} path: ${fullpath}` );
 				return fullpath;
 			}
 		};
@@ -62,7 +61,7 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
         // custom append css
 		const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = MonacoEditor.basePath+'monaco.css';
+        link.href = MonacoEditor._basePath+'monaco.css';
         link.type = 'text/css';
         document.head.appendChild(link);
 	}
@@ -70,16 +69,16 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 	static addTypelib( name: string, code: string ) {
 		const register = ( ) => {
 			///@ts-ignore
-			const ts = MonacoEditor.monaco.languages.typescript;
+			const ts = MonacoEditor._monaco.languages.typescript;
 			///@ts-ignore
 			ts.typescriptDefaults.addExtraLib( code, `ts:filename/${name}`);
 		}
 
-		if( MonacoEditor.monaco ) {
+		if( MonacoEditor._monaco ) {
 			register( );
 		}
 		else {
-			this.initCbs.push( register );
+			this._initCbs.push( register );
 		}
 	}
 
@@ -89,11 +88,11 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 
 		super( props );
 
-		MonacoEditor.start( )
+		MonacoEditor._start( )
 			.then( ( ) => {
-				MonacoEditor.initCbs.forEach( x => x() );
+				MonacoEditor._initCbs.forEach( x => x() );
 
-				this._editor = MonacoEditor.monaco.editor.create( this.dom as HTMLElement, {
+				this._editor = MonacoEditor._monaco.editor.create( this.dom as HTMLElement, {
 					value: content,
 					language: props.language,
 					theme: props.theme,
@@ -111,6 +110,26 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 				this._editor.layout();
 			}
 		})
+	}
+
+	setTheme( name: string ) {
+		MonacoEditor._monaco.editor.setTheme( name );
+	}
+
+	queryInterface<T>(name: string): T {
+		if( name=='tab-handler' ) {
+			const rc = {
+				focusNext: ( ) : boolean => { return false; }
+			}
+			return rc as T;
+		}
+
+		return super.queryInterface( name );
+	}
+
+	static async monaco( ) {
+		await this._start( );
+		return this._monaco;
 	}
 }
 
