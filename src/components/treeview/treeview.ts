@@ -83,7 +83,7 @@ class CTreeViewItem extends Box {
 
 		if( item ) {
 			this._label = new HBox( {cls:"label item", content: [
-				this._icon = new Icon( { iconId: item.children ? folder_icon : undefined } ),
+				this._icon = new Icon( { cls: "opener", iconId: item.children ? folder_icon : undefined } ),
 				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
 

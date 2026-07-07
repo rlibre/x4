@@ -115,7 +115,7 @@ export function unsafeHtml(x: string): UnsafeHtml {
 
 export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
 	const result = strings.reduce((acc, str, i) => {
-		return acc + str + (values[i] ?? '');
+		return acc + str + sanitizeHtml(values[i] ?? '');
 	}, '');
 	return unsafeHtml(result);
 }
@@ -1032,6 +1032,10 @@ const _rx_escape = /[&<>"']/g;
  */
 
 export function sanitizeHtml( input: string ): string {
+	if( input===undefined || input===null || input==="" ) {
+		return "";
+	}
+
 	if( !_rx_escape.test( input ) ) {
 		return input;
 	}
