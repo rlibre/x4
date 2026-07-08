@@ -22,7 +22,7 @@ import { ScrollView, Viewport } from '../viewport/viewport';
 import { Header } from '../header/header';
 
 import { HBox } from '../boxes/boxes';
-import { Label } from '../label/label';
+import { Label, SimpleText } from '../label/label';
 
 import "./listbox.module.scss"
 
@@ -31,6 +31,7 @@ export type ListboxID = number | string;
 export interface ListItem {
 	id: ListboxID;
 	text: string | UnsafeHtml;
+	sub_cols?: (string | UnsafeHtml | Component)[];	// extra columns
 
 	iconId?: string;
 	data?: any;
@@ -477,9 +478,31 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 	 */
 
 	defaultRenderer( item: ListItem ): Component {
+
+		const mk_col = ( _: any, index: number ) => {
+			const c = item.sub_cols[index];
+			if( c===undefined || c===null ) { 
+				return null;
+			}
+
+			if( c instanceof Component ) {
+				return c;
+			}
+				
+			return new SimpleText( { cls: `column ref-c${index+2}`, text: c } )
+		}
+
+		let cols: Component[] = null;
+		if( item.sub_cols ) {
+			cols = item.sub_cols.map( mk_col );
+		}
+
 		return new HBox( {
 			cls: item.cls,
-			content: new Label( { icon: item.iconId, text: item.text }) 
+			content: [
+				new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
+				...cols,
+			],
 		} )
 	}
 

@@ -416,8 +416,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * @param name - The suffix of the `data-` attribute (e.g., for `data-foo`, use `"foo"`).
      * @returns The string value of the `data-*` attribute, or `null` if not present.
 	 * 
-	 * @cf setIntData/getIntData (number)
-	 * @cf setInternalData/getInternalData (typed data)
+	 * @cf Component.setIntData, Component.getIntData (number)
+	 * @cf Component.setInternalData, Component.getInternalData (typed data)
      */
     
 	getData( name: string ) : string {

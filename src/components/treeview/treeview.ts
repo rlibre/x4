@@ -19,7 +19,7 @@ import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
-import { Label } from '../label/label';
+import { Label, SimpleText } from '../label/label';
 import { ListboxID, ListItem } from '../listbox/listbox';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
@@ -83,12 +83,29 @@ class CTreeViewItem extends Box {
 
 		if( item ) {
 			this._label = new HBox( {cls:"label item", content: [
-				this._icon = new Icon( { cls: "opener", iconId: item.children ? folder_icon : undefined } ),
+				this._icon = new Icon( { cls: 'arrow', iconId: item.children ? folder_icon : undefined } ),
 				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
 
 			if( item.cls ) {
 				this._label.addClass( item.cls );
+			}
+
+			if( item.sub_cols ) {
+				const mk_col = ( _: any, index: number ) => {
+					const c = item.sub_cols[index];
+					if( c===undefined || c===null ) { 
+						return null;
+					}
+
+					if( c instanceof Component ) {
+						return c;
+					}
+						
+					return new SimpleText( { cls: `column ref-c${index+2}`, text: c } )
+				}
+				
+				this._label.appendContent( item.sub_cols.map( mk_col ) );
 			}
 
 			this._label.setInternalData( "id", item.id );
