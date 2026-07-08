@@ -22,6 +22,8 @@ import { Label } from '../label/label';
 import { Input } from '../input/input'
 import { HBox } from '../boxes/boxes';
 
+import icons from "../assets/icons"
+
 import "./radio.module.scss";
 
 /**
@@ -84,8 +86,7 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 			} ),
 		])
 
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 5 5" aria-hidden="true"><circle class="fa-primary" cx="2.5" cy="2.5" r="2.5" ></circle><circle class="fa-secondary" cx="2.5" cy="2.5" r="1.25"></circle></svg>`
-		this._check.dom.insertAdjacentHTML( "beforeend", svg );
+		this._check.dom.insertAdjacentHTML( "beforeend", icons.radio );
 
 		//svgLoader.load( icon ).then( svg => {
 		//	this._check.dom.insertAdjacentHTML( "beforeend", svg );

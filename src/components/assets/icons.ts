@@ -1,0 +1,10 @@
+
+const x4icons = {
+	check: `<svg viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M4 4.586L1.707 2.293A1 1 0 1 0 .293 3.707l3 3a.997.997 0 0 0 1.414 0l5-5A1 1 0 1 0 8.293.293L4 4.586z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>`,
+	empty: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path opacity=".4" d="M32 96l0 200.6 21.7-54.3C65.9 211.9 95.3 192 128 192l320 0 0-32c0-17.7-14.3-32-32-32l-117.5 0c-25.5 0-49.9-10.1-67.9-28.1L204.1 73.4c-6-6-14.1-9.4-22.6-9.4L64 64C46.3 64 32 78.3 32 96zM49.1 426.1c-2 4.9-1.4 10.5 1.6 14.9s7.9 7 13.2 7l320 0 80 0c6.5 0 12.4-4 14.9-10.1l64-160c2-4.9 1.4-10.5-1.6-14.9s-7.9-7-13.2-7l-400 0c-6.5 0-12.4 4-14.9 10.1l-64 160z"/><path d="M448 160l0 32 32 0 0-32c0-35.3-28.7-64-64-64L298.5 96c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7L64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0 80 0c19.6 0 37.3-11.9 44.6-30.2l64-160c5.9-14.8 4.1-31.5-4.8-44.7S543.9 224 528 224l-400 0c-19.6 0-37.3 11.9-44.6 30.2L32 382.8 32 96c0-17.7 14.3-32 32-32l117.5 0c8.5 0 16.6 3.4 22.6 9.4l22.6-22.6L204.1 73.4l26.5 26.5c18 18 42.4 28.1 67.9 28.1L416 128c17.7 0 32 14.3 32 32zM384 448L64 448c-5.3 0-10.3-2.6-13.2-7s-3.6-10-1.6-14.9l64-160c2.4-6.1 8.3-10.1 14.9-10.1l400 0c5.3 0 10.3 2.6 13.2 7s3.6 10 1.6 14.9l-64 160C476.4 444 470.5 448 464 448l-80 0z"/></svg>`,
+	radio: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 5 5" aria-hidden="true"><circle class="fa-primary" cx="2.5" cy="2.5" r="2.5" ></circle><circle class="fa-secondary" cx="2.5" cy="2.5" r="1.25"></circle></svg>`,
+	chevron: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><!--!Font Awesome Pro 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M267.3 395.3c-6.2 6.2-16.4 6.2-22.6 0l-192-192c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0L256 361.4 436.7 180.7c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6l-192 192z"/></svg>`,
+
+};
+
+export default x4icons;

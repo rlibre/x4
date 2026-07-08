@@ -24,7 +24,11 @@ import { Header } from '../header/header';
 import { HBox } from '../boxes/boxes';
 import { Label, SimpleText } from '../label/label';
 
+import { _tr } from '../../x4.js';
+import icons from '../assets/icons'
+
 import "./listbox.module.scss"
+
 
 export type ListboxID = number | string;
 
@@ -63,6 +67,7 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	footer?: Component,
 	checkable?: true,
 	multisel?: true,
+	emptyMsg?: string,
 
 	dblClick?: EventCallback<EvDblClick>;
 	selectionChange?: EventCallback<EvSelectionChange>;
@@ -450,6 +455,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		}
 		else {
 			update_sel = oldSel.length>0;
+			this._view.setContent( new Label( { cls: "empty vertical", icon: icons.empty, text: this.props.emptyMsg ?? _tr.global.empty_list } ) );
 		}
 		
 		if( update_sel ) {

@@ -24,8 +24,10 @@ import { ListboxID, ListItem } from '../listbox/listbox';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
 
+import { _tr } from '../../x4.js';
+import icons from '../assets/icons'
+
 import "./treeview.module.scss";
-import folder_icon from "./chevron-down-light.svg"
 
 
 //import folder_closed from "./folder-minus-light.svg"
@@ -53,6 +55,7 @@ export interface TreeItem extends ListItem {
 interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
 	footer?: Component;
+	emptyMsg?: string;
 	selectionChange?: EventCallback<EvSelectionChange>;
 	dblClick?: EventCallback<EvDblClick>;
 	click?: EventCallback<EvClick>;
@@ -83,7 +86,7 @@ class CTreeViewItem extends Box {
 
 		if( item ) {
 			this._label = new HBox( {cls:"label item", content: [
-				this._icon = new Icon( { cls: 'arrow', iconId: item.children ? folder_icon : undefined } ),
+				this._icon = new Icon( { cls: 'arrow', iconId: item.children ? icons.chevron : undefined } ),
 				new Label( { tag: "span", cls: "", text: item.text, icon: item.iconId } ),
 			]});
 
@@ -150,7 +153,7 @@ class CTreeViewItem extends Box {
 	}
 
 	setItems( items: TreeItem[ ] ) {
-		if( items ) {
+		if( items && items.length ) {
 			const childs = items.map( itm => {
 				return new CTreeViewItem( {}, itm );
 			})
@@ -219,9 +222,12 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 		const root = new CTreeViewItem( { cls: "root"}, null );
 
-		if( items ) {
+		if( items && items.length ) {
 			root.setItems( items );
 			this._view.setContent( root );
+		}
+		else {
+			this._view.setContent( new Label( { cls: "empty vertical", icon: icons.empty, text: this.props.emptyMsg ?? _tr.global.empty_list } ) );
 		}
 	}
 
