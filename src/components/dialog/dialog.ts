@@ -23,9 +23,8 @@ import { CoreEvent, EventCallback } from '../../core/core_events';
 import { asap, class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
 import { ComponentEvent } from '../../core/component';
 import { Button } from '../button/button';
-
+import icons from "../assets/icons"
 import "./dialog.module.scss"
-import close_icon from "./xmark-sharp-light.svg";
 
 
 //let modal_stack: Popup[] = [];
@@ -79,7 +78,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 					}),
 					props.closable ? new Button({
 						id: "closebox",
-						icon: close_icon,
+						icon: icons.close_box,
 						tabindex: -1,
 						click: () => { 
 							if( isString(props.closable) ) {

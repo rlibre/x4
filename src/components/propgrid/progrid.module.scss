@@ -13,6 +13,7 @@
 	border: 1px solid var(--border);
 	overflow-y: auto;
     flex-basis: 0;
+	align-self: stretch;
 	
 	.root {
 		display: grid;

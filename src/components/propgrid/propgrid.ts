@@ -24,9 +24,9 @@ import { Label, SimpleText } from "../label/label"
 import { asap, class_ns, isFunction, isNumber } from '../../core/core_tools';
 import { Icon } from '../components'
 
-import "./progrid.module.scss"
-import updown_icon from "./updown.svg"
+import icons from "../assets/icons"
 
+import "./progrid.module.scss"
 
 type IValue = boolean | number | string;
 type IValueCB = ( name: string) => IValue;
@@ -148,7 +148,7 @@ export class PropertyGrid extends VBox {
 					new SimpleText({ cls: "title", text: g.title }),
 					g.desc ? new SimpleText({ cls: "desc", text: g.desc }) : null,
 				]}),
-				g.collapsible? new Button({ icon: updown_icon, click: (e) => toggle(tr) }) : null,
+				g.collapsible? new Button({ icon: icons.updown, click: (e) => toggle(tr) }) : null,
 			]
 		});
 

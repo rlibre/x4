@@ -23,12 +23,9 @@ import { Icon } from '../icon/icon';
 import { Label } from '../label/label';
 import { Button } from '../button/button';
 
-import "./notification.module.scss";
+import icons from "../assets/icons"
 
-import def_icon from "./circle-check-solid.svg";
-import danger_icon from "./circle-exclamation-solid.svg"
-import spin_icon from "./circle-notch-light.svg";
-import close_icon from "./xmark-sharp-light.svg";
+import "./notification.module.scss";
 
 /**
  * 
@@ -56,14 +53,14 @@ export class Notification extends Popup {
 		let icon = props.iconId;
 		if( !icon ) {
 			if( props.loading ) {
-				icon = spin_icon;
+				icon = icons.loading;
 				this.addClass( "")
 			}
 			else if( props.mode=="danger" ) {
-				icon = danger_icon;
+				icon = icons.danger;
 			}
 			else {
-				icon = def_icon;
+				icon = icons.checked;
 			}
 		}
 
@@ -82,7 +79,7 @@ export class Notification extends Popup {
 					props.title ? new Label( { cls: "title", text: props.title } ) : null,
 					new Label( { cls: "text", text: props.text } ),
 				] }),
-				props.closable ? new Button( { cls: "outline", icon: close_icon, click: ( ) => {this.close( );} } ) : null
+				props.closable ? new Button( { cls: "outline", icon: icons.close_box, click: ( ) => {this.close( );} } ) : null
 			]
 		}) );
 	}

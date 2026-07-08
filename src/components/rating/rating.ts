@@ -19,10 +19,11 @@ import { EventCallback } from '../../core/core_events';
 import { HBox } from '../boxes/boxes';
 import { Input } from '../input/input';
 import { Icon } from '../icon/icon';
+import { class_ns } from '../../core/core_tools';
+
+import icons from "../assets/icons"
 
 import "./rating.module.scss"
-import star_icon from "./star-sharp-solid.svg"
-import { class_ns } from '../../core/core_tools';
 
 interface RatingEventMap extends ComponentEvents {
 	change: EvChange;
@@ -60,7 +61,7 @@ export class Rating extends HBox<RatingProps,RatingEventMap> {
 		
 		const props = this.props;
 
-		let shape = props.icon ?? star_icon;
+		let shape = props.icon ?? icons.star.solid;
 		let value = props.value ?? 0;
 
 		this.m_input = new Input( {

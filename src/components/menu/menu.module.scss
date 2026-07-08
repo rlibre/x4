@@ -95,6 +95,7 @@
 
 		&.popup {
 			&:after {
+				//<todo: see that
 				content: url("./caret-right-solid.svg");
 				width: 6px;
 			}

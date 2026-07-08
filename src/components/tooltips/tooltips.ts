@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, componentFromDOM, wrapDOM } from '../../core/component';
+import { Component, wrapDOM } from '../../core/component';
 import { class_ns, ITipHandler, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
@@ -23,7 +23,7 @@ import { Icon } from '../icon/icon';
 
 import "./tooltips.scss"
 
-import icon from "./comments-question.svg"
+import icons from "../assets/icons"
 
 
 let last_hit: HTMLElement = null;
@@ -105,7 +105,7 @@ class Tooltip extends Popup {
 
 		this.setContent( 
 			new HBox( {content: [
-				new Icon( { iconId: icon } ),
+				new Icon( { iconId: icons.question } ),
 				new Component( { id: "text" } )
 			]} )
 		);
