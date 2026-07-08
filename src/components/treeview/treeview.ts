@@ -206,9 +206,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
-		if( props.items ) {
-			this.setItems( props.items );
-		}
+		this.setItems( props.items );
 	}
 
 	/**

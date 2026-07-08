@@ -58,6 +58,20 @@
 		position: relative;
 
 		&> .x4viewport {
+			.empty {
+				position: relative;
+				left: 50%;
+				top: 30px;
+				transform: translateX(-50%);
+				width: fit-content;
+
+				#icon {
+					height: 64px;
+					fill: var( --accent-background );
+					opacity: 50%;
+				}
+			}
+			
 			// child + subitems
 			.x4ctreeviewitem {
 				&>.label {

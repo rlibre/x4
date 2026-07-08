@@ -113,7 +113,8 @@
 		.empty {
 			position: relative;
 			left: 50%;
-			top: 20%;
+			top: 30px;
+			transform: translateX(-50%);
 			width: fit-content;
 
 			#icon {
