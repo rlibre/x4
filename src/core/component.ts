@@ -195,15 +195,15 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.show( false );
 			}
 
-			if( props.flex===true ) {
+			if( props.flex ) {
 				this.addClass( "x4flex" );
+				if( props.flex!==true && props.flex!==1 ) {
+					this.setStyle( {
+						"flexGrow": props.flex+""
+					});
+				}
 			}
-			else if( props.flex!==undefined ) {
-				this.setStyle( {
-					"flexGrow": props.flex+""
-				});
-			}
-
+			
 			if( props.id!==undefined ) {
 				this.setAttribute( "id", props.id );
 			}

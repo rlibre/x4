@@ -125,7 +125,9 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			contextmenu: (e) => this._on_ctx_menu(e),
 		} );
 
-		this.setItems( props.items, false );
+		asap( ( ) => {
+			this.setItems( props.items, false );
+		} );
 	}
 
 	/**

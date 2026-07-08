@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
+import { asap, class_ns } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 
@@ -122,7 +122,10 @@ class CTreeViewItem extends Box {
 
 				this.addClass( "folder" )
 				this.setClass( "open", item.open );
-				this.setItems( item.children );
+
+				asap( ( ) => {
+					this.setItems( item.children );
+				} );
 
 				this._icon.addDOMEvent( "click", ( ev )=>this.toggle(ev) );
 			}
