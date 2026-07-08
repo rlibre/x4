@@ -27,7 +27,7 @@ import { Box } from '../boxes/boxes';
 import { CSizer } from '../sizers/sizer'
 import { Viewport } from '../viewport/viewport';
 import { Label, SimpleText } from '../label/label';
-import icons from "../assets/icons.ts"
+import icons from "../assets/icons"
 
 import { _tr } from '../../core/core_i18n';
 
