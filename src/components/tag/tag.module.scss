@@ -1,0 +1,30 @@
+/**
+* @file tag.module.scss
+* @author Etienne Cochard 
+* @copyright (c) 2026 R-libre ingenierie, all rights reserved.
+**/
+
+.x4tag {
+	color: black;
+	border-radius: 16px;
+	border: 1px solid var( --border );
+	padding: 2px 8px;
+	gap: 4px;
+	font-weight: normal;
+
+	.x4icon:empty {
+		display: none;
+	}
+
+	.x4icon {
+	}
+
+	.x4simpletext {
+		color: inherit;
+	}
+
+	&.alert {
+		color: var( --alert-color );
+		background-color: var( --alert-background );
+	}
+}
