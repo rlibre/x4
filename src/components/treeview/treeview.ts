@@ -123,10 +123,7 @@ class CTreeViewItem extends Box {
 				this.addClass( "folder" )
 				this.setClass( "open", item.open );
 
-				asap( ( ) => {
-					this.setItems( item.children );
-				} );
-
+				this.setItems( item.children );
 				this._icon.addDOMEvent( "click", ( ev )=>this.toggle(ev) );
 			}
 		}
@@ -209,7 +206,9 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
-		this.setItems( props.items );
+		asap( ( ) => {
+			this.setItems( props.items );
+		} );
 	}
 
 	/**
