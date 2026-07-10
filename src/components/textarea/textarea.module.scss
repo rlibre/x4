@@ -22,24 +22,7 @@
 	--textarea-selection: var( --accent-background );
 }
 
-.x4textarea {
-	margin: 5px;
-
-	.x4label{
-		gap: 0;
-		padding: 4px 0;
-
-		&::after {
-			content: ":"
-		}
-	}
-
-	.x4label:has(.empty) {
-		display: none;
-	}
-
-	textarea {
-		@extend %flex;
+.x4simpletextarea {
 
 		padding: 4px;
 		outline: none;
@@ -60,4 +43,25 @@
 			resize: none;
 		}
 	}
+
+.x4textarea {
+	margin: 5px;
+
+	.x4label{
+		gap: 0;
+		padding: 4px 0;
+
+		&::after {
+			content: ":"
+		}
+	}
+
+	.x4label:has(.empty) {
+		display: none;
+	}
+
+	.x4simpletextarea {
+		@extend %flex;
+
+	}	
 }

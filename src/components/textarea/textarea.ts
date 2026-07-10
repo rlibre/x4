@@ -42,7 +42,8 @@ interface TextAreaProps extends BaseProps {
  * 
  */
 
-class SimpleTextArea extends Component<TextAreaProps> {
+@class_ns( "x4" )
+export class SimpleTextArea extends Component<TextAreaProps> {
 
 	constructor( props: TextAreaProps ) {
 		super( { ...props, tag: "textarea" } );
@@ -70,6 +71,10 @@ class SimpleTextArea extends Component<TextAreaProps> {
 		}
 
 		return text;
+	}
+
+	scrollToBottom( ) {
+		this.dom.scrollTop = this.dom.scrollHeight;
 	}
 
 	queryInterface<T>(name: string): T {
@@ -113,6 +118,10 @@ export class TextArea extends VBox {
 
 	getText( ) {
 		return this._input.getText( );
+	}
+
+	scrollToBottom( ) {
+		this._input.scrollToBottom( );
 	}
 
 	queryInterface<T>(name: string): T {
