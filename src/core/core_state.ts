@@ -5,7 +5,7 @@
 **/
 
 import { CoreEvent, EventMap, EventSource } from './core_events.js';
-import { isPlainObject } from './core_tools.js';
+import { getMemberValue, isPlainObject } from './core_tools.js';
 
 type StateData = boolean | number | string | Date | unknown;
 type State = Record<string, StateData>;
@@ -210,6 +210,11 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 			if( _path_matches( e.path, path ) ) {
 				cb( e );
 			}
+			else if( _path_matches( path, e.path ) ) {
+				const ee = { ...e };
+				ee.value = getMemberValue(this._proxy,path );
+				cb( ee );
+			}
 		});
 	}
 }
@@ -224,7 +229,7 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
  * state.items.push( 4 ); // "items.3 = 4"
  */
 
-export function makeState<T extends State>( initialState: T ): StateProxy<T> {
+export function makeState<T extends Record<keyof T, StateData>>( initialState: T ): StateProxy<T> {
 	return new StateManager( initialState ).proxify( );
 }
 
