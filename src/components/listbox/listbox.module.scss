@@ -136,6 +136,10 @@
 		}
 	}
 
+	&.empty .body .x4viewport {
+		height: 100%;
+	}
+
 	&> #footer {
 		border-top: 1px solid var(--border);
 		margin: 0;

@@ -206,9 +206,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
-		asap( ( ) => {
 			this.setItems( props.items );
-		} );
 	}
 
 	/**
@@ -478,8 +476,8 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			this._selitem = undefined;
 		}
 
-		this._selection = undefined;
-		this.fire( "selectionChange", { selection: [], empty: true } );
+			this._selection = undefined;
+			this.fire( "selectionChange", { selection: [], empty: true } );
 	}
 
 	/**

@@ -125,9 +125,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			contextmenu: (e) => this._on_ctx_menu(e),
 		} );
 
-		asap( ( ) => {
 			this.setItems( props.items, false );
-		} );
 	}
 
 	/**
@@ -446,6 +444,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		let update_sel = false;
 
 		if( this._items.length ) {
+			this.removeClass( "empty" );
 			const content = items.map( x => this.renderItem(x) );
 			this._view.setContent( content );
 
@@ -454,6 +453,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			}
 		}
 		else {
+			this.addClass( "empty" );
 			update_sel = oldSel.length>0;
 			this._view.setContent( new Label( { cls: "empty vertical", icon: icons.empty, text: this.props.emptyMsg ?? _tr.global.empty_list } ) );
 		}
