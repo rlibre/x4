@@ -47,6 +47,8 @@ interface NotificationProps extends ComponentProps {
 
 @class_ns( "x4" )
 export class Notification extends Popup {
+	private static list = new Set<Notification>( );
+
 	constructor( props: NotificationProps ) {
 		super( { } );
 
@@ -85,19 +87,34 @@ export class Notification extends Popup {
 	}
 
 	close( ) {
+		Notification.list.delete( this );
 		this.clearTimeout( "close" );
 		super.close( );
 	}
 
 	display( time_in_s = 0 ) {
-		const r = new Rect( 0, 0, window.innerWidth, window.innerHeight );
-		this.displayNear( r, "bottom right", "bottom right", { x: -20, y: -10 } );
-
+		Notification.list.add( this );
 		if( time_in_s ) {
 			this.setTimeout( "close", time_in_s*1000, ( ) => { 
 				this.close() 
 			} );
 		}
+
+		Notification.updatePositions( )
+	}
+
+	static updatePositions( ) {
+		const r = new Rect( 0, 0, window.innerWidth, window.innerHeight );
+
+		for( const n of this.list ) {
+			n.displayNear( r, "bottom right", "bottom right", { x: -20, y: -10 } );
+			const nr = n.getBoundingRect( );
+			r.height -= nr.height+10;
+			if( r.height<10 ) {
+				r.height = 10;
+			}
+		}
+
 	}
 }
 

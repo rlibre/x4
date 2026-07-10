@@ -28,10 +28,12 @@
 .x4notification {
 	@extend %shadow-xl;
 
-	padding: 8px;
+	padding: 4px 8px;
 	border: 1px solid var(--notification-border);
 	border-left: 3px solid var( --accent-background );
 	background-color: var( --notification-background );
+	min-width: 250px;
+	max-width: 30vw;
 		
 	&> .x4hbox {
 		gap: 8px;
@@ -77,8 +79,8 @@
 		color: var( --color-gray-7 );
 		border: none;
 
-		&:hover {
+		//&:hover {
 			//background-color: var( -- );;
-		}
+		//}
 	}
 }
