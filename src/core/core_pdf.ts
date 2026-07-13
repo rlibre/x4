@@ -124,6 +124,7 @@ function serialize(val: PDFValue): string {
 	return String(val)
 }
 
+// @internal
 class Ref {
 	id: number
 	constructor(id: number) { this.id = id }

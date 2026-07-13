@@ -163,7 +163,7 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
 
 
 /**
- * 
+ * @internal
  */
 
 @class_ns( "x4" )
@@ -240,7 +240,7 @@ class HueSlider extends Box<BoxProps,CommonEvents> {
 
 
 /**
- * 
+ * @internal
  */
 
 @class_ns( "x4" )
