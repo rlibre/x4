@@ -15,7 +15,7 @@
  **/
 
 import { ComponentProps } from '../../core/component';
-import { class_ns, Rect, UnsafeHtml } from '../../core/core_tools';
+import { asap, class_ns, Rect, UnsafeHtml } from '../../core/core_tools';
 
 import { Popup } from '../popup/popup';
 import { HBox, VBox } from '../boxes/boxes';
@@ -88,6 +88,8 @@ export class Notification extends Popup {
 
 	close( ) {
 		Notification.list.delete( this );
+		asap( ( ) => Notification.updatePositions( ) )
+
 		this.clearTimeout( "close" );
 		super.close( );
 	}
@@ -100,14 +102,17 @@ export class Notification extends Popup {
 			} );
 		}
 
-		Notification.updatePositions( )
+		//this.setStyleValue( "top", "9999px" );
+		
+		asap( ( ) => Notification.updatePositions( ) )
 	}
 
 	static updatePositions( ) {
 		const r = new Rect( 0, 0, window.innerWidth, window.innerHeight );
 
 		for( const n of this.list ) {
-			n.displayNear( r, "bottom right", "bottom right", { x: -20, y: -10 } );
+			n.addClass( "smooth" );
+			n.displayNear( r, "bottom right", "bottom right", { x: -20, y: -10 }, true );
 			const nr = n.getBoundingRect( );
 			r.height -= nr.height+10;
 			if( r.height<10 ) {

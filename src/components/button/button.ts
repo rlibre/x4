@@ -14,9 +14,10 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { Menu, MenuElement, MenuProps } from 'x4js';
 import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { class_ns, isFunction, UnsafeHtml } from '../../core/core_tools';
 
 import { Icon } from "../icon/icon"
 
@@ -68,6 +69,8 @@ export interface ButtonProps extends ComponentProps {
 	 * cf. ButtonEvents
 	 */
 	click?: EventCallback<EvClick>;
+
+	menu?: MenuElement[] | (( ) => MenuElement[]);
 }
 
 /**
@@ -131,17 +134,17 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 
 	protected _on_click( ev: MouseEvent ) {
 
-		//if (this.m_props.menu) {
-		//	let menu = new Menu({
-		//		items: isFunction(this.m_props.menu) ? this.m_props.menu() : this.m_props.menu
-		//	});
-		//
-		//	let rc = this.getBoundingRect();
-		//	menu.displayAt(rc.left, rc.bottom, 'tl');
-		//}
-		//else {
+		if (this.props.menu) {
+			let menu = new Menu({
+				items: isFunction(this.props.menu) ? this.props.menu() : this.props.menu
+			});
+		
+			let rc = this.getBoundingRect();
+			menu.displayNear(rc, 'top-left', 'bottom-left' );
+		}
+		else {
 			this.fire('click', {} );
-		//}
+		}
 
 		ev.preventDefault();
 		ev.stopPropagation();

@@ -4,27 +4,37 @@
 * @copyright (c) 2026 R-libre ingenierie, all rights reserved.
 **/
 
+:root {
+	--tag-border: var( --border );
+	--tag-border-focus: var( --border-focus );
+	--tag-selection: var( --accent-background );
+	--tag-color: black;
+	--tag-icon-color: var( --tag-color );
+}
+
 .x4tag {
-	color: black;
 	border-radius: 16px;
-	border: 1px solid var( --border );
+	border: 1px solid var( --tag-border );
 	padding: 2px 8px;
 	gap: 4px;
 	font-weight: normal;
+	--label-color: var( --tag-color );
 
 	.x4icon:empty {
 		display: none;
 	}
 
 	.x4icon {
+		height: 1em;
+		color: var( --tag-icon-color );
 	}
 
-	.x4simpletext {
-		color: inherit;
+	&> .x4simpletext {
+		padding: 0;
 	}
 
 	&.alert {
-		color: var( --alert-color );
+		--tag-color: var( --alert-color );
 		background-color: var( --alert-background );
 	}
 }

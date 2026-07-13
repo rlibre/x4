@@ -16,11 +16,12 @@
 
 import { Component } from "../../core/component"
 import { DOMEventHandler } from '../../core/core_dom';
-import { Timer, UnsafeHtml, class_ns, isString } from '../../core/core_tools';
+import { Timer, UnsafeHtml, class_ns, isFunction, isString } from '../../core/core_tools';
 
 import { Popup, PopupProps } from '../popup/popup';
 import { Icon } from '../icon/icon';
 
+import icons from "../assets/icons";
 import "./menu.module.scss"
 
 const OPEN_DELAY = 400;
@@ -35,6 +36,7 @@ export interface MenuItem {
 	text: string | UnsafeHtml;
 	menu?: Menu;
 	disabled?: boolean;
+	checked?: boolean | ( () => boolean);
 	click?: DOMEventHandler;
 }
 
@@ -74,8 +76,16 @@ class CMenuItem extends Component {
 			this.addClass( "popup" );
 		}
 
+		let iconId = itm.icon;
+		if( !iconId && itm.checked ) {
+			const chk = isFunction(itm.checked) ? itm.checked() : itm.checked;
+			if( chk ) {
+				iconId = icons.check;
+			}
+		}
+
 		this.setContent( [
-			new Icon({ id:"icon",iconId:itm.icon}), 
+			new Icon({ id:"icon", iconId }), 
 			new Component( { id: "text", content: itm.text } )
 		]);
 

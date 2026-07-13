@@ -34,6 +34,11 @@
 	background-color: var( --notification-background );
 	min-width: 250px;
 	max-width: 30vw;
+	position: absolute;
+	
+	&.smooth {
+		transition: top .4s ease;
+	}
 		
 	&> .x4hbox {
 		gap: 8px;

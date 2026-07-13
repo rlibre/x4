@@ -79,9 +79,12 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	 * 
 	 */
 
-	displayNear( rc: Rect, dst = "top left", src = "top left", offset = {x:0,y:0} ) {
+	displayNear( rc: Rect, dst = "top left", src = "top left", offset = {x:0,y:0}, keep_pos = false ) {
 
+		if( !keep_pos ) {
 		this.setStyle( { left: "0px", top: "0px" } );	// avoid scrollbar
+		}
+
 		this._do_show( );		// to compute size
 		
 		let rm = this.getBoundingRect();
