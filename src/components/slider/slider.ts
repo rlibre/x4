@@ -38,6 +38,13 @@ interface SliderProps extends ComponentProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --slider-track
+ * --slider-thumb-background
+ * --slider-thumb-border
+ * --slider-thumb-border-focus 
+ * ```
  */
 
 @class_ns( "x4" )

@@ -416,8 +416,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * @param name - The suffix of the `data-` attribute (e.g., for `data-foo`, use `"foo"`).
      * @returns The string value of the `data-*` attribute, or `null` if not present.
 	 * 
-	 * @cf Component.setIntData, Component.getIntData (number)
-	 * @cf Component.setInternalData, Component.getInternalData (typed data)
+	 * @see Component.setIntData
+	 * @see Component.getIntData
+	 * @see Component.setInternalData
+	 * @see Component.getInternalData
      */
     
 	getData( name: string ) : string {
@@ -536,7 +538,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * Appends content to the end of the component's DOM element.
      * Content can be a single Component, an array of Components, a string, an array of strings,
      * raw HTML, an array of raw HTML, a number, or a boolean.
-	 * @note
+	 * @remarks
 	 * for simplicity, null is also allowed:
 	 * setContent( [
 	 * 	optional ? myControl : null,
@@ -629,7 +631,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
      * Removes a specific child component from this component's DOM element.
      * @param child - The child component instance to remove.
-	 * @cf clearContent
+	 * @see clearContent
      */
 
 	removeChild( child: Component ) {
@@ -793,7 +795,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * Sets pointer capture on the component's DOM element for a specific pointer.
      * @param pointerId - The unique ID of the pointer.
 	 *
-	 * @ex
+	 * @example
 	 * control.on("pointerdown", (ev) => {
 	 * 	ev.preventDefault(); // Prevent default browser actions
 	 * 	control.setCapture(ev.pointerId);

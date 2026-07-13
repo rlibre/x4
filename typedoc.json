@@ -1,5 +1,4 @@
 {
-	"exclude": [ "publish.ts" ],
 	"entryPointStrategy": "resolve",
 	"out": "docs",
 	"name": "x4js",
@@ -12,5 +11,7 @@
 	"excludeInternal": true,
 	"excludeExternals": true,
 	"readme": "README.md",
-	"plugin": []
+  	"plugin": ["typedoc-plugin-missing-exports"],
+  	"entryPoints": ["src/x4doc.ts"],
+	"exclude": [ "src/components/monaco", "publish.ts" ]
 }

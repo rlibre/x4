@@ -29,7 +29,10 @@ export interface FormProps extends BoxProps {
 type ValidationFn = ( values: FormValues, is_valid: boolean ) => boolean;
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --form--background
+ * ```
  */
 
 @class_ns( "x4" )

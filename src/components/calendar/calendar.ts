@@ -48,7 +48,25 @@ interface CalendarProps extends ComponentProps {
  * default calendar control
  * 
  * fires:
- * 	EventChange ( value = Date )
+ * 		EventChange ( value = Date )
+ * 
+ * @cssvar
+ * ```
+ * --calendar-btn-background
+ * --calendar-btn-color
+ * --calendar-btn-color
+ * --calendar-week-color
+ * --calendar-week-color-hover
+ * --calendard-day-background-hover
+ * --calendard-day-color-hover
+ * --calendar-sel-background
+ * --calendar-sel-color
+ * --calendar-today-background
+ * --calendar-today-color
+ * --calendar-today-border
+ * --calendar-header-color
+ * --calendar-out-color
+ * ```
  */
 
 @class_ns( "x4" )

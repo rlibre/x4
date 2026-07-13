@@ -40,6 +40,15 @@ export const simpleColorStop = [
 	'var(--gauge-base-color)'
 ]
 
+/**
+ * @cssvar
+ * ```
+ * --gauge-base-color
+ * --gauge-needle-back
+ * --gauge-needle-dot
+ * ```
+ */
+
 @class_ns( "x4" )
 export class Gauge extends Component<GaugeProps> {
 

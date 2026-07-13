@@ -36,6 +36,16 @@ interface FileDialogProps extends ComponentProps {
 	callback: LoadCallback;
 }
 
+/**
+ * @cssvar
+ * ```
+ * --filedrop-border
+ * --filedrop-icon-color
+ * --filedrop-border-drop-hover
+ * --filedrop-icon-color-hover
+ * ```
+ */
+
 export class FileDialog extends Component {
 
 	constructor( props: FileDialogProps ) {

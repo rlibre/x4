@@ -32,6 +32,7 @@ interface ImageEvents extends ComponentEvents {
 	change: EvDropChange;
 	clear: CoreEvent;
 }
+
 export interface ImageProps extends ComponentProps {
 	src: string;
 	fit?: "contain" | "cover" | "fill" | "scale-down";
@@ -49,6 +50,10 @@ export interface ImageProps extends ComponentProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --image-border-drop-hover
+ * ```
  */
 
 @class_ns( "x4" )

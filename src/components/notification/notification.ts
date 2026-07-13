@@ -42,7 +42,14 @@ interface NotificationProps extends ComponentProps {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --notification-border
+ * --notification-background
+ * --notification-icon-default
+ * --notification-icon-success
+ * --notification-icon-danger
+ * ```
  */
 
 @class_ns( "x4" )

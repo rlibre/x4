@@ -59,6 +59,13 @@ export interface PropertyProps extends ComponentProps {
 	groups: PropertyGroup[];
 }
 
+/**
+ * @cssvar
+ * ```
+ * --propertygrid-background
+ * ```
+ */
+
 @class_ns( "x4" )
 export class PropertyGrid extends VBox {
 
@@ -106,8 +113,6 @@ export class PropertyGrid extends VBox {
 
 	/**
 	 * Gets the html of a group header row
-	 * @param {string} displayName - The group display name
-	 * @param {boolean} isCollapsible - Whether the group should support expand/collapse
 	 */
 
 	makeGroupHeader( g: PropertyGroup ) {

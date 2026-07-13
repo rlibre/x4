@@ -47,7 +47,16 @@ export interface MenuProps extends Omit<PopupProps,"content"> {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --menu-background
+ * --menu-border
+ * --menuitem-color
+ * --menuitem-background-active
+ * --menuitem-color-active
+ * --menuitem-background-hover
+ * --menuitem-color-hover
+ * ```
  */
 
 @class_ns( "x4" )

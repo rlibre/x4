@@ -424,8 +424,6 @@ export function oneshot(callback: () => void, ms = 0) {
 
 /**
  * prepend 0 to a value to a given length
- * @param value 
- * @param length 
  */
 
 export function pad(what: any, size: number, ch: string = '0') {
@@ -466,7 +464,7 @@ export function sprintf(format: string, ...args: any[]) {
 /**
  * inverse of camel case
  * theThingToCase -> the-thing-to-case
- * @param {String} str 
+ * @param string 
  */
 
 export function pascalCase(string: string): string {
@@ -524,8 +522,6 @@ export function date_format(date: Date, options?: any): string {
 
 /**
  * difference between 2 dates
- * @param date 
- * @param options 
  * @return text
  */
 

@@ -18,6 +18,17 @@ export interface TagProps extends ComponentProps {
 	icon?: string;
 }
 
+/**
+ * 
+ * @cssvar
+ * ```
+ * --tag-border
+ * --tag-border-focus
+ * --tag-selection
+ * --tag-color
+ * --tag-icon-color
+ * ```
+ */
 
 @class_ns( "x4" )
 export class Tag extends HBox<TagProps> {

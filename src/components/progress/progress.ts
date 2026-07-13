@@ -25,6 +25,14 @@ interface ProgressProps extends ComponentProps {
 	max: number;
 }
 
+/**
+ * @cssvar
+ * ```
+ * --progress-background
+ * --progress-color
+ * ```
+ */
+
 @class_ns( "x4" )
 export class Progress extends Component<ProgressProps> {
 

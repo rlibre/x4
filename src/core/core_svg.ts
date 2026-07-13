@@ -267,7 +267,7 @@ class SvgItem {
 
 	/**
 	 * add a class
-	 * @param name class name to add 
+	 * @param cls class name to add 
 	 */
 	
 	addClass( cls: string ): this {
@@ -287,7 +287,7 @@ class SvgItem {
 
 	/**
 	 * remove a class
-	 * @param name class name to remove
+	 * @param cls class name to remove
 	 */
 	
 	removeClass( cls: string ): this {

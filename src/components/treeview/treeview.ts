@@ -69,6 +69,18 @@ interface TreeviewEvents extends ComponentEvents {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --treeview-background
+ * --treeitem-backgound-hover
+ * --treeitem-color-hover
+ * --treeitem-background-sel
+ * --treeitem-color-sel
+ * --treeview-item-color-sel-disabled
+ * --treeview-item-color-disabled
+ * --treeitem-backgound-active
+ * --treeitem-color-active
+ * ```
  */
 
 @class_ns( "x4" )

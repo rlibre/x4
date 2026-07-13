@@ -118,7 +118,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 	/**
 	 * Clears a previously set timeout.
 	 * @param name - The name of the timeout to clear.
-	 * @link setTimeout
+	 * @see setTimeout
 	 */
 
 	clearTimeout( name: string ) {
@@ -140,7 +140,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 	/**
 	 * Clears a previously set interval.
 	 * @param name - The name of the interval to clear.
-	 * @link setInterval
+	 * @see setInterval
 	 */
 
 	clearInterval( name: string ) {
@@ -150,7 +150,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 	/**
 	 * Clears all timeouts and intervals currently managed by this instance.
 	 * This stops all scheduled callbacks and removes their references.
-	 * @link setTimeout
+	 * @see setTimeout
 	 */
 	clearTimeouts( ) {
 		for( const [id,val] of this.#timers ) {
@@ -169,7 +169,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @param name - The name of the event to listen for.
 	 * @param listener - The callback function to execute when the event is fired.
 	 * @returns An object containing an `off()` method to unsubscribe the listener.
-	 * @link fire
+	 * @see fire
 	 * attach to an event
 	 */
 
@@ -193,8 +193,8 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * If the listener was not found or no events were registered, this method does nothing.
 	 * @param name - The name of the event from which to remove the listener.
 	 * @param listener - The specific listener function to remove.
-	 * @link on
-	 * @link fire
+	 * @see on
+	 * @see fire
 	 */
 
 	off<K extends keyof E>( name: K, listener: ( ev: E[K] ) => void ) {
@@ -210,8 +210,8 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * If no listeners are registered for the event name, or if no EventSource has been initialized, this method does nothing.
 	 * @param name - The name of the event to fire.
 	 * @param ev - The payload (event object) to pass to the listeners.
-	 * @link on
-	 * @link off
+	 * @see on
+	 * @see off
 	 */
 
 	fire<K extends keyof E>( name: K, ev: E[K] ) {

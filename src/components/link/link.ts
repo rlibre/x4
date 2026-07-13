@@ -41,6 +41,10 @@ interface LinkProps extends ComponentProps {
 	click?: EventCallback<EvClick>;
 }
 
+/**
+ * 
+ */
+
 @class_ns( "x4" )
 export class Link extends Component<LinkProps,LinkEvents> {
 	constructor( props: LinkProps ) {

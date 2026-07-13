@@ -75,7 +75,20 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --listbox-item-color
+ * --listbox-icon-color
+ * --listbox-item-color-disabled
+ * --listbox-item-color-sel
+ * --listbox-item-background-sel
+ * --listbox-item-color-sel-disabled
+ * --listbox-item-color-hover
+ * --listbox-item-background-hover
+ * --listbox-background
+ * --listbox-border
+ * --listbox-border-focus
+ * ```
  */
 
 @class_ns( "x4" )

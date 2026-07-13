@@ -32,6 +32,13 @@ interface SwitchProps extends ComponentProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --switch-border
+ * --switch-background
+ * --switch-background-disabled
+ * --switch-checked
+ * ```
  */
 
 @class_ns( "x4" )

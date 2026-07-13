@@ -29,7 +29,11 @@ interface PanelProps extends ComponentProps {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --panel-border
+ * --panel-title-color
+ * ```
  */
 
 @class_ns( "x4" )

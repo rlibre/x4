@@ -31,6 +31,17 @@ interface CheckboxProps extends ComponentProps {
 
 /**
  * Checkbox component that can be checked or unchecked.
+ * 
+ * @cssvar
+ * ```
+ * --checkbox-background-check
+ * --checkbox-background-check-hover
+ * --checkbox-background-disabled
+ * --checkbox-background-disabled-check
+ * --checkbox-color-disabled
+ * --checkbox-check-border
+ * --checkbox-check-border-hover
+ * ```
  */
 
 @class_ns( "x4" )

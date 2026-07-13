@@ -19,12 +19,20 @@ import { Component, ComponentProps } from "../../core/component"
 
 import "./viewport.module.scss"
 
+/**
+ * 
+ */
+
 @class_ns( "x4" )
 export class Viewport extends Component {
 	constructor( props: ComponentProps ) {
 		super( props );
 	}
 }
+
+/**
+ * 
+ */
 
 @class_ns( "x4" )
 export class ScrollView extends Component {

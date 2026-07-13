@@ -55,6 +55,13 @@ interface BreadcrumbsProps extends BoxProps{
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --breadcrumbs-background
+ * --breadcrumbs-icon-color
+ * --breadcrumbs-link-color
+ * --breadcrumbs-active-color
+ * ```
  */
 
 @class_ns( "x4" )

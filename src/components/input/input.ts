@@ -198,6 +198,15 @@ interface InputEvents extends ComponentEvent {
  *   change: (e) => console.log("Checked:", e.value)
  * });
  * ```
+ * 
+ * @cssvar
+ * ```
+ * --input-sel-background
+ * --input-sel-color
+ * --input-placeholder
+ * --input-error
+ * --input-checkbox-color
+ * ```
  */
 
 @class_ns( "x4" )

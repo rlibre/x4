@@ -602,7 +602,6 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 	/**
 	 * 
-	 * @param records 
 	 */
 
 	async load( url?: string ) {
@@ -666,7 +665,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 	/**
 	 * 
-	 * @param data 
+	 * @param rec
 	 */
 
 	public appendRaw( rec: T ) {
@@ -1206,8 +1205,6 @@ export class DataView extends CoreElement<DataViewEventMap>
 
 	/**
 	 * 
-	 * @param columns 
-	 * @param ascending 
 	 */
 
 	public sort( props: SortProp[] ) {

@@ -50,7 +50,11 @@ interface DialogEvents extends PopupEvents {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --color-dialog-caption
+ * --color-dialog-caption-text
+ * ```
  */
 
 @class_ns("x4")

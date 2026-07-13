@@ -95,6 +95,16 @@ function closeTT( ) {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --tooltip-caption-background
+ * --tooltip-caption-color
+ * --tooltip-icon-background
+ * --tooltip-icon-color
+ * --tooltip-background
+ * --tooltip-color
+ * --tooltip-border
+ * ```
  */
 
 @class_ns( "x4" )

@@ -202,7 +202,34 @@ export interface SpreadsheetProps extends ComponentProps {
  */
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --spreadsheet-background
+ * --spreadsheet-border
+ * --spreadsheet-header-cell-background
+ * --spreadsheet-header-cell-color
+ * --spreadsheet-header-cell-vline
+ * --spreadsheet-header-cell-border
+ * --spreadsheet-check-background
+ * --spreadsheet-check-color
+ * --spreadsheet-check-background-hover
+ * --spreadsheet-check-color-hover
+ * --spreadsheet-perc-background
+ * --spreadsheet-perc-color
+ * --spreadsheet-perc-background-hover
+ * --spreadsheet-perc-color-hover
+ * --spreadsheet-cell-color
+ * --spreadsheet-cell-color-sel
+ * --spreadsheet-cell-vline
+ * --spreadsheet-row-background
+ * --spreadsheet-row-odd-background
+ * --spreadsheet-row-border
+ * --spreadsheet-row-background-hover
+ * --spreadsheet-row-background-hover-sel
+ * --spreadsheet-row-background-sel
+ * --spreadsheet-row-color-sel
+ * --spreadsheet-fix-border
+ * ```
  */
 
 @class_ns("x4")

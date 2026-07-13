@@ -44,6 +44,7 @@ interface SelectEvents extends ComponentEvent {
 
 /**
  * simple select
+ * cf. Combobox
  */
 
 @class_ns( "x4" )

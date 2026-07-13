@@ -87,6 +87,20 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	selectionChange?: EventCallback<EvSelectionChange>,
 }
 
+/**
+ * @cssvar
+ * ```
+ * --dropdown-border
+ * --dropdown-background
+ * --combobox-border
+ * --combobox-border-focus
+ * --combobox-btn-background
+ * --combobox-btn-color
+ * --combobox-btn-color-hover
+ * --combo-tree-indent
+ * ```
+ */
+
 @class_ns( "x4" )
 export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 

@@ -95,7 +95,34 @@ export interface GridviewProps extends ComponentProps {
  */
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --gridview-background
+ * --gridview-border
+ * --gridview-header-cell-background
+ * --gridview-header-cell-color
+ * --gridview-header-cell-vline
+ * --gridview-header-cell-border
+ * --grid-check-background
+ * --grid-check-color
+ * --grid-check-background-hover
+ * --grid-check-color-hover
+ * --grid-perc-background
+ * --grid-perc-color
+ * --grid-perc-background-hover
+ * --grid-perc-color-hover
+ * --gridview-cell-color
+ * --gridview-cell-color-sel
+ * --gridview-cell-vline
+ * --gridview-row-background
+ * --gridview-row-odd-background
+ * --gridview-row-border
+ * --gridview-row-background-hover
+ * --gridview-row-background-hover-sel
+ * --gridview-row-background-sel
+ * --gridview-row-color-sel
+ * --gridview-fix-border
+ * ```
  */
 
 @class_ns("x4")

@@ -29,6 +29,12 @@ export interface MessageBoxProps extends DialogProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --msgbox-caption-background
+ * --msgbox-caption-color
+ * --msgbox-icon-color
+ * ```
  */
 
 @class_ns( "x4" )

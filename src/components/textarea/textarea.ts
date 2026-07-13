@@ -96,6 +96,12 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --textarea-border
+ * --textarea-border-focus
+ * --textarea-selection
+ * ```
  */
 
 @class_ns( "x4" )

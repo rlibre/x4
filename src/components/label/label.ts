@@ -28,7 +28,13 @@ export interface LabelProps extends ComponentProps {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --label-background
+ * --label-color
+ * --label-icon-color
+ * --label-color-disa
+ * ```
  */
 
 @class_ns( "x4" )

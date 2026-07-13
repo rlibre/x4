@@ -99,6 +99,14 @@ interface KeyboardProps extends BoxProps {
 
 }
 
+/**
+ * @cssvar
+ * ```
+ * --keyboard-key-background
+ * --keyboard-hilite-color
+ * --keyboard-zoom
+ * ```
+ */
 @class_ns( "x4" )
 export class Keyboard extends HBox<KeyboardProps>
 {

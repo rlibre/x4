@@ -42,6 +42,12 @@ export interface RatingProps extends ComponentProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --rating
+ * --rating-hover
+ * --rating-checked
+ * ```
  */
 
 @class_ns( "x4" )

@@ -13,6 +13,15 @@ interface TickLineProps extends ComponentProps {
 	type: "bars" | "line";	
 }
 
+/**
+ * 
+ * @cssvar
+ * ```
+ * --tickline-axis-color
+ * --tickline-color
+ * --tickline-background
+ * ```
+ */
 
 export class TickLine extends Component<TickLineProps> {
 	

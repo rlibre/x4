@@ -75,6 +75,12 @@ interface TablistEvents extends ComponentEvents {
 
 /**
  * bar containing buttons
+ * 
+ * @cssvar
+ * ```
+ * --tab-border-selected
+ * --tab-border-hover
+ * ```
  */
 
 @class_ns( "x4" )

@@ -20,13 +20,13 @@ interface HeaderProps extends Omit<ComponentProps,"content"> {
 
 /**
  * by default when a header item is resized, the 'target' style '--{name}-width' is updated
- * if you listbox has a header and 3 cols named A, B, C then in your css, use
  * 
- * .my-listbox {
- *    --A-width: 10px;
- *    --B-width: 50px;
- *    --C-width: 100px;
- * }
+ * @cssvar
+ * ```
+ * --header-background-hover
+ * --header-sizer-hover
+ * --header-color
+ * ```
  */
 
 @class_ns( "x4" )

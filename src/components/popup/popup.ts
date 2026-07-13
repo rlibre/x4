@@ -46,7 +46,10 @@ function getRoot( ) {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --modal-mask-background
+ * ```
  */
 
 @class_ns( "x4" )
@@ -395,7 +398,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 
 
 /**
- * 
+ * @internal
  */
 
 export 

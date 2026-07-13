@@ -69,6 +69,16 @@ interface TextEditProps extends InputProps {
 
 /**
  * 
+ * @cssvar
+ * ```
+ * --textedit-border
+ * --textedit-border-focus
+ * --textedit-required
+ * --textedit-btn-background
+ * --textedit-btn-color
+ * --textedit-btn-color-hover
+ * --textedit-color-disabled
+ * ```
  */
 
 @class_ns( "x4" )

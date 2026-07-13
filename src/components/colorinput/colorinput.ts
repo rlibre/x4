@@ -38,7 +38,12 @@ interface ColorInputProps extends BoxProps {
 }
 
 /**
- * 
+ * @cssvar
+ * ```
+ * --colorinput-btn-background
+ * --colorinput-btn-color
+ * --colorinput-btn-color-hover
+ * ```
  */
 
 @class_ns( "x4" )

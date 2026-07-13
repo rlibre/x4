@@ -24,6 +24,7 @@ import { Icon } from "../icon/icon"
 import "./button.module.scss";
 
 
+
 /**
  * Button events
  */
@@ -76,12 +77,21 @@ export interface ButtonProps extends ComponentProps {
 /**
  * Represents a clickable button component.
  * 
- * Generates the CSS class **x4button** based on the class name.
- * The button can contain an optional icon and label, supports keyboard activation,
- * and may trigger auto-repeated click events while pointer is held down.
- * 
+ * @cssvar
+ * ```
+ * 	--button-background
+ * 	--button-color
+ * 	--button-background-hover
+ * 	--button-color-hover
+ * 	--button-background-active
+ * 	--button-color-active
+ * 	--button-background-focus
+ * 	--button-color-focus
+ * 	--button-background-disabled
+ * 	--button-color-disabled
+ * 	--button-icon-color
+ * ```
  */
-
 
 @class_ns( "x4" )
 export class Button extends Component<ButtonProps,ButtonEvents> {

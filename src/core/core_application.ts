@@ -171,10 +171,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	}
 
 	/**
-     * Retrieves an environment variable from the application's environment map.
-     * @param name - The name of the environment variable.
-     * @param def_value - An optional default value to return if the variable is not found.
-     * @returns The value of the environment variable, or `def_value` if not found.
+     * 
      */
 
 	static fireGlobal( msg: string, params?: any ) {
