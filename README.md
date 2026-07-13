@@ -2,11 +2,12 @@
 **A TypeScript framework for people who build applications, not markup.**
 
 ## Home page
-see [home](https://x4js.org)
+see [X4 home page](https://x4js.org)
 
 ## API Documentation
-see [API](https://rlibre.github.io/x4/index.html)
-see [AI](./aicontext.md)
+see [GitHib](https://rlibre.github.io/x4/index.html)
+
+see [AI context](./aicontext.md)
 
 ---
 
