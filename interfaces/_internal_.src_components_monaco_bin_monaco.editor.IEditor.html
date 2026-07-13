@@ -1,0 +1,781 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>IEditor | x4js - v2.2.49</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">x4js - v2.2.49</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/rlibre/x4">GitHub</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/_internal_.html">&lt;internal&gt;</a></li>
+<li><a href="../modules/_internal_.src_components_monaco_bin_monaco.html">src/components/monaco/bin/monaco</a></li>
+<li><a href="../modules/_internal_.src_components_monaco_bin_monaco.editor.html">editor</a></li>
+<li><a href="" aria-current="page">IEditor</a></li></ul>
+<h1>Interface IEditor</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>An editor.</p>
+</div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">IEditor</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-call-signature" href="#createdecorationscollection-1">createDecorationsCollection</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">decorations</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IModelDeltaDecoration.html" class="tsd-signature-type tsd-kind-interface">IModelDeltaDecoration</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorDecorationsCollection.html" class="tsd-signature-type tsd-kind-interface">IEditorDecorationsCollection</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#dispose-1">dispose</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#focus-1">focus</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#geteditortype-1">getEditorType</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getid-1">getId</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getmodel-1">getModel</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getposition-1">getPosition</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Position.html" class="tsd-signature-type tsd-kind-class">Position</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getselection-1">getSelection</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getselections-1">getSelections</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getsupportedactions-1">getSupportedActions</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorAction.html" class="tsd-signature-type tsd-kind-interface">IEditorAction</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getvisiblecolumnfromposition-1">getVisibleColumnFromPosition</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#hastextfocus-1">hasTextFocus</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#layout-1">layout</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">dimension</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IDimension.html" class="tsd-signature-type tsd-kind-interface">IDimension</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">postponeRendering</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#ondiddispose-1">onDidDispose</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">listener</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IDisposable.html" class="tsd-signature-type tsd-kind-interface">IDisposable</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#restoreviewstate-1">restoreViewState</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">state</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealline-1">revealLine</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallineincenter-1">revealLineInCenter</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallineincenterifoutsideviewport-1">revealLineInCenterIfOutsideViewport</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallineneartop-1">revealLineNearTop</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallines-1">revealLines</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">startLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallinesincenter-1">revealLinesInCenter</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallinesincenterifoutsideviewport-1">revealLinesInCenterIfOutsideViewport</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#reveallinesneartop-1">revealLinesNearTop</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealposition-1">revealPosition</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealpositionincenter-1">revealPositionInCenter</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealpositionincenterifoutsideviewport-1">revealPositionInCenterIfOutsideViewport</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealpositionneartop-1">revealPositionNearTop</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrange-1">revealRange</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrangeattop-1">revealRangeAtTop</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrangeincenter-1">revealRangeInCenter</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrangeincenterifoutsideviewport-1">revealRangeInCenterIfOutsideViewport</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrangeneartop-1">revealRangeNearTop</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#revealrangeneartopifoutsideviewport-1">revealRangeNearTopIfOutsideViewport</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#saveviewstate-1">saveViewState</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setmodel-1">setModel</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">model</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setposition-1">setPosition</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setselection-1">setSelection</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setselection-2">setSelection</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Range.html" class="tsd-signature-type tsd-kind-class">Range</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setselection-3">setSelection</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setselection-4">setSelection</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setselections-1">setSelections</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selections</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#trigger-1">trigger</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">handlerId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">payload</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#updateoptions-1">updateOptions</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">newOptions</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorOptions.html" class="tsd-signature-type tsd-kind-interface">IEditorOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<section class="tsd-panel tsd-hierarchy" data-refl="27002">
+<h4>Hierarchy (<a href="../hierarchy.html#<internal>.src/components/monaco/bin/monaco.editor.IEditor">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">IEditor</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="_internal_.src_components_monaco_bin_monaco.editor.ICodeEditor.html" class="tsd-signature-type tsd-kind-interface">ICodeEditor</a></li>
+<li class="tsd-hierarchy-item"><a href="_internal_.src_components_monaco_bin_monaco.editor.IDiffEditor.html" class="tsd-signature-type tsd-kind-interface">IDiffEditor</a></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2662">src/components/monaco/bin/monaco.d.ts:2662</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#createdecorationscollection" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Decorations<wbr/>Collection</span></a>
+<a href="#dispose" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dispose</span></a>
+<a href="#focus" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>focus</span></a>
+<a href="#geteditortype" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Editor<wbr/>Type</span></a>
+<a href="#getid" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Id</span></a>
+<a href="#getmodel" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Model</span></a>
+<a href="#getposition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Position</span></a>
+<a href="#getselection" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Selection</span></a>
+<a href="#getselections" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Selections</span></a>
+<a href="#getsupportedactions" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Supported<wbr/>Actions</span></a>
+<a href="#getvisiblecolumnfromposition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Visible<wbr/>Column<wbr/>From<wbr/>Position</span></a>
+<a href="#hastextfocus" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Text<wbr/>Focus</span></a>
+<a href="#layout" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>layout</span></a>
+<a href="#restoreviewstate" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>restore<wbr/>View<wbr/>State</span></a>
+<a href="#revealline" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line</span></a>
+<a href="#reveallineincenter" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>In<wbr/>Center</span></a>
+<a href="#reveallineincenterifoutsideviewport" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a>
+<a href="#reveallineneartop" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>Near<wbr/>Top</span></a>
+<a href="#reveallines" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines</span></a>
+<a href="#reveallinesincenter" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center</span></a>
+<a href="#reveallinesincenterifoutsideviewport" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a>
+<a href="#reveallinesneartop" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>Near<wbr/>Top</span></a>
+<a href="#revealposition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position</span></a>
+<a href="#revealpositionincenter" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>In<wbr/>Center</span></a>
+<a href="#revealpositionincenterifoutsideviewport" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a>
+<a href="#revealpositionneartop" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>Near<wbr/>Top</span></a>
+<a href="#revealrange" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range</span></a>
+<a href="#revealrangeattop" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>At<wbr/>Top</span></a>
+<a href="#revealrangeincenter" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>In<wbr/>Center</span></a>
+<a href="#revealrangeincenterifoutsideviewport" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a>
+<a href="#revealrangeneartop" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top</span></a>
+<a href="#revealrangeneartopifoutsideviewport" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a>
+<a href="#saveviewstate" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>save<wbr/>View<wbr/>State</span></a>
+<a href="#setmodel" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Model</span></a>
+<a href="#setposition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Position</span></a>
+<a href="#setselection" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Selection</span></a>
+<a href="#setselections" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Selections</span></a>
+<a href="#trigger" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>trigger</span></a>
+<a href="#updateoptions" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Options</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="events">Events<a href="#events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#ondiddispose" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Did<wbr/>Dispose</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="createdecorationscollection"><span>create<wbr/>Decorations<wbr/>Collection</span><a href="#createdecorationscollection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="createdecorationscollection-1"><span class="tsd-kind-call-signature">createDecorationsCollection</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">decorations</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IModelDeltaDecoration.html" class="tsd-signature-type tsd-kind-interface">IModelDeltaDecoration</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorDecorationsCollection.html" class="tsd-signature-type tsd-kind-interface">IEditorDecorationsCollection</a><a href="#createdecorationscollection-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create a collection of decorations. All decorations added through this collection
+will get the ownerId of the editor (meaning they will not show up in other editors).
+These decorations will be automatically cleared when the editor's model changes.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">decorations</span>: <a href="_internal_.src_components_monaco_bin_monaco.editor.IModelDeltaDecoration.html" class="tsd-signature-type tsd-kind-interface">IModelDeltaDecoration</a><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorDecorationsCollection.html" class="tsd-signature-type tsd-kind-interface">IEditorDecorationsCollection</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2870">src/components/monaco/bin/monaco.d.ts:2870</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="dispose"><span>dispose</span><a href="#dispose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="dispose-1"><span class="tsd-kind-call-signature">dispose</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#dispose-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Dispose the editor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2671">src/components/monaco/bin/monaco.d.ts:2671</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="focus"><span>focus</span><a href="#focus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="focus-1"><span class="tsd-kind-call-signature">focus</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#focus-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Brings browser focus to the editor text</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2698">src/components/monaco/bin/monaco.d.ts:2698</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="geteditortype"><span>get<wbr/>Editor<wbr/>Type</span><a href="#geteditortype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="geteditortype-1"><span class="tsd-kind-call-signature">getEditorType</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#geteditortype-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get the editor type. Please see <code>EditorType</code>.
+This is to avoid an instanceof check</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2680">src/components/monaco/bin/monaco.d.ts:2680</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getid"><span>get<wbr/>Id</span><a href="#getid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getid-1"><span class="tsd-kind-call-signature">getId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#getid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get a unique id for this editor instance.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2675">src/components/monaco/bin/monaco.d.ts:2675</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getmodel"><span>get<wbr/>Model</span><a href="#getmodel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getmodel-1"><span class="tsd-kind-call-signature">getModel</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a><a href="#getmodel-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the current model attached to this editor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2855">src/components/monaco/bin/monaco.d.ts:2855</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getposition"><span>get<wbr/>Position</span><a href="#getposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getposition-1"><span class="tsd-kind-call-signature">getPosition</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Position.html" class="tsd-signature-type tsd-kind-class">Position</a><a href="#getposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the primary position of the cursor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../classes/_internal_.src_components_monaco_bin_monaco.Position.html" class="tsd-signature-type tsd-kind-class">Position</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2722">src/components/monaco/bin/monaco.d.ts:2722</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getselection"><span>get<wbr/>Selection</span><a href="#getselection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getselection-1"><span class="tsd-kind-call-signature">getSelection</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><a href="#getselection-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the primary selection of the editor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2766">src/components/monaco/bin/monaco.d.ts:2766</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getselections"><span>get<wbr/>Selections</span><a href="#getselections" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getselections-1"><span class="tsd-kind-call-signature">getSelections</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">[]</span><a href="#getselections-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns all the selections of the editor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2770">src/components/monaco/bin/monaco.d.ts:2770</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getsupportedactions"><span>get<wbr/>Supported<wbr/>Actions</span><a href="#getsupportedactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getsupportedactions-1"><span class="tsd-kind-call-signature">getSupportedActions</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorAction.html" class="tsd-signature-type tsd-kind-interface">IEditorAction</a><span class="tsd-signature-symbol">[]</span><a href="#getsupportedactions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns all actions associated with this editor.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorAction.html" class="tsd-signature-type tsd-kind-interface">IEditorAction</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2706">src/components/monaco/bin/monaco.d.ts:2706</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getvisiblecolumnfromposition"><span>get<wbr/>Visible<wbr/>Column<wbr/>From<wbr/>Position</span><a href="#getvisiblecolumnfromposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getvisiblecolumnfromposition-1"><span class="tsd-kind-call-signature">getVisibleColumnFromPosition</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getvisiblecolumnfromposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Given a position, returns a column number that takes tab-widths into account.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2718">src/components/monaco/bin/monaco.d.ts:2718</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="hastextfocus"><span>has<wbr/>Text<wbr/>Focus</span><a href="#hastextfocus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="hastextfocus-1"><span class="tsd-kind-call-signature">hasTextFocus</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#hastextfocus-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns true if the text inside this editor is focused (i.e. cursor is blinking).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2702">src/components/monaco/bin/monaco.d.ts:2702</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="layout"><span>layout</span><a href="#layout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="layout-1"><span class="tsd-kind-call-signature">layout</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">dimension</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IDimension.html" class="tsd-signature-type tsd-kind-interface">IDimension</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">postponeRendering</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#layout-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Instructs the editor to remeasure its container. This method should
+be called when the container of the editor gets resized.</p>
+<p>If a dimension is passed in, the passed in value will be used.</p>
+<p>By default, this will also render the editor immediately.
+If you prefer to delay rendering to the next animation frame, use postponeRendering == true.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">dimension</span>: <a href="_internal_.src_components_monaco_bin_monaco.editor.IDimension.html" class="tsd-signature-type tsd-kind-interface">IDimension</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">postponeRendering</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2694">src/components/monaco/bin/monaco.d.ts:2694</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="restoreviewstate"><span>restore<wbr/>View<wbr/>State</span><a href="#restoreviewstate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="restoreviewstate-1"><span class="tsd-kind-call-signature">restoreViewState</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">state</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#restoreviewstate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Restores the view state of the editor from a serializable object generated by <code>saveViewState</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">state</span>: <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2714">src/components/monaco/bin/monaco.d.ts:2714</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealline"><span>reveal<wbr/>Line</span><a href="#revealline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealline-1"><span class="tsd-kind-call-signature">revealLine</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealline-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal a line.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2732">src/components/monaco/bin/monaco.d.ts:2732</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallineincenter"><span>reveal<wbr/>Line<wbr/>In<wbr/>Center</span><a href="#reveallineincenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallineincenter-1"><span class="tsd-kind-call-signature">revealLineInCenter</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallineincenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal a line centered vertically.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2736">src/components/monaco/bin/monaco.d.ts:2736</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallineincenterifoutsideviewport"><span>reveal<wbr/>Line<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span><a href="#reveallineincenterifoutsideviewport" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallineincenterifoutsideviewport-1"><span class="tsd-kind-call-signature">revealLineInCenterIfOutsideViewport</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallineincenterifoutsideviewport-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal a line centered vertically only if it lies outside the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2740">src/components/monaco/bin/monaco.d.ts:2740</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallineneartop"><span>reveal<wbr/>Line<wbr/>Near<wbr/>Top</span><a href="#reveallineneartop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallineneartop-1"><span class="tsd-kind-call-signature">revealLineNearTop</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallineneartop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal a line close to the top of the viewport,
+optimized for viewing a code definition.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2745">src/components/monaco/bin/monaco.d.ts:2745</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallines"><span>reveal<wbr/>Lines</span><a href="#reveallines" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallines-1"><span class="tsd-kind-call-signature">revealLines</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">startLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallines-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal lines.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">startLineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">endLineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2805">src/components/monaco/bin/monaco.d.ts:2805</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallinesincenter"><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center</span><a href="#reveallinesincenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallinesincenter-1"><span class="tsd-kind-call-signature">revealLinesInCenter</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallinesincenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal lines centered vertically.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">endLineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2809">src/components/monaco/bin/monaco.d.ts:2809</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallinesincenterifoutsideviewport"><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span><a href="#reveallinesincenterifoutsideviewport" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallinesincenterifoutsideviewport-1"><span class="tsd-kind-call-signature">revealLinesInCenterIfOutsideViewport</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallinesincenterifoutsideviewport-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal lines centered vertically only if it lies outside the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">endLineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2813">src/components/monaco/bin/monaco.d.ts:2813</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="reveallinesneartop"><span>reveal<wbr/>Lines<wbr/>Near<wbr/>Top</span><a href="#reveallinesneartop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reveallinesneartop-1"><span class="tsd-kind-call-signature">revealLinesNearTop</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">lineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">endLineNumber</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reveallinesneartop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically as necessary and reveal lines close to the top of the viewport,
+optimized for viewing a code definition.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">lineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">endLineNumber</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2818">src/components/monaco/bin/monaco.d.ts:2818</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealposition"><span>reveal<wbr/>Position</span><a href="#revealposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealposition-1"><span class="tsd-kind-call-signature">revealPosition</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a position.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2749">src/components/monaco/bin/monaco.d.ts:2749</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealpositionincenter"><span>reveal<wbr/>Position<wbr/>In<wbr/>Center</span><a href="#revealpositionincenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealpositionincenter-1"><span class="tsd-kind-call-signature">revealPositionInCenter</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealpositionincenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a position centered vertically.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2753">src/components/monaco/bin/monaco.d.ts:2753</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealpositionincenterifoutsideviewport"><span>reveal<wbr/>Position<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span><a href="#revealpositionincenterifoutsideviewport" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealpositionincenterifoutsideviewport-1"><span class="tsd-kind-call-signature">revealPositionInCenterIfOutsideViewport</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealpositionincenterifoutsideviewport-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a position centered vertically only if it lies outside the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2757">src/components/monaco/bin/monaco.d.ts:2757</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealpositionneartop"><span>reveal<wbr/>Position<wbr/>Near<wbr/>Top</span><a href="#revealpositionneartop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealpositionneartop-1"><span class="tsd-kind-call-signature">revealPositionNearTop</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealpositionneartop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a position close to the top of the viewport,
+optimized for viewing a code definition.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2762">src/components/monaco/bin/monaco.d.ts:2762</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrange"><span>reveal<wbr/>Range</span><a href="#revealrange" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrange-1"><span class="tsd-kind-call-signature">revealRange</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrange-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2822">src/components/monaco/bin/monaco.d.ts:2822</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrangeattop"><span>reveal<wbr/>Range<wbr/>At<wbr/>Top</span><a href="#revealrangeattop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrangeattop-1"><span class="tsd-kind-call-signature">revealRangeAtTop</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrangeattop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range at the top of the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2830">src/components/monaco/bin/monaco.d.ts:2830</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrangeincenter"><span>reveal<wbr/>Range<wbr/>In<wbr/>Center</span><a href="#revealrangeincenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrangeincenter-1"><span class="tsd-kind-call-signature">revealRangeInCenter</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrangeincenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range centered vertically.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2826">src/components/monaco/bin/monaco.d.ts:2826</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrangeincenterifoutsideviewport"><span>reveal<wbr/>Range<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span><a href="#revealrangeincenterifoutsideviewport" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrangeincenterifoutsideviewport-1"><span class="tsd-kind-call-signature">revealRangeInCenterIfOutsideViewport</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrangeincenterifoutsideviewport-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range centered vertically only if it lies outside the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2834">src/components/monaco/bin/monaco.d.ts:2834</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrangeneartop"><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top</span><a href="#revealrangeneartop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrangeneartop-1"><span class="tsd-kind-call-signature">revealRangeNearTop</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrangeneartop-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range close to the top of the viewport,
+optimized for viewing a code definition.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2839">src/components/monaco/bin/monaco.d.ts:2839</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revealrangeneartopifoutsideviewport"><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top<wbr/>If<wbr/>Outside<wbr/>Viewport</span><a href="#revealrangeneartopifoutsideviewport" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revealrangeneartopifoutsideviewport-1"><span class="tsd-kind-call-signature">revealRangeNearTopIfOutsideViewport</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scrollType</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#revealrangeneartopifoutsideviewport-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Scroll vertically or horizontally as necessary and reveal a range close to the top of the viewport,
+optimized for viewing a code definition. Only if it lies outside the viewport.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">range</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scrollType</span>: <a href="../enums/_internal_.src_components_monaco_bin_monaco.editor.ScrollType.html" class="tsd-signature-type tsd-kind-enum">ScrollType</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2844">src/components/monaco/bin/monaco.d.ts:2844</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="saveviewstate"><span>save<wbr/>View<wbr/>State</span><a href="#saveviewstate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="saveviewstate-1"><span class="tsd-kind-call-signature">saveViewState</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a><a href="#saveviewstate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Saves current view state of the editor in a serializable object.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorViewState.html" class="tsd-signature-type tsd-kind-type-alias">IEditorViewState</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2710">src/components/monaco/bin/monaco.d.ts:2710</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setmodel"><span>set<wbr/>Model</span><a href="#setmodel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setmodel-1"><span class="tsd-kind-call-signature">setModel</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">model</span><span class="tsd-signature-symbol">:</span> <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setmodel-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the current model attached to this editor.
+If the previous model was created by the editor via the value key in the options
+literal object, it will be destroyed. Otherwise, if the previous model was set
+via setModel, or the model key in the options literal object, the previous model
+will not be destroyed.
+It is safe to call setModel(null) to simply detach the current model from the editor.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">model</span>: <a href="../types/_internal_.src_components_monaco_bin_monaco.editor.IEditorModel.html" class="tsd-signature-type tsd-kind-type-alias">IEditorModel</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2864">src/components/monaco/bin/monaco.d.ts:2864</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setposition"><span>set<wbr/>Position</span><a href="#setposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setposition-1"><span class="tsd-kind-call-signature">setPosition</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the primary position of the cursor. This will remove any secondary cursors.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">position</span>: <a href="_internal_.src_components_monaco_bin_monaco.IPosition.html" class="tsd-signature-type tsd-kind-interface">IPosition</a></span>
+<div class="tsd-comment tsd-typography"><p>New primary cursor's position</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the position</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2728">src/components/monaco/bin/monaco.d.ts:2728</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setselection"><span>set<wbr/>Selection</span><a href="#setselection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setselection-1"><span class="tsd-kind-call-signature">setSelection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setselection-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the primary selection of the editor. This will remove any secondary cursors.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">selection</span>: <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a></span>
+<div class="tsd-comment tsd-typography"><p>The new selection</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the selection</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2776">src/components/monaco/bin/monaco.d.ts:2776</a></li></ul></aside></div></li>
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setselection-2"><span class="tsd-kind-call-signature">setSelection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Range.html" class="tsd-signature-type tsd-kind-class">Range</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setselection-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the primary selection of the editor. This will remove any secondary cursors.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">selection</span>: <a href="../classes/_internal_.src_components_monaco_bin_monaco.Range.html" class="tsd-signature-type tsd-kind-class">Range</a></span>
+<div class="tsd-comment tsd-typography"><p>The new selection</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the selection</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2782">src/components/monaco/bin/monaco.d.ts:2782</a></li></ul></aside></div></li>
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setselection-3"><span class="tsd-kind-call-signature">setSelection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setselection-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the primary selection of the editor. This will remove any secondary cursors.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">selection</span>: <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a></span>
+<div class="tsd-comment tsd-typography"><p>The new selection</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the selection</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2788">src/components/monaco/bin/monaco.d.ts:2788</a></li></ul></aside></div></li>
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setselection-4"><span class="tsd-kind-call-signature">setSelection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selection</span><span class="tsd-signature-symbol">:</span> <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setselection-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the primary selection of the editor. This will remove any secondary cursors.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">selection</span>: <a href="../classes/_internal_.src_components_monaco_bin_monaco.Selection.html" class="tsd-signature-type tsd-kind-class">Selection</a></span>
+<div class="tsd-comment tsd-typography"><p>The new selection</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the selection</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2794">src/components/monaco/bin/monaco.d.ts:2794</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setselections"><span>set<wbr/>Selections</span><a href="#setselections" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setselections-1"><span class="tsd-kind-call-signature">setSelections</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selections</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setselections-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the selections for all the cursors of the editor.
+Cursors will be removed or added, as necessary.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">selections</span>: <span class="tsd-signature-keyword">readonly</span> <a href="_internal_.src_components_monaco_bin_monaco.ISelection.html" class="tsd-signature-type tsd-kind-interface">ISelection</a><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The new selection</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Source of the call that caused the selection</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2801">src/components/monaco/bin/monaco.d.ts:2801</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="trigger"><span>trigger</span><a href="#trigger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="trigger-1"><span class="tsd-kind-call-signature">trigger</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">handlerId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">payload</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#trigger-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Directly trigger a handler or an editor action.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">source</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The source of the call.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">handlerId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The id of the handler or the id of a contribution.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">payload</span>: <span class="tsd-signature-type">unknown</span></span>
+<div class="tsd-comment tsd-typography"><p>Extra data to be sent to the handler.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2851">src/components/monaco/bin/monaco.d.ts:2851</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="updateoptions"><span>update<wbr/>Options</span><a href="#updateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updateoptions-1"><span class="tsd-kind-call-signature">updateOptions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">newOptions</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorOptions.html" class="tsd-signature-type tsd-kind-interface">IEditorOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updateoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the editor's options after the editor has been created.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">newOptions</span>: <a href="_internal_.src_components_monaco_bin_monaco.editor.IEditorOptions.html" class="tsd-signature-type tsd-kind-interface">IEditorOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2684">src/components/monaco/bin/monaco.d.ts:2684</a></li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Events"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="events-1">Events<a href="#events-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="ondiddispose"><span>on<wbr/>Did<wbr/>Dispose</span><a href="#ondiddispose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="ondiddispose-1"><span class="tsd-kind-call-signature">onDidDispose</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">listener</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IDisposable.html" class="tsd-signature-type tsd-kind-interface">IDisposable</a><a href="#ondiddispose-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>An event emitted when the editor has been disposed.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">listener</span>: <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="_internal_.src_components_monaco_bin_monaco.IDisposable.html" class="tsd-signature-type tsd-kind-interface">IDisposable</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/a03e5c157c5d8f2d5322396073290acef28818ed/src/components/monaco/bin/monaco.d.ts#L2667">src/components/monaco/bin/monaco.d.ts:2667</a></li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#createdecorationscollection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Decorations<wbr/>Collection</span></a><a href="#dispose"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dispose</span></a><a href="#focus"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>focus</span></a><a href="#geteditortype"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Editor<wbr/>Type</span></a><a href="#getid"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Id</span></a><a href="#getmodel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Model</span></a><a href="#getposition"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Position</span></a><a href="#getselection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Selection</span></a><a href="#getselections"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Selections</span></a><a href="#getsupportedactions"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Supported<wbr/>Actions</span></a><a href="#getvisiblecolumnfromposition"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Visible<wbr/>Column<wbr/>From<wbr/>Position</span></a><a href="#hastextfocus"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Text<wbr/>Focus</span></a><a href="#layout"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>layout</span></a><a href="#restoreviewstate"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>restore<wbr/>View<wbr/>State</span></a><a href="#revealline"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line</span></a><a href="#reveallineincenter"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>In<wbr/>Center</span></a><a href="#reveallineincenterifoutsideviewport"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a><a href="#reveallineneartop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Line<wbr/>Near<wbr/>Top</span></a><a href="#reveallines"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines</span></a><a href="#reveallinesincenter"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center</span></a><a href="#reveallinesincenterifoutsideviewport"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a><a href="#reveallinesneartop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Lines<wbr/>Near<wbr/>Top</span></a><a href="#revealposition"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position</span></a><a href="#revealpositionincenter"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>In<wbr/>Center</span></a><a href="#revealpositionincenterifoutsideviewport"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a><a href="#revealpositionneartop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Position<wbr/>Near<wbr/>Top</span></a><a href="#revealrange"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range</span></a><a href="#revealrangeattop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>At<wbr/>Top</span></a><a href="#revealrangeincenter"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>In<wbr/>Center</span></a><a href="#revealrangeincenterifoutsideviewport"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>In<wbr/>Center<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a><a href="#revealrangeneartop"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top</span></a><a href="#revealrangeneartopifoutsideviewport"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reveal<wbr/>Range<wbr/>Near<wbr/>Top<wbr/>If<wbr/>Outside<wbr/>Viewport</span></a><a href="#saveviewstate"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>save<wbr/>View<wbr/>State</span></a><a href="#setmodel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Model</span></a><a href="#setposition"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Position</span></a><a href="#setselection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Selection</span></a><a href="#setselections"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Selections</span></a><a href="#trigger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>trigger</span></a><a href="#updateoptions"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Options</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Events"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Events</summary>
+<div><a href="#ondiddispose"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Did<wbr/>Dispose</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/rlibre/x4" class="tsd-nav-link">GitHub</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">x4js - v2.2.49</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
