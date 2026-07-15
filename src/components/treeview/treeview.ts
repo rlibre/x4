@@ -488,8 +488,10 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 			this._selitem = undefined;
 		}
 
+        if( this._selection ) {
 			this._selection = undefined;
 			this.fire( "selectionChange", { selection: [], empty: true } );
+        }
 	}
 
 	/**
