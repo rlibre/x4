@@ -89,7 +89,8 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 								this.fire("btnclick", { button: props.closable } );
 							}
 							else {
-								this.fire("btnclick", { button: props.buttons[0] } );
+								//<no it's ok 99% ! this.fire("btnclick", { button: props.buttons[0] } );
+								this.close( );
 							}
 						}
 					}) : null,
@@ -113,6 +114,14 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				// todo cancel
 				ev.preventDefault();
 				ev.stopPropagation();
+
+				if( isString(props.closable) ) {
+					this.fire("btnclick", { button: props.closable } );
+				}
+				else {
+					//<no it's ok 99% ! this.fire("btnclick", { button: props.buttons[0] } );
+					this.close( );
+				}
 			}
 			else if (ev.key == 'Enter') {
 				const def = this.query<Button>('button.default');
@@ -124,6 +133,10 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				}
 			}
 		})
+
+		asap( ( ) => {
+			this.focusNext( true );
+		} );
 	}
 
 	private focusNext( next: boolean) : boolean {
