@@ -1,13 +1,24 @@
-/**
-* @file tag.module.scss
-* @author Etienne Cochard 
-* @copyright (c) 2026 R-libre ingenierie, all rights reserved.
-**/
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file tag.module.scss
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 
 :root {
 	--tag-border: var( --border );
 	--tag-border-focus: var( --border-focus );
-	--tag-selection: var( --accent-background );
+	--tag-background: var( --accent-background );
 	--tag-color: black;
 	--tag-icon-color: var( --tag-color );
 }
@@ -15,9 +26,11 @@
 .x4tag {
 	border-radius: 16px;
 	border: 1px solid var( --tag-border );
+	background-color: var( --tag-background );
 	padding: 2px 8px;
 	gap: 4px;
 	font-weight: normal;
+	
 	--label-color: var( --tag-color );
 
 	.x4icon:empty {

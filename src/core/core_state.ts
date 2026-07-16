@@ -1,8 +1,19 @@
-/**
-* @file core_state.ts
-* @author Etienne Cochard 
-* @copyright (c) 2025 R-libre ingenierie, all rights reserved.
-**/
+/** 
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|  
+ *  /__/\__\   |_|.2
+ * 
+ * @file core_state.ts
+ * @author Etienne Cochard 
+ * 
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license 
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
 
 import { CoreEvent, EventMap, EventSource } from './core_events.js';
 import { getMemberValue, isPlainObject } from './core_tools.js';

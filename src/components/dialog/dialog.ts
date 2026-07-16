@@ -72,11 +72,10 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 
 		this.appendContent([
 			new HBox({
-				cls: "caption",
+				cls: "caption caption-element",
 				content: [
 					this._title = new Label({
 						id: "title",
-						cls: "caption-element",
 						icon: props.icon,
 						text: props.title
 					}),

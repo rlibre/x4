@@ -515,7 +515,7 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			return new SimpleText( { cls: `column ref-c${index+2}`, text: c } )
 		}
 
-		const content = [
+		const content: Component[] = [
 			new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
 		];
 

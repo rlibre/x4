@@ -432,7 +432,7 @@ class CMover {
 		this.self = ref ? true : false;
 
 		const mouseDown = ( e: PointerEvent ) => {
-			if( this.self && e.target!=x.dom ) {
+			if( this.self && e.target && (e.target as HTMLElement).tagName!=="DIV" ) {
 				return;
 			}
 
