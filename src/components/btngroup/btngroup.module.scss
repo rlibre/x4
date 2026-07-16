@@ -22,7 +22,7 @@
 	align-content: start;
 	margin: 5px;
 	gap: 4px;
-
+	overflow: hidden;
 	background: var( --btngroup-background );
 
 	&.align-right {

@@ -498,30 +498,30 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	defaultRenderer( item: ListItem ): Component {
 
-		const mk_col = ( _: any, index: number ) => {
-			const c = item.sub_cols[index];
+		const mk_col = ( c: any, index: number ) => {
 			if( c===undefined || c===null ) { 
 				return null;
 			}
 
 			if( c instanceof Component ) {
+				c.addClass( "column" );
 				return c;
 			}
 				
 			return new SimpleText( { cls: `column ref-c${index+2}`, text: c } )
 		}
 
-		let cols: Component[] = null;
+		const content = [
+			new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
+		];
+
 		if( item.sub_cols ) {
-			cols = item.sub_cols.map( mk_col );
+			content.push( ...(item.sub_cols.map( mk_col )) );
 		}
 
 		return new HBox( {
 			cls: item.cls,
-			content: [
-				new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
-				...cols,
-			],
+			content			
 		} )
 	}
 

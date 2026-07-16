@@ -15,6 +15,9 @@
  **/
 
 :root {
+    --input-background: rgba(255, 255, 255, 0.6);
+    --input-color: black;
+
 	--input-sel-background: var( --accent-background );
 	--input-sel-color: var( --accent-color );
 	--input-placeholder: var( --disabled-background );
@@ -28,6 +31,8 @@ input.x4input {
 	outline: none;
 	
 	border: none;
+    background-color: var( --input-background );
+    color: var( --input-color );
 
 	&::selection {
 		background-color: var( --input-sel-background );

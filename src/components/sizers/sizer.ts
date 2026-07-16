@@ -24,7 +24,9 @@ import "./sizer.module.scss"
  */
 
 export interface EvSizeChange extends ComponentEvent {
-	size: number;
+	size: number;	// compat
+	width: number;
+	height: number;
 }
 
 interface CSizerEvent extends ComponentEvents {
@@ -111,28 +113,41 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 		let nr: any = {};
 		let horz = true;
 
+		//const center = this._ref.hasClass("center");
+		//if( center ) {
+		//	const orc = this._ref.getBoundingRect( );
+		//	this._ref.removeClass("center");
+		//
+		//	nr.left = orc.left;
+		//	nr.top = orc.top;
+		//}
+
 		if( this._type.includes("top") ) {
 			nr.top = pt.y,
 			nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
-		else if( this._type=="vsize-next" ) {
+		
+		if( this._type=="vsize-next" ) {
 			nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
-		else if( this._type.includes("bottom") || this._type=='vsize-prev' ) {
-			//nr.top = rc.top;
+		
+		if( this._type.includes("bottom") || this._type=='vsize-prev' ) {
 			nr.height = (pt.y-rc.top);
 			horz = false;
 		}
-		else if( this._type.includes("left") ) {
+		
+		if( this._type.includes("left") ) {
 			nr.left = pt.x;
 			nr.width = ((rc.left+rc.width)-pt.x);
 		}
-		else if( this._type=="hsize-next" ) {
+		
+		if( this._type=="hsize-next" ) {
 			nr.width = ((rc.left+rc.width)-pt.x);
 		}
-		else if( this._type.includes("right") || this._type=='hsize-prev' ) {
+		
+		if( this._type.includes("right") || this._type=='hsize-prev' ) {
 			nr.width = (pt.x-rc.left);
 		}
 
@@ -140,7 +155,7 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 		//this._ref.setStyleValue( "flexGrow", 0 );
 
 		const nrc = this._ref.getBoundingRect( );
-		this.fire( "resize", { size: horz ? nrc.width : nrc.height })
+		this.fire( "resize", { size: horz ? nrc.width : nrc.height, width: nrc.width, height: nrc.height })
 
 		e.preventDefault( );
 		e.stopPropagation( );

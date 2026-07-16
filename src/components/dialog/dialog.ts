@@ -89,7 +89,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 								this.fire("btnclick", { button: props.closable } );
 							}
 							else {
-								this.close() 
+								this.fire("btnclick", { button: props.buttons[0] } );
 							}
 						}
 					}) : null,

@@ -14,6 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+export const COMPONENT = Symbol( "component" );
+
 /** @ignore this events must be defined on domNode (do not bubble) */
 export const unbubbleEvents = {
 	mouseleave: 1, mouseenter: 1, load: 1, unload: 1, scroll: 1, focus: 1, blur: 1, rowexit: 1, beforeunload: 1, stop: 1,
@@ -33,9 +35,33 @@ let mutObserver: MutationObserver = null;
 
 const observeMutation = (mutations: MutationRecord[], observer: MutationObserver): void => {
 
+	// moves are handled this way
+	const added   = new Set<Node>( );
+	const removed = new Set<Node>( );
+
+	for( const mutation of mutations ) {
+		if( mutation.type == "childList" ) {
+			mutation.addedNodes.forEach( n => {
+				if( removed.has( n ) ) {
+					removed.delete( n ); 
+				}
+				else { 
+					added.add( n ); 
+				}
+			} );
+
+			mutation.removedNodes.forEach( n => {
+				if( added.has( n ) ) { 
+					added.delete( n ); 
+				}
+				else { 
+					removed.add( n ); 
+				}
+			} );
+		}
+	}
+
 	const sendEvent = ( node: Node, code: "created" | "removed" ) => {
-//		console.log( "notify", node, code );
-			
 		const store = event_handlers.get( node );
 		if ( store && store[code] ) {
 			node.dispatchEvent( new Event( code, {} ) );
@@ -53,26 +79,17 @@ const observeMutation = (mutations: MutationRecord[], observer: MutationObserver
 		}
 
 		if( !create ) {
+			const core = (node as any)[COMPONENT];
+			if( core && core.cleanUp ) {	//<yes: dirty hack
+				core.cleanUp(); 
+			}
+
 			sendEvent( node, "removed" );
 		}
 	}
 
-	
-	for (const mutation of mutations)  {
-		if( mutation.type=="childList" ) {
-			if( mutation.addedNodes ) {
-				mutation.addedNodes.forEach( node => {
-					notify( node, true );
-				} );
-			}
-			
-			if( mutation.removedNodes ) {
-				mutation.removedNodes.forEach( node => {
-					notify( node, false );
-				} );
-			}
-		}
-	}
+	added.forEach( n => { if( n.isConnected ) notify( n, true ); } );
+	removed.forEach( n => { if( !n.isConnected ) notify( n, false ); } );
 }
 
 
@@ -144,17 +161,27 @@ export function dispatchEvent(ev: Event) {
 
 export function addEvent( node: Node, name: string, handler: DOMEventHandler, prepend = false ) {
 
+	if( !mutObserver ) {
+		mutObserver = new MutationObserver( observeMutation )
+		mutObserver.observe( document.body, {childList: true,subtree: true} );
+	}
+	
 	if( name=="removed" || name=="created" ) {
-		if( !mutObserver ) {
-			mutObserver = new MutationObserver( observeMutation )
-			mutObserver.observe( document.body, {childList: true,subtree: true} );
+		const core = (node as any)[COMPONENT];
+		if( core && core.addClass ) {	//<yes: dirty hack
+			core.addClass( "x4:mut")
 		}
 	}
 	else if( name=="resized" ) {
 		if (!sizeObserver) {
 			sizeObserver = new ResizeObserver( observeSize );
 		}
-		
+
+		const core = (node as any)[COMPONENT];
+		if( core && core.addClass ) {	//<yes: dirty hack
+			core.addClass( "x4:sze")
+		}
+
 		sizeObserver.observe( node as Element );
 	}
 
@@ -470,12 +497,3 @@ export interface GlobalDOMEvents {
 	created?: ( ev: Event ) => void;		// occurs when inserted in the dom
 	removed?: ( ev: Event ) => void;		// occurs when removed from dom
 }
-
-
-
-
-
-
-
-
-

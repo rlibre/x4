@@ -42,6 +42,12 @@ interface NotificationProps extends ComponentProps {
 }
 
 /**
+ * 
+ * @example:
+ * const not = new Notification( { title: "Yooo", text: "You win !", mode: "danger" })
+ * not.display( 3000 )
+ * 
+ * 
  * @cssvar
  * ```
  * --notification-border
