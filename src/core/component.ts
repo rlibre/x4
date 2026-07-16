@@ -109,6 +109,7 @@ export interface ComponentProps {
 	hidden?: boolean,
 	/** Enables flex layout (boolean) or sets flex-grow (number). */
 	flex?: boolean | number;
+	stretch?: boolean;
 	/** Tooltip text. */
 	tooltip?: string;
 	/** Existing DOM element to wrap. */
@@ -201,6 +202,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 						"flexGrow": props.flex+""
 					});
 				}
+			}
+
+			if( props.stretch ) {
+				this.addClass( "x4stretch" );
 			}
 			
 			if( props.id!==undefined ) {

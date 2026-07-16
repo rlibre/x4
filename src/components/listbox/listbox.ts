@@ -94,16 +94,11 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 @class_ns( "x4" )
 export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
-	private _view: Viewport;
-	//private _selection: ListboxID;
-	//private _selitem: Component;
-	
+private _view: Viewport;
 	private _lastsel: ListboxID;
-	
 	private _multisel: Set<ListboxID>;
 	private _items: ListItem[];
-
-	preventFocus = false;
+	//<?? preventFocus = false;
 
 	constructor( props: ListboxProps ) {
 		super( { ...props } );
@@ -627,6 +622,11 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	getSelection( ) {
 		return Array.from( this._multisel );
+	}
+
+	getFirstSel( ) : ListItem {
+		const [first] = this.getSelection( );
+		return first ? this.getItem( first ) : null;
 	}
 
 	ensureSelectionVisible( ) {

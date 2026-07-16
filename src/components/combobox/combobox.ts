@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvClick, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, kbNav, safeText, sanitizeHtml, UnsafeHtml } from '../../core/core_tools';
+import { class_ns, IComponentInterface, IFormElement, kbNav } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
 import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
@@ -46,7 +46,7 @@ export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
 
 	private _list: Listbox;
 
-	constructor( props: DropdownProps, content?: ListItem[] ) {
+	constructor( props: DropdownProps ) {
 		super( props );
 
 		this._list = new Listbox( { items: props.items } );
@@ -147,7 +147,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 				list.select( sel, false );
 			}
 
-			this._input.setValue( safeText(itm.text) );
+			this._input.setValue( itm.text as string );
 			
 			if( !this._prevent_close ) {
 				this._popup.show( false );
@@ -248,7 +248,9 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	setItems( items: ListItem[] ) {
-		this._getList().setItems( items );		
+		const list = this._getList( );
+		list.setItems( items );
+		this.setValue( "" ); 
 	}
 
 	getValue( ) {
@@ -260,7 +262,12 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	}
 
 	selectItem( index: ListboxID ) {
-		this._getList( ).select( index );
+		const list = this._getList( );
+		list.select( index );
+		const el = list.getItem( index );
+		if( el ) {
+			this.setValue( el.text as string );
+		}
 	}
 
 	getSelection( ) {
