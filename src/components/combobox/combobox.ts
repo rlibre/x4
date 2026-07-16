@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, ComponentProps, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
+import { Component, ComponentEvents, ComponentProps, EvClick, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
 import { class_ns, IComponentInterface, IFormElement, kbNav, safeText, sanitizeHtml, UnsafeHtml } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
@@ -31,7 +31,8 @@ import icon from "./updown.svg";
 
 
 interface DropdownEvents extends PopupEvents {
-	selectionChange: EvSelectionChange;
+	//selectionChange: EvSelectionChange;
+	click: EvClick;
 }
 
 
@@ -57,8 +58,9 @@ export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
 			ev.preventDefault( );
 		}, true );
 
-		this._list.on( "selectionChange", ( ev ) => {
-			this.fire( "selectionChange", ev );
+		this._list.on( "click", ( ev ) => {
+			//this.fire( "selectionChange", ev );
+			this.fire( "click", ev );
 		})
 	}
 
@@ -152,11 +154,11 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			}
 		}
 
-		this._popup.on( "selectionChange", ( ev ) => {
-			const [sel] = ev.selection as ListboxID[];
+		this._popup.on( "click", ( ev ) => {
+			const sel = ev.context as ListboxID;
 			if( sel!==undefined ) {	// no empty sel
 				_select( sel );			
-				this.fire( "selectionChange", ev );
+				this.fire( "selectionChange", { selection: [sel], empty: false }  );
 			}
 		});
 
@@ -178,8 +180,11 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		switch( ev.key ) {
 			case "Enter":
 			case "Escape": {
-				this._popup.show( false );
-				break;
+				if( this._popup.isOpen( ) ) {
+					this._popup.show( false );
+					break;
+				}
+				return;
 			}
 
 			case "ArrowUp":

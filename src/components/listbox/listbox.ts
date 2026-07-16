@@ -251,14 +251,14 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 
-			// avoid trapping child ckick
-			if( c.dom.tagName==='INPUT' ) {
+			// avoid trapping child click
+			if( c && c.dom.tagName==='INPUT' ) {
 				return;
 			}
 
 			if( c && c.hasClass("x4item") ) {
 				const id = c.getInternalData( "id" );
-				const fev: ComponentEvent = { context:id };
+				const fev: EvClick = { context:id };
 				if (ev.type == 'click') {
 					this.fire('click', fev );
 				}
@@ -276,6 +276,10 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			target = target.parentElement;
 		}
 
+		if (ev.type == 'click') {
+			this.fire('click', {} );
+		}
+		
 		this.clearSelection( );
 
 		ev.stopImmediatePropagation();
