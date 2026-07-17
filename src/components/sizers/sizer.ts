@@ -112,6 +112,7 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 		let nr: any = {};
 		let horz = true;
+		let size = 0;
 
 		//const center = this._ref.hasClass("center");
 		//if( center ) {
@@ -124,38 +125,69 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 
 		if( this._type.includes("top") ) {
 			nr.top = pt.y,
-			nr.height = (rc.top+rc.height)-pt.y;
+			size = nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
 		
 		if( this._type=="vsize-next" ) {
-			nr.height = (rc.top+rc.height)-pt.y;
+			size = nr.height = (rc.top+rc.height)-pt.y;
 			horz = false;
 		}
 		
 		if( this._type.includes("bottom") || this._type=='vsize-prev' ) {
-			nr.height = (pt.y-rc.top);
+			size = nr.height = (pt.y-rc.top);
 			horz = false;
 		}
 		
 		if( this._type.includes("left") ) {
 			nr.left = pt.x;
-			nr.width = ((rc.left+rc.width)-pt.x);
+			size = nr.width = ((rc.left+rc.width)-pt.x);
 		}
 		
 		if( this._type=="hsize-next" ) {
-			nr.width = ((rc.left+rc.width)-pt.x);
+			size = nr.width = ((rc.left+rc.width)-pt.x);
 		}
 		
 		if( this._type.includes("right") || this._type=='hsize-prev' ) {
-			nr.width = (pt.x-rc.left);
+			size = nr.width = (pt.x-rc.left);
 		}
 
+		const isFlex = ( c : Component ) => {
+			if( !c ) {
+				return false;
+			}
+
+			if( c.hasClass( "x4flex" ) ) {
+				return true;
+			}
+
+			return c.getStyleValue( "flexGrow" )!==undefined;
+		}
+
+		if( this._type.includes("-prev") ) {
+			if(  isFlex(this.prevElement() ) ) {
+				this._ref.setStyleValue( "flex", `0 0 ${size}px` );	
+			}
+			else {
+				this._ref.setStyle( nr );
+			}
+		}
+		else if( this._type.includes("-next") ) {
+			if(  isFlex(this.nextElement() ) ) {
+				this._ref.setStyleValue( "flex", `0 0 ${size}px` );	
+			}
+			else {
+				this._ref.setStyle( nr );
+			}
+
+			return;
+		}
+		else {
 		this._ref.setStyle( nr );
-		//this._ref.setStyleValue( "flexGrow", 0 );
+		}
 
 		const nrc = this._ref.getBoundingRect( );
-		this.fire( "resize", { size: horz ? nrc.width : nrc.height, width: nrc.width, height: nrc.height })
+		this.fire( "resize", { size, width: nrc.width, height: nrc.height })
 
 		e.preventDefault( );
 		e.stopPropagation( );
