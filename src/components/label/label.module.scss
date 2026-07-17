@@ -53,6 +53,16 @@
 		&:empty {
 			display: none;
 		}
+
+		code {
+			padding: 0.2em 0.4em;
+			margin: 0;
+			font-size: 95%;
+			white-space: break-spaces;
+			background-color: var(--background-ternary);
+			border-radius: 6px;
+			border: 1px solid var(--border);
+		}
 	}
 	
 	#icon {
@@ -81,6 +91,16 @@
 	text-align: left;
 	&.al-center { text-align: center; }
 	&.al-right { text-align: right; }
+
+	code {
+		padding: 0.2em 0.4em;
+		margin: 0;
+		font-size: 95%;
+		white-space: break-spaces;
+		background-color: var(--background-ternary);
+		border-radius: 6px;
+		border: 1px solid var(--border);
+	}
 }
 
 [disabled] .x4label,
