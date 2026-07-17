@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>CompletionItem | x4js - v2.2.53</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">x4js - v2.2.53</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>CompletionItem | x4js - v2.2.54</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">x4js - v2.2.54</a>
 <div id="tsd-toolbar-links"><a href="https://github.com/rlibre/x4">GitHub</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -19,7 +19,7 @@ proposed to complete text that is being typed.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">CompletionItem</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#action">action</a><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.Command.html" class="tsd-signature-type tsd-kind-interface">Command</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#additionaltextedits">additionalTextEdits</a><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.ISingleEditOperation.html" class="tsd-signature-type tsd-kind-interface">ISingleEditOperation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#command">command</a><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.Command.html" class="tsd-signature-type tsd-kind-interface">Command</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#commitcharacters">commitCharacters</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#detail">detail</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#documentation">documentation</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.IMarkdownString.html" class="tsd-signature-type tsd-kind-interface">IMarkdownString</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#filtertext">filterText</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#inserttext">insertText</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#inserttextrules">insertTextRules</a><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemInsertTextRule.html" class="tsd-signature-type tsd-kind-enum">CompletionItemInsertTextRule</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kind">kind</a><span class="tsd-signature-symbol">:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemKind.html" class="tsd-signature-type tsd-kind-enum">CompletionItemKind</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#label">label</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.CompletionItemLabel.html" class="tsd-signature-type tsd-kind-interface">CompletionItemLabel</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#preselect">preselect</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#range">range</a><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.CompletionItemRanges.html" class="tsd-signature-type tsd-kind-interface">CompletionItemRanges</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#sorttext">sortText</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#tags">tags</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-keyword">readonly</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemTag.html#deprecated" class="tsd-signature-type tsd-kind-enum-member">Deprecated</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7306">src/components/monaco/bin/monaco.d.ts:7306</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7306">src/components/monaco/bin/monaco.d.ts:7306</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -52,7 +52,7 @@ proposed to complete text that is being typed.</p>
 <div class="tsd-comment tsd-typography"><p>A command that should be run upon acceptance of this item.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7386">src/components/monaco/bin/monaco.d.ts:7386</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7386">src/components/monaco/bin/monaco.d.ts:7386</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="additionaltextedits"><code class="tsd-tag">Optional</code><span>additional<wbr/>Text<wbr/>Edits</span><a href="#additionaltextedits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">additionalTextEdits</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.ISingleEditOperation.html" class="tsd-signature-type tsd-kind-interface">ISingleEditOperation</a><span class="tsd-signature-symbol">[]</span></div>
@@ -61,14 +61,14 @@ selecting this completion. Edits must not overlap with the main edit
 nor with themselves.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7378">src/components/monaco/bin/monaco.d.ts:7378</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7378">src/components/monaco/bin/monaco.d.ts:7378</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="command"><code class="tsd-tag">Optional</code><span>command</span><a href="#command" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">command</span><span class="tsd-signature-symbol">?:</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.Command.html" class="tsd-signature-type tsd-kind-interface">Command</a></div>
 <div class="tsd-comment tsd-typography"><p>A command that should be run upon acceptance of this item.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7382">src/components/monaco/bin/monaco.d.ts:7382</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7382">src/components/monaco/bin/monaco.d.ts:7382</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="commitcharacters"><code class="tsd-tag">Optional</code><span>commit<wbr/>Characters</span><a href="#commitcharacters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">commitCharacters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -77,7 +77,7 @@ then type that character. <em>Note</em> that all commit characters should have <
 characters will be ignored.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7372">src/components/monaco/bin/monaco.d.ts:7372</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7372">src/components/monaco/bin/monaco.d.ts:7372</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="detail"><code class="tsd-tag">Optional</code><span>detail</span><a href="#detail" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">detail</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -85,14 +85,14 @@ characters will be ignored.</p>
 about this item, like type or symbol information.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7327">src/components/monaco/bin/monaco.d.ts:7327</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7327">src/components/monaco/bin/monaco.d.ts:7327</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="documentation"><code class="tsd-tag">Optional</code><span>documentation</span><a href="#documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">documentation</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.IMarkdownString.html" class="tsd-signature-type tsd-kind-interface">IMarkdownString</a></div>
 <div class="tsd-comment tsd-typography"><p>A human-readable string that represents a doc-comment.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7331">src/components/monaco/bin/monaco.d.ts:7331</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7331">src/components/monaco/bin/monaco.d.ts:7331</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="filtertext"><code class="tsd-tag">Optional</code><span>filter<wbr/>Text</span><a href="#filtertext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">filterText</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -101,7 +101,7 @@ completion items. When <code>falsy</code> the <a href="#label" class="tsd-kind-p
 is used.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7343">src/components/monaco/bin/monaco.d.ts:7343</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7343">src/components/monaco/bin/monaco.d.ts:7343</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="inserttext"><span>insert<wbr/>Text</span><a href="#inserttext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">insertText</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -109,7 +109,7 @@ is used.</p>
 this completion.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7354">src/components/monaco/bin/monaco.d.ts:7354</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7354">src/components/monaco/bin/monaco.d.ts:7354</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="inserttextrules"><code class="tsd-tag">Optional</code><span>insert<wbr/>Text<wbr/>Rules</span><a href="#inserttextrules" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">insertTextRules</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemInsertTextRule.html" class="tsd-signature-type tsd-kind-enum">CompletionItemInsertTextRule</a></div>
@@ -117,7 +117,7 @@ this completion.</p>
 this completion.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7359">src/components/monaco/bin/monaco.d.ts:7359</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7359">src/components/monaco/bin/monaco.d.ts:7359</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="kind"><span>kind</span><a href="#kind" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">kind</span><span class="tsd-signature-symbol">:</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemKind.html" class="tsd-signature-type tsd-kind-enum">CompletionItemKind</a></div>
@@ -125,7 +125,7 @@ this completion.</p>
 an icon is chosen by the editor.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7317">src/components/monaco/bin/monaco.d.ts:7317</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7317">src/components/monaco/bin/monaco.d.ts:7317</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="label"><span>label</span><a href="#label" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.CompletionItemLabel.html" class="tsd-signature-type tsd-kind-interface">CompletionItemLabel</a></div>
@@ -134,7 +134,7 @@ this is also the text that is inserted when selecting
 this completion.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7312">src/components/monaco/bin/monaco.d.ts:7312</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7312">src/components/monaco/bin/monaco.d.ts:7312</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="preselect"><code class="tsd-tag">Optional</code><span>preselect</span><a href="#preselect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">preselect</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -143,7 +143,7 @@ that the editor decides which item that is. The rule is that the <em>first</em> 
 that match best is selected.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7349">src/components/monaco/bin/monaco.d.ts:7349</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7349">src/components/monaco/bin/monaco.d.ts:7349</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="range"><span>range</span><a href="#range" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">range</span><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.IRange.html" class="tsd-signature-type tsd-kind-interface">IRange</a> <span class="tsd-signature-symbol">|</span> <a href="_internal_.src_components_monaco_bin_monaco.languages.CompletionItemRanges.html" class="tsd-signature-type tsd-kind-interface">CompletionItemRanges</a></div>
@@ -152,7 +152,7 @@ that match best is selected.</p>
 Range.contains contain the position at which completion has been <a href="_internal_.src_components_monaco_bin_monaco.languages.CompletionItemProvider.html#providecompletionitems" class="tsd-kind-method">requested</a>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7366">src/components/monaco/bin/monaco.d.ts:7366</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7366">src/components/monaco/bin/monaco.d.ts:7366</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="sorttext"><code class="tsd-tag">Optional</code><span>sort<wbr/>Text</span><a href="#sorttext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sortText</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -161,7 +161,7 @@ with other items. When <code>falsy</code> the <a href="#label" class="tsd-kind-p
 is used.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7337">src/components/monaco/bin/monaco.d.ts:7337</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7337">src/components/monaco/bin/monaco.d.ts:7337</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tags"><code class="tsd-tag">Optional</code><span>tags</span><a href="#tags" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tags</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-keyword">readonly</span> <a href="../enums/_internal_.src_components_monaco_bin_monaco.languages.CompletionItemTag.html#deprecated" class="tsd-signature-type tsd-kind-enum-member">Deprecated</a><span class="tsd-signature-symbol">[]</span></div>
@@ -169,7 +169,7 @@ is used.</p>
 is rendered, e.g. Deprecated is rendered with a strikeout</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/9da972b3a7c0e20ab849b1976fedc3ffa4cfb7bc/src/components/monaco/bin/monaco.d.ts#L7322">src/components/monaco/bin/monaco.d.ts:7322</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/8de155fd44cc7fbd89c122faa757b73aa4ddfc48/src/components/monaco/bin/monaco.d.ts#L7322">src/components/monaco/bin/monaco.d.ts:7322</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -188,7 +188,7 @@ is rendered, e.g. Deprecated is rendered with a strikeout</p>
 <div><a href="#action"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>action</span></a><a href="#additionaltextedits"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>additional<wbr/>Text<wbr/>Edits</span></a><a href="#command"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>command</span></a><a href="#commitcharacters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>commit<wbr/>Characters</span></a><a href="#detail"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>detail</span></a><a href="#documentation"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>documentation</span></a><a href="#filtertext"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>filter<wbr/>Text</span></a><a href="#inserttext"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>insert<wbr/>Text</span></a><a href="#inserttextrules"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>insert<wbr/>Text<wbr/>Rules</span></a><a href="#kind"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kind</span></a><a href="#label"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>label</span></a><a href="#preselect"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>preselect</span></a><a href="#range"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>range</span></a><a href="#sorttext"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sort<wbr/>Text</span></a><a href="#tags"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tags</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/rlibre/x4" class="tsd-nav-link">GitHub</a></nav>
-<nav class="tsd-navigation"><a href="../modules.html">x4js - v2.2.53</a>
+<nav class="tsd-navigation"><a href="../modules.html">x4js - v2.2.54</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer>
 <p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
