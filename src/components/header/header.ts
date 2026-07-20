@@ -1,4 +1,4 @@
-import { class_ns } from '../../core/core_tools';
+import { class_ns, getScrollbarSize } from '../../core/core_tools';
 import { Component, ComponentProps } from '../../core/component';
 import { HBox } from '../boxes/boxes';
 import { Label } from '../label/label';
@@ -106,8 +106,9 @@ export class Header extends HBox<HeaderProps> {
 		} );
 
 		const rc = this.getBoundingRect( );
+        const cs = this.getComputedStyle( );
 		
-		let   rest = (rc.width-filled-10);
+		let   rest = (rc.width-filled-getScrollbarSize()) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
 		const unit = Math.ceil( rest/count );
 
 		//console.log( "filled", filled );

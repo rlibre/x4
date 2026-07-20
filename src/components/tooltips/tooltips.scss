@@ -40,6 +40,8 @@
 	border: 1px solid var( --tooltip-border ); 
 	background-color: var( --tooltip-background );
 
+    width: max-content;
+
 	.x4icon {
 		padding: 2px 4px;
 		svg {

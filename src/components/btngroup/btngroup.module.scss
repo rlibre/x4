@@ -48,59 +48,67 @@
         margin: 0;
         color: var( --ol-button-color );
 
-        &:disabled {
-            color: var( --ol-button-color-disabled );
-        }
-                        
         .x4icon {
             height: 1.5em;
             width: 1.5em;
-
-            .fa-primary, .fa-secondary {
-                fill:  var( --accent-background );
-            }
         }
 
-        &.icon-danger {
-            .x4icon {
+        &:not(:disabled) {
+            #icon {
+                height: 1.5em;
+                width: 1.5em;
+
                 .fa-secondary {
-                    fill: var( --disabled-color-dark);
+                    fill: var( --accent-background-hover );
                     opacity: 0.7;
                 }
-
+                
                 .fa-primary {
-                    fill: var( --alert-background );
+                    fill:  var( --accent-background );
                 }
             }
-        }
 
-        &.icon-success {
-            .x4icon {
-                .fa-primary {
-                    fill: var( --success-background );
+            &.icon-danger:not(:disabled) {
+                #icon {
+                    .fa-primary {
+                        fill: var( --alert-background );
+                    }
                 }
             }
-        }
 
-        &:hover{
-            background-color: var( --ol-button-background-hover );
-            color: var( --ol-button-color-hover );
-        }	
-
-        &:active{
-            background-color: var( --ol-button-background-active );
-            color: var( --ol-button-color-active );
-            #icon {
-                color: var( --button-icon-color );
+            &.icon-success {
+                #icon {
+                    .fa-primary {
+                        fill: var( --success-background );
+                    }
+                }
             }
-        }	
 
-        &:focus {
-            background-color: var( --ol-button-background-hover );
+            &:hover{
+                background-color: var( --ol-button-background-hover );
+                color: var( --ol-button-color-hover );
+            }	
+
+            &:active{
+                background-color: var( --ol-button-background-active );
+                color: var( --ol-button-color-active );
+                #icon {
+                    color: var( --button-icon-color );
+                }
+            }	
+
+            &:focus {
+                background-color: var( --ol-button-background-hover );
+            }
         }
 
         &:disabled {
             color: var( --disabled-color-dark );
+            #icon {
+                .fa-primary, .fa-secondary {
+                    fill: var( --disabled-color-dark ) !important;
+                }
+            }
         }
     }
 }
