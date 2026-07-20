@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>IModelContentChangedEvent | x4js - v2.2.55</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">x4js - v2.2.55</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>IModelContentChangedEvent | x4js - v2.2.56</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">x4js - v2.2.56</a>
 <div id="tsd-toolbar-links"><a href="https://github.com/rlibre/x4">GitHub</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -18,7 +18,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">IModelContentChangedEvent</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#changes">changes</a><span class="tsd-signature-symbol">:</span> <a href="_internal_.src_components_monaco_bin_monaco.editor.IModelContentChange.html" class="tsd-signature-type tsd-kind-interface">IModelContentChange</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#detailedreasonschangelengths">detailedReasonsChangeLengths</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#eol">eol</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#iseolchange">isEolChange</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#isflush">isFlush</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#isredoing">isRedoing</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#isundoing">isUndoing</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#versionid">versionId</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2965">src/components/monaco/bin/monaco.d.ts:2965</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2965">src/components/monaco/bin/monaco.d.ts:2965</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -44,7 +44,7 @@
 <div class="tsd-comment tsd-typography"><p>The changes are ordered from the end of the document to the beginning, so they should be safe to apply in sequence.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2969">src/components/monaco/bin/monaco.d.ts:2969</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2969">src/components/monaco/bin/monaco.d.ts:2969</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="detailedreasonschangelengths"><code class="tsd-tag">Readonly</code><span>detailed<wbr/>Reasons<wbr/>Change<wbr/>Lengths</span><a href="#detailedreasonschangelengths" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">detailedReasonsChangeLengths</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
@@ -52,21 +52,21 @@
 The length of this array must equal the length of detailedReasons.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2999">src/components/monaco/bin/monaco.d.ts:2999</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2999">src/components/monaco/bin/monaco.d.ts:2999</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="eol"><code class="tsd-tag">Readonly</code><span>eol</span><a href="#eol" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">eol</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The (new) end-of-line character.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2973">src/components/monaco/bin/monaco.d.ts:2973</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2973">src/components/monaco/bin/monaco.d.ts:2973</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="iseolchange"><code class="tsd-tag">Readonly</code><span>is<wbr/>Eol<wbr/>Change</span><a href="#iseolchange" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isEolChange</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Flag that indicates that this event describes an eol change.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2994">src/components/monaco/bin/monaco.d.ts:2994</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2994">src/components/monaco/bin/monaco.d.ts:2994</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isflush"><code class="tsd-tag">Readonly</code><span>is<wbr/>Flush</span><a href="#isflush" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isFlush</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -74,28 +74,28 @@ The length of this array must equal the length of detailedReasons.</p>
 The model has been reset to a new value.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2990">src/components/monaco/bin/monaco.d.ts:2990</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2990">src/components/monaco/bin/monaco.d.ts:2990</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isredoing"><code class="tsd-tag">Readonly</code><span>is<wbr/>Redoing</span><a href="#isredoing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isRedoing</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Flag that indicates that this event was generated while redoing.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2985">src/components/monaco/bin/monaco.d.ts:2985</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2985">src/components/monaco/bin/monaco.d.ts:2985</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isundoing"><code class="tsd-tag">Readonly</code><span>is<wbr/>Undoing</span><a href="#isundoing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isUndoing</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Flag that indicates that this event was generated while undoing.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2981">src/components/monaco/bin/monaco.d.ts:2981</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2981">src/components/monaco/bin/monaco.d.ts:2981</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="versionid"><code class="tsd-tag">Readonly</code><span>version<wbr/>Id</span><a href="#versionid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">versionId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The new version id the model has transitioned to.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/rlibre/x4/blob/c93c3dd5b0db46a9cd5343708f6ec3e9e170decf/src/components/monaco/bin/monaco.d.ts#L2977">src/components/monaco/bin/monaco.d.ts:2977</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/rlibre/x4/blob/bf1225838d9f10ced2310ac26972bf940192c791/src/components/monaco/bin/monaco.d.ts#L2977">src/components/monaco/bin/monaco.d.ts:2977</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -114,7 +114,7 @@ The model has been reset to a new value.</p>
 <div><a href="#changes"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>changes</span></a><a href="#detailedreasonschangelengths"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>detailed<wbr/>Reasons<wbr/>Change<wbr/>Lengths</span></a><a href="#eol"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>eol</span></a><a href="#iseolchange"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Eol<wbr/>Change</span></a><a href="#isflush"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Flush</span></a><a href="#isredoing"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Redoing</span></a><a href="#isundoing"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Undoing</span></a><a href="#versionid"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>version<wbr/>Id</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/rlibre/x4" class="tsd-nav-link">GitHub</a></nav>
-<nav class="tsd-navigation"><a href="../modules.html">x4js - v2.2.55</a>
+<nav class="tsd-navigation"><a href="../modules.html">x4js - v2.2.56</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer>
 <p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
