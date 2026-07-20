@@ -19,6 +19,8 @@
 .x4box {
 	min-width: 0;
 	min-height: 0;
+	flex-shrink: 0;
+	align-self: stretch;
 }
 
 .x4hbox {
@@ -37,7 +39,7 @@
 	
 	&>* {
 		@extend %fit;
-		position: relative !important;
+		position: absolute !important;
 	}
 
 	&>*:not(.selected) {

@@ -74,10 +74,14 @@
 			
 			// child + subitems
 			.x4ctreeviewitem {
+									
 				&>.label {
+					--label-color: var( --treeitem-color );
+					--label-icon-color: var( --treeitem-color );
+
 					gap: 4px;
 
-					.x4label, .x4icon, .x4label #icon {
+					.x4icon {
 						color: inherit;
 					}
 
@@ -98,11 +102,16 @@
 					&.selected {
 						background-color: var( --treeitem-background-sel );
 						color: var( --treeitem-color-sel );
+
+						--label-color: var( --treeitem-color-sel );
+						--label-icon-color: var( --treeitem-color-sel );
 					}
 
 					&:active{
 						background-color: var( --accent-background-active );
 						color: var( --accent-color-active );
+						--label-color: var( --accent-color-active );
+						--label-icon-color: var( --accent-color-active );
 					}	
 				}
 

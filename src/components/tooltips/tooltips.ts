@@ -75,7 +75,7 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 		tooltip = new Tooltip( { } );
 	}
 
-	timer.setTimeout( null, 300, ( ) => {
+	timer.setTimeout( "update", 300, ( ) => {
 		tooltip.setText( unsafeHtml(text) );
 
 		let y = mouse_pos.y;
@@ -90,7 +90,7 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 
 function closeTT( ) {
 	tooltip.show( false );
-	timer.clearTimeout( null );
+	timer.clearTimeout( "update" );
 }
 
 /**

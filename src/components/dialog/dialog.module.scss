@@ -29,6 +29,7 @@
 	background-color: white;
 	border: 1px solid var( --border-dark );
 	max-width: 99vw;
+	outline: none;
 	
 	&> .caption {
 		padding: 8px;
@@ -39,6 +40,7 @@
 			color: var(--color-dialog-caption-text);
 			font-weight: bold;
 			font-size: 120%;
+			pointer-events: none;
 
 			#icon {
 				color: var(--color-dialog-caption-text);

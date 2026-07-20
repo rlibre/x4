@@ -17,6 +17,13 @@
 import { EventMap, EventSource } from './core_events';
 
 
+interface TimerEntry {
+	cb: Function;
+	id: number;
+	clear: Function;
+}
+
+
 /**
  * CoreElement
  *
@@ -77,10 +84,14 @@ import { EventMap, EventSource } from './core_events';
  * el.clearInterval("poll");
  * ```
  */
+
 export class CoreElement<E extends EventMap = EventMap> {
 
 	#events: EventSource<E>;
-	#timers: Map<string, Function>;
+	#timers: Map<string, TimerEntry>;
+	#cleanup: Function[];
+
+	/** changed to stop timers when object is down
 
 	private __startTimer( name: string, ms: number, repeat: boolean, callback: ( ) => void ) {
 		if (!this.#timers) {
@@ -102,6 +113,69 @@ export class CoreElement<E extends EventMap = EventMap> {
 		const clear = this.#timers?.get(name);
 		if (clear) { clear(); }
 	}
+	*/
+
+	private __startTimer(name: string, ms: number, repeat: boolean, callback: () => void) {
+		if (!this.#timers) {
+			this.#timers = new Map();
+		}
+		else {
+			this.__stopTimer(name);
+		}
+
+		// Weak reference only: the native timer must not keep the element alive.
+		// The callback itself is stored in #timers, held by the element,
+		// so the element remains collectable while a timer is active.
+		const ref = new WeakRef(this);	// avoid keeping a ref on this.
+
+		let tick: () => void;
+
+		if (repeat) {
+			tick = () => {
+				const self = ref.deref();
+				if (!self) {
+					clearInterval(id);
+					return;
+				}
+
+				self.#timers.get(name)!.cb();
+			};
+
+			const id = setInterval( tick, ms );
+
+			this.#timers.set(name, {
+				cb: callback,
+				id,
+				clear( ) { clearInterval(id); }
+			});
+		}
+		else {
+			tick = () => {
+				const self = ref.deref();
+				if (!self) {
+					return;
+				}
+
+				// One-shot: remove the entry before firing so the map stays clean.
+				self.#timers.delete(name);
+				callback();
+			};
+
+			this.#timers.set(name, {
+				cb: callback,
+				id: setTimeout(tick, ms),
+				clear() { clearTimeout(this.id); }
+			});
+		}
+	}
+
+	private __stopTimer(name: string) {
+		const entry = this.#timers?.get(name);
+		if (entry) {
+			entry.clear();
+			this.#timers.delete(name);
+		}
+	}
 
 	/**
 	 * Sets a timeout that executes a callback function after a specified delay.
@@ -110,19 +184,19 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @param ms - The delay in milliseconds before the callback is executed.
 	 * @param callback - The function to execute after the delay.
 	 */
-	
-	setTimeout( name: string, ms: number, callback: () => void ) {
-		this.__startTimer( name, ms, false, callback );
+
+	setTimeout(name: string, ms: number, callback: () => void) {
+		this.__startTimer(name, ms, false, callback);
 	}
-	
+
 	/**
 	 * Clears a previously set timeout.
 	 * @param name - The name of the timeout to clear.
 	 * @see setTimeout
 	 */
 
-	clearTimeout( name: string ) {
-		this.__stopTimer( name );
+	clearTimeout(name: string) {
+		this.__stopTimer(name);
 	}
 
 	/**
@@ -133,8 +207,8 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @param callback - The function to execute after the delay.
 	 */
 
-	setInterval( name: string, ms: number, callback: ( ) => void ) {
-		this.__startTimer( name, ms, true, callback );
+	setInterval(name: string, ms: number, callback: () => void) {
+		this.__startTimer(name, ms, true, callback);
 	}
 
 	/**
@@ -143,8 +217,8 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @see setInterval
 	 */
 
-	clearInterval( name: string ) {
-		this.__stopTimer( name );
+	clearInterval(name: string) {
+		this.__stopTimer(name);
 	}
 
 	/**
@@ -152,12 +226,40 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * This stops all scheduled callbacks and removes their references.
 	 * @see setTimeout
 	 */
-	clearTimeouts( ) {
-		for( const [id,val] of this.#timers ) {
-			val( );
+	
+	clearTimeouts() {
+		if (!this.#timers) {
+			return;
 		}
-		
-		this.#timers.clear( );
+
+		// Entries no longer mutate the map in clear(), so plain iteration is safe.
+		for (const entry of this.#timers.values()) {
+			entry.clear();
+		}
+
+		this.#timers.clear();
+	}
+
+	/**
+	 * add a cleanup function to the cleanup list
+	 * @see cleanUp
+	 */
+
+	addCleanup( fn : Function ) {
+		if( !this.#cleanup ) {
+			this.#cleanup = [];
+		}
+
+		this.#cleanup.push( fn );
+	}
+
+	/**
+	 * called when element is removed from dom
+	 */ 
+
+	cleanUp( ) {
+		this.clearTimeouts( );
+		this.#cleanup?.forEach( x => x() );
 	}
 
 	// :: EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -173,17 +275,17 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * attach to an event
 	 */
 
-	on<K extends keyof E>( name: K, listener: ( ev: E[K] ) => void ) {
-		console.assert( listener!==undefined && listener!==null );
+	on<K extends keyof E>(name: K, listener: (ev: E[K]) => void) {
+		console.assert(listener !== undefined && listener !== null);
 
-		if( !this.#events ) {
-			this.#events = new EventSource( this );
+		if (!this.#events) {
+			this.#events = new EventSource(this);
 		}
-		
-		this.#events.addListener( name, listener );
+
+		this.#events.addListener(name, listener);
 		return {
-			off: ( ) => {
-				this.#events.removeListener( name, listener );
+			off: () => {
+				this.#events.removeListener(name, listener);
 			}
 		}
 	}
@@ -197,11 +299,11 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @see fire
 	 */
 
-	off<K extends keyof E>( name: K, listener: ( ev: E[K] ) => void ) {
-		console.assert( listener!==undefined && listener!==null );
+	off<K extends keyof E>(name: K, listener: (ev: E[K]) => void) {
+		console.assert(listener !== undefined && listener !== null);
 
-		if( this.#events ) {
-			this.#events.removeListener( name, listener );
+		if (this.#events) {
+			this.#events.removeListener(name, listener);
 		}
 	}
 
@@ -214,9 +316,9 @@ export class CoreElement<E extends EventMap = EventMap> {
 	 * @see off
 	 */
 
-	fire<K extends keyof E>( name: K, ev: E[K] ) {
-		if( this.#events ) {
-			this.#events.fire( name, ev );
+	fire<K extends keyof E>(name: K, ev: E[K]) {
+		if (this.#events) {
+			this.#events.fire(name, ev);
 		}
 	}
 }

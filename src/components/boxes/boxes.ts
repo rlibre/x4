@@ -26,19 +26,48 @@ export interface BoxProps extends ComponentProps {
 }
 
 /**
- * A generic container component for grouping and laying out child components.
- * The CSS class for this component is automatically generated as `x4box`.
+* A generic container component for grouping and laying out child components.
+ *
+ * The `refs` object is a typed directory of the children you need to reach
+ * again later. Assign a child to `refs` as you build the content: the
+ * assignment expression evaluates to the component itself, so it can be
+ * inlined directly in the content array.
+ * 
+ * @example
+ * using refs: in your code, you can type
+ * 
+ * class MyBox extends Box {
+ *   declare refs: {
+ *   	a: Combobox;
+ *      b: Input;
+ *   }
+ * 
+ *   constructor( props ) {
+ *      super( props );
+ *      
+ *      this.setContent( [
+ *          this.refs.a = new ComboBox( { ... } );
+ *          this.refs.b = new Input( { ... } );
+ *      ])
+ * 
+ * 	 onSomeEvent() {
+ *     this.refs.a.getValue();
+ *   }
+ * }
+ * 
+ * 
+ * 
  */
 
 @class_ns( "x4" )
 export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
+	protected refs: Record<string,Component> = {};
 }
 
 
 /**
  * A horizontal box layout component.
  * Arranges child components in a horizontal line.
- * The CSS class for this component is automatically generated as `x4hbox`.
  */
 
 @class_ns( "x4" )

@@ -23,6 +23,7 @@
 	--input-placeholder: var( --disabled-background );
 	--input-error: var( --alert-background );
 
+	--input-color-disabled: var( --disabled-color-dark );
 	--input-checkbox-color: var( --accent-background );
 }
 
@@ -68,8 +69,10 @@ input.x4input {
 		font-weight: bold;
 	}
 
-	&:disabled {
+	&:disabled,
+	&[disabled] {
 		background-color: transparent;
+		color: var( --input-color-disabled );
 	}
 
 	&:invalid {

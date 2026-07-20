@@ -22,7 +22,7 @@ import { Input } from "../input/input"
 import { ListboxID, ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
 import { asap, class_ns, isFunction, isNumber } from '../../core/core_tools';
-import { Icon } from '../components'
+import { Icon, ScrollView } from '../components'
 
 import icons from "../assets/icons"
 
@@ -58,6 +58,7 @@ export interface PropertyGroup {
 
 export interface PropertyProps extends ComponentProps {
 	groups: PropertyGroup[];
+	footer?: Component;
 }
 
 /**
@@ -76,8 +77,18 @@ export class PropertyGrid extends VBox {
 	constructor(props: PropertyProps) {
 		super(props);
 
-		this.root = new Component({ cls: "root" });
-		this.setContent( this.root );
+		if( props.footer ) {
+			props.footer.setAttribute( "id", "footer" );
+		}
+
+		const scroller = new ScrollView( { cls: "body" } );
+		this.root = scroller.getViewport( );
+
+		this.root.addClass( "root" );
+		this.setContent( [
+			scroller,
+			props.footer,
+		] );
 
 		if( props.groups ) {
 			this.setItems( props.groups );
@@ -90,6 +101,11 @@ export class PropertyGrid extends VBox {
 
 	setItems( _grps: PropertyGroup[] ) {
 
+		if( !_grps || _grps.length==0 ) {
+			this.root.clearContent( );
+			return;
+		}
+		
 		this.groups = _grps.filter( x => !!x );
 		//this.groups.sort( (a,b) => {return a.title>b.title ? 1 : 0} );
 
@@ -100,10 +116,8 @@ export class PropertyGrid extends VBox {
 			g.items.forEach( (i,idx) => {
 				if( i ) {
 					const row = this.makePropertyRow(i);
-					if( idx&1 ) {
-						row.addClass( "even" )
-					}
-
+					row.addClass( idx&1 ? "even" : "odd" );
+					
 					items.push( row );
 				}
 			});

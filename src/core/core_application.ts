@@ -27,9 +27,15 @@ export interface EvMessage extends CoreEvent {
 	params: any;
 }
 
+interface EvWindowResize extends CoreEvent {
+	width: number;
+	height: number;
+}
+
 export interface ApplicationEvents extends EventMap {
 	global: EvMessage;
 	message: EvMessage;
+	resize: EvWindowResize;
 }
 
 // singleton
@@ -104,6 +110,15 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		else {
 			window.addEventListener( "load", loaded, { once: true } );
 		}
+
+		const resize = ( ) => {
+			this.fire( "resize", {
+				width: window.innerWidth,
+				height: window.innerHeight,
+			} );
+		}
+
+		window.addEventListener('resize', resize, { passive: true });
 	}
 
 	/**

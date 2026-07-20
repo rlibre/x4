@@ -14,11 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym, IRect } from './core_tools';
+import { isArray, UnsafeHtml, isNumber, Rect, Constructor, class_ns, x4_class_ns_sym } from './core_tools';
 import { CoreElement } from './core_element';
 import { AriaAttributes, unitless } from './core_styles';
 import { CoreEvent, EventMap } from './core_events';
-import { addEvent, DOMEventHandler, GlobalDOMEvents } from './core_dom';
+import { addEvent, DOMEventHandler, GlobalDOMEvents, COMPONENT } from './core_dom';
 import { Application, EvMessage } from './core_application';
 import { makeState } from './core_state.js';
 
@@ -30,7 +30,6 @@ type ComponentAttributes = Record<string,string|number|boolean>;
 type CreateComponentCallBack =  ( attrs: Record<string,string> ) => ComponentContent;
 
 const FRAGMENT = Symbol( "fragment" );
-const COMPONENT = Symbol( "component" );
 
 const RE_NUMBER = /^-?\d+(\.\d*)?$/;
 
@@ -110,6 +109,7 @@ export interface ComponentProps {
 	hidden?: boolean,
 	/** Enables flex layout (boolean) or sets flex-grow (number). */
 	flex?: boolean | number;
+	stretch?: boolean;
 	/** Tooltip text. */
 	tooltip?: string;
 	/** Existing DOM element to wrap. */
@@ -152,7 +152,7 @@ export interface ComponentEvents extends EventMap {
  * ```
  */
 
-@class_ns( "x4" )
+@class_ns("x4")
 export class Component<P extends ComponentProps = ComponentProps, E extends ComponentEvents = ComponentEvents> 
 		extends CoreElement<E> {
 
@@ -166,16 +166,16 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	#store: Map<string|symbol,any>;
 	#pstate: any;
-	
-	constructor( props: P ) {
+
+	constructor(props: P) {
 		super( );
 
 		this.props = props;	// copy ?
 
 		if( props.existingDOM ) {
 			this.dom = props.existingDOM;
-		}
-		else {
+							}
+							else {
 			if( props.ns ) {
 				this.dom = document.createElementNS( props.ns, props.tag ?? "div" );
 			}
@@ -202,6 +202,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 						"flexGrow": props.flex+""
 					});
 				}
+			}
+
+			if( props.stretch ) {
+				this.addClass( "x4stretch" );
 			}
 			
 			if( props.id!==undefined ) {
@@ -242,8 +246,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.addDOMEvent( "created", ( ) => {
 					this.enable( false );
 				} );
+				}
 			}
-		}
 
 		(this.dom as any)[COMPONENT] = this;
 	}
@@ -281,10 +285,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * Multiple classes can be provided as a space-separated string.
      * @param cls - The CSS class(es) to add.
      */
-    
+
 	addClass( cls: string ) {
 		if( !cls ) return;
-			
+		
 		cls = cls.trim( );
 			
 		if( cls.includes(' ') ) {
@@ -309,13 +313,13 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		if( cls=='*' ) {
 			this.dom.classList.value = "";
 			return;
-		}
+			}
 		
 		if( cls.indexOf(' ')>=0 ) {
 			const ccs = cls.split( " " );
 			this.dom.classList.remove(...ccs);
-		}
-		else {
+			}
+			else {
 			this.dom.classList.remove(cls);
 		}
 	}
@@ -351,11 +355,11 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		if( cls.indexOf(' ')>=0 ) {
 			const ccs = cls.split( " " );
 			ccs.forEach( toggle );
-		}
-		else {
+				}
+				else {
 			toggle( cls );
 		}
-	}
+				}
 
 	/**
      * Sets or removes a CSS class based on a boolean condition.
@@ -368,7 +372,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		if( set ) this.addClass(cls);
 		else this.removeClass( cls );
 		return this;
-	}
+			}
 
 	// :: ATTRIBUTES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -383,7 +387,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 			this.setAttribute( name, attrs[name] );
 		}
 		return this;
-	}
+			}
 
 	/**
      * Sets a single HTML attribute on the component's DOM element.
@@ -399,7 +403,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		else {
 			this.dom.setAttribute( name, ""+value );
 		}
-	}
+		}
 
 	/**
      * Retrieves the value of an HTML attribute from the component's DOM element.
@@ -420,8 +424,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 * @see Component.getIntData
 	 * @see Component.setInternalData
 	 * @see Component.getInternalData
-     */
-    
+	 */
+
 	getData( name: string ) : string {
 		return this.getAttribute( "data-"+name );
 	}
@@ -794,7 +798,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
      * Sets pointer capture on the component's DOM element for a specific pointer.
      * @param pointerId - The unique ID of the pointer.
-	 *
+	 * 
 	 * @example
 	 * control.on("pointerdown", (ev) => {
 	 * 	ev.preventDefault(); // Prevent default browser actions
@@ -858,7 +862,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
      * Checks if the component's DOM element is currently visible (i.e., not hidden by `display: none`).
      * @returns `true` if the component is visible, `false` otherwise.
-     */
+	 */
 
 	isVisible( ) {
 		return (this.dom as HTMLElement).offsetParent !== null;
@@ -944,7 +948,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
      * Returns the previous sibling element as a Component instance.
      * @returns The previous sibling component, or `null` if none exists.
-     */
+	 */
 
 	prevElement<T extends Component = Component>( ): T {
 		const nxt = this.dom.previousElementSibling;
@@ -962,7 +966,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	}
 
 	/**
-     * 
+	 * 
 	 */
 
 	childCount( ) {
@@ -974,9 +978,9 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * @param dom - The starting DOM node from which to search upwards.
      * @param cls - Optional. The constructor of the Component type to match.
      * @returns The matching parent Component instance, or `null` if not found.
-     */
-	
-	
+	 */
+
+
 	static parentElement<T extends Component>( dom: Node, cls?: Constructor<T> ): T {
 
 		while( dom.parentElement ) {
@@ -991,14 +995,14 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			dom = dom.parentElement;
 		}
-
+		
 		return null;
 	}
 
 	/**
      * Returns the first child element as a Component instance.
      * @returns The first child component, or `null` if none exists.
-     */
+	 */
 
 	firstChild<T extends Component = Component>( ) : T {
 		const nxt = this.dom.firstElementChild;
@@ -1008,7 +1012,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	/**
      * Returns the last child element as a Component instance.
      * @returns The last child component, or `null` if none exists.
-     */
+	 */
 
 	lastChild<T extends Component = Component>( ) : T {
 		const nxt = this.dom.lastElementChild;
@@ -1019,19 +1023,19 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * Enumerates all child components of this component.
      * @param recursive - If `true`, searches all descendants; otherwise, only direct children.
      * @returns An array of child Component instances.
-     */
+	 */
 
 	enumChildComponents( recursive: boolean ) {
-
+	
 		const children: Component[] = [];
-		
+
 		const nodes = this.enumChildNodes( recursive );
 		nodes.forEach( ( c: Node ) => {
 			const cc = componentFromDOM( c as HTMLElement );
 			if( cc ) {
 				children.push(cc);
 			}
-		} );
+				});
 
 		return children;
 	}
@@ -1188,7 +1192,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		state.on( "change", ( ) => {
 			this.setTimeout( key, 500, ( ) => {
 				Application.instance().setStorage( key, JSON.stringify( raw ) );
-			});
+		} );
 		});
 
 		this.#pstate[name] = state;
@@ -1214,7 +1218,7 @@ type ComponentConstructor = {
 
 export function componentFromDOM<T extends Component = Component>( node: Element ) {
 	return node ? (node as any)[COMPONENT] as T : null;
-}
+	}
 
 /**
  * Wraps an existing HTMLElement with a new Component instance.

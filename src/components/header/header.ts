@@ -7,7 +7,7 @@ import { CSizer } from '../sizers/sizer';
 import "./header.module.scss"
 
 interface HeaderItem {
-	name: string;
+	name?: string;	// default to ref-cx
 	title: string;
 	iconId?: string;
 	width?: number;	// <0 for flex
@@ -15,7 +15,7 @@ interface HeaderItem {
 
 interface HeaderProps extends Omit<ComponentProps,"content"> {
 	items: HeaderItem[]
-	target?: Component;	// target element to set header col variable width var( --hdr-item-{name}-width )
+	target?: Component;	// target element to set header col variable width var( --{name}-width ) parent element if not set
 }
 
 /**
@@ -38,7 +38,12 @@ export class Header extends HBox<HeaderProps> {
 	constructor( props: HeaderProps ) {
 		super( props );
 
-		this._els = props.items?.map( x => {
+		this._els = props.items?.map( (x,index) => {
+
+			if( !x.name ) {
+				x.name = `ref-c${index+1}`;
+			}
+
 			const cell = new Label( { cls: "cell", text: x.title, icon: x.iconId } );
 			const sizer = new CSizer( "right" );
 			
@@ -126,7 +131,13 @@ export class Header extends HBox<HeaderProps> {
 			c.setWidth( width );
 
 			const item = c.getInternalData<HeaderItem>( 'data' );
+
+			if( !this.props.target ) {
+				this.parentElement().setStyleVariable( `--${item.name}-width`, width + "px");
+			}
+			else {
 			this.props.target?.setStyleVariable( `--${item.name}-width`, width + "px");
+			}
 			
 			fullw += width;
 		} );

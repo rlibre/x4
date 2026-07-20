@@ -25,7 +25,7 @@
 	--textedit-btn-color: var( --text-secondary );
 	--textedit-btn-color-hover: var( --text-primary );
 
-	--textedit-color-disabled: var( --disabled-background );
+	--textedit-color-disabled: var( --disabled-color-dark );
 }
 
 .x4textedit {
@@ -103,8 +103,8 @@
 		}
 		
 		#label > .x4label #text,
-		#label > .x4label::before,
 		#label::after  {
+			--label-color: var( --textedit-color-disabled );
 			color: var( --textedit-color-disabled );
 		}
 

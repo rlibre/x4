@@ -8,15 +8,99 @@
 	--propertygrid-background: white;
     --propertygrid-gadget-background: white;
     --propertygrid-gadget-color: black;
+<<<<<<< HEAD
+=======
+
+	--propertygrid-odd-background: var(--color-primary-a5);
+	--propertygrid-even-background: transparent;
+>>>>>>> bf1225838d9f10ced2310ac26972bf940192c791
 }
 
 .x4propertygrid {
 	background: var( --propertygrid-background );
 	border: 1px solid var(--border);
-	overflow-y: auto;
     flex-basis: 0;
 	align-self: stretch;
-	
+
+	& > .body {
+		width: 100%;
+		flex-basis: 0;
+		overflow-y: auto;
+		overflow-x: auto;
+		outline: none;
+		position: relative;
+	}
+
+	&> #footer {
+		border-top: 1px solid var(--border);
+		margin: 0;
+
+		&.x4btngroup {
+			gap: 0px;
+
+			.x4button {
+				background-color: var( --ol-button-background );
+				margin: 0;
+				color: var( --ol-button-color );
+
+				&:disabled {
+					color: var( --ol-button-color-disabled );
+				}
+								
+				.x4icon {
+					height: 1.5em;
+					width: 1.5em;
+
+					.fa-primary, .fa-secondary {
+						fill:  var( --accent-background );
+					}
+				}
+
+				&.icon-danger {
+					.x4icon {
+						.fa-secondary {
+							fill: var( --disabled-color-dark);
+							opacity: 0.7;
+						}
+
+						.fa-primary {
+							fill: var( --alert-background );
+						}
+					}
+				}
+
+				&.icon-success {
+					.x4icon {
+						.fa-primary {
+							fill: var( --success-background );
+						}
+					}
+				}
+
+				&:hover{
+					background-color: var( --ol-button-background-hover );
+					color: var( --ol-button-color-hover );
+				}	
+
+				&:active{
+					background-color: var( --ol-button-background-active );
+					color: var( --ol-button-color-active );
+					#icon {
+						color: var( --button-icon-color );
+					}
+				}	
+
+				&:focus {
+					background-color: var( --ol-button-background-hover );
+				}
+
+				&:disabled {
+					color: var( --disabled-color-dark );
+				}
+			}
+		}
+	}
+
 	.root {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -78,7 +162,10 @@
 		//border-right: 1px solid var(--color-primary-a50);
 
 		&.even {
-			background-color: var(--color-primary-a5);
+			background-color: var(--propertygrid-even-background)
+		}
+		&.odd {
+			background-color: var(--propertygrid-odd-background)
 		}
 
 		&:has(:focus) {
@@ -93,10 +180,6 @@
 			flex-grow: 1;
 			flex-basis: 10px;
 	    	padding: 4px;
-
-			&>* {
-			//	width: 100%;
-			}
 
 			input {
 				background: rgba(255,255,255,0.6);

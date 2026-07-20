@@ -22,6 +22,7 @@ import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
 import { getGlobalZoom, getScrollbarSize } from '../../core/core_tools.js';
+import { Application } from '../../core/core_application.js';
 
 export interface PopupEvents extends ComponentEvents {
 	closed: ComponentEvent;
@@ -66,6 +67,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		}
 
 		// wait for element to create it's childs
+		// > setContent is in ctor
 		asap( ( ) => {
 			if( this.props.movable===true || (this.props.sizable && this.props.movable===undefined) ) {
 				const movers = this.queryAll( ".caption-element" );
@@ -136,13 +138,31 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	/**
-	 * s
+	 * stupid parameter
 	 */
 
-	displayCenter( center = true ) {
-		//this.displayNear( new Rect( window.innerWidth/2, window.innerHeight/2, 0, 0 ), "center middle" );
-		this.setClass( 'center', center );
+	displayCenter(  ) {
 		this._do_show( );		// to compute size
+
+		const fixpos = ( ) => {
+			console.log( "fixpos" );
+
+			const orc = this.getBoundingRect( );
+			this.setStyle( {
+				left: ((window.innerWidth - orc.width) / 2) +'px',
+				top:  ((window.innerHeight - orc.height) / 2) +'px',
+			} );
+
+			console.log( orc );
+		}
+
+		asap( fixpos );
+
+		const tkn = Application.instance( ).on( "resize", () => {
+			asap( fixpos );
+		} )
+
+		this.addCleanup( tkn.off );
 	}
 
 	/**
@@ -411,51 +431,54 @@ class CMover {
 
 		this.self = ref ? true : false;
 
-		x.addDOMEvent( "pointerdown", ( e: PointerEvent ) => {
-			if( this.self && e.target!=x.dom ) {
+		const mouseDown = ( e: PointerEvent ) => {
+			if( this.self && e.target && (e.target as HTMLElement).tagName!=="DIV" ) {
 				return;
 			}
 
 			x.setCapture( e.pointerId );
 
-			this.ref = ref ?? componentFromDOM( x.dom.parentElement );
+			if( !ref ) {
+				ref = componentFromDOM( x.dom.parentElement );
+			}
 
+			this.ref = ref;
 			this.delta = {x:0,y:0};
-			const rc = this.ref.getBoundingRect();
+			const rc = ref.getBoundingRect();
 
 			this.delta.x = e.pageX-rc.left;
 			this.delta.y = e.pageY-rc.top;
-		});
-
-		x.addDOMEvent( "pointerup", ( e: PointerEvent ) => {
-			x.releaseCapture( e.pointerId );
-			this.ref = null;
-		});
-
-		x.addDOMEvent( "pointermove", ( e: PointerEvent ) => {
-			this._onMouseMove( e );
-		});
-	}
-
-	private _onMouseMove( e: PointerEvent ) {
-		if( !this.ref ) {
-			return;
 		}
 
-		const pt = { x: e.pageX-this.delta.x, y: e.pageY-this.delta.y };
-		const rc = this.ref.getBoundingRect( );
+		const mouseMove = ( e: PointerEvent ) => {
+			if( !this.delta ) {
+				return;
+			}
 
-		let nr: any = {
-		};
+			const ref = this.ref
+			const pt = { x: e.pageX-this.delta.x, y: e.pageY-this.delta.y };
+			const rc = ref.getBoundingRect( );
 
-		this.ref.setStyle( {
-			top: pt.y+"",
-			left: pt.x+"",
-		} );
-		
-		e.preventDefault( );
-		e.stopPropagation( );
+			ref.setStyle( {
+				top: pt.y+"",
+				left: pt.x+"",
+			} );
+			
+			e.preventDefault( );
+			e.stopPropagation( );
+		}
+
+		const mouseUp = ( e: PointerEvent ) => {
+			x.releaseCapture( e.pointerId );
+			this.delta = null;
+		}
+
+		x.addDOMEvent( "pointerdown", mouseDown );
+		x.addDOMEvent( "pointerup", mouseUp );
+		x.addDOMEvent( "pointermove", mouseMove );
 	}
+
+	
 }
 
 

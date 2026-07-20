@@ -94,16 +94,11 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 @class_ns( "x4" )
 export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
-	private _view: Viewport;
-	//private _selection: ListboxID;
-	//private _selitem: Component;
-	
+private _view: Viewport;
 	private _lastsel: ListboxID;
-	
 	private _multisel: Set<ListboxID>;
 	private _items: ListItem[];
-
-	preventFocus = false;
+	//<?? preventFocus = false;
 
 	constructor( props: ListboxProps ) {
 		super( { ...props } );
@@ -251,14 +246,14 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
 
-			// avoid trapping child ckick
-			if( c.dom.tagName==='INPUT' ) {
+			// avoid trapping child click
+			if( c && c.dom.tagName==='INPUT' ) {
 				return;
 			}
 
 			if( c && c.hasClass("x4item") ) {
 				const id = c.getInternalData( "id" );
-				const fev: ComponentEvent = { context:id };
+				const fev: EvClick = { context:id };
 				if (ev.type == 'click') {
 					this.fire('click', fev );
 				}
@@ -276,6 +271,10 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 			target = target.parentElement;
 		}
 
+		if (ev.type == 'click') {
+			this.fire('click', {} );
+		}
+		
 		this.clearSelection( );
 
 		ev.stopImmediatePropagation();
@@ -498,30 +497,30 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	defaultRenderer( item: ListItem ): Component {
 
-		const mk_col = ( _: any, index: number ) => {
-			const c = item.sub_cols[index];
+		const mk_col = ( c: any, index: number ) => {
 			if( c===undefined || c===null ) { 
 				return null;
 			}
 
 			if( c instanceof Component ) {
+				c.addClass( "column" );
 				return c;
 			}
 				
 			return new SimpleText( { cls: `column ref-c${index+2}`, text: c } )
 		}
 
-		let cols: Component[] = null;
+		const content: Component[] = [
+			new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
+		];
+
 		if( item.sub_cols ) {
-			cols = item.sub_cols.map( mk_col );
+			content.push( ...(item.sub_cols.map( mk_col )) );
 		}
 
 		return new HBox( {
 			cls: item.cls,
-			content: [
-				new Label( { cls: `column ref-c1`, icon: item.iconId, text: item.text } ),
-				...cols,
-			],
+			content			
 		} )
 	}
 
@@ -623,6 +622,11 @@ export class Listbox extends Component<ListboxProps,ListboxEvents> {
 
 	getSelection( ) {
 		return Array.from( this._multisel );
+	}
+
+	getFirstSel( ) : ListItem {
+		const [first] = this.getSelection( );
+		return first ? this.getItem( first ) : null;
 	}
 
 	ensureSelectionVisible( ) {

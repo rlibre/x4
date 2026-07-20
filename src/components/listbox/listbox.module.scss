@@ -126,7 +126,10 @@
 				}
 			}
 
-			.column { background-color: var(--listbox-background); overflow: hidden; }
+			.column {
+				background-color: transparent; 
+				overflow: hidden; 
+			}
 
 			.ref-c1 { width: var( --ref-c1-width); }
 			.ref-c2 { width: var( --ref-c2-width); }

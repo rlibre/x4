@@ -24,6 +24,10 @@
 	@extend %flex;
 }
 
+.x4stretch {
+	align-self: stretch;
+}
+
 .x4fit-h {
 	width: stretch;
 }
