@@ -22,7 +22,7 @@
 	align-content: start;
 	margin: 5px;
 	gap: 4px;
-
+	overflow: hidden;
 	background: var( --btngroup-background );
 
 	&.align-right {
@@ -38,4 +38,69 @@
 			fill: var( --border );
 		}
 	}
+}
+
+.x4btngroup.packed {
+    gap: 0px;
+
+    .x4button {
+        background-color: var( --ol-button-background );
+        margin: 0;
+        color: var( --ol-button-color );
+
+        &:disabled {
+            color: var( --ol-button-color-disabled );
+        }
+                        
+        .x4icon {
+            height: 1.5em;
+            width: 1.5em;
+
+            .fa-primary, .fa-secondary {
+                fill:  var( --accent-background );
+            }
+        }
+
+        &.icon-danger {
+            .x4icon {
+                .fa-secondary {
+                    fill: var( --disabled-color-dark);
+                    opacity: 0.7;
+                }
+
+                .fa-primary {
+                    fill: var( --alert-background );
+                }
+            }
+        }
+
+        &.icon-success {
+            .x4icon {
+                .fa-primary {
+                    fill: var( --success-background );
+                }
+            }
+        }
+
+        &:hover{
+            background-color: var( --ol-button-background-hover );
+            color: var( --ol-button-color-hover );
+        }	
+
+        &:active{
+            background-color: var( --ol-button-background-active );
+            color: var( --ol-button-color-active );
+            #icon {
+                color: var( --button-icon-color );
+            }
+        }	
+
+        &:focus {
+            background-color: var( --ol-button-background-hover );
+        }
+
+        &:disabled {
+            color: var( --disabled-color-dark );
+        }
+    }
 }

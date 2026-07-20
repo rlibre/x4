@@ -44,6 +44,7 @@ export interface PropertyValue {
     step?: number;	// for numbers
 	min?: number;
     max?: number;
+    gadgets?: Component[];
 }
 
 export interface PropertyGroup {
@@ -246,6 +247,7 @@ export class PropertyGrid extends VBox {
 			use_hdr = false;
 			editor = new Button({ 
 				id: item.name,
+                cls: "button",
 				label: value as string, 
 				click: ( ) => {
 					item.callback?.( item.name, '' );
@@ -253,17 +255,17 @@ export class PropertyGrid extends VBox {
 			});
 		}
 		else {
-			editor = new Input({ 
-				type: 'text', 
-				id: item.name,
-				name: item.name, 
-				value: value as string,
-				focus: ( e: EvFocus ) => {
-					if( e.focus_out ) {
-						item.callback?.( item.name, (editor as Input).getValue() );
-					}
-				}
-			});
+            editor = new Input({ 
+                type: 'text', 
+                id: item.name,
+                name: item.name, 
+                value: value as string,
+                focus: ( e: EvFocus ) => {
+                    if( e.focus_out ) {
+                        item.callback?.( item.name, (editor as Input).getValue() );
+                    }
+                },
+            })
 		}
 		
 		let cls = 'row';
@@ -271,12 +273,25 @@ export class PropertyGrid extends VBox {
 			cls += ' ' + item.cls;
 		}
 
+        editor.addClass( "x4flex" );
+
+        const content: Component[] = [
+            editor
+        ]
+
+        if( item.gadgets ) {
+            item.gadgets.forEach( g => {
+                g.addClass( "gadget" );
+                content.push( g );
+            } );
+        }
+
 		return new HBox({
 			cls,
 			content: [
-				use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
-				new Component({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content: editor })
-			]
+                use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
+                new HBox({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content }),
+            ]
 		});
 	}
 
