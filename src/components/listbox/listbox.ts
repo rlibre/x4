@@ -113,6 +113,7 @@ private _view: Viewport;
 
 		if( props.footer ) {
 			props.footer.setAttribute( "id", "footer" );
+            props.footer.addClass( "packed" );
 		}
 
 		if( props.header ) {

@@ -79,6 +79,7 @@ export class PropertyGrid extends VBox {
 
 		if( props.footer ) {
 			props.footer.setAttribute( "id", "footer" );
+			props.footer.addClass( "packed" );
 		}
 
 		const scroller = new ScrollView( { cls: "body" } );
