@@ -172,12 +172,13 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	displayAt( x: number, y: number ) {
 		const zm = getGlobalZoom( );
 		
-		//TODO: check is already visible
-		this.setStyle( {
-			left: (x/zm)+"px",
-			top: (y/zm)+"px",
-		})
+        x /= zm;
+        y /= zm;
 
+        this.setStyleValue( "left", x );
+		this.setStyleValue( "top", y );
+
+		//TODO: check is already visible
 		this._do_show( );	// to compute size
 
 		const rc = this.getBoundingRect( ).scale( 1/zm );
