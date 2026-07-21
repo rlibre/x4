@@ -982,18 +982,31 @@ export function setWaitCursor(wait: boolean) {
  * return the focusable elements from a given node
  */
 
-export function getFocusableElements(root: Element) {
-	const els = [
-		'button:not([tabindex="-1"]):not([disabled])',
+const FOCUSABLE = [
+	'button:not([tabindex="-1"])',
 		'[href]',
-		'input:not([disabled])',
-		'select:not([disabled])',
-		'textarea:not([disabled])',
+	'input',
+	'select',
+	'textarea',
 		'[tabindex]:not([tabindex="-1"])'
-	]
+]	.map( x => x+':not(:disabled):not([inert])' )
+	.join( ',' );
 
-	const focusable = Array.from(root.querySelectorAll(els.join(',')));
-	return focusable.filter(x => (x as HTMLElement).offsetParent != null);	// check visibility
+export function getFocusableElements(root: Element) {
+	const focusable = Array.from(root.querySelectorAll(FOCUSABLE));
+
+	return focusable.filter( x => {
+		// check visibility
+		if( (x as HTMLElement).offsetParent == null ) {
+			return false;
+		}	
+		// check :inert | :disable
+		if( x.closest('[inert]') || x.closest(":disabled") ) {
+			return false;
+		}
+
+		return true;
+	});
 }
 
 /**
