@@ -85,6 +85,10 @@
 		}
 	}
 
+	&:disabled> #icon {
+		fill: var( --button-color-disabled );
+	}
+
 	&> #label {
 		flex-grow: 1;
 

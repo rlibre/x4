@@ -53,11 +53,13 @@
             width: 1.5em;
         }
 
-        &:not(:disabled) {
             #icon {
                 height: 1.5em;
                 width: 1.5em;
+		}
 
+        &:not(:disabled) {
+            #icon {
                 .fa-secondary {
                     fill: var( --accent-background-hover );
                     opacity: 0.7;
@@ -105,8 +107,12 @@
         &:disabled {
             color: var( --disabled-color-dark );
             #icon {
-                .fa-primary, .fa-secondary {
+                .fa-primary {
                     fill: var( --disabled-color-dark ) !important;
+                }
+
+				.fa-secondary {
+                    fill: var( --disabled-background ) !important;
                 }
             }
         }
