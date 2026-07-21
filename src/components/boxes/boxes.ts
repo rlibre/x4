@@ -62,6 +62,9 @@ export interface BoxProps extends ComponentProps {
 @class_ns( "x4" )
 export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
 	protected refs: Record<string,Component> = {};
+	constructor( props: P ) {
+		super( { tag: "fieldset", ...props } );
+	}
 }
 
 
