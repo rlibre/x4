@@ -899,18 +899,20 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	enable( ena = true ): this {
 		this.setAttribute( "disabled", !ena ? 'true' : null );
+		this.setAttribute( "inert", !ena ? 'true' : null );
 
+		/*
+		boxes are now fieldset, this is native
 		if( this.dom instanceof HTMLInputElement || this.dom instanceof HTMLButtonElement ) {
 			this.dom.disabled = !ena;
 		}
 
-		// propagate diable state to all input children
-		const nodes = this.enumChildNodes( true );
+		// propagate enable state to all input children
+		const nodes = this.enumChildComponents( true );
 		nodes.forEach( x => {
-			if( x instanceof HTMLInputElement || x instanceof HTMLButtonElement ) {
-				x.disabled = !ena;
-			}
+			x.enable( ena );
 		});
+		*/
 
 		return this;
 	}
