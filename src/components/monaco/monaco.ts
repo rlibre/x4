@@ -131,5 +131,13 @@ export class MonacoEditor extends Component<MonacoEditorProps> {
 		await this._start( );
 		return this._monaco;
 	}
+
+	getText( ) : string {
+		return this._editor.getValue( );
+	}
+
+	setText( text: string ) {
+		return this._editor.setValue( text );
+	}
 }
 

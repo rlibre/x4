@@ -209,6 +209,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 
 		if( props.footer ) {
 			props.footer.setAttribute( "id", "footer" );
+			props.footer.addClass( "packed" );
 		}
 
 		this.setAttribute( "tabindex", 0 );

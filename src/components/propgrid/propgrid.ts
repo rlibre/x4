@@ -197,7 +197,7 @@ export class PropertyGrid extends VBox {
 			editor = new Input({ 
 				type: "checkbox", 
 				id: item.name,
-				name: item.name, 
+				//name: item.name, 
 				checked: value as boolean, 
 				dom_events: {
 					change: ( e: Event ) => {
@@ -212,7 +212,7 @@ export class PropertyGrid extends VBox {
 				value: value as ListboxID,
 				id: item.name,
 				items: item.options,
-				name: item.name,
+				//name: item.name,
 				change: ( e: EvChange ) => {
 					item.callback?.( item.name, e.value );
 				}
@@ -222,7 +222,7 @@ export class PropertyGrid extends VBox {
 			editor = new Input({ 
 				type: 'password',
 				id: item.name,
-				name: item.name, 
+				//name: item.name, 
 				value: String(value), 
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
@@ -235,7 +235,7 @@ export class PropertyGrid extends VBox {
 			editor = new Input({ 
 				type: 'number', 
 				id: item.name,
-				name: item.name, 
+				//name: item.name, 
 				value: String(value),
 				step: item.step,
                 min: item.min,
@@ -273,7 +273,7 @@ export class PropertyGrid extends VBox {
             editor = new Input({ 
                 type: 'text', 
                 id: item.name,
-                name: item.name, 
+                //name: item.name, 
                 value: value as string,
                 focus: ( e: EvFocus ) => {
                     if( e.focus_out ) {

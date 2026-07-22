@@ -37,6 +37,7 @@ type predefined = 		`ok${ "" | `.${string}`}`
 					|	`no${ "" | `.${string}`}`
 					| 	`retry${ "" | `.${string}`}`
 					| 	`abort${ "" | `.${string}`}`
+					| 	`save${ "" | `.${string}`}`
 					| 	"-" | ">>"	// - = Flex
 					|   "~";		// space
 
@@ -120,6 +121,7 @@ export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
 					case "no":		title = _tr.global.no; break;
 					case "yes":		title = _tr.global.yes; break;
 					case "retry":	title = _tr.global.retry; break;
+					case "save":	title = _tr.global.save; break;
 				}
 
 				b = new Button( { cls, id: txt, label: title, click: ( ) => {
