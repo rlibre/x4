@@ -65,3 +65,9 @@
 	}
 }
 
+.x4tabs.inline {
+	&> .body {
+		border: none;
+		border-top: 1px solid var( --border );
+	}
+}

@@ -88,7 +88,7 @@ export class Color {
 		if( value.startsWith('#') ) {
 			if (value.length == 7 && /#[0-9a-fA-F]{6}/.test(value)) {
 				const hex = parseInt(value.slice(1), 16);
-				return this.setRgb( hex >> 16, hex >> 8, hex, 1.0 );
+				return this.setRgb( (hex >> 16)&0xff, (hex >> 8)&0xff, (hex)&0xff, 1.0 );
 			}
 	
 			if (value.length == 4 && /#[0-9a-fA-F]{3}/.test(value)) {
@@ -98,7 +98,7 @@ export class Color {
 
 			if (value.length == 9 && /#[0-9a-fA-F]{8}/.test(value)) {
 				const hex = parseInt(value.slice(1), 16) >>> 0;
-				return this.setRgb( hex >> 24, hex >> 16, hex >> 8, (hex & 0xFF) / 255.0 );
+				return this.setRgb( (hex >> 24)&0xff, (hex >> 16)&0xff, (hex >> 8)&0xff, (hex & 0xFF) / 255.0 );
 			}
 		}
 		else {
@@ -131,7 +131,7 @@ export class Color {
 			else {
 				const xx = CSS_COLORS[value];
 				if( xx!==undefined ) {
-					return this.setRgb( xx>>16, xx>>8, xx, 1.0 );
+					return this.setRgb( (xx>>16)&0xff, (xx>>8)&0xff, (xx)&0xff, 1.0 );
 				}
 				else if( value=="transparent" ) {
 					return this.setRgb( 0, 0, 0, 0 );

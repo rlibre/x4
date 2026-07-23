@@ -3,6 +3,7 @@ import { Color } from '../../core/core_colors';
 import { Component, ComponentProps } from '../../core/component';
 
 import "./tickline.module.scss"
+import { class_ns } from '../../core/core_tools.ts';
 
 interface TickLineProps extends ComponentProps {
 	values: number[];
@@ -23,6 +24,7 @@ interface TickLineProps extends ComponentProps {
  * ```
  */
 
+@class_ns( "x4" )
 export class TickLine extends Component<TickLineProps> {
 	
 	constructor( props: TickLineProps ) {
@@ -47,6 +49,8 @@ export class TickLine extends Component<TickLineProps> {
 		const xmul = rc.width/vals.length;
 		const ymul = rc.height/(max-min);
 
+		const b = rc.height;
+
 		const bld = new SvgBuilder( );
 
 		if( props.background ) {
@@ -56,8 +60,8 @@ export class TickLine extends Component<TickLineProps> {
 
 		if( min!=0 ) {
 			bld.path( )
-				.moveTo( 0, 0-min )
-				.lineTo( rc.width, 0-min )
+				.moveTo( 0, b-(0-min)*ymul )
+				.lineTo( rc.width, b-(0-min)*ymul )
 				.stroke( "var(--tickline-axis-color)", 1 )
 				.antiAlias( false )
 		}
@@ -66,10 +70,10 @@ export class TickLine extends Component<TickLineProps> {
 			const pth = bld.path( );
 			for( let x=0; x<vals.length; x++ ) {
 				if( x==0 ) {
-					pth.moveTo( x*xmul, (vals[x]-min)*ymul );
+					pth.moveTo( x*xmul, b-(vals[x]-min)*ymul );
 				}
 				else {
-					pth.lineTo( x*xmul, (vals[x]-min)*ymul );
+					pth.lineTo( x*xmul, b-(vals[x]-min)*ymul );
 				}
 			}
 
@@ -78,7 +82,7 @@ export class TickLine extends Component<TickLineProps> {
 		}
 		else {
 			for( let x=0; x<vals.length; x++ ) {
-				bld.rect( x*xmul, (0-min)*ymul, xmul-1, vals[x]*ymul )
+				bld.rect( x*xmul, b-(0-min)*ymul, xmul-1, b-vals[x]*ymul )
 					.fill( props.color ? props.color.toHexString() : "var(--tickline-color)" )
 					.antiAlias( false );
 			}

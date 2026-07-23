@@ -17,6 +17,7 @@
 
 .x4csizer {
 	position: absolute;
+	touch-action: none;
 
 	@mixin horz {
 		left: 0;

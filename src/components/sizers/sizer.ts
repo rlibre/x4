@@ -89,6 +89,7 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			}
 
 			this.fire( "start", { })
+			e.preventDefault( );
 		});
 
 		this.addDOMEvent( "pointerup", ( e: PointerEvent ) => {

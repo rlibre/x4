@@ -4,6 +4,12 @@ import { Component, ComponentProps } from '../../core/component';
 import Monaco from './bin/monaco'; 
 import "./monaco.module.scss"
 
+export type IMonarchLanguage = monaco.languages.IMonarchLanguage;
+export type CompletionItem = monaco.languages.CompletionItem;
+export type CompletionItemProvider = monaco.languages.CompletionItemProvider;
+
+export { IRange, }
+
 
 interface MonacoEditorProps extends ComponentProps {
 	language: "typescript" | "javascript" | "json" | "css" | "html" | string;
