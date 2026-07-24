@@ -865,7 +865,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 	 */
 
 	isVisible( ) {
-		return (this.dom as HTMLElement).offsetParent !== null;
+		return this.dom.isConnected && this.dom.checkVisibility( {checkVisibilityCSS: true, } );
 	}
 
 	/**

@@ -110,20 +110,24 @@
 		left: 0;
 		top: 0;
 
-		.empty {
-			position: relative;
-			left: 50%;
-			top: 30px;
-			transform: translateX(-50%);
-			width: fit-content;
+        &:has(.empty) {
+            width: 100% !important;
+        }
 
-			#icon {
-				height: 64px;
-				fill: var( --accent-background );
-				opacity: 50%;
-			}
-		}
-	}
+        .empty {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%);
+            width: fit-content;
+
+            #icon {
+                height: 64px;
+                fill: var( --accent-background );
+                opacity: 50%;
+            }
+        }
+}
 
 	.row {
 		position: absolute;

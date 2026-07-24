@@ -504,7 +504,7 @@ private _view: Viewport;
 			}
 
 			if( c instanceof Component ) {
-				c.addClass( "column" );
+				c.addClass(  `column ref-c${index+2}` );
 				return c;
 			}
 				

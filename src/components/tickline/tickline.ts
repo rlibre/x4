@@ -1,9 +1,9 @@
 import { SvgBuilder, SvgComponent } from '../../core/core_svg';
 import { Color } from '../../core/core_colors';
 import { Component, ComponentProps } from '../../core/component';
-import { class_ns } from '../../core/core_tools';
 
 import "./tickline.module.scss"
+import { class_ns } from '../../core/core_tools.ts';
 
 interface TickLineProps extends ComponentProps {
 	values: number[];
@@ -12,6 +12,10 @@ interface TickLineProps extends ComponentProps {
 	color?: Color;			
 	background?: Color;		
 	type: "bars" | "line";	
+    display?: {
+        tooltips?: boolean; // display values tootips
+        axis?: boolean;     // display axis
+    }
 }
 
 /**
@@ -22,6 +26,9 @@ interface TickLineProps extends ComponentProps {
  * --tickline-color
  * --tickline-background
  * ```
+ * 
+ * by default values are in percent.
+ * 
  */
 
 @class_ns( "x4" )
@@ -36,32 +43,39 @@ export class TickLine extends Component<TickLineProps> {
 	update( ) {
 		const props = this.props;
 		const vals = props.values;
+        const padding = 4;
 
 		if( !vals.length  ) {
 			this.clearContent( );
 			return;
 		}
 		
-		const rc = this.getBoundingRect( );
-		const min = props.min ?? 0;
+		const rc = this.getBoundingRect( ).moveTo(0,0).inflate( -padding );
+
+        const min = props.min ?? 0;
 		const max = props.max ?? 100;
 
-		const xmul = rc.width/vals.length;
+        if( max<=min || rc.width<=0 || rc.height<=0 ) {
+            this.clearContent( );
+            return;
+        }
+
+		const xmul = props.type=="line" ? rc.width/(vals.length-1) : rc.width/vals.length;
 		const ymul = rc.height/(max-min);
 
-		const b = rc.height;
+		const b    = rc.bottom;
 
 		const bld = new SvgBuilder( );
 
 		if( props.background ) {
-			bld.rect( 0, 0, rc.width, rc.height )
+			bld.rect( 0, 0, rc.width+padding*2, rc.height+padding*2 )
 				.fill( props.background.toHexString() );
 		}
 
-		if( min!=0 ) {
+		if( min!=0 || props.display?.axis ) {
 			bld.path( )
-				.moveTo( 0, b-(0-min)*ymul )
-				.lineTo( rc.width, b-(0-min)*ymul )
+				.moveTo( rc.left, b-(0-min)*ymul )
+				.lineTo( rc.right, b-(0-min)*ymul )
 				.stroke( "var(--tickline-axis-color)", 1 )
 				.antiAlias( false )
 		}
@@ -70,10 +84,10 @@ export class TickLine extends Component<TickLineProps> {
 			const pth = bld.path( );
 			for( let x=0; x<vals.length; x++ ) {
 				if( x==0 ) {
-					pth.moveTo( x*xmul, b-(vals[x]-min)*ymul );
+					pth.moveTo( rc.left+x*xmul, b-(vals[x]-min)*ymul );
 				}
 				else {
-					pth.lineTo( x*xmul, b-(vals[x]-min)*ymul );
+					pth.lineTo( rc.left+x*xmul, b-(vals[x]-min)*ymul );
 				}
 			}
 
@@ -82,14 +96,27 @@ export class TickLine extends Component<TickLineProps> {
 		}
 		else {
 			for( let x=0; x<vals.length; x++ ) {
-				bld.rect( x*xmul, b-(0-min)*ymul, xmul-1, b-vals[x]*ymul )
+				const r = bld.rect( rc.left+x*xmul, b-(vals[x]-min)*ymul, xmul-1, (vals[x]-min)*ymul )
 					.fill( props.color ? props.color.toHexString() : "var(--tickline-color)" )
-					.antiAlias( false );
+                    .antiAlias( false );
+
+                if( props.display?.tooltips ) {
+                    r.setAttr( 'tooltip', vals[x].toFixed(1) )
+                }
 			}
 		}
 
-
-
 		this.setContent( new SvgComponent( {width: "100%", height: "100%", svg: bld, attrs: { viewport:`0 ${props.min??0} ${vals.length} ${props.max??100}` } } ) );
 	}
+
+    setValues( values: number[], options? : { min: number, max: number } ) {
+
+        options = { min: 0, max: 100, ...options };
+
+        this.props.values = values;
+        this.props.min = options.min;
+        this.props.max = options.max;
+
+        this.update( );
+    }
 }

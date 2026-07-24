@@ -221,7 +221,7 @@ export class Rect implements IRect {
 		this.left -= dx;
 		this.width += dx+dx;
 		this.top -= dy;
-		this.width += dy+dy;
+		this.height += dy+dy;
 
 		return this;
 	}
@@ -234,6 +234,13 @@ export class Rect implements IRect {
 
 		return this;
 	}
+
+    moveTo( x: number, y: number ) {
+        this.left = x;
+        this.top = x;
+
+        return this;
+    }
 }
 
 /**
@@ -984,11 +991,11 @@ export function setWaitCursor(wait: boolean) {
 
 const FOCUSABLE = [
 	'button:not([tabindex="-1"])',
-		'[href]',
+	'[href]',
 	'input',
 	'select',
 	'textarea',
-		'[tabindex]:not([tabindex="-1"])'
+	'[tabindex]:not([tabindex="-1"])'
 ]	.map( x => x+':not(:disabled):not([inert])' )
 	.join( ',' );
 

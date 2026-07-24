@@ -174,13 +174,14 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
         this.setStyleValue( "left", x );
 		this.setStyleValue( "top", y );
 
-		//TODO: check is already visible
+        //TODO: check is already visible
 		this._do_show( );	// to compute size
 
-		const rc = this.getBoundingRect( ).scale( 1/zm );
+        const rc = this.getBoundingRect( ).scale( 1/zm );
 		const sbw = getScrollbarSize( );
 
 		const screen_width  = window.innerWidth - sbw;
+
 		if( rc.right>screen_width ) {
 			this.setStyleValue( "left", screen_width-rc.width );
 		}

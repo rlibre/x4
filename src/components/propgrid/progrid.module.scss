@@ -101,7 +101,7 @@
 		&.odd:not(:disabled) {
 			background-color: var(--propertygrid-odd-background)
 		}
-
+		
 		&.odd:disabled {
 			background-color: var(--propertygrid-disabled-background)
 		}

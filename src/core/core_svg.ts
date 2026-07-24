@@ -845,6 +845,9 @@ export class SvgGroup extends SvgItem {
 			h = -h;
 		}
 
+        console.assert( w>=0 );
+        console.assert( h>=0 );
+
 		const shape = new SvgShape( 'rect' );
 		shape.setAttr( 'x', num(x)+'' );
 		shape.setAttr( 'y', num(y)+'' );

@@ -119,17 +119,17 @@ export namespace data {
 	**/
 
 	export function id( ) {
-	return ( ownerCls: any, fldName: string ) => {
-		let metas = _getMetas( ownerCls );
-		metas.fields.push( {
-			name: fldName,
-			type: 'any',
-			required: true,
-		});
+        return ( ownerCls: any, fldName: string ) => {
+            let metas = _getMetas( ownerCls );
+            metas.fields.push( {
+                name: fldName,
+                type: 'any',
+                required: true,
+            });
 
-		metas.id = fldName;
-	}
-}
+            metas.id = fldName;
+        }
+    }
 
 	/**
 	 * @ignore
@@ -253,6 +253,12 @@ export namespace data {
  */
 
 export class DataModel<T = any> {
+
+    constructor( fields?: FieldInfo[] ) {
+        if( fields && fields.length ) {
+            this.addField( ...fields );
+        }
+    }
 
     /**
      * dynamic DataModel

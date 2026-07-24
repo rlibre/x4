@@ -17,10 +17,16 @@
 :root {
 	--tickline-axis-color: var( --border );
 	--tickline-color: var( --accent-color );
+    --tickline-width: 1px;
 	--tickline-background: white;
 }
 
 .x4tickline {
 	position: relative;
 	background-color: var( --tickline-background );
+
+//    .tickline-line {
+//        stroke: var( --tickline-color );
+//        stroke-width: var( --tickline-width );
+//    }
 }

@@ -184,7 +184,7 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			return;
 		}
 		else {
-		this._ref.setStyle( nr );
+			this._ref.setStyle( nr );
 		}
 
 		const nrc = this._ref.getBoundingRect( );
