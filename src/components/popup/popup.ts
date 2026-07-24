@@ -145,10 +145,11 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		this._do_show( );		// to compute size
 
 		const fixpos = ( ) => {
-			const orc = this.getBoundingRect( );
+			const self = this.dom as HTMLElement;
+
 			this.setStyle( {
-				left: ((window.innerWidth - orc.width) / 2) +'px',
-				top:  ((window.innerHeight - orc.height) / 2) +'px',
+				left: ((document.body.offsetWidth - self.offsetWidth) / 2) +'px',
+				top:  ((document.body.offsetHeight - self.offsetHeight) / 2) +'px',
 			} );
 		}
 
