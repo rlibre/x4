@@ -3,7 +3,7 @@ import { Color } from '../../core/core_colors';
 import { Component, ComponentProps } from '../../core/component';
 
 import "./tickline.module.scss"
-import { class_ns } from '../../core/core_tools.ts';
+import { class_ns } from '../../core/core_tools';
 
 interface TickLineProps extends ComponentProps {
 	values: number[];

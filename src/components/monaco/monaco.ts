@@ -4,11 +4,10 @@ import { Component, ComponentProps } from '../../core/component';
 import Monaco from './bin/monaco'; 
 import "./monaco.module.scss"
 
-export type IMonarchLanguage = monaco.languages.IMonarchLanguage;
-export type CompletionItem = monaco.languages.CompletionItem;
-export type CompletionItemProvider = monaco.languages.CompletionItemProvider;
-
-export { IRange, }
+export type IMonarchLanguage = Monaco.languages.IMonarchLanguage;
+export type CompletionItem = Monaco.languages.CompletionItem;
+export type CompletionItemProvider = Monaco.languages.CompletionItemProvider;
+export type IRange = Monaco.IRange;
 
 
 interface MonacoEditorProps extends ComponentProps {
