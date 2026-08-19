@@ -100,6 +100,11 @@
 		}
 	}
 
+    &.with-menu> #label::after {
+        content: '\25be';
+        margin-left: 2px;
+    }
+    
 	&:focus {
 		background-color: var( --button-background-focus );
 		color: var( --button-color-focus );
