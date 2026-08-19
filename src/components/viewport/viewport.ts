@@ -18,6 +18,7 @@ import { class_ns } from '../../core/core_tools';
 import { Component, ComponentProps } from "../../core/component"
 
 import "./viewport.module.scss"
+import { Box, BoxProps } from '../components';
 
 /**
  * 
@@ -35,8 +36,8 @@ export class Viewport extends Component {
  */
 
 @class_ns( "x4" )
-export class ScrollView extends Component {
-	constructor( props: ComponentProps ) {
+export class ScrollView extends Box {
+	constructor( props: BoxProps ) {
 		super( props );
 		this.setContent( new Viewport( {} ) );
 	}
