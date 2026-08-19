@@ -113,6 +113,14 @@ export function unsafeHtml(x: string): UnsafeHtml {
 	return new UnsafeHtml(x);
 }
 
+/**
+ * you can use it recursively
+ * const value = "hello";
+ * const t = unsafe`<b>${ value }</b>`; // direct text
+ * const result = unsafe`<i> ${ t } ${ [t,t,t] } </i>`
+ * const result2 = unsafe`<i> ${ [t,t,t,"world"] } </i>`    // also mixes / array
+ */
+
 export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
 
     const resolve = ( value: any ) : string | UnsafeHtml => {
