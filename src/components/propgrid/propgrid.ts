@@ -50,10 +50,12 @@ export interface PropertyValue {
 export interface PropertyGroup {
 	title: string;
 	desc?: string;
+    name?: string;
 	icon?: string;
 	cls?: string;
 	collapsible?: boolean | number;  // -1 for collapsible+collapsed
 	items: PropertyValue[];
+    gadgets?: Component[];
 }
 
 export interface PropertyProps extends ComponentProps {
@@ -118,6 +120,9 @@ export class PropertyGrid extends VBox {
 				if( i ) {
 					const row = this.makePropertyRow(i);
 					row.addClass( idx&1 ? "even" : "odd" );
+                    if( g.name ) {
+                        row.setData( "group", g.name );
+                    }
 					
 					items.push( row );
 				}
@@ -163,13 +168,16 @@ export class PropertyGrid extends VBox {
 
 		const tr = new HBox({
 			cls,
+            flex: 1,
 			content: [
-				g.icon ? new Icon({ id: "icon", iconId: g.icon }) : null,
-				new VBox( { content: [
-					new SimpleText({ cls: "title", text: g.title }),
-					g.desc ? new SimpleText({ cls: "desc", text: g.desc }) : null,
-				]}),
-				g.collapsible? new Button({ icon: icons.updown, click: (e) => toggle(tr) }) : null,
+                new VBox( { flex: 1, content: [
+                    new HBox( { cls: 'hdr', content: [
+                        new Label({ flex:1, cls: "title", text: g.title, icon: g.icon }),
+                        g.gadgets ? new HBox( { cls: 'gadgets', content: g.gadgets } ) : null,
+				        g.collapsible? new Button({ icon: icons.updown, click: (e) => toggle(tr) }) : null,
+                    ]}),
+                    g.desc ? new SimpleText({ cls: "desc", text: g.desc }) : null,
+                ]}),    
 			]
 		});
 
@@ -352,5 +360,10 @@ export class PropertyGrid extends VBox {
 			this.setPropValue( p, props[p] );
 		}
 	}
+
+    enableGroup( group_name: string, ena = true ) {
+        const els = this.queryAll( `.row[data-group="${group_name}"]` );
+        els.forEach( x => x.enable( ena ) );
+    }
 }
 
