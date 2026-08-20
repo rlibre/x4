@@ -12,6 +12,8 @@
 	--propertygrid-odd-background: var(--color-primary-a5);
 	--propertygrid-even-background: transparent;
 	--propertygrid-disabled-background: rgb(170 170 170 / 14%);
+
+    --propertygrid-group-background: var( --color-primary-a5 );
 }
 
 .x4propertygrid {
@@ -43,7 +45,7 @@
 	.group {
 		padding: 6px 4px 4px 4px;
 		min-height: 2em;
-		background-color: var( --background-secondary );
+		background-color: var( --propertygrid-group-background );
 		margin-bottom: 8px;
         box-shadow: 4px 3px 8px rgba(0, 0, 0, 0.4);
         color: var(--color-primary-a50);
