@@ -45,13 +45,12 @@ const RE_NUMBER = /^-?\d+(\.\d*)?$/;
 
 function genClassNames( x: any ): string[] {
 	
-	const classes = [];
 	let self = Object.getPrototypeOf(x);
-
 	if( self.constructor==Component ) {
-		return ["x4-comp"];
+		return ["x4-comp","x4"];
 	}
 
+    const classes = [];
 	while (self && self.constructor !== Component ) {
 		const clsname:string = self.constructor.name;
 		const clsns: string = Object.prototype.hasOwnProperty.call(self.constructor,x4_class_ns_sym) ? self.constructor[x4_class_ns_sym] :  "";
@@ -59,6 +58,7 @@ function genClassNames( x: any ): string[] {
 		self = Object.getPrototypeOf(self);
 	}
 
+    classes.push( "x4" );
 	return classes;
 }
 
