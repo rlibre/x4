@@ -270,6 +270,12 @@ export namespace data {
 
 export class DataModel<T = any> {
 
+	constructor( fields?: FieldInfo[] ) {
+		if( fields ) {
+			this.addField( ...fields );
+		}
+	}
+	
     /**
      * dynamic DataModel
      */
