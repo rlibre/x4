@@ -74,7 +74,7 @@ export interface GridviewEvents extends ComponentEvents {
 }
 
 export interface GridviewProps extends ComponentProps {
-	footer?: boolean;
+	footer?: boolean | Component;
 	store: DataStore;
 	columns: GridColumn[];
 	emptyMsg?: string;
@@ -180,7 +180,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this._vis_rows = new Map();
 		this._selection = new Set();
 		this._has_fixed = false;
-		this._has_footer = props.footer;
+		this._has_footer = props.footer===true;
+
+        if( props.footer instanceof Component ) {
+            props.footer.addClass( "gadget-footer packed" );
+        }
 
 		this._columns = props.columns.map(x => x);
 
@@ -559,41 +563,45 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	private _buildColFooter(fixed: boolean) {
-		// row header
-		const els: Component[] = [];
+	private _buildColFooter(fixed: boolean): Box {
 
-		const count = this._getColCount();
-		for (let col = 0; col < count; col++) {
-			const cdata = this._getCol(col);
-			if ((!!cdata.fixed) != fixed) {
-				continue;
-			}
+        if( !this.props.footer ) {
+            return null;
+        }
 
-			const cell = new Component({
-				cls: `cell`,
-				attrs: { "data-col": col },
-				style: { width: cdata.width ? cdata.width + "px" : undefined },
-				content: [
-					new SimpleText({ text: cdata.footer_val }),
-				]
-			});
+        // row footer
+        const els: Component[] = [];
 
-			cell.addDOMEvent("dblclick", () => {
-				this._sortCol(col);
-			});
+        const count = this._getColCount();
+        for (let col = 0; col < count; col++) {
+            const cdata = this._getCol(col);
+            if ((!!cdata.fixed) != fixed) {
+                continue;
+            }
 
-			els.push(cell);
-		}
+            const cell = new Component({
+                cls: `cell`,
+                attrs: { "data-col": col },
+                style: { width: cdata.width ? cdata.width + "px" : undefined },
+                content: [
+                    new SimpleText({ text: cdata.footer_val }),
+                ]
+            });
 
-		if (fixed && els.length == 0) {
-			return null;
-		}
+            cell.addDOMEvent("dblclick", () => {
+                this._sortCol(col);
+            });
 
-		const header = new Box({ cls: "col-footer", content: els });
-		header.setClass("fixed", fixed);
+            els.push(cell);
+        }
 
-		return header;
+        if (fixed && els.length == 0) {
+            return null;
+        }
+
+        const footer = new Box({ cls: "col-footer", content: els });
+        footer.setClass("fixed", fixed);
+        return footer;
 	}
 
 	/**
@@ -790,9 +798,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			const extra: string[] = []
 			const content = this._renderCell(rec, cdata, extra );
 
-			let align = "start";
+			let align: string;
 			switch (cdata.align) {
-				default: align = "start"; break;
 				case "center": align = "center"; break;
 				case "right": align = "end"; break;
 			}
@@ -1128,12 +1135,16 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this._hheader = this._buildColHeader(false);
 		this._vheader = new Box({ cls: "row-header" })
 
-		if (this._has_footer) {
+        let rfooter: Component = null;
+		if (this._has_footer===true ) {
 			this._ffooter = this._buildColFooter(true);
 			this._footer = this._buildColFooter(false);
 		}
+        else if( this.props.footer ) {
+            rfooter = this.props.footer as Component
+        }
 
-		this.setContent([this._viewport, this._fheader, this._hheader, this._ffooter, this._footer, this._vheader]);
+		this.setContent([this._viewport, this._fheader, this._hheader, this._ffooter, this._footer, rfooter, this._vheader]);
 
 		// compute misc variables
 		{

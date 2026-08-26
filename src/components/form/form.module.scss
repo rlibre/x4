@@ -21,18 +21,18 @@
 }
 
 .x4form {
-	@extend %vbox;
+    @extend %vbox;
 	@extend %flex;
-
-	padding: 16px;
+    
+    padding: 16px;
 	background-color: var( --color-form );
+	
+    &.horizontal {
+        flex-direction: row;
+    }
 
 	&.no-flex {
 		flex-grow: 0;
-	}
-
-	&>.xcontainer {
-
 	}
 }
 

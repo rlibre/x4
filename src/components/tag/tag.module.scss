@@ -44,6 +44,8 @@
 
 	&> .x4simpletext {
 		padding: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 	}
 
 	&.alert {

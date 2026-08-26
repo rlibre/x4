@@ -43,48 +43,66 @@
 	.group {
 		padding: 6px 4px 4px 4px;
 		min-height: 2em;
-		font-weight: bold;
-		background-color: white;
-		color: var(--color-primary-a50);
+		background-color: var( --background-secondary );
+		margin-bottom: 8px;
+        box-shadow: 4px 3px 8px rgba(0, 0, 0, 0.4);
+        color: var(--color-primary-a50);
+        display: flex;
+		align-items: center;
+		padding: 8px;
+		gap: 8px;
 
-		.x4box > .desc {
-			font-style: italic;
-			font-weight: normal;
-			font-size: 90%;
-			color: var( --text-ternary );
-		}
+        &.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+		
+        .hdr {
+            &>.gadgets {
+                gap: 8px;
+                &> .x4 {
+                    margin: 0;
+                    padding: 0;
+                }
+            }
+
+            .title {
+                font-weight: bold;
+            }
+            
+            &>.x4button {
+                background-color: transparent;
+                color: var(--color-primary-a50);
+            }
+         
+            &>.x4label {
+                .x4icon {
+                    .fa-secondary,
+                    .fa-primary {
+                        fill: var( --color-primary-a50 );
+                    }
+
+                    width: 1em;
+                    height: 1em;
+                }
+            }
+        }
+
+        &>.desc {
+            font-style: italic;
+            font-weight: normal;
+            font-size: 90%;
+            color: var( --text-ternary );
+        }
 
 		&:not(:first-child ) {
-			border-top: 1px solid var(--color-primary-a50);
+			//border-top: 1px solid var(--color-primary-a50);
 		}
 
 		&:not( :last-child ) {
 			border-bottom: 1px solid var(--color-primary-a50);
 			//box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
-		}
-		
-		display: flex;
-		align-items: center;
-		padding-left: 8px;
-		gap: 8px;
-
-		&>.x4box {
-			flex-grow: 1;
-		}
-
-		&>.x4icon {
-			.fa-secondary,
-			.fa-primary {
-				fill: var( --color-primary-a50 );
-			}
-
-			width: 1em;
-			height: 1em;
-		}
-
-		&>.x4button {
-			background-color: transparent;
-			color: var(--color-primary-a50);
 		}
 	}
 

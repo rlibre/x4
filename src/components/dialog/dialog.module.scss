@@ -70,11 +70,13 @@
 
 		&> .x4button {
 			min-width: 80px;
+            #label {
+                white-space: nowrap;
+            }
 			
 			.x-simple-label {
 				text-align: center;
 			}
-
 		}
 	}
 }

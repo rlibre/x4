@@ -113,11 +113,38 @@ export function unsafeHtml(x: string): UnsafeHtml {
 	return new UnsafeHtml(x);
 }
 
+/**
+ * you can use it recursively
+ * const value = "hello";
+ * const t = unsafe`<b>${ value }</b>`; // direct text
+ * const result = unsafe`<i> ${ t } ${ [t,t,t] } </i>`
+ * const result2 = unsafe`<i> ${ [t,t,t,"world"] } </i>`    // also mixes / array
+ */
+
 export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
+
+    const resolve = ( value: any ) : string | UnsafeHtml => {
+        let v: string;
+        if( !value ) {
+            return "";
+        }
+        
+        if( isArray( value ) ) {
+            return value.map( resolve ).join( '' );
+        }
+
+        if ( value instanceof UnsafeHtml ) {
+            return value.toString();
+        }
+
+        return sanitizeHtml(value);
+    }
+
 	const result = strings.reduce((acc, str, i) => {
-		return acc + str + sanitizeHtml(values[i] ?? '');
+        return acc + str + resolve( values[i] );
 	}, '');
-	return unsafeHtml(result);
+
+	return new UnsafeHtml(result);
 }
 
 /**

@@ -136,6 +136,10 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 		if( props.tabindex!==false ) {
 			this.setAttribute( 'tabindex', props.tabindex );
 		}
+
+        if( props.menu ) {
+            this.addClass( "with-menu" );
+        }
 	}
 
 	/**

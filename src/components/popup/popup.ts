@@ -431,8 +431,11 @@ class CMover {
 		this.self = ref ? true : false;
 
 		const mouseDown = ( e: PointerEvent ) => {
-			if( this.self && e.target && (e.target as HTMLElement).tagName!=="DIV" ) {
-				return;
+			if( this.self && e.target ) {
+                const clickable = (e.target as HTMLElement).closest('button, input, a, [role="button"]');
+                if( clickable ) {
+				    return;
+                }
 			}
 
 			x.setCapture( e.pointerId );
