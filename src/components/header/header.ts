@@ -18,6 +18,8 @@ interface HeaderProps extends Omit<ComponentProps,"content"> {
 	target?: Component;	// target element to set header col variable width var( --{name}-width ) parent element if not set
 }
 
+const CELL_MW = 8;
+
 /**
  * by default when a header item is resized, the 'target' style '--{name}-width' is updated
  * 
@@ -63,10 +65,19 @@ export class Header extends HBox<HeaderProps> {
 				this._calc_sizes( );
 			})
 
+			sizer.on( "start", ( ) => {
+				//todo: remove flex on all cols
+			} );
+
+			sizer.on( "stop", ( ) => {
+				//todo: restore flex
+			} );
+
 			sizer.on( "resize", ( ev ) => {
 				//cell.setStyleValue( "flexGrow", "0" );
+				const sze = ev.size<CELL_MW ? CELL_MW : ev.size;
 				cell.setInternalData("flex",0);
-				cell.setInternalData("width",ev.size);
+				cell.setInternalData("width",sze);
 				this._calc_sizes( );
 			});
 
@@ -129,6 +140,10 @@ export class Header extends HBox<HeaderProps> {
 				width = c.getInternalData( "width" );
 			}
 
+			if( width<CELL_MW ) {
+				width = CELL_MW;
+			}
+
 			c.setWidth( width );
 
 			const item = c.getInternalData<HeaderItem>( 'data' );
@@ -137,7 +152,7 @@ export class Header extends HBox<HeaderProps> {
 				this.parentElement().setStyleVariable( `--${item.name}-width`, width + "px");
 			}
 			else {
-			this.props.target?.setStyleVariable( `--${item.name}-width`, width + "px");
+				this.props.target?.setStyleVariable( `--${item.name}-width`, width + "px");
 			}
 			
 			fullw += width;
