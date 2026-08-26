@@ -8,7 +8,7 @@
  * @file core_data.ts
  * @author Etienne Cochard 
  * 
- * @copyright (c) 2026 R-libre ingenierie
+ * @copyright (c) 2024 R-libre ingenierie
  *
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
@@ -78,7 +78,18 @@ const metaFields = Symbol( 'metaField' );
 function _getMetas( obj: object, create = true ) : MetaInfos {
 	
 	let ctor = obj.constructor as any;
-	let mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
+	let mfld = null;
+	let direct = false;
+
+	// comming from new DataModel(...)
+	if( ctor.name=="DataModel" ) {
+		direct = true;
+		mfld = (obj as any)[metaFields];
+	}
+	// standard @data....
+	else {
+		mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
+	}
 	
 	if( mfld===undefined ) {
 		if( !create && ctor!=DataModel ) {
@@ -102,7 +113,12 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
             }	
         }
 
-		(obj.constructor as any)[metaFields] = mfld;
+		if( !direct ) {
+			(obj.constructor as any)[metaFields] = mfld;
+		}
+		else {
+			(obj as any)[metaFields] = mfld;
+		}
 	}
 
 	return mfld;
@@ -119,17 +135,17 @@ export namespace data {
 	**/
 
 	export function id( ) {
-        return ( ownerCls: any, fldName: string ) => {
-            let metas = _getMetas( ownerCls );
-            metas.fields.push( {
-                name: fldName,
-                type: 'any',
-                required: true,
-            });
+	return ( ownerCls: any, fldName: string ) => {
+		let metas = _getMetas( ownerCls );
+		metas.fields.push( {
+			name: fldName,
+			type: 'any',
+			required: true,
+		});
 
-            metas.id = fldName;
-        }
-    }
+		metas.id = fldName;
+	}
+}
 
 	/**
 	 * @ignore
@@ -254,12 +270,6 @@ export namespace data {
 
 export class DataModel<T = any> {
 
-    constructor( fields?: FieldInfo[] ) {
-        if( fields && fields.length ) {
-            this.addField( ...fields );
-        }
-    }
-
     /**
      * dynamic DataModel
      */
@@ -270,11 +280,11 @@ export class DataModel<T = any> {
         }
 
         let metas = _getMetas( this, false );
-        if( metas.fields.length==0 ) {
+        metas.fields.push( ...fields );
+
+	    if( !metas.id ) {
             metas.id = fields[0].name;
         }
-
-        metas.fields.push( ...fields );
     }
 
 	/**
@@ -523,24 +533,16 @@ export class DataProxy extends CoreElement<DataEventMap> {
 			url += '?' + this.m_props.params.join( '&' );
 		}
 
-		try {
-			const r = await fetch( url );
-			if( r.ok ) {
-				const raw = await r.json( );
-				
-				let json = raw;
-				if( this.m_props.solver ) {
-					json = this.m_props.solver( json );
-				}
+		const r = await fetch( url );
+		if( r.ok ) {
+			const raw = await r.json( );
+			
+			let json = raw;
+			if( this.m_props.solver ) {
+				json = this.m_props.solver( json );
+			}
 
-				this.fire( 'change', {value:json,context:raw} );
-			}
-			else {
-				console.error( r.statusText );
-			}
-		}
-		catch( e ) {
-			console.error( e );
+			this.fire( 'change', {value:json,context:raw} );
 		}
 	}
 }
@@ -608,6 +610,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 	/**
 	 * 
+	 * @param records 
 	 */
 
 	async load( url?: string ) {
@@ -671,7 +674,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 	/**
 	 * 
-	 * @param rec
+	 * @param data 
 	 */
 
 	public appendRaw( rec: T ) {
@@ -1211,6 +1214,8 @@ export class DataView extends CoreElement<DataViewEventMap>
 
 	/**
 	 * 
+	 * @param columns 
+	 * @param ascending 
 	 */
 
 	public sort( props: SortProp[] ) {
