@@ -56,7 +56,7 @@
 		}
 	}
 
-	.x4label:has(.empty) {
+	.x4label#text:has(.empty) {
 		display: none;
 	}
 

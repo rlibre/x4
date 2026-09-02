@@ -49,7 +49,9 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 		super( { ...props, tag: "textarea" } );
 
 		this.setAttribute( "name", props.name );
-		this.setAttribute( "value", props.value+'' );
+		if( props.value ) {
+			this.setAttribute( "value", props.value+'' );
+		}
 
 		if( props.resize!==undefined ) {
 			this.setStyleValue( "resize", props.resize===false ? "none" : props.resize as string );
@@ -112,9 +114,12 @@ export class TextArea extends VBox {
 	constructor( props: TextAreaProps ) {
 		super( props );
 
+
+		const { label, value, resize, readonly, trim, name } = props;
+
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new SimpleTextArea( props )
+			this._input = new SimpleTextArea( { label,value,resize,readonly,trim } )
 		])
 	}
 
