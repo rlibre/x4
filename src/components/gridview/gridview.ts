@@ -989,7 +989,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		this._viewport = new Viewport({ content: this._body });
 
-		if (!this._has_footer) {
+		if (!this.props.footer) {
 			this.setStyleVariable("--footer-height", "0");
 		}
 
