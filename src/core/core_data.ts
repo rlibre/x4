@@ -275,7 +275,7 @@ export class DataModel<T = any> {
 			this.addField( ...fields );
 		}
 	}
-	
+
     /**
      * dynamic DataModel
      */
@@ -1083,7 +1083,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 			} );
 		}
 
-		return result>=0 ? this.getByIndex(result) : null;
+		return result>=0 ? this.m_records[result] : null;
 	}
 
 	export( ) {
