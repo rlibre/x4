@@ -172,22 +172,35 @@ export class Menu extends Popup {
 
 		this.addClass( "x4vbox" );
 
-		const children = props.items?.map( itm => {
-			if( itm==="-" ) {
-				return new CMenuSep( );
-			}
-			else if( isString(itm) ) {
-				return new CMenuItem( { text: itm, click: null, cls: 'title' } );
-			}
-			else if( itm instanceof Component ) {
-				return itm;
-			}
-			else {
-				return new CMenuItem( itm );
-			}
-		});
+		if( props.items ) {
+			let children = props.items.filter( x=> !!x);
 
-		this.setContent( children );
+			// trim separators
+			while( children.at(0)=='-' ) {
+				children.shift( );
+			}
+
+			while( children.at(-1)=='-' ) {
+				children.pop( );
+			}
+
+			const items = children.map( itm => {
+					if( itm==="-" ) {
+						return new CMenuSep( );
+					}
+					else if( isString(itm) ) {
+						return new CMenuItem( { text: itm, click: null, cls: 'title' } );
+					}
+					else if( itm instanceof Component ) {
+						return itm;
+					}
+					else {
+						return new CMenuItem( itm );
+					}
+				});
+
+			this.setContent( items );
+		}
 	}
 }
 
