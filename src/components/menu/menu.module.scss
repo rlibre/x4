@@ -17,7 +17,7 @@
 @use "../shared.scss";
 
 :root {
-	--menu-background: var( --background-ternary );
+	--menu-background: white;
 	--menu-border: var( --border-hover );
 
 	--menuitem-color: var( --text-ternary );;
