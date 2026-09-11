@@ -57,6 +57,7 @@ export interface GridColumn {
 	formatter?: (input: any) => string;	// for "custom" type
 	type?: ColType;
 	cls?: string;
+    tooltip?: boolean;  // allow tooltip for each cell of thi column
 	sortable?: boolean | SortCallback;
 	footer_val?: string;
 	classifier?: CellClassifier;
@@ -777,7 +778,12 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			}
 		}
 
-		return new Component({ tag: "span", cls, content: data });
+		return new Component({ 
+            tag: "span", 
+            cls, 
+            content: data,
+            tooltip: column.tooltip ? data : undefined
+        });
 	}
 
 	/**
