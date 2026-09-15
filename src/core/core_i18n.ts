@@ -26,8 +26,6 @@
     translations: any;
 }
 
-const sym_lang = Symbol( "i18n" );
-
 let languages: Record<string,Language> = {
 };
 
@@ -211,7 +209,46 @@ function _findBaseTrans( base: any ) {
 	return undefined;
 }
 
-export let _tr: Partial<typeof fr> = {};
+/**
+ * current language state
+ */
+
+const current = {
+	name: "",
+	translations: {} as any,
+};
+
+/**
+ * stable translation object: forwards every access to the current language,
+ * so references to _tr stay valid after selectLanguage
+ */
+
+const tr_handler: ProxyHandler<any> = {
+	get( _target, prop ) {
+		return current.translations[prop];
+	},
+
+	has( _target, prop ) {
+		return prop in current.translations;
+	},
+
+	ownKeys( ) {
+		return Reflect.ownKeys( current.translations );
+	},
+
+	getOwnPropertyDescriptor( _target, prop ) {
+		const value = current.translations[prop];
+
+		if( value === undefined ) {
+			return undefined;
+		}
+
+		return { value, enumerable: true, configurable: true };
+	},
+};
+
+export const _tr: Partial<typeof fr> = new Proxy( {}, tr_handler );
+ 
 
 /**
  * select the given language as current
@@ -224,8 +261,9 @@ export function selectLanguage( name: string ) {
 		return;
 	}
 
-	_tr = languages[name].translations;
-	(_tr as any)[sym_lang] = name;
+	current.name = name;
+	current.translations = languages[name].translations;
+
 	return _tr;
 }
 
@@ -234,7 +272,7 @@ export function selectLanguage( name: string ) {
  */
 
 export function getCurrentLanguage( ): string {
-	return (_tr as any)[sym_lang];
+	return current.name;
 }
 
 /**
@@ -359,8 +397,8 @@ let en = {
 		day_short: [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ],
 		day_long: [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
 
-		month_short: [ 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jui', 'aug', 'sep', 'oct', 'nov', 'dec' ],
-		month_long: [ 'january', 'february', 'march', 'april', 'mau', 'june', 'jully', 'august', 'september', 'october', 'november', 'december' ],
+		month_short: [ 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec' ],
+		month_long: [ 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december' ],
 
 		property: 'Property',
 		value: 'Value',
