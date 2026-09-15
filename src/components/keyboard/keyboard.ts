@@ -425,6 +425,10 @@ export class Keyboard extends HBox<KeyboardProps>
         text = cb.call( this, caret, text, String.fromCharCode(key) );
         this.input.value = text;
         this._restoreCaretPos(caret);
+
+        //<eco: fire change event
+        this.input.dispatchEvent(new Event('input',  { bubbles: true }));
+        this.input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     /**
