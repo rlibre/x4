@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { sassPlugin } from "esbuild-sass-plugin";
 import { lessPlugin } from "./less-plugin.mjs";
 import { copyPlugin } from "./copy-plugin.mjs";
+import { rawFilePlugin } from "./rawfile-plugin.mjs";
 
 const cliDir = path.dirname(fileURLToPath(import.meta.url));
 const devClient = path.join(cliDir, "dev-client.js");
@@ -28,7 +29,7 @@ export function createBuildOptions(config, mode) {
         format: "iife",
         target: "es2020",
         minify: production,
-        sourcemap: production ? false : "inline",
+        sourcemap: production ? false : "linked",
         logLevel: "info",
         external: config.external,
         assetNames: "assets/[name]-[hash]",
@@ -47,6 +48,10 @@ export function createBuildOptions(config, mode) {
             VERSION_ID: versionId(),
         },
         plugins: [
+			rawFilePlugin({
+				filter: /\.svg$/,
+				mime: "image/svg+xml",
+			}),
             sassPlugin({
                 type: "css",
                 filter: /\.s[ac]ss$/,

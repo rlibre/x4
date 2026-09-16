@@ -132,7 +132,7 @@ export function loadConfig(root = process.cwd(), env = process.env) {
         })),
         external: [...external],
         define: { ...define },
-        dev: {
+		dev: {
             host,
             port,
             https,
