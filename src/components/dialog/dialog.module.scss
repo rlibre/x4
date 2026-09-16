@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-@import "../shared.scss";
+@use "../shared";
 
 :root {
 	--color-dialog-caption: var( --color-primary-a80 );
