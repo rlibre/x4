@@ -1,50 +1,50 @@
 {
-	"name": "x4js",
-	"version": "2.3.0",
-	"type": "module",
-	"main": "src/x4.ts",
-	"module": "src/x4.ts",
-	"types": "src/x4.ts",
-	"exports": {
-		".": "./src/x4.ts",
-		"./monaco": "./src/components/monaco/monaco.ts"
-	},
-	"bin": {
-	    "x4js": "./bin/x4js.mjs"
-	},
-	"scripts": {
-		"build-publish": "deno run --allow-all ./publish.ts",
-		"build-doc": "typedoc",
-		"build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
-	},
-	"files": [
-		"src",
-		"bin",
-		"cli",
-		"README.md",
-		"LICENSE"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/rlibre/x4.git"
-	},
-	"homepage": "https://x4js.org",
-	"keywords": [
-		"typescript",
-		"framework",
-		"sap",
-		"web",
-		"desktop",
-		"application"
-	],
-	"dependencies": {
-		"esbuild": "0.28",
-		"esbuild-sass-plugin": "^3.7"
-	},
-	"devDependencies": {
-		"typescript": "^5.8.3",
-		"typedoc": "^0.28.19",
-		"typedoc-plugin-markdown": "latest",
-		"typedoc-plugin-missing-exports": "latest"
-	}
+  "name": "x4js",
+  "version": "2.3.1",
+  "type": "module",
+  "main": "src/x4.ts",
+  "module": "src/x4.ts",
+  "types": "src/x4.ts",
+  "exports": {
+    ".": "./src/x4.ts",
+    "./monaco": "./src/components/monaco/monaco.ts"
+  },
+  "bin": {
+    "x4js": "./bin/x4js.mjs"
+  },
+  "scripts": {
+    "build-publish": "deno run --allow-all ./publish.ts",
+    "build-doc": "typedoc",
+    "build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts"
+  },
+  "files": [
+    "src",
+    "bin",
+    "cli",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlibre/x4.git"
+  },
+  "homepage": "https://x4js.org",
+  "keywords": [
+    "typescript",
+    "framework",
+    "sap",
+    "web",
+    "desktop",
+    "application"
+  ],
+  "dependencies": {
+    "esbuild": "0.28",
+    "esbuild-sass-plugin": "^3.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "latest",
+    "typedoc-plugin-missing-exports": "latest"
+  }
 }
