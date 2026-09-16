@@ -33,12 +33,6 @@ async function ensureEmptyTarget(target) {
     }
 }
 
-async function clearDirectory(target) {
-    const entries = await fs.readdir(target, { withFileTypes: true });
-    await Promise.all(entries.map((entry) =>
-        fs.rm(path.join(target, entry.name), { recursive: true, force: true })
-    ));
-}
 
 async function patchPackage(target, projectName, version) {
     const filename = path.join(target, "package.json");
@@ -126,6 +120,7 @@ export async function create(argv = [], { version = "unknown", cwd = process.cwd
         throw new Error(`Unknown template '${values.template}'. Run 'x4js templates' to list templates.`);
 
     const targetCreated = await ensureEmptyTarget(target);
+    let projectReady = false;
     info("create", target);
     info("template", values.template);
 
@@ -142,6 +137,7 @@ export async function create(argv = [], { version = "unknown", cwd = process.cwd
         }));
 
         await patchPackage(target, projectName, version);
+        projectReady = true;
 
         if (!values["no-install"]) {
             info("install", "npm");
@@ -151,10 +147,11 @@ export async function create(argv = [], { version = "unknown", cwd = process.cwd
         success("created", target);
     }
     catch (error) {
-        if (targetCreated)
+        // Never remove a directory that existed before `x4js create`.
+        // Once package.json has been patched, the project is considered
+        // created and is also kept if `npm install` fails.
+        if (targetCreated && !projectReady)
             await fs.rm(target, { recursive: true, force: true });
-        else
-            await clearDirectory(target);
         throw error;
     }
 }

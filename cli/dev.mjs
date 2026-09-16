@@ -52,7 +52,7 @@ function serverUrl(host, port, https) {
         displayHost = "[::1]";
     else if (host.includes(":") && !host.startsWith("["))
         displayHost = `[${host}]`;
-    return `${https ? "https" : "http"}://${displayHost}:${port}/`;
+    return `${https ? "https" : "http"}://${displayHost}:${port}`;
 }
 
 export async function dev(argv = [], root = process.cwd()) {
@@ -85,15 +85,17 @@ export async function dev(argv = [], root = process.cwd()) {
     async function start(config) {
         const host = values.host ?? config.dev.host;
         const port = values.port === undefined ? config.dev.port : Number(values.port);
-        if (port < 0 || port > 65535)
+        if (port !== undefined && (port < 0 || port > 65535))
             throw new Error("--port must be between 0 and 65535");
 
         const useHttps = protocolConfig(config, values);
         const serveOptions = {
             host,
-            port,
             servedir: config.outdir,
         };
+
+        if (port !== undefined)
+            serveOptions.port = port;
 
         if (useHttps)
             Object.assign(serveOptions, resolveTls(config));
@@ -108,7 +110,7 @@ export async function dev(argv = [], root = process.cwd()) {
             const url = serverUrl(actualHost, result.port, useHttps);
             info("mode", "dev");
             info("outdir", config.outdir);
-            success("listening", url);
+            success("server", url);
 
             if (values.open && !browserOpened) {
                 browserOpened = true;

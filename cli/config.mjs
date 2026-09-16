@@ -9,7 +9,6 @@ const DEFAULTS = Object.freeze({
     define: {},
     dev: {
         host: "127.0.0.1",
-        port: 8000,
         https: false,
     },
 });
@@ -96,8 +95,8 @@ export function loadConfig(root = process.cwd(), env = process.env) {
     if (typeof host !== "string" || !host)
         throw new Error("x4.dev.host must be a non-empty string");
 
-    const port = devCfg.port ?? DEFAULTS.dev.port;
-    if (!Number.isInteger(port) || port < 0 || port > 65535)
+    const port = devCfg.port;
+    if (port !== undefined && (!Number.isInteger(port) || port < 0 || port > 65535))
         throw new Error("x4.dev.port must be an integer between 0 and 65535");
 
     const https = devCfg.https ?? DEFAULTS.dev.https;
