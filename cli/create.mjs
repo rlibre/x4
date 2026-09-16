@@ -66,18 +66,39 @@ async function patchPackage(target, projectName, version) {
 }
 
 async function npmInstall(target) {
-    const command = process.platform === "win32" ? "npm.cmd" : "npm";
+    let command;
+    let args;
+
+    if (process.platform === "win32") {
+        command = process.env.ComSpec || "cmd.exe";
+        args = ["/d", "/s", "/c", "npm install"];
+    }
+    else {
+        command = "npm";
+        args = ["install"];
+    }
+
     await new Promise((resolve, reject) => {
-        const child = spawn(command, ["install"], {
+        const child = spawn(command, args, {
             cwd: target,
             stdio: "inherit",
         });
+
         child.on("error", reject);
+
         child.on("exit", (code, signal) => {
-            if (code === 0)
+            if (code === 0) {
                 resolve();
-            else
-                reject(new Error(`npm install failed${signal ? ` (${signal})` : ` (exit ${code})`}`));
+                return;
+            }
+
+            reject(
+                new Error(
+                    `npm install failed${
+                        signal ? ` (${signal})` : ` (exit ${code})`
+                    }`
+                )
+            );
         });
     });
 }
