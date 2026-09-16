@@ -4,6 +4,7 @@ import esbuild from "esbuild";
 import { loadConfig } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
 import { info, success } from "./log.mjs";
+import { printBuildError} from "./diagnostic-plugin.mjs";
 
 export async function build(argv = [], root = process.cwd()) {
     const { values, positionals } = parseArgs({
@@ -28,6 +29,19 @@ export async function build(argv = [], root = process.cwd()) {
     await fs.mkdir(config.outdir, { recursive: true });
 
     const started = performance.now();
-    await esbuild.build(createBuildOptions(config, mode));
-    success("built", `${Math.round(performance.now() - started)}ms`);
+	const options = createBuildOptions(config, mode);
+
+	try {
+		const result = await esbuild.build(options);
+		if (result.warnings.length)
+			await printWarnings(result.warnings);
+
+		logSuccess(`built      ${Date.now() - start}ms`);
+	}
+	catch (error) {
+		await printBuildError(error);
+		process.exitCode = 1;
+	}
+
+	success("built", `${Math.round(performance.now() - started)}ms`);
 }

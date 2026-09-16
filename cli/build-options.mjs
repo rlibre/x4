@@ -4,6 +4,7 @@ import { sassPlugin } from "esbuild-sass-plugin";
 import { lessPlugin } from "./less-plugin.mjs";
 import { copyPlugin } from "./copy-plugin.mjs";
 import { rawFilePlugin } from "./rawfile-plugin.mjs";
+import { diagnosticsPlugin } from "./diagnostic.mjs";
 
 const cliDir = path.dirname(fileURLToPath(import.meta.url));
 const devClient = path.join(cliDir, "dev-client.js");
@@ -26,6 +27,7 @@ export function createBuildOptions(config, mode) {
         charset: "utf8",
         keepNames: true,
         platform: "browser",
+		logLevel: "silent",
         format: "iife",
         target: "es2020",
         minify: production,
@@ -58,6 +60,9 @@ export function createBuildOptions(config, mode) {
             }),
             lessPlugin(config.root),
             copyPlugin(config, { dev }),
+
+			//last
+			...(dev ? [diagnosticsPlugin()] : []),
         ],
     };
 
