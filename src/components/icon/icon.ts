@@ -133,7 +133,6 @@ export class Icon extends Component<IconProps> {
      * import myicon from "./myicon.svg";
      * setIcon(myicon);
      */
-
 	setIcon( iconId: string ) {
 		this.clearContent( );
 			
@@ -147,6 +146,9 @@ export class Icon extends Component<IconProps> {
 
 			if( iconId.startsWith("data:image/svg+xml,<svg") ) {
 				this.dom.insertAdjacentHTML('beforeend', iconId.substring(19) );
+			}
+			else if( iconId.startsWith("data:image/svg+xml;base64,") ) {
+				this.dom.insertAdjacentHTML('beforeend', atob(iconId.substring(26)) );
 			}
 			else if( iconId.startsWith("<svg") ) {	// raw
 				this.dom.insertAdjacentHTML('beforeend', iconId );
