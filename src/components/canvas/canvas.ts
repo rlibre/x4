@@ -93,11 +93,11 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 	 * redraw the canvas (force a paint)
 	 */
 
-	private $update_rep = 0;
+	#update_rep = 0;
 	public redraw(wait?: number) {
 
 		if (wait !== undefined) {
-			if( ++this.$update_rep>=20 ) {
+			if( ++this.#update_rep>=20 ) {
 				this.clearTimeout( 'update' );
 				this._paint( );
 			}
@@ -115,67 +115,63 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 	 * 
 	 */
 
+	#pixel_ratio = -1		// can change when moving to another screen
 	private _paint() {
-		this.$update_rep = 0;
+		this.#update_rep = 0;
 
-		let dom = this.dom;
-		if (!this.isVisible() ) {
+		if (!this.isVisible()) {
 			return;
 		}
 
-		//const canvas = this.m_canvas.dom as HTMLCanvasElement;
+		const dom = this.dom;
 		const w = dom.clientWidth;
 		const h = dom.clientHeight;
 
+		if (!w || !h) {
+			return;
+		}
+
 		const ctx = this.getContext();
-		if (w != this.m_iwidth || h != this.m_iheight) {
-			// adjustment for HDPI
-			let devicePixelRatio = window.devicePixelRatio || 1;
-			let backingStoreRatio = (<any>ctx).webkitBackingStorePixelRatio ||
-				(<any>ctx).mozBackingStorePixelRatio ||
-				(<any>ctx).msBackingStorePixelRatio ||
-				(<any>ctx).oBackingStorePixelRatio ||
-				(<any>ctx).backingStorePixelRatio || 1;
+		const ratio = window.devicePixelRatio || 1;
 
-			let canvas = this.canvas;
+		if (
+			w !== this.m_iwidth ||
+			h !== this.m_iheight ||
+			ratio !== this.#pixel_ratio
+		) {
+			const canvas = this.canvas;
 
-			if ( this.m_scale != 1.0 ) { //devicePixelRatio !== backingStoreRatio || this.m_scale != 1.0) {
-				let ratio = 1;	//devicePixelRatio / backingStoreRatio,
-				const rw = w * ratio;
-				const rh = h * ratio;
-
-				canvas.setAttribute('width', '' + rw);
-				canvas.setAttribute('height', '' + rh);
-				canvas.setStyleValue('width', w);
-				canvas.setStyleValue('height', h);
-
-				ratio *= this.m_scale;
-				ctx.scale(ratio, ratio);
-			}
-			else {
-				canvas.setAttribute('width', '' + w);
-				canvas.setAttribute('height', '' + h);
-				canvas.setStyleValue('width', w);
-				canvas.setStyleValue('height', h);
-				ctx.scale(1, 1);
-			}
+			// CSS size stays in logical pixels, while the backing buffer
+			// uses the physical screen resolution.
+			canvas.setAttribute('width', '' + Math.round(w * ratio));
+			canvas.setAttribute('height', '' + Math.round(h * ratio));
+			canvas.setStyleValue('width', w);
+			canvas.setStyleValue('height', h);
 
 			this.m_iwidth = w;
 			this.m_iheight = h;
+			this.#pixel_ratio = ratio;
 		}
 
-		if (w && h) {
-			let cc = createPainter(ctx, w, h);
-			if (this.props.clear) {
-				
-				cc.clearRect(0,0,w/this.m_scale,h/this.m_scale);
-			}
+		// setTransform avoids accumulating transformations between paints.
+		const scale = ratio * this.m_scale;
+		ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
-			cc.save();
-			cc.translate(-0.5, -0.5);
-			this.paint(cc);
-			cc.restore();
+		const cc = createPainter(ctx, w, h);
+
+		if (this.props.clear) {
+			cc.clearRect(
+				0,
+				0,
+				w / this.m_scale,
+				h / this.m_scale
+			);
 		}
+
+		cc.save();
+		cc.translate(-0.5, -0.5);
+		this.paint(cc);
+		cc.restore();
 	}
 
 	protected paint(ctx: CanvasEx ) {

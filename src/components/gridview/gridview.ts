@@ -391,15 +391,15 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 	}
 
+	/*
 	setColumns( columns: GridColumn[] ) {
 		this._columns = columns.map(x => x);
+
 		if( this.dom ) {
-			
 			this._updateFlexs( );
 			
 			// Rebuild headers
 			if (this._fheader) {
-				/*
 				const newFixedHeader = this._buildColHeader(true);
 				this._fheader.setContent(newFixedHeader.getChildren());
 				// On doit remplacer _fheader dans le DOM ou mettre à jour son contenu
@@ -444,14 +444,13 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				}
 				
 				this.setContent(content);
-				*/
-				console.assert( false, "TODO" );
 			}
 
 			this._computeFullSize( );
 			this._update( true );
 		}
 	}
+	*/
 
 	getView( ): DataView {
 		return this._dataview;
@@ -862,7 +861,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				continue;
 			}
 
-			const content = this._renderCell(rec, cdata.id, [cdata.type] );
+			const content = this._renderCell(rec, cdata, [cdata.type] );
 
 			let align = "start";
 			switch (cdata.align) {

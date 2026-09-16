@@ -424,7 +424,7 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
      */
 
 	setRowCount( n: number ) {
-		this.setStyleValue( "gridTemplateRows", `repeat(${n})` );
+		this.setStyleValue( "gridTemplateRows", `repeat(${n},1fr)` );
 	}
 
 	/**
@@ -433,7 +433,7 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
      */
 
 	setColCount( n: number ) {
-		this.setStyleValue( "gridTemplateColumns", `repeat(${n})` );
+		this.setStyleValue( "gridTemplateColumns", `repeat(${n},1fr)` );
 	}
 
 	/**
@@ -442,7 +442,7 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
      */
 
 	setTemplate( t: string[] ) {
-		this.setAttribute( "grid-template-area", t.map( x => '"' + x + '"' ).join(" ") );
+		this.setAttribute( "grid-template-areas", t.map( x => '"' + x + '"' ).join(" ") );
 	}
 
 	/**

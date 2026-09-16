@@ -38,7 +38,7 @@ export interface PropertyValue {
 	name?: string;
 	value: IValue | IValueCB;
 	options?: ListItem[];
-	callback: ( name: string, value: any ) => void;
+	callback?: ( name: string, value: any ) => void;
 	live?: boolean;	// for live update 
 	cls?: string;
     step?: number;	// for numbers
@@ -345,6 +345,12 @@ export class PropertyGrid extends VBox {
 			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
 				editor.setNumValue( value as number, -2 );
+			}
+		}
+		else if (item.type === 'label') {
+			const label = this.root.query<Label>( '#'+item.name );
+			if( label ) {
+				label.setText( value );
 			}
 		}
 		else {

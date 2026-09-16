@@ -52,7 +52,7 @@ export interface TreeItem extends ListItem {
 	open?: boolean;
 }
 
-interface TreeviewProps extends Omit<ComponentProps,"content"> {
+export interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	items: TreeItem[];
 	footer?: Component;
 	emptyMsg?: string;
@@ -61,7 +61,7 @@ interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	click?: EventCallback<EvClick>;
 }
 
-interface TreeviewEvents extends ComponentEvents {
+export interface TreeviewEvents extends ComponentEvents {
 	selectionChange?: EvSelectionChange;
 	dblClick?: EvDblClick;
 	click?: EvClick;

@@ -157,7 +157,7 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 			for( let name in result ) {
 				if( new_values[name] != result[name] ) {
-					const x = this.query( `input[${name}"]` );
+					const x = this.query( `input[name="${name}"]` );
 					const ifx = x.queryInterface( "form-element" ) as IFormElement;
 					ifx.setRawValue( new_values[name] );
 				}

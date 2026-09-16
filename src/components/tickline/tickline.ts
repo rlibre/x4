@@ -5,7 +5,7 @@ import { Component, ComponentProps } from '../../core/component';
 import "./tickline.module.scss"
 import { class_ns } from '../../core/core_tools';
 
-interface TickLineProps extends ComponentProps {
+export interface TickLineProps extends ComponentProps {
 	values: number[];
 	min?: number;
 	max?: number;
@@ -45,7 +45,8 @@ export class TickLine extends Component<TickLineProps> {
 		const vals = props.values;
         const padding = 4;
 
-		if( !vals.length  ) {
+		if( (props.type=='bars' && vals.length==0) || 
+			(props.type=='line' && vals.length<2) ) {
 			this.clearContent( );
 			return;
 		}

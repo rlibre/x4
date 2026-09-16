@@ -315,7 +315,7 @@ export class DataModel<T = any> {
 
 		fields.forEach( (fi) => {
 			if( fi.required && !this.getField(fi.name,record) ) {
-				if( errs ) {
+				if( !errs ) {
 					errs = [];
 				}
 				
