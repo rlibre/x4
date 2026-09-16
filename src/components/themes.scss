@@ -14,77 +14,77 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+@use "sass:color";
 
 $color--base: #569cd6;
 $color--interval: 8.4%;
 
 :root {
 	--color-primary-a0: #ffffff;
-	--color-primary-a5:  #{lighten($color--base, 35%)};
-	--color-primary-a10:  #{lighten($color--base, $color--interval * 4)};
-	--color-primary-a20: #{lighten($color--base, $color--interval * 3)};
-	--color-primary-a30: #{lighten($color--base, $color--interval * 2)};
-	--color-primary-a40: #{lighten($color--base, $color--interval)};
+	--color-primary-a5: #{color.adjust($color--base, $lightness: 35%)};
+	--color-primary-a10: #{color.adjust($color--base, $lightness: $color--interval * 4)};
+	--color-primary-a20: #{color.adjust($color--base, $lightness: $color--interval * 3)};
+	--color-primary-a30: #{color.adjust($color--base, $lightness: $color--interval * 2)};
+	--color-primary-a40: #{color.adjust($color--base, $lightness: $color--interval)};
 	--color-primary-a50: #{$color--base};
-	--color-primary-a55: #{darken($color--base,5%)};
-	--color-primary-a60: #{darken($color--base, $color--interval )};
-	--color-primary-a70: #{darken($color--base, $color--interval * 2)};
-	--color-primary-a80: #{darken($color--base, $color--interval * 3)};
-	--color-primary-a90: #{darken($color--base, $color--interval * 4)};
+	--color-primary-a55: #{color.adjust($color--base, $lightness: -5%)};
+	--color-primary-a60: #{color.adjust($color--base, $lightness: -$color--interval)};
+	--color-primary-a70: #{color.adjust($color--base, $lightness: -$color--interval * 2)};
+	--color-primary-a80: #{color.adjust($color--base, $lightness: -$color--interval * 3)};
+	--color-primary-a90: #{color.adjust($color--base, $lightness: -$color--interval * 4)};
 	--color-primary-a100: #000000;
 
-	--color-danger-a30: #{lighten(#c01010,30%)};
+	--color-danger-a30: #{color.adjust(#c01010, $lightness: 30%)};
 	--color-danger-a50: #c01010;
-	--color-danger-a60: #{darken(#c01010,10%)};
+	--color-danger-a60: #{color.adjust(#c01010, $lightness: -10%)};
 
 	--color-warning-a50: #b67b0d;
 
 	--color-success-a50: #10c01f;
-	--color-success-a60: #{darken(#10c01f,10%)};
+	--color-success-a60: #{color.adjust(#10c01f, $lightness: -10%)};
 }
 
 :root {
 	// Backgrounds
-	--background-primary: var(--color-primary-a0); // Fond principal
-	--background-secondary: var(--color-primary-a10); // Fond secondaire
-	--background-ternary: #f4f4f4; // Fond secondaire
+	--background-primary: var(--color-primary-a0);
+	--background-secondary: var(--color-primary-a10);
+	--background-ternary: #f4f4f4;
 
 	// Texts
-	--text-primary: var(--color-primary-a100); // Texte principal
-	--text-secondary: #999; // Texte secondaire
-	--text-ternary: #666; // Texte tertiaire
+	--text-primary: var(--color-primary-a100);
+	--text-secondary: #999;
+	--text-ternary: #666;
 
-	// disabled
+	// Disabled
 	--disabled-background: #ccc;
 	--disabled-color: white;
 	--disabled-color-dark: #aaa;
 
-	// accents
-	--accent-background: var(--color-primary-a60); 
-	--accent-background-hover: var(--color-primary-a55); 
+	// Accents
+	--accent-background: var(--color-primary-a60);
+	--accent-background-hover: var(--color-primary-a55);
 	--accent-background-focus: var(--color-primary-a70);
-	--accent-background-active: var(--color-primary-a80); 
+	--accent-background-active: var(--color-primary-a80);
 
-	--accent-color: var(--color-primary-a0); 
-	--accent-color-hover: var(--color-primary-a0); 
+	--accent-color: var(--color-primary-a0);
+	--accent-color-hover: var(--color-primary-a0);
 	--accent-color-focus: var(--color-primary-a0);
-	--accent-color-active: var(--color-primary-a0); 
+	--accent-color-active: var(--color-primary-a0);
 
 	// Borders
-	--border: #e1e1e1; // Bordures
-	--border-light: #eaeaea; // Bordures
-	--border-hover: #c2c2c2; // Bordures au survol
-	--border-focus: var( --accent-background ); // Bordures si focus
+	--border: #e1e1e1;
+	--border-light: #eaeaea;
+	--border-hover: #c2c2c2;
+	--border-focus: var(--accent-background);
 
-	--alert-background: var( --color-danger-a50 );
-	--alert-background-active: var( --color-danger-a60 );
-	--alert-color: var( --color-primary-a0 );
+	--alert-background: var(--color-danger-a50);
+	--alert-background-active: var(--color-danger-a60);
+	--alert-color: var(--color-primary-a0);
 
-	--warning-background: var( --color-warning-a50 );
-	--warning-color: var( --color-primary-a0 );
+	--warning-background: var(--color-warning-a50);
+	--warning-color: var(--color-primary-a0);
 
-	--success-background: var( --color-success-a50 );
-	--success-background-active: var( --color-success-a60 );
-	--success-color: var( --color-success-a0 );
+	--success-background: var(--color-success-a50);
+	--success-background-active: var(--color-success-a60);
+	--success-color: var(--color-primary-a0);
 }
-

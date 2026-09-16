@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-@import "./components/normalize.scss";
-@import "./components/colors.scss";
-@import "./components/themes.scss";
-@import "./components/base.scss";
+@use "./components/normalize";
+@use "./components/colors";
+@use "./components/themes";
+@use "./components/base";
