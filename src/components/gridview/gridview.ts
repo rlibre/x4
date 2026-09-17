@@ -33,7 +33,7 @@ import { _tr } from '../../core/core_i18n';
 
 import "./gridview.module.scss"
 
-export type CellRenderer = (rec: DataRecord) => Component;
+export type CellRenderer = (rec: DataRecord, col_id: any) => Component;
 export type CellClassifier = (data: any, rec: DataRecord, col: string ) => string;	// return the cell computed class
 
 type ColType = "number" | "money" | "checkbox" | "date" | "string" | "image" | "percent" | "icon" | "date-time";
@@ -693,6 +693,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		if (data === undefined || data === null) {
 			return null;
 		}
+
+        if( column.renderer ) {
+            const cell = column.renderer( rec, col );
+            return cell;
+        }
 
 		let cls = "";
 		if( column.classifier ) {
