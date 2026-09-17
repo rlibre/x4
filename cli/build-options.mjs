@@ -4,7 +4,7 @@ import { sassPlugin } from "esbuild-sass-plugin";
 import { lessPlugin } from "./less-plugin.mjs";
 import { copyPlugin } from "./copy-plugin.mjs";
 import { rawFilePlugin } from "./rawfile-plugin.mjs";
-import { diagnosticsPlugin } from "./diagnostic.mjs";
+import { diagnosticsPlugin } from "./diagnostic-plugin.mjs";
 
 const cliDir = path.dirname(fileURLToPath(import.meta.url));
 const devClient = path.join(cliDir, "dev-client.js");
