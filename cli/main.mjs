@@ -21,10 +21,11 @@ function printHelp(version) {
 Usage:
   x4js create <project> [--template <name>] [--no-install]
   x4js templates
-  x4js dev [--host <host>] [--port <port>] [--http|--https] [--open]
-  x4js build [--debug]
+  x4js dev [--config <file>] [--host <host>] [--port <port>] [--http|--https] [--open]
+  x4js build [--config <file>] [--debug]
 
 Options:
+  --config <file>  Config file (default: x4.config.json)
   -h, --help       Show help
   -v, --version    Show version`);
 }

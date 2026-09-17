@@ -3,7 +3,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { parseArgs } from "node:util";
 import esbuild from "esbuild";
-import { loadConfig, resolveTls } from "./config.mjs";
+import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig, resolveConfigFile, resolveTls } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
 import { info, success, failure } from "./log.mjs";
 
@@ -59,6 +59,7 @@ export async function dev(argv = [], root = process.cwd()) {
     const { values, positionals } = parseArgs({
         args: argv,
         options: {
+            config: { type: "string" },
             host: { type: "string" },
             port: { type: "string" },
             http: { type: "boolean", default: false },
@@ -71,12 +72,15 @@ export async function dev(argv = [], root = process.cwd()) {
 
     if (positionals.length)
         throw new Error(`Unexpected argument: ${positionals[0]}`);
-
     if (values.port !== undefined && !/^\d+$/.test(values.port))
         throw new Error("--port must be an integer");
 
+    const configArg = values.config ? expandEnv(values.config) : DEFAULT_CONFIG_FILE;
+    const explicitConfig = values.config !== undefined;
+    const watchedConfigFile = resolveConfigFile(root, configArg);
+
     let context;
-    let packageWatcher;
+    let configWatcher;
     let stopping = false;
     let restartTimer;
     let restartChain = Promise.resolve();
@@ -96,7 +100,6 @@ export async function dev(argv = [], root = process.cwd()) {
 
         if (port !== undefined)
             serveOptions.port = port;
-
         if (useHttps)
             Object.assign(serveOptions, resolveTls(config));
 
@@ -109,6 +112,7 @@ export async function dev(argv = [], root = process.cwd()) {
             const actualHost = result.hosts.includes(host) ? host : (result.hosts[0] ?? host);
             const url = serverUrl(actualHost, result.port, useHttps);
             info("mode", "dev");
+            info("config", config.configFile);
             info("outdir", config.outdir);
             success("server", url);
 
@@ -126,9 +130,9 @@ export async function dev(argv = [], root = process.cwd()) {
     async function reload() {
         let config;
         try {
-            config = loadConfig(root);
+            config = loadConfig(root, configArg, process.env, { explicit: explicitConfig });
             protocolConfig(config, values);
-            if ((values.https || (!values.http && config.dev.https)))
+            if (values.https || (!values.http && config.dev.https))
                 resolveTls(config);
         }
         catch (error) {
@@ -147,8 +151,6 @@ export async function dev(argv = [], root = process.cwd()) {
         }
         catch (error) {
             failure(`restart: ${error.message}`);
-            // The old context cannot be restored after dispose. Keep watching
-            // package.json so fixing the configuration starts dev again.
         }
     }
 
@@ -159,11 +161,13 @@ export async function dev(argv = [], root = process.cwd()) {
         }, 150);
     }
 
-    const initialConfig = loadConfig(root);
+    const initialConfig = loadConfig(root, configArg, process.env, { explicit: explicitConfig });
     await start(initialConfig);
 
-    packageWatcher = fs.watch(path.resolve(root), { persistent: true }, (_event, filename) => {
-        if (filename === null || filename.toString() === "package.json")
+    const watchDir = path.dirname(watchedConfigFile);
+    const watchName = path.basename(watchedConfigFile);
+    configWatcher = fs.watch(watchDir, { persistent: true }, (_event, filename) => {
+        if (filename === null || filename.toString() === watchName)
             scheduleReload();
     });
 
@@ -172,7 +176,7 @@ export async function dev(argv = [], root = process.cwd()) {
             return;
         stopping = true;
         clearTimeout(restartTimer);
-        packageWatcher?.close();
+        configWatcher?.close();
         await restartChain.catch(() => {});
         await context?.dispose();
     }

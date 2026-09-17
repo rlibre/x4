@@ -1,15 +1,16 @@
 import fs from "node:fs/promises";
 import { parseArgs } from "node:util";
 import esbuild from "esbuild";
-import { loadConfig } from "./config.mjs";
+import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
 import { info, success } from "./log.mjs";
-import { printBuildError} from "./diagnostic-plugin.mjs";
+import { printBuildError, printWarnings } from "./diagnostic-plugin.mjs";
 
 export async function build(argv = [], root = process.cwd()) {
     const { values, positionals } = parseArgs({
         args: argv,
         options: {
+            config: { type: "string" },
             debug: { type: "boolean", default: false },
         },
         allowPositionals: true,
@@ -19,29 +20,26 @@ export async function build(argv = [], root = process.cwd()) {
     if (positionals.length)
         throw new Error(`Unexpected argument: ${positionals[0]}`);
 
-    const config = loadConfig(root);
+    const configArg = values.config ? expandEnv(values.config) : DEFAULT_CONFIG_FILE;
+    const config = loadConfig(root, configArg, process.env, { explicit: values.config !== undefined });
     const mode = values.debug ? "debug" : "production";
 
     info("mode", mode);
+    info("config", config.configFile);
     info("outdir", config.outdir);
 
     await fs.rm(config.outdir, { recursive: true, force: true });
     await fs.mkdir(config.outdir, { recursive: true });
 
     const started = performance.now();
-	const options = createBuildOptions(config, mode);
-
-	try {
-		const result = await esbuild.build(options);
-		if (result.warnings.length)
-			await printWarnings(result.warnings);
-
-		logSuccess(`built      ${Date.now() - start}ms`);
-	}
-	catch (error) {
-		await printBuildError(error);
-		process.exitCode = 1;
-	}
-
-	success("built", `${Math.round(performance.now() - started)}ms`);
+    try {
+        const result = await esbuild.build(createBuildOptions(config, mode));
+        if (result.warnings.length)
+            await printWarnings(result.warnings);
+        success("built", `${Math.round(performance.now() - started)}ms`);
+    }
+    catch (error) {
+        await printBuildError(error);
+        process.exitCode = 1;
+    }
 }
