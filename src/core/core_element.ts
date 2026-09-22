@@ -259,8 +259,10 @@ export class CoreElement<E extends EventMap = EventMap> {
 
 	cleanUp( ) {
 		this.clearTimeouts( );
-		this.#cleanup?.forEach( x => x() );
-		this.#cleanup.length = 0;
+		if( this.#cleanup ) {
+			this.#cleanup.forEach( x => x() );
+			this.#cleanup.length = 0;
+		}
 	}
 
 	// :: EVENTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
