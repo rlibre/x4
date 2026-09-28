@@ -14,6 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+import { Box } from './components/boxes/boxes.js';
 export { }
 
 declare global {
@@ -23,7 +24,7 @@ declare global {
 		}
 
 		interface IntrinsicClassAttributes<T> {
-			ref?: [ owner: object, name: string ];
+			ref?: [ owner: Box<any, any>, name: string ];
 		}
 	}
 }
