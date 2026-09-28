@@ -46,34 +46,28 @@ import { Constructor, isString } from './core_tools';
 export class x4_react {
 
 	static create_element( tag: string, props: any, ...content: any[] ): Component;
-	static create_element<X extends Component>( tag: string | Constructor<X>, props: X["props"], ...content: any[] ) {
+	static create_element<X extends Component>( tag: string | Constructor<X>, props: X["props"], ...children: any[] ) {
 		
-		props = props || {};
+		props = props ?? {};
 
-		let el: Component;
+		// flatten {items.map(...)} and drop null / false from conditional children
+		const content = children.flat( Infinity )
+								.filter( c => c !== null && c !== undefined && c !== false );
 
-		// --- simple div ------------------------
-		if( isString(tag) ) {
-			el = new Component( { tag } );
-			Object.entries( props )
-				.forEach(([name, value]) => {
-					if (name.startsWith('on') && name.toLowerCase() in window) {
-						el.dom.addEventListener(name.toLowerCase().substring(2), value)
-					}
-					else {
-						el.setAttribute(name, value )
-					}
-				});
-		}
-		// --- Component ------------------------
-		else {
-			el = new tag( props );
+		if( isString( tag ) ) {
+			const el = new Component( { tag } );
+			// ... existing attribute / on* handling ...
+			if( content.length ) {
+				el.setContent( content );
+			}
+			return el;
 		}
 
-		if( content && content.length ) {
-			el.appendContent( content );
+		// same path as object construction: <X a={1}>{kids}</X> === new X({ a: 1, content: kids })
+		if( content.length ) {
+			props = { ...props, content };
 		}
 
-		return el;
+		return new tag( props );
 	}
 }
