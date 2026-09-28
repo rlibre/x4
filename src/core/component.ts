@@ -22,10 +22,6 @@ import { addEvent, DOMEventHandler, GlobalDOMEvents, COMPONENT } from './core_do
 import { Application, EvMessage } from './core_application';
 import { makeState } from './core_state.js';
 
-interface RefType<T extends Component> {
-	dom: T;
-}
-
 type ComponentAttributes = Record<string,string|number|boolean>;
 type CreateComponentCallBack =  ( attrs: Record<string,string> ) => ComponentContent;
 
@@ -95,8 +91,6 @@ export interface ComponentProps {
     cls?: string;
 	/** Element ID. */
     id?: string;
-	/** Reference to the component instance. */
-    ref?: RefType<any>;
 	
 	// shortcuts
 	/** Width (px or string like `"50%"` or `"3em"`). */
