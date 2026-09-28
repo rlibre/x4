@@ -47,27 +47,53 @@ export class x4_react {
 
 	static create_element( tag: string, props: any, ...content: any[] ): Component;
 	static create_element<X extends Component>( tag: string | Constructor<X>, props: X["props"], ...children: any[] ) {
-		
-		props = props ?? {};
+
+		// ref is a JSX-only attribute: never passed to the component
+		const { ref, ...attrs } = ( props ?? {} ) as any;
 
 		// flatten {items.map(...)} and drop null / false from conditional children
 		const content = children.flat( Infinity )
 								.filter( c => c !== null && c !== undefined && c !== false );
 
+		let el: Component;
+
+		// --- simple html element ------------------------
 		if( isString( tag ) ) {
-			const el = new Component( { tag } );
-			// ... existing attribute / on* handling ...
+			el = new Component( { tag } );
+
+			Object.entries( attrs )
+				.forEach( ( [name, value]: [string, any] ) => {
+					if( name.startsWith( 'on' ) && name.toLowerCase( ) in window ) {
+						el.dom.addEventListener( name.toLowerCase( ).substring( 2 ), value );
+					}
+					else {
+						el.setAttribute( name, value );
+					}
+				});
+
 			if( content.length ) {
 				el.setContent( content );
 			}
-			return el;
+		}
+		// --- Component ------------------------
+		else {
+			// same path as object construction: <X a={1}>{kids}</X> === new X({ a: 1, content: kids })
+			el = new tag( content.length ? { ...attrs, content } : attrs );
 		}
 
-		// same path as object construction: <X a={1}>{kids}</X> === new X({ a: 1, content: kids })
-		if( content.length ) {
-			props = { ...props, content };
+		// ref={[owner, "name"]} stores the element in owner.refs.name
+		if( ref ) {
+			const [owner, name] = ref;
+
+			// the owner must be a Box: only Box has refs
+			if( !owner?.refs || typeof name !== "string" ) {
+				console.error( "invalid JSX ref, expected [ownerBox, \"name\"]:", ref );
+			}
+			else {
+				owner.refs[name] = el;
+			}
 		}
 
-		return new tag( props );
+		return el;
 	}
 }

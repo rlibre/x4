@@ -21,6 +21,10 @@ declare global {
 		interface IntrinsicElements {
 			[ name: string ]: any;
 		}
+
+		interface IntrinsicClassAttributes<T> {
+			ref?: [ owner: object, name: string ];
+		}
 	}
 }
 
