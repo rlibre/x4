@@ -628,7 +628,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				set( child );
 			}
 
-			d.insertBefore( d.firstChild, fragment );
+			d.insertBefore( fragment, d.firstChild );
 		}
 	}
 
