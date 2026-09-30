@@ -163,7 +163,8 @@ export function addEvent( node: Node, name: string, handler: DOMEventHandler, pr
 
 	if( !mutObserver ) {
 		mutObserver = new MutationObserver( observeMutation )
-		mutObserver.observe( document.body, {childList: true,subtree: true} );
+		//document.documentElement exists even when document.body is not present
+		mutObserver.observe( document.documentElement, {childList: true,subtree: true} );
 	}
 	
 	if( name=="removed" || name=="created" ) {
