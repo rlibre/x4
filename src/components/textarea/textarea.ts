@@ -119,7 +119,7 @@ export class TextArea extends VBox {
 
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new SimpleTextArea( { label,value,resize,readonly,trim } )
+			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name } )
 		])
 	}
 
