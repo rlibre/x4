@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.3.8",
+  "version": "2.3.9",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",
@@ -21,8 +21,8 @@
     "src",
     "bin",
     "cli",
-	"aicontext.md",
-	"aiguide.md",
+    "aicontext.md",
+    "aiguide.md",
     "README.md",
     "LICENSE"
   ],
