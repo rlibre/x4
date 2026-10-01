@@ -1,6 +1,7 @@
 # x4js — AI Guide
 
 This document explains how to write idiomatic x4 code.
+This is not a suggestion but an imperative rule.
 
 For exact classes, properties and method signatures, always use `aicontext.md` or inspect the current x4 TypeScript sources.
 

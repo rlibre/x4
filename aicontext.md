@@ -16,7 +16,7 @@ import { ... } from 'x4js'   // src/x4.ts
 **Active repository**: https://github.com/rlibre/x4
 **Archived repository**: https://github.com/rlibre/x4js (read-only since March 2026)
 **License**: MIT
-**Quick start**: `npx x4build create demo --type=html`
+**Quick start**: `npx x4js create demo` (list the templates with `npx x4js templates`)
 
 ---
 
@@ -132,7 +132,6 @@ interface ComponentProps {
   attrs?: Record<string, string | number | boolean>
   content?: ComponentContent
   dom_events?: GlobalDOMEvents
-  ref?: RefType<any>                                 // filled at creation with the instance
   width?: string | number
   height?: string | number
   flex?: number | boolean                            // true → "x4flex"; number → flex-grow
@@ -302,6 +301,31 @@ class HBox<P, E> extends Box<P, E>
 class VBox<P, E> extends Box<P, E>
 interface BoxProps extends ComponentProps { tag?: string }
 ```
+
+### `Box.refs` — typed directory of the children to reach again later
+
+`Box` owns a `protected refs: Record<string, Component>`. Declare its shape in the subclass, then assign each child
+to `refs` while building the content: the assignment evaluates to the component, so it is written inline in the
+content array. Do not keep such children in separate private fields, and do not use `refs.x` for a child that was
+not assigned.
+
+```ts
+class Panel extends VBox {
+  declare protected refs: { title: Label; save: Button }
+
+  constructor(props: BoxProps) {
+    super(props)
+    this.setContent([
+      this.refs.title = new Label({ text: "" }),
+      this.refs.save = new Button({ label: "Save", click: () => this.save() }),
+    ])
+  }
+
+  setTitle(text: string) { this.refs.title.setText(text) }
+}
+```
+
+In JSX, the same directory is filled with `ref={[owner, "name"]}` (the owner must be a `Box`).
 
 ### `StackBox` — one page visible at a time (lazily created)
 
@@ -1261,7 +1285,7 @@ import { Router } from 'x4js'
 const router = new Router(true)              // hash mode
 router.get('/home',       () => showHome())
 router.get('/detail/:id', (p) => showDetail(p.id))
-router.on('error',        () => router.navigate('/home'))
+router.addListener('error', () => router.navigate('/home'))
 router.init()
 ```
 
@@ -1288,35 +1312,35 @@ When creating a new x4js project, use these files as a base.
 	"name": "min demo",
 	"version": "1.0",
 	"scripts": {
-		"build-debug": "x4build --watch --hmr --serve --ip=0.0.0.0:8080",
-		"build-release": "x4build --release"
-	},
-	"devDependencies": {
-		"x4build": "latest"
+		"dev": "x4js dev",
+		"build": "x4js build"
 	},
 	"dependencies": {
 		"@fontsource/montserrat": "^5.1.0",
 		"@types/node": "^25.9.1",
 		"x4js": "latest"
-	},
-	"x4build": {
-		"outdir": "./bin",
-		"entryPoints": [
-			"src/main.ts"
-		],
-		"copy": [
-			{
-				"from": "./src/assets",
-				"to": "assets"
-			},
-			{
-				"from": "./src/index.html",
-				"to": "index.html"
-			}
-		]
 	}
 }
 ```
+
+`x4js dev` runs the dev server, `x4js build` writes `outdir` (add `--debug` for a debug build).
+Both read `x4.config.json` (change the file with `--config <file>`).
+
+### `x4.config.json`
+
+```json
+{
+	"entryPoints": ["src/main.ts"],
+	"outdir": "./bin",
+	"copy": [
+		{ "from": "./src/assets", "to": "assets" },
+		{ "from": "./src/index.html", "to": "index.html" }
+	]
+}
+```
+
+Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, `tls`).
+`copy[].to` is relative to `outdir`.
 
 ### `tsconfig.json`
 

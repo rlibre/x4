@@ -21,6 +21,8 @@
     "src",
     "bin",
     "cli",
+	"aicontext.md",
+	"aiguide.md",
     "README.md",
     "LICENSE"
   ],
