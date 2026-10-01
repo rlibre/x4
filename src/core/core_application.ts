@@ -130,6 +130,7 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 			const ev = document.querySelector( mountPoint );
 			if( ev ) {
 				ev.appendChild( this.mainview.dom );
+				this.mounted = true;
 			}
 		}
 	}
