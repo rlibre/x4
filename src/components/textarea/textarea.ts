@@ -50,7 +50,7 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 
 		this.setAttribute( "name", props.name );
 		if( props.value ) {
-			this.setAttribute( "value", props.value+'' );
+			this.setText( props.value+'' );
 		}
 
 		if( props.resize!==undefined ) {
