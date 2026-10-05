@@ -1,4 +1,10 @@
 
+/**
+ * @cssvar
+ * --select-border
+ * --select-border-focus
+ * --select-background
+ */
 
 .x4select,
 ::picker(select) {
@@ -8,8 +14,8 @@
 	outline: none;
 
 	border-radius: 0;
-	border: 1px solid var( --border );
-	background-color: white;
+	border: 1px solid var( --select-border, var( --border ) );
+	background-color: var( --select-background, white );
 }
 
 .x4select {
@@ -21,23 +27,26 @@
     background-position: right 6px center;
     background-size: 12px 8px;
     padding-right: 23px;
-}
 
-//-- global saddly
-option {
-	padding: 5px;
-}
+	&:focus-visible {
+		border-color: var( --select-border-focus, var( --accent-background ) );
+	}
 
-option:checked {
- 	background-color: var( --accent-background );
-  	color: var( --accent-color );
-}
+	.select-option {
+		padding: 5px;
 
-option:hover {
- 	background-color: var( --accent-background-focus );
-  	color: var( --accent-color );
-}
+		&:checked {
+			background-color: var( --accent-background );
+			color: var( --accent-color );
+		}
 
-option::checkmark {
-    display: none;
+		&:hover {
+			background-color: var( --accent-background-focus );
+			color: var( --accent-color );
+		}
+
+		&::checkmark {
+			display: none;
+		}
+	}
 }
