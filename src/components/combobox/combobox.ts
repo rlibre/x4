@@ -145,10 +145,9 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			const itm = list.getItem(sel);
 			if( itm ) {
 				list.select( sel, false );
+				this._input.setValue( itm.text as string );
 			}
 
-			this._input.setValue( itm.text as string );
-			
 			if( !this._prevent_close ) {
 				this._popup.show( false );
 			}
@@ -162,7 +161,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			}
 		});
 
-		if( props.value ) {
+		if( props.value!==undefined && props.value!==null ) {
 			_select( props.value );
 		}
 
