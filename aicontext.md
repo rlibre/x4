@@ -26,7 +26,7 @@ import { ... } from 'x4js'   // src/x4.ts
 CoreElement<E>                 named timers + event surface (no DOM)
   ├── Component<P,E>           base DOM component
   │     ├── Box<P,E>
-  │     │     ├── HBox / VBox
+  │     │     ├── HBox / VBox → HSplitBox / VSplitBox
   │     │     ├── StackBox → AssistBox
   │     │     ├── GridBox / MasonryBox
   │     │     ├── Form
@@ -894,6 +894,13 @@ class Form extends Box {
 ## Sizers / viewport / misc
 
 ```ts
+// PREFERRED for resizable panels: HSplitBox / VSplitBox (sizers are inserted automatically between panels).
+// The panel with `flex` takes the remaining space, its neighbour is the one resized.
+class HSplitBox extends HBox               // panels side by side, resizable width:  { content: Component[] }
+class VSplitBox extends VBox               // panels stacked, resizable height:      { content: Component[] }
+// new HSplitBox( { content: [ new Treeview( { width: 250 } ), new Panel( { flex: 1 } ) ] } )
+
+// Low level: only place sizers by hand when a SplitBox does not fit (popup edges, header cells...).
 class CSizer extends Component             // base splitter
 class HSizer extends CSizer                // horizontal splitter
 class VSizer extends CSizer                // vertical splitter

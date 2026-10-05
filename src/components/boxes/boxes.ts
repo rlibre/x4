@@ -17,6 +17,7 @@
 import { asap, class_ns, isArray, isNumber } from '../../core/core_tools';
 import { Component, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
+import { HSizer, VSizer } from '../sizers/sizer';
 
 import "./boxes.module.scss";
 
@@ -87,6 +88,71 @@ export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
 export class VBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
 	constructor( p: P ) {
 		super( p );
+	}
+}
+
+
+// :: SPLITBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+export interface SplitBoxProps extends Omit<BoxProps,"content"> {
+	/** Panels to lay out, a sizer is inserted between each of them. */
+	content: Component[];
+}
+
+/**
+ * insert a sizer between each panel.
+ * the sizer resizes the panel that is not flex (the flex one takes the remaining space),
+ * when both are of the same kind, the previous panel is resized.
+ */
+
+function split_content( panels: Component[], horz: boolean ) {
+	const els = panels?.filter( x => !!x ) ?? [];
+	const res: Component[] = [];
+
+	els.forEach( ( p, i ) => {
+		if( i>0 ) {
+			const prev = els[i-1];
+			const next = prev.hasClass( "x4flex" ) && !p.hasClass( "x4flex" );
+			res.push( horz ? new HSizer( next ) : new VSizer( next ) );
+		}
+
+		res.push( p );
+	});
+
+	return res;
+}
+
+/**
+ * A horizontal box where panels are separated by sizers: panels are side by side
+ * (like in a {@link HBox}) and the user can change their width.
+ * The CSS class for this component is automatically generated as `x4hsplitbox`.
+ *
+ * @example
+ * new HSplitBox( {
+ *   content: [
+ *     new Treeview( { width: 250, ... } ),		// resized by the sizer
+ *     new Panel( { flex: 1, ... } ),			// takes the remaining space
+ *   ]
+ * })
+ */
+
+@class_ns( "x4" )
+export class HSplitBox<P extends SplitBoxProps=SplitBoxProps,E extends ComponentEvents=ComponentEvents> extends HBox<P,E> {
+	constructor( props: P ) {
+		super( { ...props, content: split_content( props.content, true ) } );
+	}
+}
+
+/**
+ * A vertical box where panels are separated by sizers: panels are stacked
+ * (like in a {@link VBox}) and the user can change their height.
+ * The CSS class for this component is automatically generated as `x4vsplitbox`.
+ */
+
+@class_ns( "x4" )
+export class VSplitBox<P extends SplitBoxProps=SplitBoxProps,E extends ComponentEvents=ComponentEvents> extends VBox<P,E> {
+	constructor( props: P ) {
+		super( { ...props, content: split_content( props.content, false ) } );
 	}
 }
 
