@@ -81,7 +81,7 @@ interface ComboboxEvents extends ComponentEvents {
 interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	label?: string;
 	name?: string;
-	value?: string;
+	value?: ListboxID;
 	labelWidth?: number | string;
 	readonly?: boolean;
 	required?: boolean;
