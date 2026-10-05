@@ -192,6 +192,10 @@ Component objects
 Real DOM
 ```
 
+`addDOMEvent` belongs to custom components (a canvas-based widget, for example).
+
+On standard components, use their props and events.
+
 ---
 
 ## 6. Objects vs JSX
@@ -326,6 +330,12 @@ export const deviceModel = new DeviceModel();
 ```
 
 A model may encapsulate server access directly.
+
+Views should never call `fetch`.
+
+All server access goes through model classes deriving from one base class that owns the single `fetch` call (timeout, network failure, HTTP status, expired session, fetch mask).
+
+Create one model per functional domain. It normally corresponds to one URL root.
 
 Keep responsibilities simple:
 
@@ -467,6 +477,18 @@ Do not introduce a JavaScript theme abstraction simply to mirror CSS variables.
 
 Presentation belongs in CSS when CSS already solves the problem.
 
+CSS styles a component; it never removes behaviour.
+
+Do not hide a control a component creates: configure the component through its props (for example `closable: false`).
+
+If the props cannot express it, say so instead of working around it.
+
+To retheme an application, redefine the primary colour scale (`--color-primary-a5` … `--color-primary-a90`) once per theme.
+
+Do not recolour components one by one, and do not override the variables derived from the scale.
+
+A dark theme gets its own scale.
+
 ---
 
 ## 19. Browser and TypeScript capabilities
@@ -575,6 +597,27 @@ Do not introduce an object merely to fill one of the boxes.
 The goal is not to use every x4 feature.
 
 The goal is to build the application with the smallest set of mechanisms that keeps the code clear.
+
+---
+
+## 23. Translations
+
+x4 starts in French.
+
+Application texts are declared with `addTranslation` for each language.
+
+Select the language before any component is built, since a component reads its texts at construction.
+
+Call `selectLanguage` after `addTranslation`:
+
+```ts
+addTranslation("fr", { /* ... */ });
+addTranslation("en", { /* ... */ });
+
+selectLanguage("en");
+
+// only now build the application components
+```
 
 ---
 
