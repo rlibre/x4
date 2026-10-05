@@ -14,12 +14,12 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Menu, MenuElement, MenuProps } from 'x4js';
 import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
 import { class_ns, isFunction, UnsafeHtml } from '../../core/core_tools';
 
 import { Icon } from "../icon/icon"
+import { Menu, MenuElement } from '../menu/menu';
 
 import "./button.module.scss";
 
