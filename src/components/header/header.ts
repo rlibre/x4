@@ -19,10 +19,15 @@ interface HeaderProps extends Omit<ComponentProps,"content"> {
 }
 
 const CELL_MW = 8;
+const MAX_COLS = 10;	// columns with a default name (ref-c1...ref-c10) handled by the listbox css
 
 /**
  * by default when a header item is resized, the 'target' style '--{name}-width' is updated
- * 
+ *
+ * a Listbox handles 10 columns at most: the width of its cells is given by the
+ * css classes ref-c1 to ref-c10 (text of the item, then sub_cols).
+ * above, give a name to the header item and handle '--{name}-width' in your own css.
+ *
  * @cssvar
  * ```
  * --header-background-hover
@@ -39,6 +44,10 @@ export class Header extends HBox<HeaderProps> {
 
 	constructor( props: HeaderProps ) {
 		super( props );
+
+		if( props.items?.some( ( x, index ) => !x.name && index>=MAX_COLS ) ) {
+			console.warn( `Header: ${props.items.length} columns, only the first ${MAX_COLS} get a width in a Listbox (ref-c1 to ref-c${MAX_COLS}).` );
+		}
 
 		this._els = props.items?.map( (x,index) => {
 
@@ -65,16 +74,42 @@ export class Header extends HBox<HeaderProps> {
 				this._calc_sizes( );
 			})
 
+			let resized = false;
+
 			sizer.on( "start", ( ) => {
-				//todo: remove flex on all cols
+				// freeze the flex columns: if they keep taking the remaining space, the left side
+				// of the resized cell moves, and the sizer (which measures from it) runs away
+				resized = false;
+
+				this._els.forEach( c => {
+					const flex = c.getInternalData( "flex" );
+					if( flex ) {
+						c.setInternalData( "saved-flex", flex );
+						c.setInternalData( "flex", 0 );
+						c.setInternalData( "width", Math.round( c.getBoundingRect( ).width ) );
+					}
+				});
 			} );
 
 			sizer.on( "stop", ( ) => {
-				//todo: restore flex
+				this._els.forEach( c => {
+					const flex = c.getInternalData( "saved-flex" );
+					if( flex ) {
+						c.setInternalData( "saved-flex", 0 );
+
+						// the resized column keeps its new width
+						if( c!==cell || !resized ) {
+							c.setInternalData( "flex", flex );
+						}
+					}
+				});
+
+				this._calc_sizes( );
 			} );
 
 			sizer.on( "resize", ( ev ) => {
 				//cell.setStyleValue( "flexGrow", "0" );
+				resized = true;
 				const sze = ev.size<CELL_MW ? CELL_MW : ev.size;
 				cell.setInternalData("flex",0);
 				cell.setInternalData("width",sze);
