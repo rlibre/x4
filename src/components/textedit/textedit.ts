@@ -15,10 +15,10 @@
  **/
 
 //import { EventCallback } from '../../core/core_events';
-import { Component, makeUniqueComponentId } from '../../core/component';
+import { Component, ComponentEvents, makeUniqueComponentId } from '../../core/component';
 import { class_ns, UnsafeHtml } from '../../core/core_tools';
 
-import { HBox } from '../boxes/boxes';
+import { BoxProps, HBox } from '../boxes/boxes';
 import { DateProps, Input, InputProps, NumberProps, TextInputProps, TimeProps } from "../input/input"
 import { Label } from '../label/label';
 
@@ -32,7 +32,7 @@ import "./textedit.module.scss";
 
 type TextEditInputs = TextInputProps | NumberProps | DateProps | TimeProps;
 
-interface TextEditBase {
+export interface TextEditBase {
 	label: string | UnsafeHtml;
 	labelWidth?: number;
 	inputWidth?: number;		
@@ -82,7 +82,7 @@ interface TextEditProps extends InputProps {
  */
 
 @class_ns( "x4" )
-export class TextEdit extends HBox {
+export class TextEdit<E extends ComponentEvents = ComponentEvents> extends HBox<BoxProps,E> {
 
 	private input: Input;
 

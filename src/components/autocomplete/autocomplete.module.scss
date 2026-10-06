@@ -1,0 +1,28 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file autocomplete.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+// the field itself is a textedit
+
+.x4dropdownlist.autocomplete {
+	.x4item {
+		gap: 8px;
+
+		.id {
+			font-weight: 500;
+			min-width: 4em;
+		}
+	}
+}

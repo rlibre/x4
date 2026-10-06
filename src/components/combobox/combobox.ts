@@ -38,6 +38,7 @@ interface DropdownEvents extends PopupEvents {
 
 interface DropdownProps extends Omit<PopupProps,"content"> {
 	items: ListItem[];
+	renderer?: ( item: ListItem ) => Component;
 }
 
 
@@ -49,7 +50,7 @@ export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
 	constructor( props: DropdownProps ) {
 		super( props );
 
-		this._list = new Listbox( { items: props.items } );
+		this._list = new Listbox( { items: props.items, renderer: props.renderer } );
 		this.setContent( this._list );
 
 		this.addDOMEvent( "mousedown", ( ev: Event ) => { 
