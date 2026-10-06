@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentProps } from './component';
+import { Component, ComponentEvents, ComponentProps } from './component';
 import { isUnitLess } from "./core_styles";
 import { DOMEventHandler, GlobalDOMEvents, addEvent } from './core_dom';
 import { isNumber, isString, sanitizeHtml } from './core_tools';
@@ -1004,7 +1004,7 @@ export interface SvgProps extends ComponentProps {
  * It extends `Component` and provides methods for setting SVG content.
  */
 
-export class SvgComponent<P extends SvgProps = SvgProps> extends Component<P> {
+export class SvgComponent<P extends SvgProps = SvgProps, E extends ComponentEvents = ComponentEvents> extends Component<P,E> {
 
 	/**
 	 * Creates an instance of `SvgComponent`.
