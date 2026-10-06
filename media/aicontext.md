@@ -26,7 +26,7 @@ import { ... } from 'x4js'   // src/x4.ts
 CoreElement<E>                 named timers + event surface (no DOM)
   ├── Component<P,E>           base DOM component
   │     ├── Box<P,E>
-  │     │     ├── HBox / VBox
+  │     │     ├── HBox / VBox → HSplitBox / VSplitBox
   │     │     ├── StackBox → AssistBox
   │     │     ├── GridBox / MasonryBox
   │     │     ├── Form
@@ -35,10 +35,11 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
-  │     ├── Progress, TickLine, Canvas, Image, SvgComponent, Spreadsheet, MonacoEditor
+  │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, Flex, Space
-  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit, Breadcrumbs
+  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
   └── Application<E>           singleton, no DOM of its own
 
@@ -608,6 +609,26 @@ class Combobox extends Component {
 }
 ```
 
+### `AutoComplete` — text field with on-demand suggestions
+
+```ts
+interface AutoCompleteProps extends TextEditProps {   // label, labelWidth, required, placeholder, value...
+  search: (ev: EvSearch) => void            // required; ev.text, ev.setItems(items) — may be called async
+  change?                                   // EvAutoCompleteChange { value, item /* null = free text */ }
+  strict?: boolean                          // only a picked item (or empty) is accepted; default false
+  itemValue?: "text" | "id"                 // what goes into the field when an item is picked; default "text"
+  delay?: number                            // ms before search, default 250
+  minChars?: number                         // default 1
+  renderer?: (item: ListItem) => Component
+}
+class AutoComplete extends TextEdit {
+  getSelection(): ListboxID                 // id of the picked item, undefined for a free text
+  setSelection(item: ListItem): void;  showDropDown(): void
+}
+// Use Combobox for a fixed, known list; AutoComplete when suggestions come from a search (server).
+// In a Form the value is the field content (text or id, per itemValue).
+```
+
 ### `ColorInput`
 
 ```ts
@@ -710,11 +731,28 @@ interface SpreadsheetProps extends ComponentProps {
   columns: SpreadsheetColumn[]              // required
   footer?: boolean
   rowClassifier?: RowClassifier
+  enterMove?: "down" | "right" | "none"     // selection move after Enter in a cell editor (default "down")
   click?, dblClick?, contextMenu?, selectionChange?
+  cellChange?                               // EvCellChange, fired before an edited value is written to the store
 }
+interface SpreadsheetColumn {               // GridColumn +
+  editable?: boolean | ((row, col) => boolean)       // inline edition (off by default), col = column index
+  editor?: (row, col, value) => Component            // custom editor, must implement queryInterface("form-element")
+}
+interface EvCellChange { row; col /* index */; colId /* store key */; value /* writable */; oldValue }
 class Spreadsheet extends Component {
   getSelection(): /* cell */; navigate(sens: kbNav): boolean; lock(lock): void
+  editCell(row, col, clear = false): boolean         // cell must be visible
+  stopEdit(commit = true): void;  isEditing(): boolean
 }
+
+// Inline edition: F2 / Enter / double-click / typing starts, Enter / Tab / click elsewhere validates, Escape cancels,
+// Delete clears, editable checkboxes toggle on click or Space. Default editor is an Input matching the column type.
+// cellChange: ev.preventDefault() refuses the value, ev.value can be replaced.
+// Select / Combobox in a cell (the store holds the id, use `formatter` to display the text):
+//   { id: 2, title: "Status", width: 120, editable: true,
+//     formatter: ( id ) => states.find( x => x.id===id )?.text,
+//     editor: ( row, col, value ) => new Select( { items: states, value } ) }
 
 // Store: in-memory cell store (extends CoreElement)
 class Store extends CoreElement {
@@ -722,6 +760,28 @@ class Store extends CoreElement {
   removeRow(row_num): void;  getRowCount(): number;  setMaxRowCount(rows): void
   clear(): void;  lock(): void;  unlock(): void
 }
+```
+
+### `Chart` — minimal svg chart (line, area, bar, pie, donut)
+
+```ts
+interface ChartProps extends SvgProps {
+  type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
+  series: ChartSerie[]                      // required; pie & donut use the first serie
+  labels?: string[]                         // default: 1, 2, 3...
+  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default
+  legend?: boolean                          // default: shown when 2+ named series
+  stacked?: boolean
+  formatter?: (value: number) => string     // default: chartFormatUnit (1.5k, 2M...)
+  click?                                    // EvChartClick { serie, index, value }
+}
+interface ChartSerie { name?; values: number[] /* undefined = hole */; color?; fill?; dots? }
+class Chart extends SvgComponent {
+  setType(type): void;  setSeries(series, labels?): void;  setLabels(labels): void
+  setTicks(sens: "x" | "y", ticks: ChartTick[]): void
+}
+// Colors: CSS variables --chart-color-1..8 (or serie.color). Size it with width/height/flex like any component.
+// Minimal by design: no dual axis, mixed types, time axis, zoom or animation — use a dedicated library for those.
 ```
 
 ### `PropertyGrid`
@@ -894,6 +954,13 @@ class Form extends Box {
 ## Sizers / viewport / misc
 
 ```ts
+// PREFERRED for resizable panels: HSplitBox / VSplitBox (sizers are inserted automatically between panels).
+// The panel with `flex` takes the remaining space, its neighbour is the one resized.
+class HSplitBox extends HBox               // panels side by side, resizable width:  { content: Component[] }
+class VSplitBox extends VBox               // panels stacked, resizable height:      { content: Component[] }
+// new HSplitBox( { content: [ new Treeview( { width: 250 } ), new Panel( { flex: 1 } ) ] } )
+
+// Low level: only place sizers by hand when a SplitBox does not fit (popup edges, header cells...).
 class CSizer extends Component             // base splitter
 class HSizer extends CSizer                // horizontal splitter
 class VSizer extends CSizer                // vertical splitter
