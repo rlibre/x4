@@ -1,0 +1,126 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file chart.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--chart-background: white;
+	--chart-text: #52514e;
+	--chart-grid: #e6e5e0;
+	--chart-axis: #b5b4ae;
+
+	// series colors, used in this order
+	--chart-color-1: #2a78d6;
+	--chart-color-2: #eb6834;
+	--chart-color-3: #1baf7a;
+	--chart-color-4: #eda100;
+	--chart-color-5: #e87ba4;
+	--chart-color-6: #008300;
+	--chart-color-7: #4a3aa7;
+	--chart-color-8: #e34948;
+}
+
+.x4chart {
+	display: block;
+	background-color: var( --chart-background );
+
+	text {
+		font-size: 10px;
+		fill: var( --chart-text );
+		user-select: none;
+
+		&.name {
+			font-weight: 500;
+		}
+	}
+
+	.grid,
+	.base {
+		fill: none;
+		stroke-width: 1px;
+		shape-rendering: crispEdges;
+	}
+
+	.grid {
+		stroke: var( --chart-grid );
+	}
+
+	.base {
+		stroke: var( --chart-axis );
+	}
+
+	// --chart-c is the color of the element (palette slot, or serie.color)
+	@for $i from 1 through 8 {
+		.c#{$i} {
+			--chart-c: var( --chart-color-#{$i} );
+		}
+	}
+
+	.mark,
+	.bar,
+	.slice {
+		fill: var( --chart-c );
+	}
+
+	.slice {
+		stroke: var( --chart-background );
+		stroke-width: 2px;
+		stroke-linejoin: round;
+	}
+
+	.ring {
+		fill: none;
+		stroke: var( --chart-c );
+	}
+
+	.line {
+		fill: none;
+		stroke: var( --chart-c );
+		stroke-width: 2px;
+		stroke-linejoin: round;
+		stroke-linecap: round;
+	}
+
+	.area {
+		fill: var( --chart-c );
+		fill-opacity: 0.15;
+		stroke: none;
+	}
+
+	.dot {
+		fill: var( --chart-c );
+		stroke: var( --chart-background );
+		stroke-width: 2px;
+	}
+
+	.bar,
+	.slice,
+	.ring,
+	.dot {
+		transition: opacity 0.15s ease;
+
+		&:hover {
+			opacity: 0.75;
+		}
+	}
+
+	// hover point of a line without dots
+	.dot.ghost {
+		opacity: 0;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}

@@ -35,7 +35,8 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
-  │     ├── Progress, TickLine, Canvas, Image, SvgComponent, Spreadsheet, MonacoEditor
+  │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit, Breadcrumbs
@@ -739,6 +740,28 @@ class Store extends CoreElement {
   removeRow(row_num): void;  getRowCount(): number;  setMaxRowCount(rows): void
   clear(): void;  lock(): void;  unlock(): void
 }
+```
+
+### `Chart` — minimal svg chart (line, area, bar, pie, donut)
+
+```ts
+interface ChartProps extends SvgProps {
+  type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
+  series: ChartSerie[]                      // required; pie & donut use the first serie
+  labels?: string[]                         // default: 1, 2, 3...
+  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default
+  legend?: boolean                          // default: shown when 2+ named series
+  stacked?: boolean
+  formatter?: (value: number) => string     // default: chartFormatUnit (1.5k, 2M...)
+  click?                                    // EvChartClick { serie, index, value }
+}
+interface ChartSerie { name?; values: number[] /* undefined = hole */; color?; fill?; dots? }
+class Chart extends SvgComponent {
+  setType(type): void;  setSeries(series, labels?): void;  setLabels(labels): void
+  setTicks(sens: "x" | "y", ticks: ChartTick[]): void
+}
+// Colors: CSS variables --chart-color-1..8 (or serie.color). Size it with width/height/flex like any component.
+// Minimal by design: no dual axis, mixed types, time axis, zoom or animation — use a dedicated library for those.
 ```
 
 ### `PropertyGrid`
