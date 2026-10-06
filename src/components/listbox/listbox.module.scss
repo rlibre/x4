@@ -131,11 +131,10 @@
             overflow: hidden; 
         }
 
-        .ref-c1 { width: var( --ref-c1-width); }
-        .ref-c2 { width: var( --ref-c2-width); }
-        .ref-c3 { width: var( --ref-c3-width); }
-        .ref-c4 { width: var( --ref-c4-width); }
-        .ref-c5 { width: var( --ref-c5-width); }
+        // 10 columns max (see Header)
+        @for $i from 1 through 10 {
+            .ref-c#{$i} { width: var( --ref-c#{$i}-width ); }
+        }
 
         //&:active{
             //background-color: var( --color-80 );

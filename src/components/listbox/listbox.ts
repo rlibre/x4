@@ -35,7 +35,7 @@ export type ListboxID = number | string;
 export interface ListItem {
 	id: ListboxID;
 	text: string | UnsafeHtml;
-	sub_cols?: (string | UnsafeHtml | Component)[];	// extra columns
+	sub_cols?: (string | UnsafeHtml | Component)[];	// extra columns (9 max: 10 columns with text), a null value creates no cell
 
 	iconId?: string;
 	data?: any;
