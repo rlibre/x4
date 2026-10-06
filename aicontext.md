@@ -710,11 +710,28 @@ interface SpreadsheetProps extends ComponentProps {
   columns: SpreadsheetColumn[]              // required
   footer?: boolean
   rowClassifier?: RowClassifier
+  enterMove?: "down" | "right" | "none"     // selection move after Enter in a cell editor (default "down")
   click?, dblClick?, contextMenu?, selectionChange?
+  cellChange?                               // EvCellChange, fired before an edited value is written to the store
 }
+interface SpreadsheetColumn {               // GridColumn +
+  editable?: boolean | ((row, col) => boolean)       // inline edition (off by default), col = column index
+  editor?: (row, col, value) => Component            // custom editor, must implement queryInterface("form-element")
+}
+interface EvCellChange { row; col /* index */; colId /* store key */; value /* writable */; oldValue }
 class Spreadsheet extends Component {
   getSelection(): /* cell */; navigate(sens: kbNav): boolean; lock(lock): void
+  editCell(row, col, clear = false): boolean         // cell must be visible
+  stopEdit(commit = true): void;  isEditing(): boolean
 }
+
+// Inline edition: F2 / Enter / double-click / typing starts, Enter / Tab / click elsewhere validates, Escape cancels,
+// Delete clears, editable checkboxes toggle on click or Space. Default editor is an Input matching the column type.
+// cellChange: ev.preventDefault() refuses the value, ev.value can be replaced.
+// Select / Combobox in a cell (the store holds the id, use `formatter` to display the text):
+//   { id: 2, title: "Status", width: 120, editable: true,
+//     formatter: ( id ) => states.find( x => x.id===id )?.text,
+//     editor: ( row, col, value ) => new Select( { items: states, value } ) }
 
 // Store: in-memory cell store (extends CoreElement)
 class Store extends CoreElement {

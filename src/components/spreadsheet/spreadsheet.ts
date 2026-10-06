@@ -15,10 +15,10 @@
  **/
 
 
-import { Component, ComponentContent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { Component, ComponentContent, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { GridColumn } from '../gridview/gridview'
 
-import { class_ns, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
+import { class_ns, IFormElement, isFunction, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
 import { CoreEvent, EventCallback, EventMap } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -28,6 +28,7 @@ import { Box } from '../boxes/boxes';
 import { CSizer } from '../sizers/sizer'
 import { Viewport } from '../viewport/viewport';
 import { SimpleText } from '../label/label';
+import { Input } from '../input/input';
 import { CoreElement } from '../../x4.js';
 
 import icons from "../assets/icons"
@@ -42,8 +43,39 @@ export type SSCellClassifier = ( row: number, col: number ) => string;	    // re
 export type RowClassifier = (row: number ) => string;	    				// return the row computed class
 //export type CellRenderer = (row: number, col: number, content: any) => Component;
 
+export type SSCellEditable = ( row: number, col: number ) => boolean;			// col is the column index
+export type SSCellEditor = ( row: number, col: number, value: any ) => Component;	// col is the column index
+
 export interface SpreadsheetColumn extends Omit<GridColumn,"classifier"> {
     cellClassifier?: SSCellClassifier;
+
+	/** allow the inline edition of the cells of this column */
+	editable?: boolean | SSCellEditable;
+
+	/**
+	 * custom cell editor (default is an input matching the column type)
+	 * the component must implement the "form-element" interface
+	 */
+	editor?: SSCellEditor;
+}
+
+/**
+ * fired before an edited value is written to the store
+ * call preventDefault to refuse the value
+ */
+
+export interface EvCellChange extends ComponentEvent {
+	row: number;
+	col: number;		// column index
+	colId: any;			// column id (the key in the store)
+	value: any;			// new value, the handler can change it
+	oldValue: any;
+}
+
+interface CellEdit extends CellRef {
+	editor: Component;
+	initial?: string;	// text of the editor at start
+	busy?: boolean;		// rows are being rebuilt, focus loss must be ignored
 }
 
 
@@ -181,6 +213,7 @@ export interface SpreadsheetEvents extends ComponentEvents {
 	dblClick?: EvDblClick;
 	contextMenu?: EvContextMenu;
 	selectionChange?: EvSelectionChange;
+	cellChange?: EvCellChange;
 }
 
 export interface SpreadsheetProps extends ComponentProps {
@@ -189,7 +222,10 @@ export interface SpreadsheetProps extends ComponentProps {
 	columns: SpreadsheetColumn[];
 	rowClassifier?: RowClassifier;
 
+	/** where the selection goes when an edition is validated with Enter (default "down") */
+	enterMove?: "down" | "right" | "none";
 
+	cellChange?: EventCallback<EvCellChange>;
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
 	contextMenu?: EventCallback<EvContextMenu>;
@@ -267,6 +303,8 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
 
+	private _edit: CellEdit;	// cell being edited
+
 	constructor(props: P) {
 		super(props);
 
@@ -285,7 +323,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 		this._columns = props.columns.map(x => x);
 
-		this.mapPropEvents(props, "click", "dblClick", "contextMenu", "selectionChange");
+		this.mapPropEvents(props, "click", "dblClick", "contextMenu", "selectionChange", "cellChange");
 
 		this.lock(true);
 		this.setAttribute("tabindex", 0);
@@ -319,6 +357,11 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 	private _on_key(ev: KeyboardEvent) {
 		
 		if (this.isDisabled()) {
+			return;
+		}
+
+		// keys of the cell editor are handled by the editor
+		if( this._edit ) {
 			return;
 		}
 
@@ -363,8 +406,43 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 				break;
 			}
 
-			default:
+			case "F2":
+			case "Enter": {
+				const sel = this._curCell( );
+				if( !sel || !this.editCell( sel.row, sel.col ) ) {
+					return;
+				}
+				break;
+			}
+
+			case "Delete": {
+				const sel = this._curCell( );
+				if( !sel || !this._isEditable( sel.row, sel.col ) ) {
+					return;
+				}
+
+				this._setCellValue( sel.row, sel.col, null );
+				break;
+			}
+
+			default: {
+				const sel = this._curCell( );
+				if( !sel ) {
+					return;
+				}
+
+				if( ev.key==" " && this._toggleCell( sel.row, sel.col ) ) {
+					break;
+				}
+
+				// a typed char starts the edition: the editor takes the focus, so the char goes into it
+				const altgr = ev.getModifierState( "AltGraph" );
+				if( ev.key.length==1 && ( altgr || ( !ev.ctrlKey && !ev.altKey && !ev.metaKey ) ) ) {
+					this.editCell( sel.row, sel.col, true );
+				}
+
 				return;
+			}
 		}
 
 		ev.preventDefault();
@@ -391,8 +469,8 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			this._selection.forEach( x => {
 				const row = x>>12;
-				if( m===undefined || m>row ) { m = row; col=x&0xff; }
-				if( M===undefined || M<row ) { M = row; col=x&0xff; }
+				if( m===undefined || m>row ) { m = row; col=x&0xfff; }
+				if( M===undefined || M<row ) { M = row; col=x&0xfff; }
 			} );
 
 			return [top ? m : M, col]
@@ -450,7 +528,13 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			if (ncol >= 0 && ncol < this._columns.length ) {
 				this._clearSelection(false);
 				this._addSelection( mkid(fline,ncol), true);
-				//this._scrollToIndex( nline );
+
+				// fixed columns are always visible
+				if( !this._getCol(ncol).fixed ) {
+					const cell = this.query( `.cell[data-ref="${mkid(fline,ncol)}"]` );
+					cell?.scrollIntoView( { block: "nearest", inline: "nearest" } );
+				}
+
 				return true;
 			}
 		}
@@ -497,7 +581,9 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			if (ev.type == 'changed' && this._selection.size ) {
 				const nsel = new Set<number>();
 				this._selection.forEach(x => {
-					if( this._store.hasData( x ) ) {
+					// selection use column index, store use column id
+					const cdata = this._getCol( x & 0xfff );
+					if( cdata && this._store.hasData( x >> 12, cdata.id ) ) {
 						nsel.add( x );
 					}
 				});
@@ -857,7 +943,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			el.setInternalData("row", rowid);
 			el.setData("ref", mkid(rowid, col) + "");
 
-			if (this._selection.has(mkid(col, rowid))) {
+			if (this._selection.has(mkid(rowid, col))) {
 				el.addClass("selected");
 			}
 
@@ -1028,8 +1114,33 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 
 
+		// MOUSEDOWN
+		this.addDOMEvent("mousedown", (e) => {
+			if( !this._edit || this._inEditor(e) ) {
+				return;
+			}
+
+			// click on another cell while editing:
+			// validate now, rows may be rebuilt before the click event (and the click lost)
+			const ref = targetCell(e);
+			if( ref && ref.row!==undefined ) {
+				this._endEdit( true, true );
+
+				if (!this._selection.has(ref.ref)) {
+					this._clearSelection( false );
+					this._addSelection(ref.ref,true);
+				}
+
+				e.preventDefault( );
+			}
+		});
+
 		// CLICK
 		this.addDOMEvent("click", (e) => {
+			if( this._inEditor(e) ) {
+				return;
+			}
+
 			const ref = targetCell(e);
 			if (ref) {
 				//TODO: multiselection
@@ -1037,11 +1148,17 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this._clearSelection( false );
 					this._addSelection(ref.ref,true);
 				}
+
+				this._toggleCell( ref.row, ref.col );
 			}
 		});
 
 		// DBLCLICK
 		this.addDOMEvent("dblclick", (e) => {
+			if( this._inEditor(e) ) {
+				return;
+			}
+
 			const ref = targetCell(e);
 			if (ref) {
 				//TODO: multiselection
@@ -1050,12 +1167,22 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this._addSelection(ref.ref,true);
 				}
 
-				this.fire( "dblClick", { context: { row: ref.row, col: ref.col } } );
+				const dev: EvDblClick = { context: { row: ref.row, col: ref.col } };
+				this.fire( "dblClick", dev );
+
+				if( !dev.defaultPrevented ) {
+					this.editCell( ref.row, ref.col );
+				}
 			}
 		});
 
 		// CONTEXT
 		this.addDOMEvent("contextmenu", (e) => {
+			// keep the native menu of the editor (copy/paste)
+			if( this._inEditor(e) ) {
+				return;
+			}
+
 			const ref = targetCell(e);
 			if (ref) {
 				//TODO: multiselection
@@ -1114,6 +1241,13 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			const hasFixed = this._has_fixed;
 
 			if (this._start != start || this._end != end || force) {
+
+				// rows are rebuilt: the cell editor must survive
+				const edit = this._edit;
+				const edit_focus = edit ? edit.editor.dom.contains( document.activeElement ) : false;
+				if( edit ) {
+					edit.busy = true;
+				}
 
 				const rows: Component[] = [];
 				const headers: Component[] = [];
@@ -1175,6 +1309,10 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 				else {
 					this._vheader.addClass("@hidden");
 				}
+
+				if( edit && this._edit===edit ) {
+					this._restoreEditor( edit, edit_focus );
+				}
 			}
 		}
 	}
@@ -1211,7 +1349,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 		if (notify) {
 			const selection = this.getSelection();
-			this.fire("selectionChange", { selection, empty: selection.length != 0 });
+			this.fire("selectionChange", { selection, empty: selection.length == 0 });
 		}
 	}
 
@@ -1242,6 +1380,379 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 
 		this._addSelection(mkid(row, col), true);
+	}
+
+	// :: EDITION ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	/**
+	 * @returns the selected cell when there is exactly one
+	 */
+
+	private _curCell( ): CellRef {
+		if( this._selection.size!=1 ) {
+			return null;
+		}
+
+		const ref = this._selection.values().next().value as number;
+		return { row: ref >> 12, col: ref & 0xfff };
+	}
+
+	private _inEditor( e: Event ) {
+		return !!this._edit && this._edit.editor.dom.contains( e.target as Node );
+	}
+
+	/**
+	 *
+	 */
+
+	private _isEditable( row: number, col: number ) {
+		const cdata = this._getCol( col );
+		if( !cdata?.editable || !this._store || this.isDisabled() ) {
+			return false;
+		}
+
+		if( !(row>=0) || row>=this._store.getRowCount() ) {
+			return false;
+		}
+
+		if( isFunction(cdata.editable) && !cdata.editable( row, col ) ) {
+			return false;
+		}
+
+		// html content & images cannot be edited by the default editor
+		if( !cdata.editor ) {
+			if( cdata.type=="image" || cdata.type=="icon" ) {
+				return false;
+			}
+
+			if( this._store.getData( row, cdata.id ) instanceof UnsafeHtml ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * write a value to the store (after cellChange agreement)
+	 * @returns true if the value was written
+	 */
+
+	private _setCellValue( row: number, col: number, value: any ) {
+		const cdata = this._getCol( col );
+		if( !cdata || !this._store || row>=this._store.getRowCount() ) {
+			return false;
+		}
+
+		const empty = ( v: any ) => v===undefined || v===null || v==="";
+		const same = ( a: any, b: any ) => {
+			if( a instanceof Date && b instanceof Date ) {
+				return a.getTime()==b.getTime();
+			}
+
+			return a===b || ( empty(a) && empty(b) );
+		}
+
+		const oldValue = this._store.getData( row, cdata.id );
+		if( same( value, oldValue ) ) {
+			return false;
+		}
+
+		const ev: EvCellChange = { row, col, colId: cdata.id, value, oldValue };
+		this.fire( "cellChange", ev );
+
+		if( ev.defaultPrevented ) {
+			return false;
+		}
+
+		this._store.setData( row, cdata.id, ev.value );
+		return true;
+	}
+
+	/**
+	 * editable checkboxes are toggled without editor
+	 */
+
+	private _toggleCell( row: number, col: number ) {
+		const cdata = this._getCol( col );
+		if( cdata?.type!="checkbox" || cdata.editor || !this._isEditable( row, col ) ) {
+			return false;
+		}
+
+		this._setCellValue( row, col, !this._store.getData( row, cdata.id ) );
+		return true;
+	}
+
+	/**
+	 * default editor: an input matching the column type
+	 */
+
+	private _createEditor( cdata: SpreadsheetColumn, value: any, clear: boolean ): Component {
+		switch( cdata.type ) {
+			case "number":
+			case "money":
+			case "percent": {
+				const ed = new Input( { type: "number", value: !clear && isNumber(value) ? value : undefined } );
+				ed.setAttribute( "step", "any" );
+				return ed;
+			}
+
+			case "date": {
+				return new Input( { type: "date", value: !clear && value instanceof Date ? value : undefined } );
+			}
+
+			default: {
+				return new Input( { type: "text", value: clear || value===undefined || value===null ? "" : value+"" } );
+			}
+		}
+	}
+
+	/**
+	 * @returns the value of the editor, undefined if there is nothing to write
+	 */
+
+	private _readEditor( edit: CellEdit ): any {
+		const cdata = this._getCol( edit.col );
+		if( !cdata ) {
+			return undefined;
+		}
+
+		if( cdata.editor ) {
+			const fe = edit.editor.queryInterface<IFormElement>( "form-element" );
+			return fe && fe.isValid() ? fe.getRawValue( ) : undefined;
+		}
+
+		const input = edit.editor as Input;
+		if( (input.dom as HTMLInputElement).validity?.badInput ) {
+			return undefined;
+		}
+
+		const text = input.getValue( );
+		if( text===edit.initial ) {
+			return undefined;	// untouched
+		}
+
+		switch( cdata.type ) {
+			case "number":
+			case "money":
+			case "percent": {
+				const v = parseFloat( text );
+				return isNaN(v) ? null : v;
+			}
+
+			case "date": {
+				const [y,m,d] = text.split( "-" ).map( x => parseInt(x) );
+				return y ? new Date( y, m-1, d ) : null;
+			}
+
+			default: {
+				// keep numbers as numbers
+				const old = this._store.getData( edit.row, cdata.id );
+				if( isNumber(old) && text!=="" && isFinite( Number(text) ) ) {
+					return Number( text );
+				}
+
+				return text;
+			}
+		}
+	}
+
+	private _focusEditor( editor: Component ) {
+		const dom = editor.dom as HTMLElement;
+		const el = dom.matches( "input,select,textarea" ) ? dom : dom.querySelector<HTMLElement>( "input,select,textarea,[tabindex]" );
+		( el ?? dom ).focus( { preventScroll: true } );
+	}
+
+	/**
+	 * rows have been rebuilt: put the editor back in its cell
+	 */
+
+	private _restoreEditor( edit: CellEdit, focus: boolean ) {
+		const cell = this.query( `.cell[data-ref="${mkid(edit.row,edit.col)}"]` );
+		if( !cell ) {
+			// the cell is no more visible
+			edit.busy = false;
+			this._endEdit( true, focus );
+			return;
+		}
+
+		if( edit.editor.dom.parentElement!=cell.dom ) {
+			cell.addClass( "editing" );
+			cell.appendContent( edit.editor );
+		}
+
+		if( focus ) {
+			this._focusEditor( edit.editor );
+		}
+
+		edit.busy = false;
+	}
+
+	/**
+	 *
+	 */
+
+	private _on_edit_key( ev: KeyboardEvent ) {
+		// the grid must not handle the editor keys (navigation)
+		ev.stopPropagation( );
+
+		if( ev.isComposing ) {
+			return;
+		}
+
+		switch( ev.key ) {
+			case "Enter": {
+				this._endEdit( true, true );
+
+				const move = this.props.enterMove ?? "down";
+				if( move=="down" ) {
+					this.navigate( ev.shiftKey ? kbNav.prev : kbNav.next );
+				}
+				else if( move=="right" ) {
+					this.navigate( ev.shiftKey ? kbNav.left : kbNav.right );
+				}
+
+				break;
+			}
+
+			case "Tab": {
+				this._endEdit( true, true );
+				this.navigate( ev.shiftKey ? kbNav.left : kbNav.right );
+				break;
+			}
+
+			case "Escape": {
+				this._endEdit( false, true );
+				break;
+			}
+
+			default:
+				return;
+		}
+
+		ev.preventDefault( );
+	}
+
+	/**
+	 * @param refocus - give the focus back to the grid (default: only if the editor has it)
+	 */
+
+	private _endEdit( commit: boolean, refocus?: boolean ) {
+		const edit = this._edit;
+		if( !edit ) {
+			return;
+		}
+
+		this._edit = null;
+
+		const value = commit ? this._readEditor( edit ) : undefined;
+		const dom = edit.editor.dom;
+
+		if( refocus===undefined ) {
+			refocus = dom.contains( document.activeElement );
+		}
+
+		const cell = componentFromDOM( dom.parentElement );
+		cell?.removeClass( "editing" );
+		dom.remove( );
+
+		if( refocus ) {
+			(this.dom as HTMLElement).focus( { preventScroll: true } );
+		}
+
+		if( value!==undefined ) {
+			this._setCellValue( edit.row, edit.col, value );
+		}
+	}
+
+	/**
+	 * start the edition of a cell (the cell must be visible and its column editable)
+	 * @param row - row index
+	 * @param col - column index
+	 * @param clear - start with an empty editor
+	 * @returns false if the cell cannot be edited
+	 */
+
+	editCell( row: number, col: number, clear = false ): boolean {
+		this._endEdit( true );
+
+		const cdata = this._getCol( col );
+		if( !this._isEditable( row, col ) || ( cdata.type=="checkbox" && !cdata.editor ) ) {
+			return false;
+		}
+
+		const ref = mkid( row, col );
+		const cell = this.query( `.cell[data-ref="${ref}"]` );
+		if( !cell ) {
+			return false;
+		}
+
+		if( this._selection.size!=1 || !this._selection.has(ref) ) {
+			this._clearSelection( false );
+			this._addSelection( ref, true );
+		}
+
+		const value = this._store.getData( row, cdata.id );
+		const editor = cdata.editor ? cdata.editor( row, col, value ) : this._createEditor( cdata, value, clear );
+		if( !editor ) {
+			return false;
+		}
+
+		const edit: CellEdit = { row, col, editor };
+		if( !cdata.editor ) {
+			edit.initial = (editor as Input).getValue( );
+		}
+
+		editor.addClass( "cell-editor" );
+		editor.addDOMEvent( "keydown", ( ev ) => this._on_edit_key( ev ) );
+
+		// avoid a second dispatch of the editor handlers by the grid
+		editor.addDOMEvent( "wheel", ( ev ) => ev.stopPropagation( ) );
+
+		editor.addDOMEvent( "focusout", ( ev ) => {
+			if( this._edit!==edit || edit.busy ) {
+				return;
+			}
+
+			// focus is moving inside the editor
+			const to = ev.relatedTarget as Node;
+			if( to && editor.dom.contains(to) ) {
+				return;
+			}
+
+			this._endEdit( true, false );
+		});
+
+		this._edit = edit;
+
+		cell.addClass( "editing" );
+		cell.appendContent( editor );
+		this._focusEditor( editor );
+
+		if( !clear && !cdata.editor ) {
+			const input = editor as Input;
+			if( cdata.type=="number" || cdata.type=="money" || cdata.type=="percent" ) {
+				input.selectAll( );
+			}
+			else if( cdata.type!="date" ) {
+				input.select( input.getValue().length, 0 );
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * stop the current edition
+	 * @param commit - false to cancel
+	 */
+
+	stopEdit( commit = true ) {
+		this._endEdit( commit );
+	}
+
+	isEditing( ) {
+		return !!this._edit;
 	}
 }
 

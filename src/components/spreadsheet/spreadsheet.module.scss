@@ -97,6 +97,37 @@
 		&.align-right {
 			justify-content: end;
 		}
+
+		&.editing {
+			position: relative;
+		}
+
+		// inline editor: cover the cell
+		.cell-editor {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0 4px;
+
+			font: inherit;
+			outline: none;
+			border: 2px solid var( --spreadsheet-row-background-sel );
+			border-radius: 0;
+
+			color: var( --spreadsheet-cell-color );
+			background-color: var( --spreadsheet-background );
+		}
+
+		&.align-center .cell-editor {
+			text-align: center;
+		}
+
+		&.align-right .cell-editor {
+			text-align: right;
+		}
 	}
 
 	.x4viewport {
