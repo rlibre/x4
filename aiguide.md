@@ -132,6 +132,23 @@ super();
 
 when the component expects props.
 
+When writing a custom component, pass the whole props object: do not remove your own values from it before calling `super`. The base class keeps what it receives in `this.props`, so they stay readable later.
+
+```ts
+// avoid: search and strict are lost for this.props
+const { search, strict, ...base } = props;
+super(base);
+
+// prefer: override only what must not reach the parent
+super({ ...props, type: "text" });
+```
+
+Connect the event callbacks given in props with `mapPropEvents`, not with hand-written `if (props.x) this.on(...)`:
+
+```ts
+this.mapPropEvents(props, "change", "search");
+```
+
 For derived application components, prefer building the component's main content explicitly after `super(props)`.
 
 Ordinary nested x4 components may naturally use their `content` property where convenient.

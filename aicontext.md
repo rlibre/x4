@@ -39,7 +39,7 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, Flex, Space
-  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit, Breadcrumbs
+  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
   └── Application<E>           singleton, no DOM of its own
 
@@ -607,6 +607,26 @@ class Combobox extends Component {
   setItems(items): void
   showDropDown(): void
 }
+```
+
+### `AutoComplete` — text field with on-demand suggestions
+
+```ts
+interface AutoCompleteProps extends TextEditProps {   // label, labelWidth, required, placeholder, value...
+  search: (ev: EvSearch) => void            // required; ev.text, ev.setItems(items) — may be called async
+  change?                                   // EvAutoCompleteChange { value, item /* null = free text */ }
+  strict?: boolean                          // only a picked item (or empty) is accepted; default false
+  itemValue?: "text" | "id"                 // what goes into the field when an item is picked; default "text"
+  delay?: number                            // ms before search, default 250
+  minChars?: number                         // default 1
+  renderer?: (item: ListItem) => Component
+}
+class AutoComplete extends TextEdit {
+  getSelection(): ListboxID                 // id of the picked item, undefined for a free text
+  setSelection(item: ListItem): void;  showDropDown(): void
+}
+// Use Combobox for a fixed, known list; AutoComplete when suggestions come from a search (server).
+// In a Form the value is the field content (text or id, per itemValue).
 ```
 
 ### `ColorInput`
