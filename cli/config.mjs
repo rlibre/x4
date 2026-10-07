@@ -15,7 +15,7 @@ const DEFAULTS = Object.freeze({
     },
 });
 
-export function expandEnv(value, env = process.env) {
+export function expandEnv(value, env = process.env, escape = (text) => text) {
     if (typeof value !== "string")
         return value;
 
@@ -26,9 +26,16 @@ export function expandEnv(value, env = process.env) {
             const result = env[name];
             if (result === undefined)
                 throw new Error(`Environment variable '${name}' is not defined`);
-            return result;
+            return escape(result);
         },
     );
+}
+
+// A define value is a JavaScript expression, usually a string literal
+// ("\"$NAME\""). The value of the variable is escaped so that a quote or a
+// backslash in it cannot end or corrupt that literal.
+function escapeForDefine(text) {
+    return JSON.stringify(text).slice(1, -1);
 }
 
 export function resolvePath(root, value, env = process.env) {
@@ -146,7 +153,9 @@ export function loadConfig(root = process.cwd(), configFile = DEFAULT_CONFIG_FIL
             to: path.normalize(item.to),
         })),
         external: [...external],
-        define: { ...define },
+        define: Object.fromEntries(
+            Object.entries(define).map(([name, value]) => [name, expandEnv(value, env, escapeForDefine)]),
+        ),
         dev: {
             host,
             port,

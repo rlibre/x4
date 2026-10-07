@@ -129,7 +129,29 @@ The file sits at the root of the project. Every key is optional; without the fil
 | `dev` | | Dev server settings: `host`, `port`, `https`, `tls`. |
 | `esbuild` | `{}` | Native esbuild options, applied last. They override everything above. |
 
-Relative paths are resolved from the project root. Paths accept environment variables, written `$NAME` or `${NAME}`; an undefined variable is an error.
+Relative paths are resolved from the project root. Paths and `define` values accept environment variables, written `$NAME` or `${NAME}`; an undefined variable is an error.
+
+### Environment variables in `define`
+
+A `define` value is a JavaScript expression, so a text is written between escaped double quotes. The variable is read when the command runs: its value ends up in the bundle.
+
+```json
+{
+	"define": {
+		"API_URL": "\"$API_URL\"",
+		"API_PORT": "$API_PORT"
+	}
+}
+```
+
+```ts
+declare const API_URL: string;
+declare const API_PORT: number;
+```
+
+With `API_URL=https://example.com` and `API_PORT=8080`, the code sees the text `"https://example.com"` and the number `8080`. A quote or a backslash in the value of a variable is escaped: use double quotes around `$NAME`, not single ones.
+
+Everything in the bundle is public: do not put a secret in `define`.
 
 ### The HTML page
 
@@ -189,6 +211,6 @@ declare const VERSION_ID: number;
 | A file placed in the output folder disappeared | `x4js build` empties the folder. Move the file to the sources and add it to `copy`. |
 | `Cannot find package 'esbuild'` | The dependencies of the `x4js` copy being run are not installed. Run `npm install` in the project. |
 | `Config file not found` | The file given to `--config` does not exist. Without `--config`, a missing `x4.config.json` is not an error. |
-| `Environment variable '…' is not defined` | A path in the config uses `$NAME` and the variable is not set. |
+| `Environment variable '…' is not defined` | A path or a `define` value in the config uses `$NAME` and the variable is not set. |
 | `LESS support requires the "less" package` | A `.less` file is imported and `less` is not installed in the project. |
 | No colors in the terminal, or unwanted ones | Set `FORCE_COLOR=1` to force them, `NO_COLOR=1` to remove them. |
