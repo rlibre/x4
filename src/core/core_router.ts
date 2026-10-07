@@ -143,7 +143,13 @@ export class Router extends EventSource< RouterEvents > {
 		window.addEventListener('popstate', (event) => {
 			const url = this._getLocation( );
 			const found = this._find(url);
-		
+
+			if( found.handlers.length==0 ) {
+				console.log( 'route not found: '+url );
+				this.fire( "error", {code: 404, message: "route not found" } );
+				return;
+			}
+
 			found.handlers.forEach(h => {
 				h(found.params,url);
 			});
@@ -173,11 +179,17 @@ export class Router extends EventSource< RouterEvents > {
 
 
 	init() {
-		this.navigate( this._getLocation() );
+		// the page is already in the history: replace its entry instead of adding one
+		this.navigate( this._getLocation(), true, true );
 	}
 
 	private _getLocation( ) {
-		return this.m_useHash ? '/'+document.location.hash.substring(1) : document.location.pathname;
+		if( !this.m_useHash ) {
+			return document.location.pathname;
+		}
+
+		// "#home" and "#/home" are the same route
+		return '/'+document.location.hash.substring(1).replace( /^\/+/, '' );
 	}
 
 	/**
