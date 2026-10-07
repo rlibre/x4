@@ -1,0 +1,29 @@
+# x4js
+
+> x4js is a TypeScript framework for building web and desktop applications from object components. A component is a class instance that owns its DOM element and updates it directly: there is no virtual DOM, no template language and no JSX to learn. The package ships more than 50 components (boxes, forms, lists, grid, tree, spreadsheet, chart, dialogs, menus) and a command line that creates, serves and builds projects.
+
+Notes for assistants writing x4js code:
+
+- Everything is imported from a single entry point: `import { ... } from 'x4js'`.
+- Do not invent x4js APIs. Take exact class names, props and method signatures from the AI context file below.
+- Follow the AI guide for idiomatic code: how to build a component, pass props, wire events, and what to avoid.
+- A component is created with `new Xxx( { ...props } )`, and children go in the `content` prop.
+- Start a project with `npx x4js create <name>`, then `npm run dev`.
+- The same three files are installed with the package, in `node_modules/x4js/`.
+
+## Docs
+
+- [AI context](https://raw.githubusercontent.com/rlibre/x4/main/aicontext.md): compact API reference of every class, with exact signatures, the class hierarchy and the default project files
+- [AI guide](https://raw.githubusercontent.com/rlibre/x4/main/aiguide.md): rules for writing idiomatic x4js code, with the mistakes to avoid
+- [Command line](https://raw.githubusercontent.com/rlibre/x4/main/aicli.md): the `x4js` commands (`create`, `templates`, `dev`, `build`), the `x4.config.json` keys and troubleshooting
+
+## API
+
+- [API reference](https://rlibre.github.io/x4/index.html): full generated documentation of the TypeScript sources
+
+## Optional
+
+- [Home page](https://x4js.org): presentation of the model, the components and code examples
+- [Source repository](https://github.com/rlibre/x4): TypeScript sources, MIT license
+- [README](https://raw.githubusercontent.com/rlibre/x4/main/README.md): why x4js is built on object components instead of a virtual DOM
+- [npm package](https://www.npmjs.com/package/x4js): published versions

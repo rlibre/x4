@@ -1,0 +1,14 @@
+{
+	"name": "rlibre",
+	"description": "Claude Code plugins for the x4js framework",
+	"owner": {
+		"name": "R-libre ingenierie"
+	},
+	"plugins": [
+		{
+			"name": "x4js",
+			"source": "./plugins/x4js",
+			"description": "Write x4js code and use the x4js command line with the documentation of the installed version"
+		}
+	]
+}

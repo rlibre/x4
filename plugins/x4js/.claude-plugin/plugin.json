@@ -1,0 +1,14 @@
+{
+	"name": "x4js",
+	"displayName": "x4js",
+	"version": "1.0.0",
+	"description": "Write x4js code and use the x4js command line with the documentation of the installed version",
+	"author": {
+		"name": "R-libre ingenierie",
+		"url": "https://x4js.org"
+	},
+	"homepage": "https://x4js.org",
+	"repository": "https://github.com/rlibre/x4",
+	"license": "MIT",
+	"keywords": ["x4js", "typescript", "ui", "framework"]
+}
