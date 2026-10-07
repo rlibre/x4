@@ -636,6 +636,13 @@ selectLanguage("en");
 // only now build the application components
 ```
 
+Type each additional language after the first one, so the compiler reports a missing text:
+
+```ts
+const app_fr = { app: { open: "Ouvrir", close: "Fermer" } };
+const app_en: typeof app_fr = { app: { open: "Open", close: "Close" } };
+```
+
 ---
 
 ## Final rule

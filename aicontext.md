@@ -17,6 +17,7 @@ import { ... } from 'x4js'   // src/x4.ts
 **Archived repository**: https://github.com/rlibre/x4js (read-only since March 2026)
 **License**: MIT
 **Quick start**: `npx x4js create demo` (list the templates with `npx x4js templates`)
+**Claude Code plugin**: `claude plugin marketplace add rlibre/x4` then `claude plugin install x4js@rlibre` (skill that reads these files from the project)
 
 ---
 
