@@ -7,7 +7,19 @@ see [X4 home page](https://x4js.org)
 ## API Documentation
 see [GitHib](https://rlibre.github.io/x4/index.html)
 
-see [AI context](./aicontext.md)
+## Using x4js with an AI assistant
+Three files written for AI assistants ship with the package (in `node_modules/x4js/`). Give them to your assistant before asking it to write x4js code:
+
+- [aicontext.md](./aicontext.md): compact API reference, with exact signatures
+- [aiguide.md](./aiguide.md): how to write idiomatic x4js code
+- [aicli.md](./aicli.md): the `x4js` command line and `x4.config.json`
+
+With Claude Code, install the x4js plugin instead: its skill reads these files from your project by itself.
+
+```
+claude plugin marketplace add rlibre/x4
+claude plugin install x4js@rlibre
+```
 
 ---
 

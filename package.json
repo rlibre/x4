@@ -21,6 +21,7 @@
     "src",
     "bin",
     "cli",
+    "aicli.md",
     "aicontext.md",
     "aiguide.md",
     "README.md",

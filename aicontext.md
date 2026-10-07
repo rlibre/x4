@@ -734,6 +734,7 @@ interface SpreadsheetProps extends ComponentProps {
   enterMove?: "down" | "right" | "none"     // selection move after Enter in a cell editor (default "down")
   click?, dblClick?, contextMenu?, selectionChange?
   cellChange?                               // EvCellChange, fired before an edited value is written to the store
+  cellKey?                                  // EvCellKey { key, row, col, uievent }, fired for each key before the default handling
 }
 interface SpreadsheetColumn {               // GridColumn +
   editable?: boolean | ((row, col) => boolean)       // inline edition (off by default), col = column index
@@ -747,7 +748,9 @@ class Spreadsheet extends Component {
 }
 
 // Inline edition: F2 / Enter / double-click / typing starts, Enter / Tab / click elsewhere validates, Escape cancels,
-// Delete clears, editable checkboxes toggle on click or Space. Default editor is an Input matching the column type.
+// Delete clears, editable checkboxes toggle on double-click or Space (a single click only selects).
+// Default editor is an Input matching the column type.
+// cellKey: key hook (function keys...), not fired while a cell is edited; ev.preventDefault() skips the default handling.
 // cellChange: ev.preventDefault() refuses the value, ev.value can be replaced.
 // Select / Combobox in a cell (the store holds the id, use `formatter` to display the text):
 //   { id: 2, title: "Status", width: 120, editable: true,
@@ -1392,6 +1395,7 @@ When creating a new x4js project, use these files as a base.
 
 `x4js dev` runs the dev server, `x4js build` writes `outdir` (add `--debug` for a debug build).
 Both read `x4.config.json` (change the file with `--config <file>`).
+Full reference of the command line (commands, options, config keys, troubleshooting): `aicli.md`.
 
 ### `x4.config.json`
 

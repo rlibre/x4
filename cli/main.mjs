@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { failure } from "./log.mjs";
+import { failure, info } from "./log.mjs";
 
 const cliDir = path.dirname(fileURLToPath(import.meta.url));
 const packageFile = path.join(cliDir, "..", "package.json");
@@ -46,11 +46,13 @@ try {
             break;
         }
         case "dev": {
+            info("x4js", version);
             const { dev } = await import("./dev.mjs");
             await dev(argv);
             break;
         }
         case "build": {
+            info("x4js", version);
             const { build } = await import("./build.mjs");
             await build(argv);
             break;

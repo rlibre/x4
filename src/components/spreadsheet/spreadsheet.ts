@@ -72,6 +72,18 @@ export interface EvCellChange extends ComponentEvent {
 	oldValue: any;
 }
 
+/**
+ * fired for each key pressed on the grid (not while a cell is edited), before the default handling
+ * call preventDefault to handle the key yourself
+ */
+
+export interface EvCellKey extends ComponentEvent {
+	key: string;				// "F2", "Enter", "a"...
+	row: number;				// selected cell, undefined if none
+	col: number;				// column index
+	uievent: KeyboardEvent;		// UI event that fire this event
+}
+
 interface CellEdit extends CellRef {
 	editor: Component;
 	initial?: string;	// text of the editor at start
@@ -214,6 +226,7 @@ export interface SpreadsheetEvents extends ComponentEvents {
 	contextMenu?: EvContextMenu;
 	selectionChange?: EvSelectionChange;
 	cellChange?: EvCellChange;
+	cellKey?: EvCellKey;
 }
 
 export interface SpreadsheetProps extends ComponentProps {
@@ -226,6 +239,7 @@ export interface SpreadsheetProps extends ComponentProps {
 	enterMove?: "down" | "right" | "none";
 
 	cellChange?: EventCallback<EvCellChange>;
+	cellKey?: EventCallback<EvCellKey>;
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
 	contextMenu?: EventCallback<EvContextMenu>;
@@ -323,7 +337,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 		this._columns = props.columns.map(x => x);
 
-		this.mapPropEvents(props, "click", "dblClick", "contextMenu", "selectionChange", "cellChange");
+		this.mapPropEvents(props, "click", "dblClick", "contextMenu", "selectionChange", "cellChange", "cellKey");
 
 		this.lock(true);
 		this.setAttribute("tabindex", 0);
@@ -362,6 +376,17 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 		// keys of the cell editor are handled by the editor
 		if( this._edit ) {
+			return;
+		}
+
+		// the application first
+		const cur = this._curCell( );
+		const kev: EvCellKey = { key: ev.key, row: cur?.row, col: cur?.col, uievent: ev };
+		this.fire( "cellKey", kev );
+
+		if( kev.defaultPrevented ) {
+			ev.preventDefault();
+			ev.stopPropagation();
 			return;
 		}
 
@@ -1148,8 +1173,6 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this._clearSelection( false );
 					this._addSelection(ref.ref,true);
 				}
-
-				this._toggleCell( ref.row, ref.col );
 			}
 		});
 
@@ -1170,7 +1193,8 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 				const dev: EvDblClick = { context: { row: ref.row, col: ref.col } };
 				this.fire( "dblClick", dev );
 
-				if( !dev.defaultPrevented ) {
+				// checkboxes are toggled, other cells are edited
+				if( !dev.defaultPrevented && !this._toggleCell( ref.row, ref.col ) ) {
 					this.editCell( ref.row, ref.col );
 				}
 			}
