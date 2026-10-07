@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.3.11",
+  "version": "2.3.12",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",
