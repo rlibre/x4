@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parseEnv } from "node:util";
 
 export const DEFAULT_CONFIG_FILE = "x4.config.json";
 
@@ -47,6 +48,39 @@ export function resolvePath(root, value, env = process.env) {
 
 export function resolveConfigFile(root, configFile = DEFAULT_CONFIG_FILE, env = process.env) {
     return resolvePath(root, configFile, env);
+}
+
+/**
+ * Reads the file given to --env.
+ * Returns the environment to expand the config with: the variables of the
+ * file, under those already defined, which win as with `node --env-file`.
+ *
+ * The option is not named --env-file on purpose: node handles that name
+ * itself, even after the script name, before this code runs.
+ */
+export function loadEnvFile(root, file, env = process.env) {
+    const filename = resolvePath(root, file, env);
+
+    let variables;
+    try {
+        variables = parseEnv(fs.readFileSync(filename, "utf8"));
+    }
+    catch (error) {
+        if (error.code === "ENOENT")
+            throw new Error(`Env file not found: ${filename}`);
+        throw new Error(`Cannot read env file '${filename}': ${error.message}`);
+    }
+
+    // Inherit from the environment instead of copying it: process.env has
+    // its own lookup rules (names are case-insensitive on Windows).
+    // defineProperty, because a plain assignment would go through to it.
+    const merged = Object.create(env);
+    for (const [name, value] of Object.entries(variables)) {
+        if (env[name] === undefined)
+            Object.defineProperty(merged, name, { value, enumerable: true });
+    }
+
+    return { filename, env: merged };
 }
 
 function readJson(filename) {

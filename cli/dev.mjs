@@ -3,7 +3,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { parseArgs } from "node:util";
 import esbuild from "esbuild";
-import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig, resolveConfigFile, resolveTls } from "./config.mjs";
+import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig, loadEnvFile, resolveConfigFile, resolveTls } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
 import { info, success, failure } from "./log.mjs";
 
@@ -60,6 +60,7 @@ export async function dev(argv = [], root = process.cwd()) {
         args: argv,
         options: {
             config: { type: "string" },
+            env: { type: "string" },
             host: { type: "string" },
             port: { type: "string" },
             http: { type: "boolean", default: false },
@@ -86,7 +87,16 @@ export async function dev(argv = [], root = process.cwd()) {
     let restartChain = Promise.resolve();
     let browserOpened = false;
 
-    async function start(config) {
+    // Read again on each (re)start, so an edited env file is taken into
+    // account when the config is reloaded.
+    function load() {
+        const envFile = values.env ? loadEnvFile(root, values.env) : undefined;
+        const env = envFile?.env ?? process.env;
+        const config = loadConfig(root, configArg, env, { explicit: explicitConfig });
+        return { config, env, envFile };
+    }
+
+    async function start({ config, env, envFile }) {
         const host = values.host ?? config.dev.host;
         const port = values.port === undefined ? config.dev.port : Number(values.port);
         if (port !== undefined && (port < 0 || port > 65535))
@@ -101,7 +111,7 @@ export async function dev(argv = [], root = process.cwd()) {
         if (port !== undefined)
             serveOptions.port = port;
         if (useHttps)
-            Object.assign(serveOptions, resolveTls(config));
+            Object.assign(serveOptions, resolveTls(config, env));
 
         const next = await esbuild.context(createBuildOptions(config, "dev"));
         try {
@@ -113,6 +123,8 @@ export async function dev(argv = [], root = process.cwd()) {
             const url = serverUrl(actualHost, result.port, useHttps);
             info("mode", "dev");
             info("config", config.configFile);
+            if (envFile)
+                info("env file", envFile.filename);
             info("outdir", config.outdir);
             success("server", url);
 
@@ -128,12 +140,12 @@ export async function dev(argv = [], root = process.cwd()) {
     }
 
     async function reload() {
-        let config;
+        let loaded;
         try {
-            config = loadConfig(root, configArg, process.env, { explicit: explicitConfig });
-            protocolConfig(config, values);
-            if (values.https || (!values.http && config.dev.https))
-                resolveTls(config);
+            loaded = load();
+            protocolConfig(loaded.config, values);
+            if (values.https || (!values.http && loaded.config.dev.https))
+                resolveTls(loaded.config, loaded.env);
         }
         catch (error) {
             failure(`config: ${error.message}`);
@@ -146,7 +158,7 @@ export async function dev(argv = [], root = process.cwd()) {
             await previous.dispose();
 
         try {
-            await start(config);
+            await start(loaded);
             success("config", "reloaded");
         }
         catch (error) {
@@ -161,8 +173,7 @@ export async function dev(argv = [], root = process.cwd()) {
         }, 150);
     }
 
-    const initialConfig = loadConfig(root, configArg, process.env, { explicit: explicitConfig });
-    await start(initialConfig);
+    await start(load());
 
     const watchDir = path.dirname(watchedConfigFile);
     const watchName = path.basename(watchedConfigFile);

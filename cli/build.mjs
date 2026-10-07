@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { parseArgs } from "node:util";
 import esbuild from "esbuild";
-import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig } from "./config.mjs";
+import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig, loadEnvFile } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
 import { info, success } from "./log.mjs";
 import { printBuildError, printWarnings } from "./diagnostic-plugin.mjs";
@@ -11,6 +11,7 @@ export async function build(argv = [], root = process.cwd()) {
         args: argv,
         options: {
             config: { type: "string" },
+            env: { type: "string" },
             debug: { type: "boolean", default: false },
         },
         allowPositionals: true,
@@ -20,12 +21,17 @@ export async function build(argv = [], root = process.cwd()) {
     if (positionals.length)
         throw new Error(`Unexpected argument: ${positionals[0]}`);
 
+    const envFile = values.env ? loadEnvFile(root, values.env) : undefined;
+    const env = envFile?.env ?? process.env;
+
     const configArg = values.config ? expandEnv(values.config) : DEFAULT_CONFIG_FILE;
-    const config = loadConfig(root, configArg, process.env, { explicit: values.config !== undefined });
+    const config = loadConfig(root, configArg, env, { explicit: values.config !== undefined });
     const mode = values.debug ? "debug" : "production";
 
     info("mode", mode);
     info("config", config.configFile);
+    if (envFile)
+        info("env file", envFile.filename);
     info("outdir", config.outdir);
 
     await fs.rm(config.outdir, { recursive: true, force: true });
