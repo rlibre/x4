@@ -27,12 +27,12 @@ export function createBuildOptions(config, mode) {
         charset: "utf8",
         keepNames: true,
         platform: "browser",
-		logLevel: "silent",
+        // Errors and warnings are printed by diagnostic-plugin.mjs.
+        logLevel: "silent",
         format: "iife",
         target: "es2020",
         minify: production,
         sourcemap: production ? false : "linked",
-        logLevel: "info",
         external: config.external,
         assetNames: "assets/[name]-[hash]",
         loader: {
