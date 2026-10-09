@@ -130,7 +130,7 @@ interface ComponentProps {
   ns?: string                                        // SVG/MathML namespace
   cls?: string                                       // extra CSS classes
   id?: string
-  style?: Partial<CSSStyleDeclaration>
+  style?: StyleProps                                 // numbers get "px" except unitless
   attrs?: Record<string, string | number | boolean>
   content?: ComponentContent
   dom_events?: GlobalDOMEvents
@@ -188,7 +188,7 @@ getInternalData<T>(name: string|symbol): T
 ### Styles
 
 ```ts
-setStyle(style: Partial<CSSStyleDeclaration>): this  // numbers auto-suffixed "px" except unitless
+setStyle(style: StyleProps): this  // numbers auto-suffixed "px" except unitless
 setStyleValue<K>(name: K, value): this
 getStyleValue<K>(name: K): CSSStyleDeclaration[K]
 setWidth(w: number|string): void

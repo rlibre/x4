@@ -71,6 +71,15 @@ export const makeUniqueComponentId = ( ) => {
 }
 
 /**
+ * CSS properties. A number gets "px", except for the unitless properties
+ * (opacity, lineHeight, flexGrow...).
+ */
+
+export type StyleProps = {
+	[K in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[K] | number;
+};
+
+/**
  * Base properties for all components.
  */
 
@@ -80,7 +89,7 @@ export interface ComponentProps {
 	/** Namespace for SVG/MathML elements. */
     ns?: string;
 	/** Inline CSS styles. */
-    style?: Partial<CSSStyleDeclaration>;
+    style?: StyleProps;
 	/** HTML attributes. */
     attrs?: Record<string,string|number|boolean>;
 	/** Child content (components, strings, or HTML). */
@@ -685,17 +694,17 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      * @returns The component instance for chaining.
      */
 
-	setStyle( style: Partial<CSSStyleDeclaration> ): this {
+	setStyle( style: StyleProps ): this {
 		const _style = (this.dom as HTMLElement).style;
 
 		for( const name in style ) {
-			
-			let value = style[name];
+
+			let value: any = style[name];
 			if( !unitless[name] && (isNumber(value) || RE_NUMBER.test(value)) ) {
 				value += "px";
 			}
 
-			_style[name] = value;
+			(_style as any)[name] = value;
 		}
 
 		return this;
