@@ -130,4 +130,27 @@
 			}
 		}
 	}
+
+	// the colors offered under the sliders (props.swatches)
+	.swatches {
+		flex-wrap: wrap;
+		gap: 4px;
+
+		.item {
+			width: 18px;
+			height: 18px;
+			border: 1px solid var( --border );
+			border-radius: 3px;
+			cursor: pointer;
+
+			&:hover {
+				border-color: var( --border-focus );
+			}
+
+			// no color: crossed out
+			&.none {
+				background: linear-gradient( to top right, transparent 45%, #d04040 45%, #d04040 55%, transparent 55% );
+			}
+		}
+	}
 }

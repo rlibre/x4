@@ -17,13 +17,19 @@
 import { Color, Hsv } from '../../core/core_colors';
 import { Rect, clamp, class_ns, isFeatureAvailable } from '../../core/core_tools';
 
-import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
 
 import "./colorpicker.module.scss"
 
-interface ColorPickerProps extends ComponentProps {
+export interface ColorPickerProps extends ComponentProps {
 	color: string | Color;
+
+	/** Colors offered under the sliders, to be picked with a click. */
+	swatches?: ( string | Color )[];
+
+	/** Adds a "no color" swatch: picking it fires `change` with a null color. */
+	nullable?: boolean;
 }
 
 interface HueChangeEvent extends ComponentEvent {
@@ -125,6 +131,18 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
 		const base = new Color(0,0,0)
 		base.setHsv( hsv.hue, 1, 1, 1 );
 		this.color.setStyleValue( "backgroundColor", base.toRgbString(false) );
+	}
+
+	/**
+	 * Shows another color: base color and thumb. Does not fire `sat_change`.
+	 */
+
+	setColor( hsv: Hsv ) {
+		this.hsv.saturation = hsv.saturation;
+		this.hsv.value = hsv.value;
+
+		this.updateBaseColor( hsv );
+		this.updateThumbMarker( );
 	}
 
 	move( sens: string, delta: number ) {
@@ -335,31 +353,41 @@ class AlphaSlider extends Box<BoxProps,CommonEvents> {
  * 
  */
 
-interface ChangeEvent extends ComponentEvent {
+/**
+ * Fired by ColorPicker and ColorInput when the user changes the color.
+ *
+ * `value` is the color as text: "#rrggbb", or "#rrggbbaa" when it is not
+ * opaque. Both are null when the user picked "no color" (`nullable`).
+ */
+
+export interface EvColorChange extends EvChange {
 	color: Color;
+	readonly value: string;
 }
 
 interface ColorPickerChangeEvents extends ComponentEvents {
-	change: ChangeEvent
+	change: EvColorChange
 }
 
 /**
- * 
+ *
  */
 
 @class_ns( "x4" )
 export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> {
 
 	private _base: Color;
+	private _hsv: Hsv;
 	private _sat: Saturation;
 	private _swatch: Component;
 	private _hue: HueSlider;
 	private _alpha: AlphaSlider;
+	private _swatches: HBox;
 
 
 	constructor( props: ColorPickerProps ) {
 		super( props );
-	
+
 		if( props.color instanceof Color ) {
 			this._base = props.color;
 		}
@@ -367,7 +395,7 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 			this._base = new Color( props.color );
 		}
 
-		let hsv = this._base.toHsv( );
+		const hsv = this._hsv = this._base.toHsv( );
 
 		this.setAttribute( "tabindex", 0 );
 
@@ -385,48 +413,34 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 						this._swatch = new Component( { cls: "overlay" } ),
 					] } )
 				]
-			})
+			}),
+			this._swatches = new HBox( { cls: "swatches" } ),
 		]);
 
 		this._sat.on( "sat_change", ( ev ) => {
-			hsv.saturation = ev.saturation;
-			hsv.value = ev.value;
-			updateColor( );
-			this._alpha.updateBaseColor( hsv );
+			this._hsv.saturation = ev.saturation;
+			this._hsv.value = ev.value;
+			this._changed( );
+			this._alpha.updateBaseColor( this._hsv );
 		} );
 
 		this._hue.on( 'hue_change', ( ev ) => {
-			hsv.hue = ev.hue;
-			this._sat.updateBaseColor( hsv );
-			this._alpha.updateBaseColor( hsv );
-			updateColor( );
+			this._hsv.hue = ev.hue;
+			this._sat.updateBaseColor( this._hsv );
+			this._alpha.updateBaseColor( this._hsv );
+			this._changed( );
 		} );
 
 		this._alpha.on( 'alpha_change', ( ev ) => {
-			hsv.alpha = ev.alpha;
-			updateColor( );
+			this._hsv.alpha = ev.alpha;
+			this._changed( );
 		} );
-
-		const updateColor = ( ) => {
-			this._base.setHsv( hsv.hue, hsv.saturation, hsv.value, hsv.alpha );
-			this._swatch.setStyleValue( "backgroundColor", this._base.toRgbString() );
-			this._swatch.setAttribute( "tooltip", this._base.toRgbString() );
-
-			this.fire( "change", { color: this._base } );
-		}
 
 		if( isFeatureAvailable("eyedropper") ) {
 			this._swatch.addDOMEvent( "click", ( e ) => {
 				const eyeDropper = new (window as any).EyeDropper();
 				eyeDropper.open( ).then( ( result: any ) => {
-					const color = new Color( result.sRGBHex );
-					hsv = color.toHsv( );
-
-					this._alpha.setColor( hsv );
-					
-					this._sat.updateBaseColor( hsv );
-					this._hue.updateHue( hsv );
-					updateColor( );
+					this._pick( new Color( result.sRGBHex ) );
 				}).catch( (_: any )=> {
 					/* silence */
 				} );
@@ -435,7 +449,107 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 
 		this.addDOMEvent( "keydown", ( ev ) => this._onkey( ev ) );
 
-		updateColor( );
+		this.setSwatches( props.swatches );
+		this._changed( );
+	}
+
+	/**
+	 * the sliders moved: compute the color, show it, tell it
+	 */
+
+	private _changed( ) {
+		const hsv = this._hsv;
+
+		this._base.setHsv( hsv.hue, hsv.saturation, hsv.value, hsv.alpha );
+		this._refresh( );
+		this._notify( );
+	}
+
+	private _refresh( ) {
+		this._swatch.setStyleValue( "backgroundColor", this._base.toRgbString() );
+		this._swatch.setAttribute( "tooltip", this._base.toRgbString() );
+	}
+
+	private _notify( ) {
+		this.fire( "change", { color: this._base, value: this._base.toHexString() } );
+	}
+
+	/**
+	 * the user took a color as a whole (eye dropper, swatch)
+	 */
+
+	private _pick( color: Color ) {
+		this.setColor( color );
+		this._notify( );
+	}
+
+	/**
+	 * The current color. It is the object the `change` event gives, and it
+	 * changes with the picker: copy it to keep a value.
+	 */
+
+	getColor( ): Color {
+		return this._base;
+	}
+
+	/**
+	 * Shows another color. Does not fire `change`.
+	 */
+
+	setColor( color: Color | string ) {
+		const rgb = ( color instanceof Color ? color : new Color( color ) ).toRgb( );
+
+		// the color itself is kept as given: going through hsv could shift it
+		this._base.setRgb( rgb.red, rgb.green, rgb.blue, rgb.alpha );
+
+		const hsv = this._base.toHsv( );
+		this._hsv.hue = hsv.hue;
+		this._hsv.saturation = hsv.saturation;
+		this._hsv.value = hsv.value;
+		this._hsv.alpha = hsv.alpha;
+
+		this._sat.setColor( this._hsv );
+		this._hue.updateHue( this._hsv );
+		this._alpha.setColor( this._hsv );
+
+		this._refresh( );
+	}
+
+	/**
+	 * Colors offered under the sliders. A click on one of them takes it
+	 * and fires `change`. Nothing is shown without swatches.
+	 */
+
+	setSwatches( swatches: ( string | Color )[] ) {
+		const items: Component[] = [];
+
+		if( this.props.nullable ) {
+			items.push( new Component( {
+				cls: "item none",
+				dom_events: {
+					click: ( ) => this.fire( "change", { color: null, value: null } ),
+				},
+			} ) );
+		}
+
+		for( const swatch of swatches ?? [] ) {
+			const color = swatch instanceof Color ? swatch : new Color( swatch );
+			if( color.isInvalid( ) ) {
+				continue;
+			}
+
+			items.push( new Component( {
+				cls: "item",
+				tooltip: color.toHexString( ),
+				style: { backgroundColor: color.toRgbString( ) },
+				dom_events: {
+					click: ( ) => this._pick( color ),
+				},
+			} ) );
+		}
+
+		this._swatches.setContent( items );
+		this._swatches.show( items.length>0 );
 	}
 
 	private _onkey( ev: KeyboardEvent ) {

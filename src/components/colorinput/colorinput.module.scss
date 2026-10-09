@@ -17,7 +17,8 @@
 :root {
 	--colorinput-btn-background: inherit;
 	--colorinput-btn-color: var( --text-secondary );
-	--colorinput-btn-color-hover: var( --text-primary );	
+	--colorinput-btn-color-hover: var( --text-primary );
+	--colorinput-popup-background: var( --background-primary );
 }
 
 .x4colorinput {
@@ -33,6 +34,18 @@
 		margin: 4px;
 		width: 1rem;
 		height: 1rem;
+
+		// props.picker: a click opens the color picker
+		&.picker {
+			flex-shrink: 0;
+			cursor: pointer;
+		}
+
+		// props.nullable, no color: crossed out
+		&.none {
+			border: 1px solid var( --border );
+			background: linear-gradient( to top right, transparent 45%, #d04040 45%, #d04040 55%, transparent 55% );
+		}
 	}
 
 	input {
@@ -62,4 +75,11 @@
 			//color: var( --color-10 );
 		}
 	}
+}
+
+// the color picker opened from the swatch (props.picker)
+.x4colorinput-popup {
+	background-color: var( --colorinput-popup-background );
+	border: 1px solid var( --border );
+	box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.3 );
 }
