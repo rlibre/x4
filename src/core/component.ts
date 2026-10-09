@@ -1194,9 +1194,10 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 		const state = makeState( raw );
 
+		// the state is what is saved, not raw: makeState works on a copy of it
 		state.on( "change", ( ) => {
 			this.setTimeout( key, 500, ( ) => {
-				Application.instance().setStorage( key, JSON.stringify( raw ) );
+				Application.instance().setStorage( key, JSON.stringify( state ) );
 		} );
 		});
 
