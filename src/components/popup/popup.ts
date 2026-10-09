@@ -233,7 +233,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			if( idx>=0 ) {
 				autoclose_list.splice( idx, 1 );
 				if( autoclose_list.length==0 ) {
-					document.removeEventListener( "pointerdown", this._dismiss );
+					document.removeEventListener( "pointerdown", this._dismiss, true );
 				}
 			}
 		}
@@ -263,7 +263,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 				
 		if( this.props.autoClose ) {
 			if( autoclose_list.length==0 ) {
-				document.addEventListener( "pointerdown", this._dismiss );
+				document.addEventListener( "pointerdown", this._dismiss, true );
 			}
 
 			autoclose_list.push( this );
@@ -322,6 +322,10 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 
 	/**
 	 * binded
+	 *
+	 * listened on the document while the event goes down (capture): a press
+	 * closes the popups even when what is pressed stops its propagation.
+	 * the event is left as it is, what is pressed handles it as usual.
 	 */
 
 	private _dismiss = ( e: UIEvent ) => {
@@ -329,9 +333,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		if( onac ) {
 			return;
 		}
-
-		e.preventDefault( );
-		e.stopPropagation( );
 
 		this.dismiss( );
 	}
@@ -368,7 +369,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		const list = inc_group.reverse( );
 		autoclose_list = excl_group;
 		if( autoclose_list.length==0 ) {
-			document.removeEventListener( "pointerdown", this._dismiss );
+			document.removeEventListener( "pointerdown", this._dismiss, true );
 		}
 		
 		list.forEach( x => x.close() );
