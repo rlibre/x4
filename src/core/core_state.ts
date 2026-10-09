@@ -139,9 +139,13 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 					return Reflect.get( target, prop, receiver );
 				}
 
-				// genuinely missing property ('in' walks the prototype chain, so array methods, toString, toJSON... never trigger a false positive)
+				// genuinely missing property ('in' walks the prototype chain, so array methods, toString... never trigger a false positive).
+				// toJSON is asked by JSON.stringify to every object: a plain one has none, and that is not an error
 				if( !( prop in target ) ) {
-					console.error( `state error, unable to find ${_child_path(path,prop,target)}` );
+					if( prop !== "toJSON" ) {
+						console.error( `state error, unable to find ${_child_path(path,prop,target)}` );
+					}
+
 					return undefined;
 				}
 
@@ -237,7 +241,7 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
  * const state = makeState( { count: 0, items: [1,2,3] } );
  * state.on( "change", e => console.log( e.path, "=", e.value ) );
  * state.count++;         // "count = 1"
- * state.items.push( 4 ); // "items.3 = 4"
+ * state.items.push( 4 ); // "items[3] = 4"
  */
 
 export function makeState<T extends Record<keyof T, StateData>>( initialState: T ): StateProxy<T> {
