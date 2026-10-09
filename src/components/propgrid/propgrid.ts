@@ -67,6 +67,16 @@ export interface PropertyProps extends ComponentProps {
  * @cssvar
  * ```
  * --propertygrid-background
+ * --propertygrid-odd-background
+ * --propertygrid-even-background
+ * --propertygrid-disabled-background
+ * --propertygrid-hover-background
+ * --propertygrid-focus-background
+ * --propertygrid-input-background
+ * --propertygrid-group-background
+ * --propertygrid-group-color
+ * --propertygrid-gadget-background
+ * --propertygrid-gadget-color
  * ```
  */
 
