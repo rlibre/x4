@@ -14,7 +14,8 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, EventCallback } from '../../core/component';
+import { Component, ComponentEvents } from '../../core/component';
+import { EventCallback } from '../../core/core_events';
 import { isFeatureAvailable, class_ns, isFunction, IComponentInterface, IFormElement } from '../../core/core_tools';
 import { Color } from '../../core/core_colors';
 
@@ -37,7 +38,7 @@ type Swatches = ( Color | string )[];
  */
 
 export interface ColorInputProps extends BoxProps {
-	/** The color at start. null (with `nullable`): no color. */
+	/** The color at start. null: no color is shown. */
 	color: Color | string;
 
 	/** Name of the field: with it, a Form reads and writes the color (as "#rrggbb"). */
@@ -147,7 +148,9 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 			return color;
 		}
 
-		if( this.props.nullable && ( color===null || color===undefined || color==="" ) ) {
+		// Nothing to show (a color that is not known, or several ones). Whether
+		// the user may choose "no color" is another matter: props.nullable.
+		if( color===null || color===undefined || color==="" ) {
 			return null;
 		}
 
@@ -213,7 +216,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 	}
 
 	/**
-	 * The current color, null when there is none (`nullable`).
+	 * The current color, null when there is none.
 	 */
 
 	getColor( ): Color {
@@ -230,7 +233,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 	}
 
 	/**
-	 * Shows another color. Does not fire `change`.
+	 * Shows another color, or none (null). Does not fire `change`.
 	 */
 
 	setColor( color: Color | string ) {
