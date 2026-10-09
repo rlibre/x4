@@ -23,6 +23,8 @@ import { ListboxID, ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
 import { asap, class_ns, isFunction, isNumber } from '../../core/core_tools';
 import { Icon, ScrollView } from '../components'
+import { ColorInput } from '../colorinput/colorinput'
+import { EvColorChange } from '../colorpicker/colorpicker'
 
 import icons from "../assets/icons"
 
@@ -32,12 +34,14 @@ type IValue = boolean | number | string;
 type IValueCB = ( name: string) => IValue;
 
 export interface PropertyValue {
-	type: 'boolean' | 'number' | 'string' | 'password' | 'options' | 'label' | 'button';
+	type: 'boolean' | 'number' | 'string' | 'password' | 'options' | 'color' | 'label' | 'button';
 	title?: string;
 	desc?: string;
 	name?: string;
 	value: IValue | IValueCB;
 	options?: ListItem[];
+	swatches?: string[] | ( ( ) => string[] );	// for colors: offered in the picker; a function is called when it opens
+	nullable?: boolean;	// for colors: "no color" can be chosen, the value is then null
 	callback?: ( name: string, value: any ) => void;
 	live?: boolean;	// for live update 
 	cls?: string;
@@ -270,10 +274,23 @@ export class PropertyGrid extends VBox {
 				}
 			});
 		}
-		else if (item.type === 'label') {
-			editor = new Label({ 
+		else if (item.type === 'color') {
+			editor = new ColorInput({
 				id: item.name,
-				text: value as string, 
+				color: value as string,
+				format: "hex",
+				picker: true,
+				swatches: item.swatches,
+				nullable: item.nullable,
+				change: ( e: EvColorChange ) => {
+					item.callback?.( item.name, e.value );
+				}
+			});
+		}
+		else if (item.type === 'label') {
+			editor = new Label({
+				id: item.name,
+				text: value as string,
 			});
 		}
 		else if (item.type === 'button') {
@@ -355,6 +372,12 @@ export class PropertyGrid extends VBox {
 			const editor = this.root.query<Input>( '#'+item.name );
 			if( editor ) {
 				editor.setNumValue( value as number, -2 );
+			}
+		}
+		else if (item.type === 'color') {
+			const editor = this.root.query<ColorInput>( '#'+item.name );
+			if( editor ) {
+				editor.setColor( value as string );
 			}
 		}
 		else if (item.type === 'label') {
