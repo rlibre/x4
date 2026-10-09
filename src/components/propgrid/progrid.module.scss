@@ -40,13 +40,17 @@
 		margin: 0;
 	}
 
+	// Two columns shared by all the rows: the titles, as wide as the longest
+	// of them but never more than half of the grid, and the editors, which
+	// take the rest.
 	.root {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: fit-content( 50% ) 1fr;
 		grid-template-rows: auto;
 	}
 
 	.group {
+		grid-column: 1 / -1;
 		padding: 6px 4px 4px 4px;
 		min-height: 2em;
 		background-color: var( --propertygrid-group-background );
@@ -112,47 +116,57 @@
 		}
 	}
 
+	// A row has no box of its own: its two cells go straight on the columns
+	// of the grid, which is how all the titles get the same width. (A row is
+	// a fieldset: it cannot be a subgrid.) What a row looked like, background
+	// and bottom line, is carried by its cells.
 	.row {
-		border-bottom: 1px solid var( --border-light );
-		//border-top: none;
-		//border-left: 1px solid var(--color-primary-a50);
-		//border-right: 1px solid var(--color-primary-a50);
+		display: contents;
 
-		&.even:not(:disabled) {
-			background-color: var(--propertygrid-even-background)
-		}
-		
-		&.odd:not(:disabled) {
-			background-color: var(--propertygrid-odd-background)
-		}
-		
-		&.odd:disabled {
-			background-color: var(--propertygrid-disabled-background)
-		}
-		
-		&:has(:focus) {
-			background-color: var( --propertygrid-focus-background );
-		}
-
-		&:hover {
-			background-color: var( --propertygrid-hover-background );
-		}
-
-		.cell {
-			flex-grow: 1;
-			flex-basis: 10px;
+		> .cell {
+			min-width: 0;
 	    	padding: 4px;
+			border-bottom: 1px solid var( --border-light );
 
 			input {
 				background: var( --propertygrid-input-background );
 			}
 		}
 
-		.cell:first-child {
+		&.even:not(:disabled) > .cell {
+			background-color: var(--propertygrid-even-background)
+		}
+
+		&.odd:not(:disabled) > .cell {
+			background-color: var(--propertygrid-odd-background)
+		}
+
+		&.odd:disabled > .cell {
+			background-color: var(--propertygrid-disabled-background)
+		}
+
+		&:has(:focus) > .cell {
+			background-color: var( --propertygrid-focus-background );
+		}
+
+		&:hover > .cell {
+			background-color: var( --propertygrid-hover-background );
+		}
+
+		> .cell:first-child {
 			border-right: 1px solid var( --border );
 		}
 
-		.hdr {
+		// a row without title (a button): its editor takes the two columns
+		> .cell:only-child {
+			grid-column: 1 / -1;
+		}
+
+		// The title, centered in the height of the row. Wider than half of
+		// the grid, it is cut by the column and goes on several lines.
+		> .hdr {
+			display: flex;
+			align-items: center;
 			padding: 8px;
 			padding-left: 34px;
 		}

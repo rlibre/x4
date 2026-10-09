@@ -35,10 +35,19 @@
 		width: 1rem;
 		height: 1rem;
 
-		// props.picker: a click opens the color picker
+		// props.picker: a click opens the color picker. It is a button:
+		// wide enough to be aimed at.
 		&.picker {
 			flex-shrink: 0;
+			width: 2.4rem;
+			height: 1.4rem;
+			border: 1px solid var( --border );
+			border-radius: 3px;
 			cursor: pointer;
+
+			&:hover {
+				border-color: var( --border-focus );
+			}
 		}
 
 		// props.nullable, no color: crossed out
@@ -55,14 +64,19 @@
 		flex-grow: 1;
 	}
 
+	// the eye dropper: as high as the field, and wide enough to be aimed at
 	.x4button {
+		flex-shrink: 0;
+		align-self: stretch;
 		margin: 0;
-		padding: 0;
+		padding: 0 6px;
 		outline: none;
 		background-color: var( --combobox-btn-background );
 		color: var( --colorinput-btn-color );
 
 		#icon {
+			width: 1.3em;
+			height: 1.3em;
 			color: var( --colorinput-btn-color );
 		}
 

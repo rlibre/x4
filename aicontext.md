@@ -633,7 +633,20 @@ class AutoComplete extends TextEdit {
 ### `ColorInput`
 
 ```ts
-class ColorInput extends HBox {}           // queryInterface("form-element")
+interface ColorInputProps extends BoxProps {
+  color: Color | string                    // null: no color shown
+  name?: string
+  format?: "rgb" | "hex"                   // text of the field, "rgb" by default
+  picker?: boolean                         // a click on the swatch opens a ColorPicker
+  swatches?: (Color|string)[] | (() => (Color|string)[])   // a function is called each time the picker opens
+  nullable?: boolean                       // "no color" can be chosen
+  change?: EventCallback<EvColorChange>    // user changes only, not setColor
+}
+class ColorInput extends HBox {            // queryInterface("form-element"): "#rrggbb" or null
+  getColor(): Color; getValue(): string
+  setColor(color: Color | string): void; setSwatches(swatches): void
+}
+interface EvColorChange extends EvChange { color: Color; value: string }  // "#rrggbb" or "#rrggbbaa"; both null for "no color"
 ```
 
 ### `FileDrop` / `FileDialog`
@@ -796,6 +809,9 @@ class PropertyGrid extends VBox {
   setItems(groups: PropertyGroup[]): void
   setPropValue(name: string, value): void
 }
+// PropertyValue.type: 'boolean' | 'number' | 'string' | 'password' | 'options' | 'color' | 'label' | 'button'
+// 'color': the editor is a ColorInput (hex, with picker); swatches?: string[] | (() => string[]), nullable?: boolean,
+//          callback(name, value) receives "#rrggbb", or null for "no color"
 ```
 
 ---
@@ -978,7 +994,9 @@ class Video extends Box {
   set stream(stream: MediaStream)
 }
 class Calendar extends VBox { getDate(): Date; setDate(date: Date): void }
-class ColorPicker extends VBox             // queryInterface("form-element")
+class ColorPicker extends VBox {           // props: color, swatches?, nullable?; "change": EvColorChange, also fired once when built
+  getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
+}
 class Panel extends VBox { setTitle(title: string): void }
 class Breadcrumbs extends HBox { setItems(elements): void }
 class Keyboard extends HBox                // virtual keyboard
