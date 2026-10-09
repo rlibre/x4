@@ -1,0 +1,87 @@
+# Changelog
+
+What changes in x4js, the library and its command line. The newest first.
+A version gets its date when it is published.
+
+## 2.3.15
+
+### Core
+
+- `JSON.stringify()` of a state, or of a part of it, no longer logs `state error, unable to find toJSON` for each object and array it goes through. The JSON was already right.
+- `makeState()`: the example in its comment gave `"items.3"` as the path of an array element; it is `"items[3]"`.
+
+## 2.3.14 (2026-10-09)
+
+### ColorInput
+
+- New `change` event, fired when the user changes the color (typing, eye dropper, picker). It gives the `Color` and its text, `"#rrggbb"`.
+- New methods: `getColor()`, `getValue()`, `setColor()`, `setSwatches()`.
+- New props, all optional:
+  - `picker`: a click on the swatch opens a color picker.
+  - `swatches`: colors offered in the picker, as a list or as a function called each time the picker opens.
+  - `nullable`: "no color" can be chosen; the value is then `null`.
+  - `format`: `"rgb"` (default, as before) or `"hex"`, how the field writes the color.
+  - `name`: with it, a `Form` reads and writes the color.
+- Answers to `queryInterface( "form-element" )`.
+- The eye dropper button is as high as the field and easier to aim at.
+- A color that is `null`, `undefined` or `""` shows nothing, instead of red or `rgb(NaN,NaN,NaN)`.
+
+```ts
+const input = new ColorInput( {
+	color: "#126e9e",
+	format: "hex",
+	picker: true,
+	nullable: true,
+	swatches: ["#002a40", "#126e9e", "#8ad0f5"],
+	change: ev => console.log( ev.value ),		// "#rrggbb", or null for "no color"
+} );
+
+input.setColor( "#ff0000" );					// does not fire change
+```
+
+### ColorPicker
+
+- New props `swatches` and `nullable`: colors, and "no color", offered under the sliders.
+- New methods: `getColor()`, `setColor()`, `setSwatches()`.
+- The `change` event keeps `color` and gains `value`, the color as `"#rrggbb"` (`"#rrggbbaa"` when it is not opaque).
+- After the eye dropper, the saturation marker follows the color that was taken.
+
+```ts
+const picker = new ColorPicker( { color: "#126e9e", swatches: ["#002a40", "#8ad0f5"] } );
+
+picker.on( "change", ev => console.log( ev.value, ev.color ) );
+picker.setColor( "#ff0000" );					// does not fire change
+```
+
+### PropertyGrid
+
+- New type `'color'`: the editor is a `ColorInput` with its picker. `swatches` and `nullable` are passed to it; the callback receives `"#rrggbb"`, or `null` for "no color".
+- The column of the titles is as wide as the longest title, and at most half of the grid. It was always half of it.
+- A row has no box of its own anymore (`display: contents`): its background and its bottom line are carried by its cells. A stylesheet that styled `.row` has to style `.row > .cell`.
+- New CSS variables, with the values that were hard coded: `--propertygrid-hover-background`, `--propertygrid-focus-background`, `--propertygrid-input-background`, `--propertygrid-group-color`.
+
+```ts
+new PropertyGrid( {
+	groups: [ {
+		title: "Text",
+		items: [
+			{ type: "string", name: "text", title: "Text", value: "Hello" },
+			{
+				type: "color", name: "back", title: "Background", value: null,
+				nullable: true,
+				swatches: ( ) => ["#002a40", "#126e9e"],
+				callback: ( name, value ) => console.log( name, value ),
+			},
+		],
+	} ],
+} );
+```
+
+### Core
+
+- `style` (props) and `setStyle()` accept numbers, as `setStyleValue()` did: `px` is added unless the property has no unit. New type `StyleProps`.
+- `Rect.moveTo()` moved the rectangle to `( x, x )`; fixed.
+
+```ts
+box.setStyle( { left: 10, top: 20 } );
+```

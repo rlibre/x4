@@ -46,10 +46,11 @@ CoreElement<E>                 named timers + event surface (no DOM)
 
 EventSource<E>                 standalone event registry
   ├── DataStore<T>
-  └── Router
+  ├── Router
+  └── StateManager<T>
 
 CoreElement-based (non-DOM): DataProxy, DataView, Store
-Standalone: Rect, Timer, Color, DataModel, StateManager, Stylesheet, ComputedStyle,
+Standalone: Rect, Timer, Color, DataModel, Stylesheet, ComputedStyle,
             SvgBuilder, X4PDFBuilder, x4_react, CMover, UnsafeHtml (extends String)
 ```
 
@@ -1277,16 +1278,35 @@ initTooltips(): void                                   // initialize the global 
 
 ---
 
-## State (`core_state`) — Experimental
+## State (`core_state`)
 
 ```ts
-class StateManager {
-  constructor(initialState)
-  getState(path: string, defaultValue?): any
-  setState(path: string, value, context?): void
+makeState<T>(initialState: T): StateProxy<T>     // the data itself + on / off / once / watch
+
+const state = makeState({ count: 0, user: { name: '' }, items: [1, 2, 3] })
+state.on('change', e => ...)                     // EvStateChange { path, value }
+state.watch('user', e => ...)                    // 'user', anything below it, or a parent replaced; returns { off() }
+state.count++                                    // path "count"
+state.user.name = 'x'                            // path "user.name"
+state.items.push(4)                              // path "items[3]"
+
+class StateManager<T> extends EventSource<StateEvents> {
+  constructor(initialState: T)
+  proxify(): StateProxy<T>
+  on(name, listener): { off(): void }
+  off(name, listener): void
+  once(name, listener): { off(): void }
+  watch(path: string, cb: (ev: EvStateChange) => void): { off(): void }
 }
-// NOTE: marked @Experimental in the sources.
+
+// Component (protected): a state kept in localStorage under "x4@persist:<name>",
+// saved 500 ms after a change
+loadPState(name: string, defaults: Record<string, any>): any
 ```
+
+- Plain objects and arrays are proxied when read; Date, Map, Set and class instances are not.
+- Setting a property to the value it already has fires nothing.
+- Reading a property that does not exist logs an error and returns `undefined`.
 
 ---
 
@@ -1487,7 +1507,6 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - The default language is `fr`. Call `selectLanguage('en')` to switch to English.
 - `Gridview` is backed by a `DataStore`; `Spreadsheet` is backed by a `Store` (different, cell-based).
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
-- `StateManager` (`core_state`) is marked **Experimental** — verify before relying on it.
 - `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma; 
 - `unbubbleEvents` is the set of DOM events that do not bubble through the x4 component tree.
