@@ -5,8 +5,13 @@ A version gets its date when it is published.
 
 ## 2.3.15
 
+### Popup
+
+- A popup with `autoClose` (a menu, the picker of a `ColorInput`) now closes on any press outside of it, even when what is pressed stops the propagation of the event. The press is no longer cancelled (`preventDefault`): what is pressed handles it as usual.
+
 ### Core
 
+- `Component.loadPState()`: a property set on the state it returns was never saved. It wrote the object the state was made from, which the state copies; it now writes the state itself.
 - `JSON.stringify()` of a state, or of a part of it, no longer logs `state error, unable to find toJSON` for each object and array it goes through. The JSON was already right.
 - `makeState()`: the example in its comment gave `"items.3"` as the path of an array element; it is `"items[3]"`.
 
