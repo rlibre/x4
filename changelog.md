@@ -3,6 +3,36 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.16
+
+### DockingView
+
+- New component: a view whose panels the user arranges by dragging their title.
+- Two kinds of panels, which never mix. Tools are docked in a band on the left or on the right: one above the other, side by side, or as tabs. Contents (what is worked on, as the editors of an IDE) share the room between the bands: split, or as tabs.
+- Props `floating` (tools can float above the rest) and `closable` (tools have a button that hides them); `showPanel()` brings a panel back where it was.
+- The layout is plain data (`DockLayout`): `getState()`, `setState()`, `resetLayout()`, and the event `layoutChange`. With the prop `persist`, it is remembered in the storage of the application, floating panels included.
+
+```ts
+const view = new DockingView( {
+	floating: true,
+	closable: true,
+	persist: "myapp.layout",
+	panels: [
+		{ id: "tools", title: "Tools", content: tools },
+		{ id: "page", kind: "content", content: editor },
+	],
+	layout: {
+		left: { size: 180, root: { type: "stack", size: 0, panels: ["tools"], active: "tools" } },
+		right: { size: 0, root: null },
+		content: { type: "stack", size: 0, panels: ["page"], active: "page" },
+		floats: [],
+		hidden: [],
+	},
+} );
+
+view.showPanel( "tools", false );		// hidden; view.showPanel( "tools" ) shows it again
+```
+
 ## 2.3.15 (2026-10-09)
 
 ### Shortcuts

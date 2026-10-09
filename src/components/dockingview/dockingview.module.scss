@@ -1,0 +1,279 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file dockingview.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+.x4dockingview {
+	--dock-line: var( --border, #cfdae0 );						// between two panels, under a title
+	--dock-title-background: var( --background-secondary, #f3f7f9 );
+	--dock-title-background-hover: color-mix( in srgb, var( --dock-accent ) 25%, transparent );
+	--dock-title-color: var( --text-ternary, #607784 );
+	--dock-title-color-active: var( --text-primary, #002a40 );
+	--dock-accent: var( --accent-background, #126e9e );			// the tab in front, the sizer under the pointer, the preview
+	--dock-float-background: var( --background-primary, white );
+	--dock-float-shadow: 0 6px 24px rgba( 0, 0, 0, 0.35 );
+
+	position: relative;
+	display: flex;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+
+	// it has no size of its own: it takes what its container gives it,
+	// even in an HBox, which centers its children
+	align-self: stretch;
+
+	// The boxes of the layout: the band of the left, the room of the
+	// contents, the band of the right. The floating tools are placed from
+	// its top-left corner, which is the one of the box.
+	> .dock-frame {
+		position: relative;
+		display: flex;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	// The tools of one side. Its width is given by the layout; it only
+	// gets narrower when the box has no room left.
+	.dock-band {
+		display: flex;
+		flex: 0 1 auto;
+		min-width: 48px;
+		min-height: 0;
+		overflow: hidden;
+
+		> .dock-split,
+		> .dock-stack {
+			flex: 1 1 0;
+		}
+	}
+
+	// the room of the contents: what the bands leave
+	.dock-area {
+		display: flex;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+
+		> .dock-split,
+		> .dock-stack {
+			flex: 1 1 0;
+		}
+	}
+
+	.dock-split {
+		display: flex;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+
+		&.column {
+			flex-direction: column;
+		}
+
+		// the smallest size of a child (MIN_SIZE in dockingview.ts)
+		&.row > .dock-split,
+		&.row > .dock-stack {
+			min-width: 48px;
+		}
+
+		&.column > .dock-split,
+		&.column > .dock-stack {
+			min-height: 48px;
+		}
+	}
+
+	// One line between two children. It is caught from a little further
+	// than what is drawn.
+	.dock-sizer {
+		position: relative;
+		z-index: 1;
+		flex: none;
+		align-self: stretch;
+		min-width: 1px;
+		min-height: 1px;
+		background: var( --dock-line );
+		touch-action: none;
+
+		&::after {
+			content: "";
+			position: absolute;
+		}
+
+		&:hover,
+		&:active {
+			background: var( --dock-accent );
+		}
+	}
+
+	// between two boxes that are side by side
+	.dock-sizer.row {
+		cursor: ew-resize;
+
+		&::after {
+			inset: 0 -3px;
+		}
+	}
+
+	// between two boxes that are one above the other
+	.dock-sizer.column {
+		cursor: ns-resize;
+
+		&::after {
+			inset: -3px 0;
+		}
+	}
+
+	.dock-stack {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+
+		// what a panel shows keeps its z-index for itself: it stays under
+		// the floating panels
+		isolation: isolate;
+	}
+
+	// the titles of a stack, which are also what it is dragged by
+	.dock-titles {
+		display: flex;
+		flex: none;
+		overflow: hidden;
+		background: var( --dock-title-background );
+		border-bottom: 1px solid var( --dock-line );
+		cursor: grab;
+		user-select: none;
+		touch-action: none;
+	}
+
+	.dock-title {
+		display: flex;
+		flex: none;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 8px;
+		font-weight: 600;
+		white-space: nowrap;
+		color: var( --dock-title-color );
+
+		// under the pointer: it can be taken
+		&:hover {
+			color: var( --dock-title-color-active );
+			background: var( --dock-title-background-hover );
+		}
+
+		// The only title of a stack takes the whole bar: its button is at
+		// the end of it. Among several tabs, it follows the text of its tab.
+		&:only-child {
+			flex: 1 1 0;
+			min-width: 0;
+
+			> span {
+				flex: 1 1 0;
+				min-width: 0;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
+		// several tabs: the one in front stands out
+		&.active:not( :only-child ) {
+			color: var( --dock-title-color-active );
+			box-shadow: inset 0 -2px 0 var( --dock-accent );
+		}
+	}
+
+	.dock-close {
+		width: 16px;
+		height: 16px;
+		line-height: 16px;
+		border-radius: 3px;
+		text-align: center;
+		font-weight: 400;
+		cursor: pointer;
+		opacity: 0.6;
+
+		&:hover {
+			opacity: 1;
+			background: var( --dock-line );
+		}
+	}
+
+	.dock-body {
+		display: flex;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	// what a panel shows fills its page
+	.dock-page {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+
+		> * {
+			flex: 1 1 0;
+			min-width: 0;
+			min-height: 0;
+		}
+	}
+
+	.dock-float {
+		position: absolute;
+		z-index: 20;
+		display: flex;
+		flex-direction: column;
+		min-width: 120px;
+		min-height: 80px;
+		overflow: hidden;
+		isolation: isolate;
+
+		background: var( --dock-float-background );
+		border: 1px solid var( --dock-line );
+		border-radius: 4px;
+		box-shadow: var( --dock-float-shadow );
+	}
+
+	// where the panel that is dragged will go
+	.dock-preview {
+		position: absolute;
+		z-index: 30;
+		box-sizing: border-box;
+		pointer-events: none;
+
+		background: color-mix( in srgb, var( --dock-accent ) 30%, transparent );
+		border: 1px solid var( --dock-accent );
+		border-radius: 3px;
+	}
+
+	// It holds the pointer during a drag: its cursor is the one that shows.
+	// It must be in the page to do so, but takes no room.
+	.dock-grip {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 0;
+		height: 0;
+		cursor: grabbing;
+	}
+}
