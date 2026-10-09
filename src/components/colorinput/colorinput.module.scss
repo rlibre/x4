@@ -50,10 +50,10 @@
 			}
 		}
 
-		// props.nullable, no color: crossed out
+		// props.nullable, no color: the checkerboard that stands for what is transparent
 		&.none {
 			border: 1px solid var( --border );
-			background: linear-gradient( to top right, transparent 45%, #d04040 45%, #d04040 55%, transparent 55% );
+			background: repeating-conic-gradient( #c8c8c8 0% 25%, #ffffff 0% 50% ) 0 0 / 6px 6px;
 		}
 	}
 

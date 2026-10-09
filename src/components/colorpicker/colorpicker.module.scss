@@ -147,9 +147,9 @@
 				border-color: var( --border-focus );
 			}
 
-			// no color: crossed out
+			// no color: the checkerboard that stands for what is transparent
 			&.none {
-				background: linear-gradient( to top right, transparent 45%, #d04040 45%, #d04040 55%, transparent 55% );
+				background: repeating-conic-gradient( #c8c8c8 0% 25%, #ffffff 0% 50% ) 0 0 / 6px 6px;
 			}
 		}
 	}

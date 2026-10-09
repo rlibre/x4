@@ -3,6 +3,12 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.17
+
+### ColorInput, ColorPicker
+
+- "No color" (`nullable`) is drawn as a fine checkerboard, the usual sign of what is transparent, in the swatch of the field and in the picker. It was a red line across, drawn on nothing, which could hardly be read on a dark theme.
+
 ## 2.3.16 (2026-10-09)
 
 ### DockingView
