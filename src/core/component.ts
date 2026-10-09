@@ -1197,7 +1197,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			// straight on the element, not with addDOMEvent: the handlers of the
 			// children are called exactly as before
-			this.dom.addEventListener( "keydown", ( ev: KeyboardEvent ) => shortcuts.handle( ev ) );
+			this.dom.addEventListener( "keydown", ( ev ) => shortcuts.handle( ev as KeyboardEvent ) );
 			this.dom.addEventListener( "focusin", ( ) => Application.instance( ).setActiveShortcuts( this, shortcuts ) );
 		}
 
