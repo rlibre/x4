@@ -264,7 +264,7 @@ export class Rect implements IRect {
 
     moveTo( x: number, y: number ) {
         this.left = x;
-        this.top = x;
+        this.top = y;
 
         return this;
     }
