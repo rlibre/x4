@@ -39,17 +39,18 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
-  │     ├── FileDialog, ScrollView, Viewport, Flex, Space
+  │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
   └── Application<E>           singleton, no DOM of its own
 
 EventSource<E>                 standalone event registry
   ├── DataStore<T>
-  └── Router
+  ├── Router
+  └── StateManager<T>
 
 CoreElement-based (non-DOM): DataProxy, DataView, Store
-Standalone: Rect, Timer, Color, DataModel, StateManager, Stylesheet, ComputedStyle,
+Standalone: Rect, Timer, Color, DataModel, Shortcuts, Stylesheet, ComputedStyle,
             SvgBuilder, X4PDFBuilder, x4_react, CMover, UnsafeHtml (extends String)
 ```
 
@@ -239,6 +240,7 @@ setCapture(pointerId: number): void;  releaseCapture(pointerId: number): void
 animate(keyframes: Keyframe[], duration: number): void
 onGlobalEvent(cb: (ev: EvMessage) => void): void   // auto-removed on DOM removal
 queryInterface<T>(name: string): T     // "form-element" → IFormElement; "tab-handler" → ITabHandler
+addShortcut(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): this   // see Shortcuts
 ```
 
 ### Exported helpers
@@ -284,6 +286,7 @@ setEnv(name: string, value: any): void
 getEnv(name: string, def_value?: any): any
 static fireGlobal(msg: string, params?: any): void
 focusNext(next: boolean): boolean
+addShortcut(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void   // see Shortcuts
 setupSocketMessaging(path?: string, looseCallback?: () => void): void
 getStorage(name: string): string
 setStorage(name: string, value: string|number): void
@@ -383,6 +386,79 @@ class MasonryBox extends Box {
   resizeItem(item: Component): void
 }
 ```
+
+---
+
+## `DockingView` — panels the user arranges by dragging their title
+
+Not a `Box`. Two kinds of panels, which never mix: **tools**, docked in a band on the left or on the right
+(one above the other, side by side, or as tabs) and which can float; **contents**, what is worked on
+(as the editors of an IDE), which share the room between the bands, split or as tabs.
+
+```ts
+interface DockPanel {
+  id: string
+  title?: string                           // shown in its tab; the id when missing
+  content: Component
+  kind?: 'tool' | 'content'                // default 'tool'
+  closable?: boolean                       // for this panel, instead of the view's
+  floating?: boolean                       // idem; a content never floats
+}
+interface DockingViewProps extends ComponentProps {
+  panels: DockPanel[]
+  layout: DockLayout                       // where the panels are at first
+  floating?: boolean                       // tools can float above the rest
+  closable?: boolean                       // tools have a button that hides them
+  persist?: string                         // a name: the layout is remembered under it (application storage)
+  layoutChange?: EventCallback<ComponentEvent>
+}
+class DockingView extends Component {
+  getState(): DockLayout                   // plain data, to save
+  setState(layout: unknown): void          // a saved layout; what it lacks comes from props.layout
+  resetLayout(): void                      // back to props.layout
+  showPanel(id: string, show?: boolean): void
+  isPanelVisible(id: string): boolean
+}
+
+interface DockLayout {
+  left: DockBand; right: DockBand          // the tools
+  content: DockNode                        // the contents; null when there is none
+  floats: DockFloat[]                      // floating tools: { panel, x, y, w, h }
+  hidden: string[]                         // ids of the closed panels
+}
+interface DockBand { size: number; root: DockNode }            // size: width in px; root: null when empty
+type DockNode  = DockStack | DockSplit
+interface DockStack { type: 'stack'; size: number; panels: string[]; active: string }    // one tab per panel
+interface DockSplit { type: 'split'; dir: 'row' | 'column'; size: number; children: DockNode[] }
+// size of a node: its share of its split (0 = an equal share)
+```
+
+```ts
+const view = new DockingView({
+  flex: true,
+  floating: true,
+  closable: true,
+  persist: 'myapp.layout',
+  panels: [
+    { id: 'tools', title: 'Tools', content: tools },
+    { id: 'props', title: 'Properties', content: props },
+    { id: 'page', kind: 'content', content: editor },
+  ],
+  layout: {
+    left:  { size: 180, root: { type: 'stack', size: 0, panels: ['tools'], active: 'tools' } },
+    right: { size: 260, root: { type: 'stack', size: 0, panels: ['props'], active: 'props' } },
+    content: { type: 'stack', size: 0, panels: ['page'], active: 'page' },
+    floats: [],
+    hidden: [],
+  },
+})
+```
+
+- A closed panel is hidden, not removed: `showPanel(id)` brings it back where it was. Offer it in a menu.
+- Tools only go in `left`, `right` or `floats`; contents only in `content`. A panel missing from the layout is added where its kind goes.
+- A content alone has no title bar; with several contents, each stack has tabs.
+- What a panel shows is built once (`content`) and moved as the layout changes: never rebuild it.
+- CSS variables: `--dock-line`, `--dock-accent`, `--dock-title-background`, `--dock-title-background-hover`, `--dock-title-color`, `--dock-title-color-active`, `--dock-float-background`, `--dock-float-shadow`.
 
 ---
 
@@ -1099,6 +1175,46 @@ parseRoute(str: string|RegExp, loose?: boolean): Segment
 
 ---
 
+## Shortcuts (`core_shortcuts`)
+
+Keyboard shortcuts. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`, `"Alt+ArrowLeft"`.
+Modifiers: `Shift`, `Ctrl`, `Cmd`, `Alt`, and `Mod` = the key of the commands (Ctrl on Windows and Linux, Cmd on a Mac). Prefer `Mod`.
+
+```ts
+interface ShortcutOptions { editable?: boolean }       // true: also while the user types in a field
+
+component.addShortcut(keys, callback, options?)         // a view: while the focus is in the component
+Application.instance().addShortcut(keys, callback, options?)   // the whole application, wherever the focus is
+
+shortcutText(keys: string): string                     // for a tooltip or a menu: "Ctrl+Z", "⌘Z" on a Mac
+
+class Shortcuts {                                       // the list itself; rarely used directly
+  add(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void
+  clear(): void
+  handle(ev: KeyboardEvent): boolean                   // true when the key was a shortcut
+}
+```
+
+```ts
+class MyView extends VBox {
+  constructor(props: BoxProps) {
+    super(props)
+    this.addShortcut('Mod+C', () => this.copy())
+    this.addShortcut(['Mod+Y', 'Shift+Mod+Z'], () => this.redo())
+    this.setContent(new Button({ label: 'Undo', tooltip: shortcutText('Mod+Z'), click: () => this.undo() }))
+  }
+}
+```
+
+- A component shortcut also works while the focus is nowhere, if the component is the last one with shortcuts that had the focus: of two views shown together, the one the user works in answers.
+- A key typed in an `input`, a `textarea` or a `select` is not a shortcut, unless `editable` is set.
+- A key that what has the focus already used (it called `preventDefault` or `stopPropagation`) is not a shortcut.
+- A shortcut always takes its key (`preventDefault`). For a key that must sometimes be left alone, use a `keydown` handler instead.
+- An application shortcut also works while a dialog is open.
+- Do not write a `keydown` handler with a `switch` on `ev.ctrlKey` for commands: use `addShortcut`.
+
+---
+
 ## i18n (`core_i18n`)
 
 Two built-in languages (`fr` default, and `en`).
@@ -1277,16 +1393,35 @@ initTooltips(): void                                   // initialize the global 
 
 ---
 
-## State (`core_state`) — Experimental
+## State (`core_state`)
 
 ```ts
-class StateManager {
-  constructor(initialState)
-  getState(path: string, defaultValue?): any
-  setState(path: string, value, context?): void
+makeState<T>(initialState: T): StateProxy<T>     // the data itself + on / off / once / watch
+
+const state = makeState({ count: 0, user: { name: '' }, items: [1, 2, 3] })
+state.on('change', e => ...)                     // EvStateChange { path, value }
+state.watch('user', e => ...)                    // 'user', anything below it, or a parent replaced; returns { off() }
+state.count++                                    // path "count"
+state.user.name = 'x'                            // path "user.name"
+state.items.push(4)                              // path "items[3]"
+
+class StateManager<T> extends EventSource<StateEvents> {
+  constructor(initialState: T)
+  proxify(): StateProxy<T>
+  on(name, listener): { off(): void }
+  off(name, listener): void
+  once(name, listener): { off(): void }
+  watch(path: string, cb: (ev: EvStateChange) => void): { off(): void }
 }
-// NOTE: marked @Experimental in the sources.
+
+// Component (protected): a state kept in localStorage under "x4@persist:<name>",
+// saved 500 ms after a change
+loadPState(name: string, defaults: Record<string, any>): any
 ```
+
+- Plain objects and arrays are proxied when read; Date, Map, Set and class instances are not.
+- Setting a property to the value it already has fires nothing.
+- Reading a property that does not exist logs an error and returns `undefined`.
 
 ---
 
@@ -1487,7 +1622,6 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - The default language is `fr`. Call `selectLanguage('en')` to switch to English.
 - `Gridview` is backed by a `DataStore`; `Spreadsheet` is backed by a `Store` (different, cell-based).
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
-- `StateManager` (`core_state`) is marked **Experimental** — verify before relying on it.
 - `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma; 
 - `unbubbleEvents` is the set of DOM events that do not bubble through the x4 component tree.
