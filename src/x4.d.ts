@@ -25,6 +25,7 @@ export * from "./core/core_i18n";
 export * from "./core/core_pdf";
 export * from "./core/core_react";
 export * from "./core/core_router";
+export * from "./core/core_shortcuts";
 export * from "./core/core_state";
 export * from "./core/core_styles";
 export * from "./core/core_svg";

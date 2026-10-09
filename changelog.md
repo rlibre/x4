@@ -5,6 +5,29 @@ A version gets its date when it is published.
 
 ## 2.3.15
 
+### Shortcuts
+
+- New: keyboard shortcuts, in `core_shortcuts`. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`. `Mod` is the key of the commands: Ctrl on Windows and Linux, Cmd on a Mac.
+- `Component.addShortcut( keys, callback, options? )`: a shortcut of a view. It works while the focus is in the component, and while the focus is nowhere if it is the last component with shortcuts that had it.
+- `Application.addShortcut( keys, callback, options? )`: a shortcut of the whole application.
+- A key typed in a field (`input`, `textarea`, `select`) is not a shortcut, unless the option `editable` is set. Nor is a key that what has the focus already used.
+- `shortcutText( keys )` writes a sequence for the user: `"Ctrl+Z"`, `"⌘Z"` on a Mac.
+
+```ts
+class MyView extends VBox {
+	constructor( props: BoxProps ) {
+		super( props );
+
+		this.addShortcut( "Mod+C", ( ) => this.copy( ) );
+		this.addShortcut( ["Mod+Y", "Shift+Mod+Z"], ( ) => this.redo( ) );
+
+		this.setContent( new Button( { label: "Undo", tooltip: shortcutText( "Mod+Z" ), click: ( ) => this.undo( ) } ) );
+	}
+}
+
+Application.instance( ).addShortcut( "Mod+S", ( ) => save( ), { editable: true } );
+```
+
 ### Popup
 
 - A popup with `autoClose` (a menu, the picker of a `ColorInput`) now closes on any press outside of it, even when what is pressed stops the propagation of the event. The press is no longer cancelled (`preventDefault`): what is pressed handles it as usual.

@@ -18,6 +18,7 @@ import { Component, componentFromDOM } from './component';
 import { CoreElement } from './core_element';
 import { CoreEvent, EventMap } from './core_events';
 import { asap, getFocusableElements, ITabHandler } from './core_tools';
+import { Shortcuts, ShortcutCallback, ShortcutOptions } from './core_shortcuts';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -80,6 +81,9 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	private mainview: Component;
 	private props: AppProps;
 	private mounted = false;
+
+	private _shortcuts = new Shortcuts( );
+	private _active: { owner: Component, shortcuts: Shortcuts };
 	
 	 /**
      * Provides access to process-related information, such as touch capabilities.
@@ -206,7 +210,36 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 					ev.preventDefault( );
 				}
 			}
+
+			// The focus is nowhere: the shortcuts of the view the user worked in last.
+			// (when it is in a view, the view has seen the key before us)
+			if( ev.target===document.body && this._active?.owner.dom.isConnected && this._active.shortcuts.handle( ev ) ) {
+				return;
+			}
+
+			this._shortcuts.handle( ev );
 		} );
+	}
+
+	/**
+	 * Adds a keyboard shortcut to the whole application: it works wherever
+	 * the focus is, even in a dialog. A key typed in a field is not a
+	 * shortcut, unless `editable` is set.
+	 *
+	 * @param keys - "Mod+S", "F1"... or several of them. Mod is Ctrl, or Cmd on a Mac.
+	 * @see Component.addShortcut for the shortcuts of a view
+	 */
+
+	addShortcut( keys: string | string[], callback: ShortcutCallback, options?: ShortcutOptions ) {
+		this._shortcuts.add( keys, callback, options );
+	}
+
+	/**
+	 * @internal the last component with shortcuts that had the focus
+	 */
+
+	setActiveShortcuts( owner: Component, shortcuts: Shortcuts ) {
+		this._active = { owner, shortcuts };
 	}
 
 	/**

@@ -21,6 +21,7 @@ import { CoreEvent, EventMap } from './core_events';
 import { addEvent, DOMEventHandler, GlobalDOMEvents, COMPONENT } from './core_dom';
 import { Application, EvMessage } from './core_application';
 import { makeState } from './core_state.js';
+import { Shortcuts, ShortcutCallback, ShortcutOptions } from './core_shortcuts';
 
 type ComponentAttributes = Record<string,string|number|boolean>;
 type CreateComponentCallBack =  ( attrs: Record<string,string> ) => ComponentContent;
@@ -169,6 +170,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	#store: Map<string|symbol,any>;
 	#pstate: any;
+	#shortcuts: Shortcuts;
 
 	constructor(props: P) {
 		super( );
@@ -1167,6 +1169,40 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	queryInterface<T>( name: string ): T {
 		return null;
+	}
+
+	// :: SHORTCUTS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	/**
+	 * Adds a keyboard shortcut to the component. It works while the focus
+	 * is in the component, and while the focus is nowhere if this component
+	 * is the last one with shortcuts that had it: of two views that are shown
+	 * together, the one the user works in answers.
+	 *
+	 * A key that a child has used (it prevented its default, or stopped its
+	 * propagation) is not a shortcut. Nor is a key typed in a field, unless
+	 * `editable` is set.
+	 *
+	 * @param keys - "Mod+C", "Shift+Mod+Z", "Delete"... or several of them. Mod is Ctrl, or Cmd on a Mac.
+	 * @see Application.addShortcut for the shortcuts of the whole application
+	 *
+	 * @example
+	 * this.addShortcut( "Mod+C", ( ) => this.copy( ) );
+	 * this.addShortcut( ["Mod+Y", "Shift+Mod+Z"], ( ) => this.redo( ) );
+	 */
+
+	addShortcut( keys: string | string[], callback: ShortcutCallback, options?: ShortcutOptions ): this {
+		if( !this.#shortcuts ) {
+			const shortcuts = this.#shortcuts = new Shortcuts( );
+
+			// straight on the element, not with addDOMEvent: the handlers of the
+			// children are called exactly as before
+			this.dom.addEventListener( "keydown", ( ev: KeyboardEvent ) => shortcuts.handle( ev ) );
+			this.dom.addEventListener( "focusin", ( ) => Application.instance( ).setActiveShortcuts( this, shortcuts ) );
+		}
+
+		this.#shortcuts.add( keys, callback, options );
+		return this;
 	}
 
 	// :: PERSISTENCE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
