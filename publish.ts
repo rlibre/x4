@@ -14,6 +14,18 @@ pkg.version = version.join(".");
 
 writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 
+// The changes of this release are under the first heading of the changelog:
+// give it the number and the date of the release. A heading that already has
+// a date belongs to a release that is out: nothing was noted since.
+const logPath = "./changelog.md";
+const log = readFileSync(logPath, "utf-8");
+const first = /^## .*$/m.exec(log);
+
+if (first && !/\(\d{4}-\d{2}-\d{2}\)$/.test(first[0])) {
+	const today = new Date().toISOString().slice(0, 10);
+	writeFileSync(logPath, log.replace(first[0], `## ${pkg.version} (${today})`));
+}
+
 try {
 	run( `git commit -am "release: ${pkg.version}"` );
 	run( `git push` );
