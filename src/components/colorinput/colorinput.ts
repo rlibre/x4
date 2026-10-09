@@ -86,6 +86,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 	private _edit: Input;
 	private _swatches: Swatches | ( ( ) => Swatches );
 	private _popup: Popup;				// the color picker, once it was opened
+	private _closedAt = -1;				// when it closed for the last time (performance.now)
 
 	constructor( props: ColorInputProps ) {
 		super( props );
@@ -128,11 +129,12 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 		if( props.picker ) {
 			// A click on the swatch opens the picker, a second one closes it.
 			// The picker closes by itself as soon as the button goes down
-			// outside of it: whether it was open is to be known before that.
+			// outside of it, before the swatch hears of it: it was open if
+			// it closed since this very press began.
 			let wasOpen = false;
 
 			this._swatch.addClass( "picker" );
-			this._swatch.addDOMEvent( "pointerdown", ( ) => { wasOpen = !!this._popup?.isOpen( ); } );
+			this._swatch.addDOMEvent( "pointerdown", ev => { wasOpen = this._closedAt >= ev.timeStamp; } );
 			this._swatch.addDOMEvent( "click", ( ) => {
 				if( !wasOpen ) {
 					this._openPicker( );
@@ -202,6 +204,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 		} );
 
 		const popup = this._popup = new Popup( { cls: "x4colorinput-popup", autoClose: true, content: picker } );
+		popup.on( "closed", ( ) => { this._closedAt = performance.now( ); } );
 
 		// after the construction: the picker fires a first change when it is built
 		picker.on( "change", ev => {
