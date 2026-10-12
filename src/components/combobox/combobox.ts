@@ -87,6 +87,10 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
 	readonly?: boolean;
 	required?: boolean;
 	items: ListItem[];
+
+	/** draws an item of the list, instead of its text. The field still shows the text of the item that is chosen. */
+	renderer?: ( item: ListItem ) => Component;
+
 	selectionChange?: EventCallback<EvSelectionChange>,
 }
 
@@ -139,7 +143,7 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			this.setAttribute( "required", true );
 		}
 
-		this._popup = new DropdownList( { items: props.items } );
+		this._popup = new DropdownList( { items: props.items, renderer: props.renderer } );
 		const list = this._popup.getList( );
 
 		const _select = ( sel: ListboxID ) => {
