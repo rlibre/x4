@@ -19,16 +19,21 @@
  *
  * There are two kinds of panels, which never mix:
  *
- *   tools      docked in a band on the left or on the right: one above the
- *              other, side by side, or as tabs of the same stack; they
- *              can also float.
+ *   tools      docked in a band along a side of the contents: one above
+ *              the other, side by side, or as tabs of the same stack;
+ *              they can also float. Which bands a tool may be in is said
+ *              by the view (DockKinds.sides): the left and the right
+ *              ones, unless it says otherwise.
  *   contents   what is worked on (a document, as the editors of an IDE).
  *              They share the room between the bands: side by side, one
  *              above the other, or as tabs of the same stack.
  *
  * A layout is plain data, so that it can be saved as it is:
  *
- *   left, right   the two bands: a width, and a tree of tools.
+ *   left, right   the bands of the sides: a width, and a tree of tools.
+ *                 They take the whole height.
+ *   top, bottom   the bands above and under the contents, between those of
+ *                 the sides: a height, and a tree of tools.
  *   content       the tree of the contents.
  *
  *                 In a tree, a split puts its children side by side (row)
@@ -73,7 +78,10 @@ export interface DockStack {
 
 export type DockNode = DockSplit | DockStack;
 
-/** the tools docked on one side: `size` is its width in pixels, `root` is null when it has none */
+/**
+ * The tools docked on one side: `size` is its width in pixels (its height,
+ * for the band of the top or of the bottom), `root` is null when it has none.
+ */
 export interface DockBand {
 	size: number;
 	root: DockNode;
@@ -91,9 +99,16 @@ export interface DockFloat extends DockRect {
 	panel: string;
 }
 
+/**
+ * `top` and `bottom` may be missing: a band that is missing is an empty
+ * one. A layout that does not use them does not have them.
+ */
+
 export interface DockLayout {
 	left: DockBand;
 	right: DockBand;
+	top?: DockBand;
+	bottom?: DockBand;
 	content: DockNode;
 	floats: DockFloat[];
 	hidden: string[];
@@ -103,10 +118,45 @@ export interface DockLayout {
 export interface DockKinds {
 	tools: string[];
 	contents: string[];
+
+	/** the bands a tool may be docked in, by its id; the left and the right ones for a tool that is not there */
+	sides?: Record<string, DockSide[]>;
 }
+
+/** the bands, in the order they are looked at */
+const SIDES: DockSide[] = ["left", "right", "top", "bottom"];
+
+/** where a tool may be docked when nothing says it */
+const USUAL_SIDES: DockSide[] = ["left", "right"];
 
 function copy( layout: DockLayout ): DockLayout {
 	return structuredClone( layout );
+}
+
+/**
+ * true for the bands of the top and of the bottom: they lie flat. Their
+ * size is a height, and their tools are side by side where those of the
+ * left and of the right are one above the other.
+ */
+
+export function isFlat( side: DockSide ): boolean {
+	return side === "top" || side === "bottom";
+}
+
+/**
+ * The bands a tool may be docked in. A list that is empty counts as none
+ * given: a tool has to be somewhere when its layout is lost.
+ */
+
+export function dockSides( kinds: DockKinds, panel: string ): DockSide[] {
+	const given = kinds.sides ? kinds.sides[panel] : null;
+
+	if( !given ) {
+		return USUAL_SIDES;
+	}
+
+	const sides = given.filter( side => SIDES.includes( side ) );
+	return sides.length ? sides : USUAL_SIDES;
 }
 
 /**
@@ -122,7 +172,7 @@ export function stacksOf( node: DockNode ): DockStack[] {
 }
 
 function allStacks( layout: DockLayout ): DockStack[] {
-	return [...stacksOf( layout.left.root ), ...stacksOf( layout.right.root ), ...stacksOf( layout.content )];
+	return [...SIDES.flatMap( side => stacksOf( layout[side]?.root ) ), ...stacksOf( layout.content )];
 }
 
 function parentOf( root: DockNode, node: DockNode ): DockSplit {
@@ -179,8 +229,13 @@ function normalize( node: DockNode ): DockNode {
 
 function tidy( layout: DockLayout ): void {
 	layout.content = normalize( layout.content );
-	layout.left.root = normalize( layout.left.root );
-	layout.right.root = normalize( layout.right.root );
+
+	for( const side of SIDES ) {
+		const band = layout[side];
+		if( band ) {
+			band.root = normalize( band.root );
+		}
+	}
 }
 
 /**
@@ -189,10 +244,13 @@ function tidy( layout: DockLayout ): void {
 
 function detach( layout: DockLayout, panel: string ): void {
 	// A tool that was beside others, alone in its stack, takes its width
-	// with it: its band gets narrower by its share of the row.
-	for( const band of [layout.left, layout.right] ) {
-		const root = band.root;
-		const at = root?.type === "split" && root.dir === "row" ? root.children.findIndex( child => child.type === "stack" && child.panels.length === 1 && child.panels[0] === panel ) : -1;
+	// with it: its band gets narrower by its share of the row. In a band
+	// that lies flat it is its height, and its share of the column.
+	for( const side of SIDES ) {
+		const band = layout[side];
+		const root = band?.root;
+		const across = isFlat( side ) ? "column" : "row";
+		const at = root?.type === "split" && root.dir === across ? root.children.findIndex( child => child.type === "stack" && child.panels.length === 1 && child.panels[0] === panel ) : -1;
 
 		if( root?.type === "split" && at >= 0 ) {
 			const shares = sharesOf( root.children );
@@ -227,14 +285,8 @@ export function stackOf( layout: DockLayout, panel: string ): DockStack {
  * the band a panel is docked in, null when it is a content, floats or is unknown
  */
 
-export function bandOf( layout: DockLayout, panel: string ): "left" | "right" {
-	const holds = ( band: DockBand ) => stacksOf( band.root ).some( stack => stack.panels.includes( panel ) );
-
-	if( holds( layout.left ) ) {
-		return "left";
-	}
-
-	return holds( layout.right ) ? "right" : null;
+export function bandOf( layout: DockLayout, panel: string ): DockSide {
+	return SIDES.find( side => stacksOf( layout[side]?.root ).some( stack => stack.panels.includes( panel ) ) ) ?? null;
 }
 
 export function floatOf( layout: DockLayout, panel: string ): DockFloat {
@@ -286,6 +338,10 @@ export function sharesOf( nodes: DockNode[] ): number[] {
  * takes half of its room. But a tool put on the left or on the right of
  * another one does not make it narrower: with `width`, the band gets
  * wider by that much, which is what the tool gets.
+ *
+ * In a band that lies flat (top, bottom) it is the other way round: a
+ * tool put above or under another one makes the band higher, by `width`,
+ * which is then a height.
  */
 
 export function dockMove( layout: DockLayout, panel: string, target: string, where: DockWhere, width = 0 ): DockLayout {
@@ -319,7 +375,9 @@ export function dockMove( layout: DockLayout, panel: string, target: string, whe
 
 	const dir = where === "left" || where === "right" ? "row" : "column";
 	const before = where === "left" || where === "top";
-	const wider = !!band && dir === "row" && width > 0;
+
+	// across the band: the direction in which it grows
+	const wider = !!band && dir === ( isFlat( side ) ? "column" : "row" ) && width > 0;
 
 	const half = dest.size / 2;
 	const fresh: DockStack = { type: "stack", size: wider ? width : half, panels: [panel], active: panel };
@@ -357,16 +415,21 @@ export function dockMove( layout: DockLayout, panel: string, target: string, whe
 }
 
 /**
- * Dock a tool in a band, under the tools that are already there.
- * `size` is the width the band gets when it was empty.
+ * Dock a tool in a band, after the tools that are already there: under
+ * them on the left and on the right, on their right in a band that lies
+ * flat (top, bottom). `size` is the width the band gets when it was empty;
+ * its height, when it lies flat.
  */
 
-export function dockBand( layout: DockLayout, panel: string, side: "left" | "right", size = 0 ): DockLayout {
+export function dockBand( layout: DockLayout, panel: string, side: DockSide, size = 0 ): DockLayout {
 	const result = copy( layout );
-	const band = result[side];
+	const band = result[side] ??= { size: 0, root: null };
 
 	detach( result, panel );
 	tidy( result );
+
+	// along the band: the direction its tools follow each other in
+	const along = isFlat( side ) ? "row" : "column";
 
 	const fresh: DockStack = { type: "stack", size: 0, panels: [panel], active: panel };
 	const root = band.root;
@@ -378,15 +441,15 @@ export function dockBand( layout: DockLayout, panel: string, side: "left" | "rig
 			band.size = size;
 		}
 	}
-	else if( root.type === "split" && root.dir === "column" ) {
-		// as high as the others, on average
+	else if( root.type === "split" && root.dir === along ) {
+		// as big as the others, on average
 		fresh.size = sharesOf( root.children ).reduce( ( a, b ) => a + b ) / root.children.length;
 		root.children.push( fresh );
 	}
 	else {
-		// what was there and the tool share the height
+		// what was there and the tool share the band
 		root.size = 0;
-		band.root = { type: "split", dir: "column", size: 0, children: [root, fresh] };
+		band.root = { type: "split", dir: along, size: 0, children: [root, fresh] };
 	}
 
 	return result;
@@ -475,7 +538,7 @@ function sizeOf( from: Record<string, unknown>, name: string ): number {
  * A layout rebuilt from something that was saved, or null when it is not a
  * layout or holds no panel. Only what is understood is kept, and only the
  * panels that are known, each once and where its kind may be: a tool in a
- * band or floating, a content among the contents.
+ * band it may be docked in, or floating; a content among the contents.
  *
  * (a field is read only once it is known to be there: what was saved may be
  * a state of x4, which reports the reading of a missing property)
@@ -527,17 +590,21 @@ function sanitize( saved: unknown, kinds: DockKinds ): DockLayout {
 		return null;
 	};
 
-	const band = ( name: string ): DockBand => {
+	// a band only keeps the tools that may be docked in it
+	const band = ( name: DockSide ): DockBand => {
 		const from = name in saved ? saved[name] : null;
 		if( !isObject( from ) ) {
 			return { size: 0, root: null };
 		}
 
-		return { size: sizeOf( from, "size" ), root: normalize( "root" in from ? node( from.root, kinds.tools ) : null ) };
+		const allowed = kinds.tools.filter( id => dockSides( kinds, id ).includes( name ) );
+		return { size: sizeOf( from, "size" ), root: normalize( "root" in from ? node( from.root, allowed ) : null ) };
 	};
 
 	const left = band( "left" );
 	const right = band( "right" );
+	const top = band( "top" );
+	const bottom = band( "bottom" );
 	const content = normalize( "content" in saved ? node( saved.content, kinds.contents ) : null );
 
 	const floats: DockFloat[] = [];
@@ -561,7 +628,23 @@ function sanitize( saved: unknown, kinds: DockKinds ): DockLayout {
 	}
 
 	// nothing in it that is known: not worth more than no layout at all
-	return seen.size > 0 ? { left, right, content, floats, hidden } : null;
+	if( seen.size === 0 ) {
+		return null;
+	}
+
+	// the bands of the top and of the bottom are only there when they hold
+	// something: a layout that does not use them is as it always was
+	const layout: DockLayout = { left, right, content, floats, hidden };
+
+	if( top.root ) {
+		layout.top = top;
+	}
+
+	if( bottom.root ) {
+		layout.bottom = bottom;
+	}
+
+	return layout;
 }
 
 /**
@@ -570,7 +653,9 @@ function sanitize( saved: unknown, kinds: DockKinds ): DockLayout {
  *
  * `kinds` are the panels that exist today. A saved layout may be older
  * than the application: the panels it does not know are added where the
- * default layout has them, those that are gone are dropped.
+ * default layout has them, those that are gone are dropped. So is a tool
+ * that is in a band it may not be docked in anymore: it goes where the
+ * default layout has it.
  */
 
 export function dockRestore( saved: unknown, kinds: DockKinds, defaults: DockLayout ): DockLayout {
@@ -582,8 +667,10 @@ export function dockRestore( saved: unknown, kinds: DockKinds, defaults: DockLay
 			continue;
 		}
 
+		// where the default layout has it; otherwise on the right if it may, or in the first band it may be in
+		const allowed = dockSides( kinds, panel );
 		const float = floatOf( usual, panel );
-		const side = bandOf( usual, panel ) ?? "right";
+		const side = bandOf( usual, panel ) ?? ( allowed.includes( "right" ) ? "right" : allowed[0] );
 
 		if( kinds.contents.includes( panel ) ) {
 			layout = addContent( layout, panel );
@@ -592,7 +679,9 @@ export function dockRestore( saved: unknown, kinds: DockKinds, defaults: DockLay
 			layout = dockFloat( layout, panel, float );
 		}
 		else {
-			layout = dockBand( layout, panel, side, usual[side].size );
+			// as wide as the default layout has that band, when it has it
+			const band = usual[side];
+			layout = dockBand( layout, panel, side, band ? band.size : 0 );
 		}
 
 		if( usual.hidden.includes( panel ) ) {

@@ -19,13 +19,13 @@ import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../.
 import { EventCallback } from '../../core/core_events';
 import { CSizer } from '../sizers/sizer';
 
-import { bandOf, dockActivate, dockBand, dockFloat, dockMove, dockRestore, dockShow, dropZone, floatOf, isShown, keepInside, sharesOf, shownPanel, sideRect, stackOf, stacksOf, visiblePanels } from './docklayout';
-import { DockFloat, DockKinds, DockLayout, DockNode, DockRect, DockStack } from './docklayout';
+import { bandOf, dockActivate, dockBand, dockFloat, dockMove, dockRestore, dockShow, dockSides, dropZone, floatOf, isFlat, isShown, keepInside, sharesOf, shownPanel, sideRect, stackOf, stacksOf, visiblePanels } from './docklayout';
+import { DockFloat, DockKinds, DockLayout, DockNode, DockRect, DockSide, DockStack } from './docklayout';
 
 import "./dockingview.module.scss";
 
 // the layout is given and read by the host: its types go with the component
-export type { DockLayout, DockBand, DockNode, DockSplit, DockStack, DockFloat } from './docklayout';
+export type { DockLayout, DockBand, DockNode, DockSplit, DockStack, DockFloat, DockSide } from './docklayout';
 
 /** under this distance, in pixels, a press on a title is a click, not a drag */
 const DRAG_SLOP = 4;
@@ -39,8 +39,12 @@ const MIN_SIZE = 48;
 /** what a sizer always leaves to the contents, between the two bands */
 const MIN_AREA = 80;
 
-/** width of a band whose layout gives none */
+/** width of a band whose layout gives none; height, for the band of the top or of the bottom */
 const BAND_SIZE = 200;
+const BAND_HEIGHT = 160;
+
+/** the bands, in the order they are looked at */
+const SIDES: DockSide[] = ["left", "right", "top", "bottom"];
 
 /** smallest size of a panel that starts to float */
 const FLOAT_MIN_W = 160;
@@ -68,6 +72,9 @@ export interface DockPanel {
 
 	/** a tool: instead of what the box says. A content never floats. */
 	floating?: boolean;
+
+	/** a tool: the bands it may be docked in, instead of what the box says */
+	sides?: DockSide[];
 }
 
 export interface DockingViewProps extends ComponentProps {
@@ -81,6 +88,14 @@ export interface DockingViewProps extends ComponentProps {
 
 	/** tools have a button that hides them (see showPanel) */
 	closable?: boolean;
+
+	/**
+	 * The bands tools may be docked in: "left", "right", "top", "bottom".
+	 * The left and the right ones when missing. A tool is never offered a
+	 * place in a band it may not be in, neither beside one of its tools nor
+	 * as one of their tabs.
+	 */
+	sides?: DockSide[];
 
 	/**
 	 * A name: the layout is then remembered under it, in the storage of
@@ -142,6 +157,11 @@ interface Drag {
  * dropped anywhere else floats above the rest. With `closable`, its title
  * has a button that hides it; showPanel() brings it back.
  *
+ * With `sides`, a tool may also be docked above or under the contents, in
+ * a band that lies between those of the left and of the right: for what is
+ * wide and low (a log, a list of results, a timeline). `sides` says which
+ * bands a tool may be in, for all the tools or for one of them.
+ *
  * A content is what is worked on (a document, as the editors of an IDE).
  * Contents share the room between the bands: a title dragged to a side of
  * another content is put beside it, to its middle it becomes one of its
@@ -175,7 +195,7 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 
 	// the boxes of the layout as it is shown now
 	private nodes = new Map<DockNode, Component>( );
-	private bands = new Map<"left" | "right", Component>( );
+	private bands = new Map<DockSide, Component>( );
 	private floats = new Map<string, Component>( );
 	private area: Component;					// the room of the contents, between the bands
 
@@ -277,7 +297,23 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 
 	private kinds( ): DockKinds {
 		const ids = this.props.panels.map( panel => panel.id );
-		return { tools: ids.filter( id => this.isTool( id ) ), contents: ids.filter( id => !this.isTool( id ) ) };
+		const tools = ids.filter( id => this.isTool( id ) );
+
+		// what a tool says for itself, otherwise what the box says for all
+		const sides: Record<string, DockSide[]> = {};
+		for( const id of tools ) {
+			sides[id] = this.panel( id ).sides ?? this.props.sides;
+		}
+
+		return { tools, contents: ids.filter( id => !this.isTool( id ) ), sides };
+	}
+
+	/**
+	 * true when a tool may be docked in a band
+	 */
+
+	private mayDock( id: string, side: DockSide ): boolean {
+		return dockSides( this.kinds( ), id ).includes( side );
 	}
 
 	private mayFloat( id: string ): boolean {
@@ -316,8 +352,10 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 	// :: BUILDING ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	/**
-	 * Make the boxes of the layout again: the band of the left, the room
-	 * of the contents, the band of the right, and the floating tools.
+	 * Make the boxes of the layout again: the band of the left, then,
+	 * one above the other, the band of the top, the room of the contents
+	 * and the band of the bottom, then the band of the right; and the
+	 * floating tools.
 	 *
 	 * What the panels show is not built again: their pages are moved. They
 	 * go straight from a place in the document to another one, the park
@@ -346,9 +384,19 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 			content: content && isShown( content, hidden ) ? this.makeNode( content, titled ) : null,
 		} );
 
+		// between the bands of the sides, which take the whole height
+		const middle = new Component( {
+			cls: "dock-middle",
+			content: [
+				...this.makeBand( "top" ),
+				this.area,
+				...this.makeBand( "bottom" ),
+			],
+		} );
+
 		this.frame.setContent( [
 			...this.makeBand( "left" ),
-			this.area,
+			middle,
 			...this.makeBand( "right" ),
 			...floats.filter( float => !hidden.includes( float.panel ) ).map( float => this.makeFloat( float ) ),
 		] );
@@ -362,39 +410,58 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 	}
 
 	/**
-	 * A band and the sizer that changes its width, in the order they are
-	 * shown; nothing when none of its tools is shown.
+	 * A band and the sizer that changes its width (its height, for the
+	 * band of the top or of the bottom), in the order they are shown;
+	 * nothing when none of its tools is shown.
 	 */
 
-	private makeBand( side: "left" | "right" ): Component[] {
+	private makeBand( side: DockSide ): Component[] {
 		const band = this.layout[side];
 
-		if( !band.root || !isShown( band.root, this.layout.hidden ) ) {
+		if( !band?.root || !isShown( band.root, this.layout.hidden ) ) {
 			return [];
 		}
 
+		const flat = isFlat( side );
+
 		const box = new Component( {
 			cls: `dock-band ${side}`,
-			width: band.size || BAND_SIZE,
 			content: this.makeNode( band.root, true ),
 		} );
 
+		if( flat ) {
+			box.setHeight( band.size || BAND_HEIGHT );
+		}
+		else {
+			box.setWidth( band.size || BAND_SIZE );
+		}
+
 		this.bands.set( side, box );
 
-		// what the band gets is taken from the contents
-		const sign = side === "left" ? 1 : -1;
+		// what the band gets is taken from the contents: the sizer is on
+		// the side of the band that faces them
+		const first = side === "left" || side === "top";
+		const sign = first ? 1 : -1;
 		let size = 0;
 		let max = 0;
 
-		const sizer = this.makeSizer( true, ( ) => {
+		const sizer = this.makeSizer( !flat, ( ) => {
+			const room = this.area.getBoundingRect( );
+
 			size = band.size;
-			max = size + Math.max( 0, this.area.getBoundingRect( ).width - MIN_AREA );
+			max = size + Math.max( 0, ( flat ? room.height : room.width ) - MIN_AREA );
 		}, delta => {
 			band.size = Math.round( Math.max( MIN_SIZE, Math.min( size + delta * sign, max ) ) );
-			box.setWidth( band.size );
+
+			if( flat ) {
+				box.setHeight( band.size );
+			}
+			else {
+				box.setWidth( band.size );
+			}
 		} );
 
-		return side === "left" ? [box, sizer] : [sizer, box];
+		return first ? [box, sizer] : [sizer, box];
 	}
 
 	private makeNode( node: DockNode, titled: boolean ): Component {
@@ -588,12 +655,23 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 			visit( this.layout.content, null );
 		}
 
-		for( const side of ["left", "right"] as const ) {
+		for( const side of SIDES ) {
 			const band = this.layout[side];
-			const width = Math.round( this.bands.get( side )?.getBoundingRect( ).width ?? 0 );
+			if( !band ) {
+				continue;
+			}
 
-			if( width > 0 ) {
-				band.size = width;
+			// A band that is not shown has no box: its size stays what it
+			// was. Otherwise its width, or its height when it lies flat.
+			const box = this.bands.get( side );
+
+			if( box ) {
+				const rc = box.getBoundingRect( );
+				const size = Math.round( isFlat( side ) ? rc.height : rc.width );
+
+				if( size > 0 ) {
+					band.size = size;
+				}
 			}
 
 			if( band.root ) {
@@ -761,8 +839,11 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 	 *
 	 *   a side of a tool                        beside it, above or under it
 	 *   the middle of another tool              one of its tabs
-	 *   the left or the right of the contents   the band of that side, under its tools
+	 *   a side of the contents                  the band of that side, after its tools
 	 *   anywhere else                           it floats, if it may
+	 *
+	 * The first three only for a band the tool may be docked in (`sides`):
+	 * the left and the right ones, unless the host says otherwise.
 	 */
 
 	private dropTool( x: number, y: number ): Drop {
@@ -777,8 +858,10 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 
 		const inside = ( rect: DockRect ) => dropZone( rect, x, y, 1 ) !== null;
 
-		// the width the tool brings to a band: the one it has now, a third of the box at most
+		// the width the tool brings to a band: the one it has now, a third of the box at most;
+		// and its height, for a band that lies flat
 		const width = Math.round( Math.max( MIN_SIZE, Math.min( ( float?.w ?? page.w ) || BAND_SIZE, within.w / 3 ) ) );
+		const height = Math.round( Math.max( MIN_SIZE, Math.min( ( float?.h ?? page.h ) || BAND_HEIGHT, within.h / 3 ) ) );
 
 		const floating = ( ): Drop => {
 			if( !this.mayFloat( panel ) ) {
@@ -800,44 +883,52 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 			return floating( );
 		}
 
-		// a tool of a band
-		for( const stack of [...stacksOf( layout.left.root ), ...stacksOf( layout.right.root )] ) {
-			const box = this.nodes.get( stack );
-			const rect = box ? this.rectOf( box ) : null;
-			const zone = rect ? dropZone( rect, x, y, SIDE_BAND ) : null;
-
-			if( !zone ) {
+		// a tool of a band, when the one that is dragged may be in that band
+		for( const side of SIDES ) {
+			if( !this.mayDock( panel, side ) ) {
 				continue;
 			}
 
-			const panels = visiblePanels( stack, hidden );
+			for( const stack of stacksOf( layout[side]?.root ) ) {
+				const box = this.nodes.get( stack );
+				const rect = box ? this.rectOf( box ) : null;
+				const zone = rect ? dropZone( rect, x, y, SIDE_BAND ) : null;
 
-			if( zone === "center" ) {
-				// the middle of its own stack: it leaves it
-				return stack === own ? floating( ) : { rect, apply: ( ) => dockMove( layout, panel, panels[0], "tab" ) };
+				if( !zone ) {
+					continue;
+				}
+
+				const panels = visiblePanels( stack, hidden );
+
+				if( zone === "center" ) {
+					// the middle of its own stack: it leaves it
+					return stack === own ? floating( ) : { rect, apply: ( ) => dockMove( layout, panel, panels[0], "tab" ) };
+				}
+
+				// beside the stack it is alone in: it is already there
+				if( stack === own && panels.length === 1 ) {
+					return null;
+				}
+
+				// Half of the stack is shown. On the left or on the right, the
+				// band gets wider instead: the two tools keep their width. In
+				// a band that lies flat, it is above and under, and its height.
+				const half = ( zone === "left" || zone === "right" ? rect.w : rect.h ) / 2;
+				return { rect: sideRect( rect, zone, half ), apply: ( ) => dockMove( layout, panel, panels[0], zone, isFlat( side ) ? height : width ) };
 			}
-
-			// beside the stack it is alone in: it is already there
-			if( stack === own && panels.length === 1 ) {
-				return null;
-			}
-
-			// Half of the stack is shown. On the left or on the right, the
-			// band gets wider instead: the two tools keep their width.
-			const half = ( zone === "left" || zone === "right" ? rect.w : rect.h ) / 2;
-			return { rect: sideRect( rect, zone, half ), apply: ( ) => dockMove( layout, panel, panels[0], zone, width ) };
 		}
 
-		// the left or the right of the contents: the band of that side
+		// a side of the contents: the band of that side
 		const area = this.rectOf( this.area );
-		const side = x < area.x + SIDE_BAND ? "left" : x >= area.x + area.w - SIDE_BAND ? "right" : null;
+		const side = this.edgeOf( panel, area, x, y );
 
 		if( !side ) {
 			return floating( );
 		}
 
+		const flat = isFlat( side );
 		const band = this.bands.get( side );
-		const root = layout[side].root;
+		const root = layout[side]?.root;
 		const shown = stacksOf( root ).filter( stack => isShown( stack, hidden ) );
 
 		// the only tool of that band: it is already there
@@ -845,14 +936,60 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 			return null;
 		}
 
-		// A band that shows nothing is made beside the contents, as wide as
-		// the tool is now. Otherwise the tool goes under what the band
-		// holds: one more row of it, or its lower half.
-		const rows = root?.type === "split" && root.dir === "column" ? root.children.filter( child => isShown( child, hidden ) ).length : 1;
+		// A band that shows nothing is made beside the contents, as big as
+		// the tool is now. Otherwise the tool goes after what the band
+		// holds: one more row of it, or its lower half; one more column, or
+		// its right half, for a band that lies flat.
+		const size = flat ? height : width;
+		const count = root?.type === "split" && root.dir === ( flat ? "row" : "column" ) ? root.children.filter( child => isShown( child, hidden ) ).length : 1;
 		const bandRect = band ? this.rectOf( band ) : null;
-		const rect = bandRect ? sideRect( bandRect, "bottom", bandRect.h / ( rows + 1 ) ) : sideRect( area, side, width );
 
-		return { rect, apply: ( ) => dockBand( layout, panel, side, band ? 0 : width ) };
+		let rect: DockRect;
+
+		if( !bandRect ) {
+			rect = sideRect( area, side, size );
+		}
+		else if( flat ) {
+			rect = sideRect( bandRect, "right", bandRect.w / ( count + 1 ) );
+		}
+		else {
+			rect = sideRect( bandRect, "bottom", bandRect.h / ( count + 1 ) );
+		}
+
+		return { rect, apply: ( ) => dockBand( layout, panel, side, band ? 0 : size ) };
+	}
+
+	/**
+	 * The side of the contents a point is near, among those the band of
+	 * which a tool may be docked in; the nearest one, null for none.
+	 *
+	 * A point beyond the side counts too: it is between the contents and
+	 * the band. But it has to be along the side: over a band of another
+	 * side, it is not near this one.
+	 */
+
+	private edgeOf( panel: string, area: DockRect, x: number, y: number ): DockSide {
+		const along = ( side: DockSide ) => isFlat( side ) ? x >= area.x && x < area.x + area.w : y >= area.y && y < area.y + area.h;
+
+		// how deep the point is from each side: 0 on it, 1 where its zone ends
+		const depth = ( side: DockSide ): number => {
+			switch( side ) {
+				case "left":	return ( x - area.x ) / SIDE_BAND;
+				case "right":	return ( area.x + area.w - x ) / SIDE_BAND;
+				case "top":		return ( y - area.y ) / SIDE_BAND;
+				case "bottom":	return ( area.y + area.h - y ) / SIDE_BAND;
+			}
+		};
+
+		let nearest: DockSide = null;
+
+		for( const side of SIDES ) {
+			if( this.mayDock( panel, side ) && along( side ) && depth( side ) < 1 && ( nearest === null || depth( side ) < depth( nearest ) ) ) {
+				nearest = side;
+			}
+		}
+
+		return nearest;
 	}
 
 	/**

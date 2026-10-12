@@ -34,15 +34,26 @@
 	// even in an HBox, which centers its children
 	align-self: stretch;
 
-	// The boxes of the layout: the band of the left, the room of the
-	// contents, the band of the right. The floating tools are placed from
-	// its top-left corner, which is the one of the box.
+	// The boxes of the layout: the band of the left, what is between the
+	// two, the band of the right. The floating tools are placed from its
+	// top-left corner, which is the one of the box.
 	> .dock-frame {
 		position: relative;
 		display: flex;
 		flex: 1 1 0;
 		min-width: 0;
 		min-height: 0;
+	}
+
+	// Between the bands of the left and of the right, one above the other:
+	// the band of the top, the room of the contents, the band of the bottom.
+	.dock-middle {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	// The tools of one side. Its width is given by the layout; it only
@@ -57,6 +68,13 @@
 		> .dock-split,
 		> .dock-stack {
 			flex: 1 1 0;
+		}
+
+		// the bands that lie flat: it is their height that the layout gives
+		&.top,
+		&.bottom {
+			min-width: 0;
+			min-height: 48px;
 		}
 	}
 
