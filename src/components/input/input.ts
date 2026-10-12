@@ -410,7 +410,12 @@ export class Input extends Component<InputProps,InputEvents> {
      */
 
 	public setNumValue( value: number, ndec = -1 ) {
-		
+
+		// no number (a field that is not filled): the field is emptied
+		if( value===undefined || value===null || isNaN( value ) ) {
+			return this.setValue( "" );
+		}
+
 		if( ndec==-2 && this.props.type=='number' ) {
 			const p = this.props as NumberProps;
 
