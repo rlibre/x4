@@ -265,7 +265,7 @@ interface EvDblClick extends ComponentEvent {}
 interface EvBtnClick extends CoreEvent { button: string }
 
 // Spacers
-class Flex extends Component    // CSS "x4flex"
+class Flex extends Component    // new Flex(), no argument; CSS "x4flex"
 class Space extends Component   // new Space(width?: number|string, cls?: string)
 ```
 
@@ -403,12 +403,14 @@ interface DockPanel {
   kind?: 'tool' | 'content'                // default 'tool'
   closable?: boolean                       // for this panel, instead of the view's
   floating?: boolean                       // idem; a content never floats
+  sides?: DockSide[]                       // a tool: the bands it may be docked in, instead of the view's
 }
 interface DockingViewProps extends ComponentProps {
   panels: DockPanel[]
   layout: DockLayout                       // where the panels are at first
   floating?: boolean                       // tools can float above the rest
   closable?: boolean                       // tools have a button that hides them
+  sides?: DockSide[]                       // the bands tools may be docked in; left and right when missing
   persist?: string                         // a name: the layout is remembered under it (application storage)
   layoutChange?: EventCallback<ComponentEvent>
 }
@@ -421,12 +423,14 @@ class DockingView extends Component {
 }
 
 interface DockLayout {
-  left: DockBand; right: DockBand          // the tools
+  left: DockBand; right: DockBand          // the tools, on the sides
+  top?: DockBand; bottom?: DockBand        // the tools above and under the contents, between left and right
   content: DockNode                        // the contents; null when there is none
   floats: DockFloat[]                      // floating tools: { panel, x, y, w, h }
   hidden: string[]                         // ids of the closed panels
 }
-interface DockBand { size: number; root: DockNode }            // size: width in px; root: null when empty
+interface DockBand { size: number; root: DockNode }            // size: width in px (height for top/bottom); root: null when empty
+type DockSide = 'left' | 'right' | 'top' | 'bottom'
 type DockNode  = DockStack | DockSplit
 interface DockStack { type: 'stack'; size: number; panels: string[]; active: string }    // one tab per panel
 interface DockSplit { type: 'split'; dir: 'row' | 'column'; size: number; children: DockNode[] }
@@ -455,7 +459,8 @@ const view = new DockingView({
 ```
 
 - A closed panel is hidden, not removed: `showPanel(id)` brings it back where it was. Offer it in a menu.
-- Tools only go in `left`, `right` or `floats`; contents only in `content`. A panel missing from the layout is added where its kind goes.
+- Tools only go in the bands or in `floats`; contents only in `content`. A panel missing from the layout is added where its kind goes.
+- A tool goes in `left` or `right` only, unless `sides` says otherwise (on the view, or on one panel): `sides: ['bottom']` for what is wide and low (a log, a list of results). It is never offered a place in a band it may not be in.
 - A content alone has no title bar; with several contents, each stack has tabs.
 - What a panel shows is built once (`content`) and moved as the layout changes: never rebuild it.
 - CSS variables: `--dock-line`, `--dock-accent`, `--dock-title-background`, `--dock-title-background-hover`, `--dock-title-color`, `--dock-title-color-active`, `--dock-float-background`, `--dock-float-shadow`.
@@ -535,14 +540,15 @@ class Image extends Component {
 ### `Progress`
 
 ```ts
-interface ProgressProps extends ComponentProps { /* min/max/value */ }
+interface ProgressProps extends ComponentProps { value: number; min?: number /* 0 */; max?: number /* 100 */ }
+// the bar is where value is between min (0%) and max (100%)
 class Progress extends Component { setValue(value: number): void }
 ```
 
 ### `Gauge`
 
 ```ts
-interface GaugeProps extends ComponentProps { min?: number; max?: number; colors?: string[] }
+interface GaugeProps extends ComponentProps { min?: number /* 0 */; max?: number /* 100 */; colors?: string[] }
 class Gauge extends Component {
   setRange(min: number, max: number): void
   setPos(pos: number): void
@@ -616,6 +622,11 @@ class TextEdit extends HBox {
 ### `TextArea`
 
 ```ts
+interface TextAreaProps extends BaseProps {      // BaseProps: see Input (name, readonly, placeholder...)
+  label?: string; value?: string
+  resize?: boolean | "none" | "vertical" | "horizontal" | "both"
+  trim?: boolean                           // getText() trims, unless false
+}
 class TextArea extends VBox { getText(): string; setText(text: string): void }
 ```
 
@@ -636,7 +647,13 @@ class Checkbox extends Component {
 ### `Radio`
 
 ```ts
-interface RadioProps extends ComponentProps { /* label, value, name, group */ }
+interface RadioProps extends ComponentProps {
+  label: string; icon?: string
+  name: string                             // required: the radios that have the same name are one group
+  value: number | string                   // required
+  checked?: boolean
+  change?: EventCallback<EvChange>
+}
 class Radio extends Component {
   getValue(): string; setCheck(ck: boolean): void
   setLabel(text: string): void
@@ -647,14 +664,19 @@ class Radio extends Component {
 ### `Switch`
 
 ```ts
-interface SwitchProps extends ComponentProps { /* label, checked, name */ }
+interface SwitchProps extends ComponentProps { label: string; checked?: boolean; name?: string }
+// with a name, a Form reads and writes it as a boolean
 class Switch extends HBox {}
 ```
 
 ### `Slider`
 
 ```ts
-interface SliderProps extends ComponentProps { /* min, max, value, step */ }
+interface SliderProps extends ComponentProps {
+  value: number; min: number; max: number  // required
+  step?: number; vertical?: boolean
+  change?: EventCallback<EvChange>
+}
 class Slider extends Component {
   setMin(min: number): void; setMax(max: number): void; setValue(v: number): void
 }
@@ -665,17 +687,28 @@ class Slider extends Component {
 ```ts
 interface SelectProps extends ComponentProps {
   items: ListItem[]                        // required
-  value: string                            // required
-  multiple?: boolean; name?: string
+  value?: ListboxID                        // the id of the item that is selected
+  multiple?: boolean; required?: boolean; name?: string
   change?: EventCallback<EvChange>; focus?: EventCallback<EvFocus>
 }
-class Select extends Component { getValue(): string; setValue(value: string): void; setItems(items: ListItem[]): void }
+class Select extends Component {
+  getValue(): ListboxID; setValue(value: ListboxID): void
+  getSelValues(): ListboxID[]; setSelValues(values: ListboxID[]): void   // multiple
+  setItems(items: ListItem[]): void
+}
 ```
 
 ### `Combobox` — input + dropdown list
 
 ```ts
-interface ComboboxProps extends ComponentProps { /* items, value, renderer... */ }
+interface ComboboxProps extends ComponentProps {
+  items: ListItem[]                        // required
+  value?: ListboxID                        // the id of the item that is selected
+  label?: string; labelWidth?: number | string
+  readonly?: boolean                       // true by default: the user picks, and cannot type. false to let him type
+  required?: boolean; name?: string
+  selectionChange?: EventCallback<EvSelectionChange>
+}
 class Combobox extends Component {
   getValue(): string; setValue(value: string): void
   getInput(): Input
@@ -1025,7 +1058,14 @@ class ProgressionBox extends Dialog {
 ### `Notification`
 
 ```ts
-class Notification extends Popup { display(time_in_s?: number): void }
+interface NotificationProps extends ComponentProps {
+  title: string; text: string | UnsafeHtml
+  mode?: "success" | "danger"
+  loading?: boolean                        // a turning icon
+  iconId?: string
+  closable?: boolean                       // a button that closes it
+}
+class Notification extends Popup { display(time_in_s?: number): void }   // 0: until it is closed
 ```
 
 ---
@@ -1614,6 +1654,7 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - `Component` stores its instance on its DOM node. Use `componentFromDOM(el)` to retrieve a component from an `HTMLElement`.
 - Numbers passed to `setStyle`/`setStyleValue` are auto-suffixed with `"px"` except for unitless properties (see the `unitless` set: `zIndex`, `opacity`, `flexGrow`...).
 - `show(false)` / `hide()` toggle the `"x4hidden"` CSS class, not `display:none`.
+- x4 sets `user-select: none` on every element (`*`): text that must be selectable needs `user-select: text` on it and on its descendants.
 - `enable(false)` / `disable()` propagate the `disabled` state to child `<input>` and `<button>` elements.
 - `Application` is a strict singleton — one instance per page (an assertion fails otherwise).
 - `Popup.show()` routes to `displayCenter()`. To position, call `displayAt()` or `displayNear()` instead.
