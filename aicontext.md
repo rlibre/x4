@@ -706,6 +706,7 @@ interface ComboboxProps extends ComponentProps {
   value?: ListboxID                        // the id of the item that is selected
   label?: string; labelWidth?: number | string
   readonly?: boolean                       // true by default: the user picks, and cannot type. false to let him type
+  renderer?: (item: ListItem) => Component // draws an item of the list (the field still shows item.text)
   required?: boolean; name?: string
   selectionChange?: EventCallback<EvSelectionChange>
 }

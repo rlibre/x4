@@ -52,6 +52,9 @@ interface NotificationProps extends ComponentProps {
  * ```
  * --notification-border
  * --notification-background
+ * --notification-title-color
+ * --notification-text-color
+ * --notification-button-color
  * --notification-icon-default
  * --notification-icon-success
  * --notification-icon-danger

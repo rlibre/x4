@@ -18,7 +18,11 @@
 
 :root {
 	--notification-border: var( --border );
-	--notification-background: white;
+	--notification-background: var( --background-primary );
+
+	--notification-title-color: var( --text-primary );
+	--notification-text-color: var( --text-ternary );
+	--notification-button-color: var( --text-ternary );
 
 	--notification-icon-default: var( --accent-background );
 	--notification-icon-success: var( --success-background );
@@ -54,11 +58,12 @@
 		.title {
 			font-weight: bold;
 			padding: 6px 6px 3px 6px;
+			color: var( --notification-title-color );
 		}
 
 		.text {
 			padding: 3px 6px 6px 6px;
-			color: var( --color-gray-7 );
+			color: var( --notification-text-color );
 		}
 	}
 
@@ -81,7 +86,7 @@
 
 	.x4button {
 		height: 24px;
-		color: var( --color-gray-7 );
+		color: var( --notification-button-color );
 		border: none;
 
 		//&:hover {
