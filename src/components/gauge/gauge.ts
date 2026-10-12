@@ -60,8 +60,8 @@ export class Gauge extends Component<GaugeProps> {
 		super( props );
 
 		// no range given: 0 to 100
-		props.min = props.min ?? 0;
-		props.max = props.max ?? 100;
+		this.props.min = props.min ?? 0;
+		this.props.max = props.max ?? 100;
 
 		this.pos = 70;
 		this.stops = [];
