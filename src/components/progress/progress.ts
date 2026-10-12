@@ -21,8 +21,8 @@ import "./progress.module.scss";
 
 interface ProgressProps extends ComponentProps {
 	value: number;
-	min: number;
-	max: number;
+	min?: number;	// 0 when missing
+	max?: number;	// 100 when missing
 }
 
 /**
@@ -46,7 +46,11 @@ export class Progress extends Component<ProgressProps> {
 	}
 
 	setValue( value: number ) {
-		const perc = value / (this.props.max-this.props.min) * 100;
+		const min = this.props.min ?? 0;
+		const max = this.props.max ?? 100;
+
+		// where the value is between the two: min is 0%, max is 100%
+		const perc = (value-min) / (max-min) * 100;
 		this._bar.setStyleValue( "width", perc+"%" );
 	}
 }
