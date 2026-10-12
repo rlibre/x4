@@ -28,6 +28,7 @@ interface SwitchProps extends ComponentProps {
 	label: string;
 	checked?: boolean;
 	value?: string;
+	name?: string;	// with it, a Form reads and writes the switch (a boolean)
 }
 
 /**
@@ -52,7 +53,7 @@ export class Switch extends HBox<SwitchProps> {
 			new Component( {
 				cls: "switch",
 				content: [
-					new Input( { type: "checkbox", id: inputId, checked: props.checked } ),
+					new Input( { type: "checkbox", id: inputId, name: props.name, checked: props.checked } ),
 					new Component( { cls: "track" } ),
 					new Component( { cls: "thumb" } ),
 				]
