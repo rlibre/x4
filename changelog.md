@@ -9,6 +9,47 @@ A version gets its date when it is published.
 
 - "No color" (`nullable`) is drawn as a fine checkerboard, the usual sign of what is transparent, in the swatch of the field and in the picker. It was a red line across, drawn on nothing, which could hardly be read on a dark theme.
 
+### Progress, Gauge, Switch
+
+- `Progress`: `min` and `max` may be left out, they are then 0 and 100. Without them the bar had no width at all. And the bar now starts at `min`: a value of 50 between 50 and 100 is an empty bar, where it was a full one (the value was divided by the range without `min` being taken off it first).
+- `Gauge`: without `min` and `max`, the range is 0 to 100. Without them the needle was not drawn where it should.
+- `Switch`: new prop `name`. With it, a `Form` reads and writes the switch as it does a `Checkbox`.
+
+```ts
+new Progress( { value: 30 } )                       // 30% of 0..100
+new Progress( { value: 75, min: 50, max: 100 } )    // half of the bar
+new Switch( { label: "Notifications", name: "notify", checked: true } )
+```
+
+### DockingView
+
+- Tools can be docked above and under the contents: two more bands, `top` and `bottom`, between those of the left and of the right. They are for what is wide and low (a log, a list of results, a timeline). Their tools are side by side; one put above or under another makes the band higher.
+- New prop `sides`, on the view and on a panel: the bands a tool may be docked in. The left and the right ones when nothing is said, as before: an application that does not use it behaves as it did. A tool is never offered a place in a band it may not be in, neither beside one of its tools nor as one of their tabs.
+- `DockLayout` has two optional bands, `top` and `bottom`; a layout that does not use them does not have them, and is saved as it always was. A tool that a saved layout has in a band it may not be in anymore goes where the default layout has it.
+
+```ts
+const view = new DockingView( {
+	sides: ["left", "right"],                                  // what tools may do, when they say nothing
+	panels: [
+		{ id: "tree", title: "Objects", content: tree },
+		{ id: "log", title: "Log", content: log, sides: ["bottom"] },
+		{ id: "page", kind: "content", content: editor },
+	],
+	layout: {
+		left: { size: 180, root: { type: "stack", size: 0, panels: ["tree"], active: "tree" } },
+		right: { size: 0, root: null },
+		bottom: { size: 160, root: { type: "stack", size: 0, panels: ["log"], active: "log" } },
+		content: { type: "stack", size: 0, panels: ["page"], active: "page" },
+		floats: [],
+		hidden: [],
+	},
+} );
+```
+
+### Input
+
+- A number field built without a value no longer throws when it has a `step` under 1 or over 1. `setNumValue` empties the field when it is given no number (undefined, null or NaN), instead of formatting it.
+
 ## 2.3.16 (2026-10-09)
 
 ### DockingView

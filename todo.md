@@ -8,8 +8,5 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 ## DockingView
 
-- Bands at the top and at the bottom.
-- Tabs in a floating window; a menu that lists the panels that are closed.
 - What a panel shows loses its scroll position when the layout changes: its box is moved.
 - Closing a tool that is beside others does not make its band narrower.
-- Its tests (the layout, under node) are not run from here.
