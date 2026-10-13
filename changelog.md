@@ -39,6 +39,17 @@ new Button( { label: "Paste", click: async ( ) => {
 } } )
 ```
 
+### Gridview, Spreadsheet
+
+- With a fixed column, the flex columns fill the grid up to its right edge: the width they share is the one of the scrolled part, which the fixed columns are not in.
+- When a column was resized by its sizer, the body of the grid gets the width of its columns once the flex columns have taken what is left: every column is shown, and there is nothing to scroll beyond the last one.
+
+- A double click on the sizer of a column makes it flex: a column that is not (it was given no flex, or its sizer was dragged) takes its share of the place that is left, with a flex of 1. To stop being flex, a column has its sizer dragged. The column is not sorted: this is the double click on the rest of its header.
+
+### Spreadsheet
+
+- The cells of a fixed column follow its sizer while it is dragged, as its header does: they have the `data-col` of their column, by which the sizer finds them.
+
 ### Keyboard
 
 - New prop `locale` and new method `setLocale( locale )`: the language of the keys of the virtual keyboard, with or without its country (`"fr-FR"`, `"de-CH"`, `"pl"`). `"fr-FR"` when nothing is said.
@@ -64,6 +75,18 @@ keyboard.setLocale( "pl" );
 new TextArea( { label: "Comment", name: "comment", placeholder: "A few words...", required: true } )
 new SimpleTextArea( { flex: 1, placeholder: "Your message", change: ev => send.enable( ev.value!=="" ) } )
 ```
+
+### DOM events
+
+- Of several handlers of one event on one node, one that returns `true` stops those that follow it. Only `true` does: an arrow function without braces returns what its expression does (`( ) => panel.show( false )` returns the panel), and this stops nothing. The handler a component puts for itself is then always called, whatever the one given in `dom_events` returns.
+- An event of `unbubbleEvents` that the browser does not bubble (`focus`, `blur`, `mouseenter`, `mouseleave`...) stops at the node that gets it: the handler of an ancestor is not called for one of its descendants. `focusin` and `focusout` are the ones that go up. Those of the table that the browser bubbles (`contextmenu`, `dragenter`, `dragover`) go up.
+- `resized` is for the node that changed size only, as `created` and `removed` are for theirs: the handler of an ancestor is not called when one of its descendants changes size. `unbubbleEvents` has `resized`, the name that is sent.
+
+### Component
+
+- `content: 0`, in the props of a component, shows `0`: a number is a content as another.
+- `loadPState`: a change of the state is written 500 ms later, also when the component left the DOM in between. The write has a timer of its own: the timers of a component are cleared when it leaves.
+- `removeClass` and `toggleClass` skip the empty names that a space too many makes (`" a"`, `"a  b"`), as `addClass` does: the browser refuses an empty class name.
 
 ### Drag and drop
 

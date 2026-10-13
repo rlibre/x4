@@ -676,7 +676,9 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			const sizer = new CSizer("right");
 
 			sizer.on("stop", () => {
+				// the flex columns took what was left: the body gets the width of its columns
 				this._updateFlexs();
+				this._computeFullSize();
 			})
 
 			sizer.on("resize", (ev) => {
@@ -697,6 +699,24 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					this.setStyleVariable("--fixed-width", rh.width + "px");
 				}
 			})
+
+			// a double click on the sizer: the column takes its share of the place
+			// that is left (flex 1). To stop taking it, the sizer is dragged
+			sizer.addDOMEvent("dblclick", (ev) => {
+				// both: the grid has a double click of its own
+				ev.stopPropagation();
+				ev.preventDefault();
+
+				// a fixed column is not in the place that is shared
+				if (fixed || cdata.flex) {
+					return;
+				}
+
+				cdata.flex = 1;
+
+				this._updateFlexs();
+				this._computeFullSize();
+			});
 
 			const cell = new Component({
 				cls: `cell`,
@@ -956,6 +976,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			const el = new Component({
 				cls: "cell",
+				attrs: { "data-col": col },		// the sizer of the column finds its cells by it
 				style: { width: cdata?.width ? cdata.width + "px" : undefined, justifyContent: align },
 				content
 			});
@@ -993,7 +1014,12 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		for (let x = 0; x < ccount; x++) {
 			const cdata = this._getCol(x);
 
-			if (!cdata.fixed && cdata.flex) {
+			// the fixed columns are not in the viewport: their width is not taken from its own
+			if (cdata.fixed) {
+				continue;
+			}
+
+			if (cdata.flex) {
 				flexc += cdata.flex;
 			}
 			else {
