@@ -201,9 +201,24 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this.setAttribute("tabindex", 0);
 
 		this.addDOMEvent("created", () => {
+			// back in the document: the view follows its store again (see "removed")
+			if (this._dataview) {
+				this._dataview.open( );
+			}
+
 			this._init();
 			this._dirty = 1;
 			this.lock(false);
+		});
+
+		// out of the document: its store must not keep the grid alive, nor redraw it
+		this.addDOMEvent("removed", () => {
+			if (this._dataview) {
+				this._dataview.close( );
+			}
+
+			// as before its first insertion: nothing is drawn out of the document
+			this.lock( true );
 		});
 
 		this.addDOMEvent("resized", () => {
@@ -216,24 +231,198 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			this._on_key( e );
 		})
 
+		// the handlers of the grid itself are put once, here. _init builds what is
+		// inside the grid, each time it comes in the document
+
+		// WHEEL
+		this.addDOMEvent("wheel", (ev: WheelEvent) => {
+			// many rows: one pixel of the scroll bar is one row, wherever the pointer is
+			if (ev.deltaY && this._dataview && this._dataview.getCount() >= SCROLL_LIMIT) {
+				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
+				ev.stopPropagation();
+				ev.preventDefault();
+			}
+			else if (this._has_fixed && ev.deltaY) {
+				// wheel on fixed part
+				//	fixed part do not have scrollbar, so we need to handle it by hand
+				let t = ev.target as Node;
+				while (t != this.dom) {
+					if (t == this._vheader.dom) {
+						this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
+						ev.stopPropagation();
+						ev.preventDefault();
+						break;
+					}
+
+					t = t.parentNode;
+				}
+			}
+		})
+
+		const targetRow = ( e: MouseEvent ) => {
+			let el = Component.parentElement(e.target as HTMLElement, Component);
+			while (el && !el.hasClass("row")) {
+				el = el.parentElement();
+			}
+
+			if (el) {
+				return el.getIntData("row");
+			}
+			
+			return undefined;
+		}
+
+		const inColHeader = ( e: MouseEvent ) => {
+			let el = Component.parentElement(e.target as HTMLElement, Component);
+			while (el && !el.hasClass("col-header")) {
+				el = el.parentElement();
+			}
+
+			return !!el;
+		}
+
+		// multisel, Ctrl + click: one row more, or one row less
+		const toggleRow = ( row: number ) => {
+			const id = this._dataview.getIdByIndex( row );
+			if( !this._selection.has( id ) ) {
+				this._addSelection( row );
+				return;
+			}
+
+			this._selection.delete( id );
+			this.queryAll(`.row[data-row="${row}"]`).forEach(el => {
+				el.removeClass("selected");
+			});
+
+			this.fire("selectionChange", { selection: this.getSelection( ) ?? [], empty: this._selection.size==0 } );
+		}
+
+		// multisel, Shift + click: from the row that was selected last to this one
+		const selectTo = ( row: number ) => {
+			let last: any;
+			for (const id of this._selection) {
+				last = id;
+			}
+
+			const from = this._dataview.indexOfId( last );
+
+			this._clearSelection( false );
+
+			// the row to start from is added last: the next Shift + click starts from it too
+			if( from<0 ) {
+				this._addSelection( row, false );
+			}
+			else if( from<=row ) {
+				for( let r=row; r>=from; r-- ) {
+					this._addSelection( r, false );
+				}
+			}
+			else {
+				for( let r=row; r<=from; r++ ) {
+					this._addSelection( r, false );
+				}
+			}
+
+			this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
+		}
+
+
+		// CLICK
+		this.addDOMEvent("click", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				if( this.props.multisel && ( e.ctrlKey || e.metaKey ) ) {
+					toggleRow( row );
+				}
+				else if( this.props.multisel && e.shiftKey && this._selection.size ) {
+					selectTo( row );
+				}
+				// this row alone
+				else if( this._selection.size!=1 || !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
+					this._clearSelection( false );
+					this._addSelection(row);
+				}
+
+				// once the selection is what the click made it
+				const rec = this._dataview.getByIndex( row );
+				this.fire( "click", { context: rec } );
+			}
+			// a click in a column header sorts or sizes it: what is selected stays
+			else if( !inColHeader( e ) ) {
+				this._clearSelection( true );
+			}
+		});
+
+		// DBLCLICK
+		this.addDOMEvent("dblclick", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
+					this._clearSelection( false );
+					this._addSelection(row);
+				}
+
+				this._on_dblclk( e, row );
+
+				const rec = this._dataview.getByIndex( row );
+				this.fire( "dblClick", { context: rec } );
+			}
+		});
+
+		// CONTEXT
+		this.addDOMEvent("contextmenu", (e) => {
+			const row = targetRow( e );
+			if (row!==undefined ) {
+				// on a selected row, the menu is for all that is selected
+				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
+					this._clearSelection( false );
+					this._addSelection(row);
+				}
+
+				const rec = this._dataview.getByIndex( row );
+				this.fire( "contextMenu", { uievent: e, context: rec } );
+			}
+
+			e.preventDefault( );
+			e.stopPropagation( );
+		});
+
+		// MOUSE OVER
+		this.addDOMEvent("mouseover", (e) => {
+
+			if (!this._has_fixed) {
+				return;
+			}
+
+			let el = Component.parentElement(e.target as HTMLElement, Component);
+			while (el && !el.hasClass("row")) {
+				el = el.parentElement();
+			}
+
+			if (el) {
+				const data = el.getData("row");
+
+				this.queryAll(".hover").forEach(x => x.removeClass("hover"));
+
+				if (data) {
+					const rows = this.queryAll(`.row[data-row="${data}"]`);
+					rows.forEach(x => x.addClass("hover"));
+				}
+			}
+		});
+
+		// MOUSE LEAVE
+		this.addDOMEvent("mouseleave", (e) => {
+
+			if (!this._has_fixed) {
+				return;
+			}
+
+			this.queryAll(".hover").forEach(x => x.removeClass("hover"));
+		});
+
 		if( props.multisel ) {
-			// every record of the view
-			this.addShortcut( "Mod+A", ( ) => {
-				const count = this._dataview ? this._dataview.getCount( ) : 0;
-				if( !count ) {
-					return;
-				}
-
-				for( let row=0; row<count; row++ ) {
-					this._selection.add( this._dataview.getIdByIndex( row ) );
-				}
-
-				this.queryAll(".row").forEach(el => {
-					el.addClass("selected");
-				});
-
-				this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
-			} );
+			this.addShortcut( "Mod+A", ( ) => this.selectAll( ) );
 		}
 
 		if (props.store) {
@@ -298,6 +487,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 */
 
 	navigate( sens: kbNav ) {
+		// no row to go to
+		if( !this._dataview || !this._dataview.getCount( ) ) {
+			return false;
+		}
+
 		// the row to start from: the one of the first selected record
 		let fsel = -1;
 		if( this._selection.size ) {
@@ -416,9 +610,9 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			this._update(true);
 		}
 
-		// unlink previous observer
+		// the previous view stops following its store
 		if (this._dataview) {
-			this._dataview.off('view_change', on_change);
+			this._dataview.close( );
 		}
 
 		if (store) {
@@ -591,6 +785,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				]
 			});
 
+			// the column the grid is sorted by
+			if (cdata.sens) {
+				cell.addClass( cdata.sens==="up" ? "sorted" : "sorted desc" );
+			}
+
 			cell.addDOMEvent("touchend", () => {
 				const last = cell.getInternalData("touchend");
 				const now = Date.now();
@@ -675,34 +874,29 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this.setTimeout("sort", 50, () => {
 			let asc = true;
 
-			// already sorted ?
-			const scol = this.query(`.col-header .cell[data-col="${col}"]`);
-			if( !scol ) {
-				return;
-			}
+			const cdata = this._getCol(col);
 
 			if( ascending===undefined ) {
-				if (scol.hasClass("sorted")) {
-					if (scol.hasClass("desc")) {
-						asc = true;
-					}
-					else {
-						asc = false;
-					}
-				}
-				else {
-					const sorted = this.queryAll(".sorted");
-					sorted.forEach(x => x.removeClass("sorted asc desc"));
-				}
+				// a double click on the sorted column reverses it
+				asc = cdata.sens!=="up";
 			}
 			else {
 				asc = ascending;
 			}
 
-			scol.setClass("sorted");
-			scol.setClass("desc", !asc);
+			// one column is sorted. It is kept in the columns, not in the header: the header
+			// may not be built yet, and is built again each time the grid comes in the document
+			this._columns.forEach( c => { c.sens = undefined; } );
+			cdata.sens = asc ? "up" : "dn";
 
-			const cdata = this._getCol(col);
+			const sorted = this.queryAll(".sorted");
+			sorted.forEach(x => x.removeClass("sorted asc desc"));
+
+			const scol = this.query(`.col-header .cell[data-col="${col}"]`);
+			if( scol ) {
+				scol.setClass("sorted");
+				scol.setClass("desc", !asc);
+			}
 
 			let num = false;
 			switch (cdata.type) {
@@ -754,6 +948,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 		const col = column.id;
 		const type = column.type;
+
+		// a column that is not a field of the model (actions...) has only its renderer to draw it
+		if( column.renderer && isString( col ) && this._datamodel.getFieldIndex( col )<0 ) {
+			return column.renderer( rec, col );
+		}
 
 		let data = this._datamodel.getRaw(col, rec);
 		if (data === undefined || data === null) {
@@ -1087,189 +1286,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			this._update()
 		});
 
-		// WHEEL
-		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if (ev.deltaY && this._dataview && this._dataview.getCount() >= SCROLL_LIMIT) {
-				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
-				ev.stopPropagation();
-				ev.preventDefault();
-			}
-
-			if (this._has_fixed && ev.deltaY) {
-				// wheel on fixed part
-				//	fixed part do not have scrollbar, so we need to handle it by hand
-				let t = ev.target as Node;
-				while (t != this.dom) {
-					if (t == this._vheader.dom) {
-						this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
-						ev.stopPropagation();
-						ev.preventDefault();
-						break;
-					}
-
-					t = t.parentNode;
-				}
-			}
-		})
-
-		const targetRow = ( e: MouseEvent ) => {
-			let el = Component.parentElement(e.target as HTMLElement, Component);
-			while (el && !el.hasClass("row")) {
-				el = el.parentElement();
-			}
-
-			if (el) {
-				return el.getIntData("row");
-			}
-			
-			return undefined;
-		}
-
-		const inColHeader = ( e: MouseEvent ) => {
-			let el = Component.parentElement(e.target as HTMLElement, Component);
-			while (el && !el.hasClass("col-header")) {
-				el = el.parentElement();
-			}
-
-			return !!el;
-		}
-
-		// multisel, Ctrl + click: one row more, or one row less
-		const toggleRow = ( row: number ) => {
-			const id = this._dataview.getIdByIndex( row );
-			if( !this._selection.has( id ) ) {
-				this._addSelection( row );
-				return;
-			}
-
-			this._selection.delete( id );
-			this.queryAll(`.row[data-row="${row}"]`).forEach(el => {
-				el.removeClass("selected");
-			});
-
-			this.fire("selectionChange", { selection: this.getSelection( ) ?? [], empty: this._selection.size==0 } );
-		}
-
-		// multisel, Shift + click: from the row that was selected last to this one
-		const selectTo = ( row: number ) => {
-			let last: any;
-			for (const id of this._selection) {
-				last = id;
-			}
-
-			const from = this._dataview.indexOfId( last );
-
-			this._clearSelection( false );
-
-			// the row to start from is added last: the next Shift + click starts from it too
-			if( from<0 ) {
-				this._addSelection( row, false );
-			}
-			else if( from<=row ) {
-				for( let r=row; r>=from; r-- ) {
-					this._addSelection( r, false );
-				}
-			}
-			else {
-				for( let r=row; r<=from; r++ ) {
-					this._addSelection( r, false );
-				}
-			}
-
-			this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
-		}
-
-
-		// CLICK
-		this.addDOMEvent("click", (e) => {
-			const row = targetRow( e );
-			if (row!==undefined ) {
-				if( this.props.multisel && ( e.ctrlKey || e.metaKey ) ) {
-					toggleRow( row );
-				}
-				else if( this.props.multisel && e.shiftKey && this._selection.size ) {
-					selectTo( row );
-				}
-				// this row alone
-				else if( this._selection.size!=1 || !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
-					this._clearSelection( false );
-					this._addSelection(row);
-				}
-			}
-			// a click in a column header sorts or sizes it: what is selected stays
-			else if( !inColHeader( e ) ) {
-				this._clearSelection( true );
-			}
-		});
-
-		// DBLCLICK
-		this.addDOMEvent("dblclick", (e) => {
-			const row = targetRow( e );
-			if (row!==undefined ) {
-				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
-					this._clearSelection( false );
-					this._addSelection(row);
-				}
-
-				this._on_dblclk( e, row );
-
-				const rec = this._dataview.getByIndex( row );
-				this.fire( "dblClick", { context: rec } );
-			}
-		});
-
-		// CONTEXT
-		this.addDOMEvent("contextmenu", (e) => {
-			const row = targetRow( e );
-			if (row!==undefined ) {
-				// on a selected row, the menu is for all that is selected
-				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
-					this._clearSelection( false );
-					this._addSelection(row);
-				}
-
-				const rec = this._dataview.getByIndex( row );
-				this.fire( "contextMenu", { uievent: e, context: rec } );
-			}
-
-			e.preventDefault( );
-			e.stopPropagation( );
-		});
-
-		// MOUSE OVER
-		this.addDOMEvent("mouseover", (e) => {
-
-			if (!this._has_fixed) {
-				return;
-			}
-
-			let el = Component.parentElement(e.target as HTMLElement, Component);
-			while (el && !el.hasClass("row")) {
-				el = el.parentElement();
-			}
-
-			if (el) {
-				const data = el.getData("row");
-
-				this.queryAll(".hover").forEach(x => x.removeClass("hover"));
-
-				if (data) {
-					const rows = this.queryAll(`.row[data-row="${data}"]`);
-					rows.forEach(x => x.addClass("hover"));
-				}
-			}
-		});
-
-		// MOUSE LEAVE
-		this.addDOMEvent("mouseleave", (e) => {
-
-			if (!this._has_fixed) {
-				return;
-			}
-
-			this.queryAll(".hover").forEach(x => x.removeClass("hover"));
-		});
-
 		this._updateFlexs( );
 
 		this._fheader = this._buildColHeader(true);
@@ -1402,6 +1418,29 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this._clearSelection( false );
 	}
 
+	/**
+	 * Select every record of the view (with multisel only).
+	 * The id of each record is kept, and selectionChange gives them all:
+	 * on a very large view this costs memory.
+	 */
+
+	selectAll( ) {
+		const count = this._dataview ? this._dataview.getCount( ) : 0;
+		if( !this.props.multisel || !count ) {
+			return;
+		}
+
+		for( let row=0; row<count; row++ ) {
+			this._selection.add( this._dataview.getIdByIndex( row ) );
+		}
+
+		this.queryAll(".row").forEach(el => {
+			el.addClass("selected");
+		});
+
+		this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
+	}
+
 	private _clearSelection( notify: boolean ) {
 		if( !this._selection.size ) {
 			return;
@@ -1440,25 +1479,31 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 */
 	
 	getSelection( ) {
-		if( this._selection.size==0 ) {
-			return null;
+		// a record may be gone: out of the document, the grid does not follow its store
+		const recs: DataRecord[] = [];
+		for (const id of this._selection) {
+			const rec = this._dataview.getById( id );
+			if (rec) {
+				recs.push( rec );
+			}
 		}
 
-		const ids = [...this._selection.values() ];
-		return ids.map( id => this._dataview.getById(id) );
+		return recs.length ? recs : null;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 
 	getFirstSel( ) {
-		if( this._selection.size==0 ) {
-			return null;
+		for (const id of this._selection) {
+			const rec = this._dataview.getById( id );
+			if (rec) {
+				return rec;
+			}
 		}
 
-		const id = this._selection.values().next().value;
-		return this._dataview.getById( id );
+		return null;
 	}
 
 	/**
