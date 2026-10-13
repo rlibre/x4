@@ -34,13 +34,13 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── Popup → Dialog → MessageBox / InputBox / PromptBox / ProgressionBox
   │     │     │        → Menu, DropdownList, Notification
   │     │     ├── BtnGroup, Tabs, Video, Saturation
-  │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link
+  │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
   │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
-  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit → AutoComplete, Breadcrumbs
+  │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
   └── Application<E>           singleton, no DOM of its own
 
@@ -228,7 +228,7 @@ static parentElement<T>(dom: Node, cls?: Constructor<T>): T
 ```ts
 show(vis?: boolean): this              // toggles "x4hidden" class (not display:none)
 hide(): this
-enable(ena?: boolean): this            // sets "disabled" + propagates to child <input>/<button>
+enable(ena?: boolean): this            // sets or removes "disabled" and "inert" on the component
 disable(): this
 isDisabled(): string | null
 isVisible(): boolean
@@ -537,6 +537,23 @@ class Image extends Component {
 }
 ```
 
+### `Tag` — a short text in a rounded frame, with an icon
+
+```ts
+interface TagProps extends ComponentProps {
+  label?: string | UnsafeHtml              // the text: `label`, not `text` as in Label
+  icon?: string
+}
+class Tag extends HBox {}                  // no method: its text and its icon are those of its props
+// cls "alert": the colors of an alert
+// CSS vars: --tag-background --tag-color --tag-icon-color --tag-border
+```
+
+```ts
+new Tag({ label: 'Draft' })
+new Tag({ label: 'Late', icon: 'assets/clock.svg', cls: 'alert' })
+```
+
 ### `Progress`
 
 ```ts
@@ -619,17 +636,38 @@ class TextEdit extends HBox {
 }
 ```
 
-### `TextArea`
+### `TextArea`, `SimpleTextArea` — native `<textarea>`, with or without a label
 
 ```ts
-interface TextAreaProps extends BaseProps {      // BaseProps: see Input (name, readonly, placeholder...)
-  label?: string; value?: string
-  resize?: boolean | "none" | "vertical" | "horizontal" | "both"
+interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (name, readonly, required, placeholder, autofocus, focus, change)
+  value?: string
+  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // false = "none"
   trim?: boolean                           // getText() trims, unless false
 }
-class TextArea extends VBox { getText(): string; setText(text: string): void }
+interface TextAreaProps extends SimpleTextAreaProps { label?: string }
+
+class SimpleTextArea extends Component {    // the <textarea> alone
+  getText(): string; setText(text: string): void
+  scrollToBottom(): void
+  isValid(): boolean                       // false when it is required and empty
+}
+class TextArea extends VBox {               // a Label above a SimpleTextArea
+  getText(): string; setText(text: string): void
+  scrollToBottom(): void
+  isValid(): boolean
+}
 ```
 
+```ts
+new TextArea({ label: 'Comment', name: 'comment', placeholder: 'A few words...', resize: 'vertical' })   // in a form
+new SimpleTextArea({ flex: 1, placeholder: 'Your message', resize: false })                              // no label
+```
+
+- `TextArea` in a form; `SimpleTextArea` where a label has no place (a message to type, a log).
+- Both are form elements: with a `name`, `Form.getValues()` and `setValues()` read and write them.
+- The value is read and written with `getText()` / `setText()`, not `getValue()` / `setValue()`.
+- `change` is fired at each key that is typed, with the text as `ev.value`; `focus` when the focus comes and goes (`ev.focus_out`). As for an `Input`.
+- `required`: an empty text is not valid. `Form.validate()` then returns `null`, or tells its validator that the form is not valid.
 ### `Checkbox`
 
 ```ts
@@ -784,10 +822,13 @@ interface ListboxProps extends Omit<ComponentProps,"content"> {
   title?: string; icon?: string
   header?: Header; footer?: Component
   checkable?: true; multisel?: true
+  emptyMsg?: string                        // shown in place of the items while there are none
   dblClick?: EventCallback<EvDblClick>
   selectionChange?: EventCallback<EvSelectionChange>
   contextMenu?: EventCallback<EvContextMenu>
 }
+// emptyMsg: without it the text is _tr.global.empty_list ("Empty list"). It is shown by setItems
+//   (the constructor calls it) when there is no item. The listbox then has the class "empty".
 class Listbox extends Component {
   setItems(items: ListItem[], keepSel?: boolean): void
   appendItem(item: ListItem, prepend?: boolean, select?: boolean): void
@@ -801,7 +842,6 @@ class Listbox extends Component {
   ensureSelectionVisible(): void
   renderItem(item: ListItem): Component     // override to customize
   defaultRenderer(item: ListItem): Component
-  preventFocus: boolean
 }
 ```
 
@@ -812,38 +852,51 @@ interface GridviewProps extends ComponentProps {
   store: DataStore                          // required
   columns: GridColumn[]                     // required
   footer?: boolean; emptyMsg?: string
-  sort?: object
-  click?: EventCallback<EvClick>
-  dblClick?: EventCallback<EvDblClick>
+  multisel?: boolean                        // Ctrl+click adds or removes a row, Shift+click a range, Ctrl+A all
+  sort?: { field_id: string; asc?: boolean }   // the first sort; ascending only when asc is true
+  click?: EventCallback<EvClick>               // a click on a row; ev.context is its record
+  dblClick?: EventCallback<EvDblClick>         // ev.context is the record of the row
   contextMenu?: EventCallback<EvContextMenu>
   selectionChange?: EventCallback<EvSelectionChange>
 }
 class Gridview extends Component {
   setStore(store: DataStore): void
-  setColumns(columns: GridColumn[]): void
   setColTitle(col_name: string, title: string): void
-  sortCol(colIdx: number, ascending: boolean): void
+  sortCol(colId: any, ascending: boolean): void     // colId: the id of the column, not its index
   getView(): DataView
-  getSelection(): DataRecord[]
-  getFirstSel(): DataRecord
+  getSelection(): DataRecord[]              // null when nothing is selected
+  getFirstSel(): DataRecord                 // null when nothing is selected
   selectItem(id, ensureVisible?: boolean): void
   clearSelection(): void
+  selectAll(): void                         // multisel only; keeps the id of every record: costs memory on a very large view
   navigate(sens: kbNav): boolean
   lock(lock: boolean): void
 }
+// Selection: the selected records, not their rows. It survives a sort; a record that leaves the view (filter, delete) leaves it, with a selectionChange.
+// getSelection(): every selected record, or null. selectionChange: ev.selection has them all.
+// Column sizer: dragging it gives the column that width (it is not flex anymore); a double click on it makes the column flex again.
 ```
 
 ### `Treeview`
 
 ```ts
 interface TreeItem extends ListItem { children?: TreeItem[]; open?: boolean }
-interface TreeviewProps extends ComponentProps { /* items, renderer... */ }
+interface TreeviewProps extends Omit<ComponentProps,"content"> {
+  items: TreeItem[]                         // required
+  footer?: Component
+  emptyMsg?: string                        // shown in place of the items while there are none
+  click?: EventCallback<EvClick>
+  dblClick?: EventCallback<EvDblClick>
+  selectionChange?: EventCallback<EvSelectionChange>
+}
+// emptyMsg: as for a Listbox. Without it the text is _tr.global.empty_list ("Empty list").
+// There is no `renderer`: an item is drawn from its `text`, `iconId`, `cls` and `sub_cols`.
 class Treeview extends Component {
   setItems(items: TreeItem[]): void
-  getSelection(): ListboxID
-  selectItem(id): void
+  getSelection(): ListboxID                 // one item, not an array
+  selectItem(id: ListboxID): void
   clearSelection(): void
-  navigate(sens: kbNav): boolean            // see kbTreeNav enum
+  navigate(sens: kbTreeNav): boolean        // first, prev, next, last, parent, child, expand, collapse, toggle
 }
 ```
 
@@ -871,6 +924,7 @@ class Spreadsheet extends Component {
   stopEdit(commit = true): void;  isEditing(): boolean
 }
 
+// Column sizer: dragging it gives the column that width (it is not flex anymore); a double click on it makes the column flex again.
 // Inline edition: F2 / Enter / double-click / typing starts, Enter / Tab / click elsewhere validates, Escape cancels,
 // Delete clears, editable checkboxes toggle on double-click or Space (a single click only selects).
 // Default editor is an Input matching the column type.
@@ -1116,7 +1170,13 @@ class ColorPicker extends VBox {           // props: color, swatches?, nullable?
 }
 class Panel extends VBox { setTitle(title: string): void }
 class Breadcrumbs extends HBox { setItems(elements): void }
-class Keyboard extends HBox                // virtual keyboard
+interface KeyboardProps extends BoxProps { locale?: string }   // "fr-FR" (default), "de-CH", "pl"...
+class Keyboard extends HBox {               // virtual keyboard, shown while an <input> has the focus
+  setLocale(locale: string): void
+  setZoom(perc: number): void
+  showOn(el: Component): void
+}
+// languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```
@@ -1189,6 +1249,8 @@ class DataView extends CoreElement {
   getRecId(rec): any; indexOfId(id): number
   getStore(): DataStore; getModel(): DataModel
   forEach(cb): void; changed(): void
+  close(): void                            // stops following the store; call it on a view you made (createView) and do not use anymore
+  open(): void                             // follows the store again after a close(), filtered and sorted with its data of the moment
 }
 ```
 
@@ -1253,6 +1315,80 @@ class MyView extends VBox {
 - A shortcut always takes its key (`preventDefault`). For a key that must sometimes be left alone, use a `keydown` handler instead.
 - An application shortcut also works while a dialog is open.
 - Do not write a `keydown` handler with a `switch` on `ev.ctrlKey` for commands: use `addShortcut`.
+
+---
+
+## Clipboard (`core_clipboard`)
+
+The clipboard of the system: a text, an image, files. Never call `navigator.clipboard` or `ev.clipboardData`.
+
+```ts
+interface ClipboardContent { text?: string; image?: Blob }
+interface ClipboardRead extends ClipboardContent { files: File[] }   // files: only in an event
+
+// from a menu or a button: asynchronous, never fail
+setClipboard(data: ClipboardContent): Promise<boolean>   // false: the system refused
+getClipboard(): Promise<ClipboardRead>
+canReadClipboard(): boolean                              // false: nothing to paste, disable the item
+
+// in a "copy", "cut" or "paste" event
+setEventClipboard(ev: ClipboardEvent, data: ClipboardContent): void   // prevents the default
+getEventClipboard(ev: ClipboardEvent): ClipboardRead                  // synchronous, default left as it is
+```
+
+```ts
+this.addDOMEvent('copy', ev => setEventClipboard(ev, { text: this.getSelectedText() }))
+
+this.addDOMEvent('paste', ev => {
+  const data = getEventClipboard(ev)
+  if (data.image) {
+    ev.preventDefault()
+    this.setPicture(data.image)
+  }
+})
+
+new Button({ label: 'Paste', click: async () => {
+  const data = await getClipboard()
+  if (data.text) this.insert(data.text)
+} })
+```
+
+- The keys of the user (Ctrl+C, Ctrl+V) are the `copy`, `cut` and `paste` events, not shortcuts: the browser then gives its clipboard without asking for a permission.
+- The events go to the component that has the focus: give it a `tabindex`.
+- Out of an event, the browser may refuse, and there is no system clipboard on a page that is not served in https. What the application set last is then what `getClipboard` gives: copy and paste still work inside the application.
+- An image is written as a PNG; another format is converted. Files can be read in a `paste` event only, and cannot be written.
+
+---
+
+## Drag and drop (`core_dragdrop`)
+
+`dragManager` makes a component something the user drags, and another one a place where things are dropped: components of the application, or files that come from the desktop.
+
+```ts
+interface DropInfo { pt: Point; data: DataTransfer }
+type DropCallback = (command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo) => void
+type DropFilterCallback = (el: Component, data: DataTransfer) => boolean   // false: nothing can be dropped here
+
+dragManager.registerDraggableElement(el: Component): void
+dragManager.registerDropTarget(el: Component, cb: DropCallback, filterCB?: DropFilterCallback): void
+```
+
+```ts
+dragManager.registerDraggableElement(card)
+
+dragManager.registerDropTarget(column, (cmd, el, infos) => {
+  if (cmd == 'drop') {
+    if (infos.data.files.length) this.upload(infos.data.files)   // files from the desktop
+    else this.moveCard(el, infos.pt)                              // el: the component that was dragged
+  }
+})
+```
+
+- `registerDraggableElement`: while it is dragged, the component has the class `dragging`, and a copy of it with the class `dragged`, added to the body, follows the pointer. Nothing else is done: no data of the application goes with the drag, the target gets the component itself.
+- The callback of a target: `enter` and `leave` when the pointer comes over it and goes away, `drag` again and again while it is over it, `drop`. Only `drag` and `drop` have `infos`; `pt` is in the coordinates of the page.
+- `enter` and `leave` are found by a timer: they may come up to 300 ms late, and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
+- `el` in the callbacks is the dragged component, not the target. There is none for files that come from the desktop: read `infos.data.files`.
+- `Image` (`candrop`) and `FileDrop` already use it for files.
 
 ---
 
@@ -1351,8 +1487,9 @@ interface ITabHandler  { focusNext(next: boolean): boolean }
 interface ITipHandler  { getTip(): string }
 
 // Other variables
-const dragManager; const svgLoader; const linearColorStops; const simpleColorStop
-const unbubbleEvents       // set of DOM event names that do NOT bubble through the x4 tree
+const dragManager                           // see Drag and drop
+const svgLoader; const linearColorStops; const simpleColorStop
+const unbubbleEvents       // the events that stay on their node: see "Important stupid notes"
 const makeUniqueComponentId  // () => string, "x4-<n>" (exported as a value)
 ```
 
@@ -1656,7 +1793,7 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - Numbers passed to `setStyle`/`setStyleValue` are auto-suffixed with `"px"` except for unitless properties (see the `unitless` set: `zIndex`, `opacity`, `flexGrow`...).
 - `show(false)` / `hide()` toggle the `"x4hidden"` CSS class, not `display:none`.
 - x4 sets `user-select: none` on every element (`*`): text that must be selectable needs `user-select: text` on it and on its descendants.
-- `enable(false)` / `disable()` propagate the `disabled` state to child `<input>` and `<button>` elements.
+- `enable(false)` / `disable()` put `disabled` and `inert` on the component itself. Its children are not changed: the browser makes all that is inside an `inert` element inactive (no click, no focus).
 - `Application` is a strict singleton — one instance per page (an assertion fails otherwise).
 - `Popup.show()` routes to `displayCenter()`. To position, call `displayAt()` or `displayNear()` instead.
 - `BtnGroup` accepts predefined strings (`"ok"`, `"cancel"`...) with options after a dot: `"ok.outline.default.disabled"`.
@@ -1666,4 +1803,5 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
 - `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma; 
-- `unbubbleEvents` is the set of DOM events that do not bubble through the x4 component tree.
+- A DOM handler of an ancestor is called for the events of its descendants, as in the browser. Not for the events that do not bubble: `focus`, `blur`, `mouseenter`, `mouseleave` (use `focusin` / `focusout`, `mouseover` / `mouseout`), nor for those of x4: `created`, `removed`, `resized`.
+- Several handlers of one event on one node are called in the order they were added. One that returns `true` stops those that follow it.
