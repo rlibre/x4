@@ -39,6 +39,12 @@
 			color: white;
 		}
 
+		// as the one of an input
+		&::placeholder {
+			color: var( --input-placeholder );
+			font-style: italic;
+		}
+
 		&[resize=false] {
 			resize: none;
 		}

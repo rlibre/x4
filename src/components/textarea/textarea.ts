@@ -60,6 +60,10 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 		if( props.readonly ) {
 			this.setAttribute( "readonly", true );
 		}
+
+		if( props.placeholder ) {
+			this.setAttribute( "placeholder", props.placeholder );
+		}
 	}
 
 	setText( text: string ) {
@@ -115,11 +119,11 @@ export class TextArea extends VBox {
 		super( props );
 
 
-		const { label, value, resize, readonly, trim, name } = props;
+		const { label, value, resize, readonly, trim, name, placeholder } = props;
 
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name } )
+			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name,placeholder } )
 		])
 	}
 
