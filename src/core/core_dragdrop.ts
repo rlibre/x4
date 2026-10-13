@@ -19,13 +19,13 @@ import { Point } from './core_tools';
 
 const x_drag_cb = Symbol( 'x-drag-cb' );
 
-interface DropInfo {
+export interface DropInfo {
 	pt: Point;
 	data: DataTransfer;
 }
 
-type DropCallback = ( command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo ) => void;
-type FilterCallback = ( el: Component, data: DataTransfer ) => boolean;
+export type DropCallback = ( command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo ) => void;
+export type FilterCallback = ( el: Component, data: DataTransfer ) => boolean;
 
 /** 
  * Manages drag and drop operations within the application.

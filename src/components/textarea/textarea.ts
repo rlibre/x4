@@ -17,7 +17,7 @@
  **/
 
 import { BaseProps } from '../input/input';
-import { Component, ComponentProps } from '../../core/component';
+import { Component, ComponentEvents, ComponentProps, EvChange, EvFocus } from '../../core/component';
 
 import { Label } from '../label/label';
 import { VBox } from '../boxes/boxes';
@@ -29,7 +29,7 @@ import { class_ns, IFormElement } from '../../core/core_tools';
  * 
  */
 
-interface TextAreaProps extends BaseProps {
+export interface TextAreaProps extends BaseProps {
 	label?: string;
 	value?: string;
 	resize?: boolean | "none" | "vertical" | "horizontal" | "both";
@@ -37,16 +37,23 @@ interface TextAreaProps extends BaseProps {
 	trim?: boolean;
 }
 
+export interface TextAreaEvents extends ComponentEvents {
+	focus: EvFocus;
+	change: EvChange;
+}
+
 
 /**
- * 
+ *
  */
 
 @class_ns( "x4" )
-export class SimpleTextArea extends Component<TextAreaProps> {
+export class SimpleTextArea extends Component<TextAreaProps,TextAreaEvents> {
 
 	constructor( props: TextAreaProps ) {
 		super( { ...props, tag: "textarea" } );
+
+		this.mapPropEvents( props, "focus", "change" );
 
 		this.setAttribute( "name", props.name );
 		if( props.value ) {
@@ -64,6 +71,18 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 		if( props.placeholder ) {
 			this.setAttribute( "placeholder", props.placeholder );
 		}
+
+		if( props.required ) {
+			this.setAttribute( "required", true );
+		}
+
+		if( props.autofocus ) {
+			this.setAttribute( "autofocus", true );
+		}
+
+		this.addDOMEvent( "blur", ( ) => this.fire( "focus", { focus_out: true } ) );
+		this.addDOMEvent( "focus", ( ) => this.fire( "focus", { focus_out: false } ) );
+		this.addDOMEvent( "input", ( ) => this.fire( "change", { value: this.getText( ) } ) );
 	}
 
 	setText( text: string ) {
@@ -83,12 +102,18 @@ export class SimpleTextArea extends Component<TextAreaProps> {
 		this.dom.scrollTop = this.dom.scrollHeight;
 	}
 
+	/** false when it is required and empty */
+
+	isValid( ) {
+		return !this.props.required || this.getText( )!=="";
+	}
+
 	queryInterface<T>(name: string): T {
 		if( name=="form-element" ) {
 			const i: IFormElement = {
 				getRawValue: ( ): any => { return this.getText(); },
 				setRawValue: ( v: any ) => { this.setText( v ); },
-				isValid: ( ) => { return true; }
+				isValid: ( ) => { return this.isValid( ); }
 			};
 
 			return i as unknown as T;
@@ -119,11 +144,11 @@ export class TextArea extends VBox {
 		super( props );
 
 
-		const { label, value, resize, readonly, trim, name, placeholder } = props;
+		const { label, value, resize, readonly, trim, name, placeholder, required, autofocus, focus, change } = props;
 
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name,placeholder } )
+			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name,placeholder,required,autofocus,focus,change } )
 		])
 	}
 
@@ -139,12 +164,18 @@ export class TextArea extends VBox {
 		this._input.scrollToBottom( );
 	}
 
+	/** false when it is required and empty */
+
+	isValid( ) {
+		return this._input.isValid( );
+	}
+
 	queryInterface<T>(name: string): T {
 		if( name=="form-element" ) {
 			const i: IFormElement = {
 				getRawValue: ( ): any => { return this.getText(); },
 				setRawValue: ( v: any ) => { this.setText( v ); },
-				isValid: ( ) => { return true; }
+				isValid: ( ) => { return this.isValid( ); }
 			};
 
 			return i as unknown as T;
