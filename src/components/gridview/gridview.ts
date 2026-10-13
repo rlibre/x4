@@ -80,6 +80,12 @@ export interface GridviewProps extends ComponentProps {
 	columns: GridColumn[];
 	emptyMsg?: string;
 
+	/**
+	 * several rows can be selected: Ctrl (Cmd on a Mac) + click adds a row or
+	 * removes it, Shift + click selects up to the row, Ctrl + A selects all
+	 */
+	multisel?: boolean;
+
 	click?: EventCallback<EvClick>;
 	dblClick?: EventCallback<EvDblClick>;
 	contextMenu?: EventCallback<EvContextMenu>;
@@ -155,7 +161,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	private _start: number;
 	private _end: number;
 
-	private _selection: Set<number>;
+	private _selection: Set<any>;	// the ids of the selected records: a row changes place when the view is sorted
 	
 
 	// TODO: that
@@ -209,6 +215,26 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this.addDOMEvent( "keydown", (e) => {
 			this._on_key( e );
 		})
+
+		if( props.multisel ) {
+			// every record of the view
+			this.addShortcut( "Mod+A", ( ) => {
+				const count = this._dataview ? this._dataview.getCount( ) : 0;
+				if( !count ) {
+					return;
+				}
+
+				for( let row=0; row<count; row++ ) {
+					this._selection.add( this._dataview.getIdByIndex( row ) );
+				}
+
+				this.queryAll(".row").forEach(el => {
+					el.addClass("selected");
+				});
+
+				this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
+			} );
+		}
 
 		if (props.store) {
 			this.setStore(props.store);
@@ -272,7 +298,13 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 */
 
 	navigate( sens: kbNav ) {
-		if( !this._selection.size ) {
+		// the row to start from: the one of the first selected record
+		let fsel = -1;
+		if( this._selection.size ) {
+			fsel = this._dataview.indexOfId( this._selection.values().next().value );
+		}
+
+		if( fsel<0 ) {
 			if( sens==kbNav.next || sens==kbNav.pgdn )  {
 				sens = kbNav.first;
 			}
@@ -289,7 +321,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			return true;
 		}
 		else if( sens==kbNav.prev || sens==kbNav.next ) {
-			const fsel = this._selection.values().next().value;
 			let nel = sens==kbNav.next ? fsel+1 : fsel-1;
 			if( nel>=0 && nel<this._dataview.getCount() ) {
 				this._clearSelection( false );
@@ -301,8 +332,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		else if( sens==kbNav.pgdn || sens==kbNav.pgup ) {
 			const pgh = this._vis_rows.size;
 
-			const fsel = this._selection.values().next().value;
-			
 			let sby = sens==kbNav.pgdn ? pgh : -pgh;
 			let nel = fsel+sby;
 
@@ -366,8 +395,20 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 				return;
 			}
 
-			if (ev.change_type == 'change') {
-				this._selection.clear();
+			// the data or the filter changed: a record that left the view leaves the selection
+			if (ev.change_type != 'sort') {
+				let lost = false;
+
+				for (const id of this._selection) {
+					if (this._dataview.indexOfId( id ) < 0) {
+						this._selection.delete( id );
+						lost = true;
+					}
+				}
+
+				if (lost) {
+					this.fire("selectionChange", { selection: this.getSelection( ) ?? [], empty: this._selection.size==0 } );
+				}
 			}
 
 			this._updateFlexs( );
@@ -684,6 +725,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 			this._update(true);
 
+			// sorted by a double click on a header: what is selected is shown where it went
+			if( ascending===undefined && this._selection.size ) {
+				this._scrollToIndex( this._dataview.indexOfId( this._selection.values().next().value ) );
+			}
+
 			setWaitCursor(false);
 		});
 	}
@@ -857,7 +903,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		const rowel = new Box({ cls: "row", style: { top: top.toFixed(2) + "px" }, content: els });
 		rowel.setData("row", rowid + "");
 
-		if (this._selection.has(rowid)) {
+		if (this._selection.has( this._dataview.getRecId( rec ) )) {
 			rowel.addClass("selected");
 		}
 
@@ -914,7 +960,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		const rowel = new Box({ cls: "row", style: { top: top + "px" }, content: cols });
 		rowel.setData("row", rowid + "");
 
-		if (this._selection.has(rowid)) {
+		if (this._selection.has( this._dataview.getRecId( rec ) )) {
 			rowel.addClass("selected");
 		}
 
@@ -1079,18 +1125,79 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			return undefined;
 		}
 
+		const inColHeader = ( e: MouseEvent ) => {
+			let el = Component.parentElement(e.target as HTMLElement, Component);
+			while (el && !el.hasClass("col-header")) {
+				el = el.parentElement();
+			}
+
+			return !!el;
+		}
+
+		// multisel, Ctrl + click: one row more, or one row less
+		const toggleRow = ( row: number ) => {
+			const id = this._dataview.getIdByIndex( row );
+			if( !this._selection.has( id ) ) {
+				this._addSelection( row );
+				return;
+			}
+
+			this._selection.delete( id );
+			this.queryAll(`.row[data-row="${row}"]`).forEach(el => {
+				el.removeClass("selected");
+			});
+
+			this.fire("selectionChange", { selection: this.getSelection( ) ?? [], empty: this._selection.size==0 } );
+		}
+
+		// multisel, Shift + click: from the row that was selected last to this one
+		const selectTo = ( row: number ) => {
+			let last: any;
+			for (const id of this._selection) {
+				last = id;
+			}
+
+			const from = this._dataview.indexOfId( last );
+
+			this._clearSelection( false );
+
+			// the row to start from is added last: the next Shift + click starts from it too
+			if( from<0 ) {
+				this._addSelection( row, false );
+			}
+			else if( from<=row ) {
+				for( let r=row; r>=from; r-- ) {
+					this._addSelection( r, false );
+				}
+			}
+			else {
+				for( let r=row; r<=from; r++ ) {
+					this._addSelection( r, false );
+				}
+			}
+
+			this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
+		}
+
 
 		// CLICK
 		this.addDOMEvent("click", (e) => {
 			const row = targetRow( e );
 			if (row!==undefined ) {
-				//TODO: multiselection
-				if( !this._selection.has(row) ) {
+				if( this.props.multisel && ( e.ctrlKey || e.metaKey ) ) {
+					toggleRow( row );
+				}
+				else if( this.props.multisel && e.shiftKey && this._selection.size ) {
+					selectTo( row );
+				}
+				// this row alone
+				else if( this._selection.size!=1 || !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
 					this._clearSelection( false );
 					this._addSelection(row);
 				}
 			}
-			else {
+			// a click in a column header sorts or sizes it: what is selected stays
+			else if( !inColHeader( e ) ) {
 				this._clearSelection( true );
 			}
 		});
@@ -1099,8 +1206,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this.addDOMEvent("dblclick", (e) => {
 			const row = targetRow( e );
 			if (row!==undefined ) {
-				//TODO: multiselection
-				if( !this._selection.has(row) ) {
+				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
 					this._clearSelection( false );
 					this._addSelection(row);
 				}
@@ -1116,8 +1222,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		this.addDOMEvent("contextmenu", (e) => {
 			const row = targetRow( e );
 			if (row!==undefined ) {
-				//TODO: multiselection
-				if( !this._selection.has(row) ) {
+				// on a selected row, the menu is for all that is selected
+				if( !this._selection.has( this._dataview.getIdByIndex( row ) ) ) {
 					this._clearSelection( false );
 					this._addSelection(row);
 				}
@@ -1301,12 +1407,9 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			return;
 		}
 
-		for (const ref of this._selection.keys()) {
-			const els = this.queryAll(`.row[data-row="${ref}"]`)
-			els.forEach(el => {
-				el.removeClass("selected");
-			})
-		}
+		this.queryAll(".row.selected").forEach(el => {
+			el.removeClass("selected");
+		});
 
 		this._selection.clear();
 		if( notify ) {
@@ -1318,16 +1421,18 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	 * 
 	 */
 
-	private _addSelection(rowid: number) {
-		this._selection.add(rowid)
+	private _addSelection(rowid: number, notify = true) {
+		this._selection.add( this._dataview.getIdByIndex( rowid ) );
 
 		const els = this.queryAll(`.row[data-row="${rowid}"]`)
 		els.forEach(el => {
 			el.addClass("selected");
 		});
 
-		const rec = this._dataview.getByIndex( rowid );
-		this.fire("selectionChange", { selection: [rec], empty: false } );
+		// all that is selected, not this row only
+		if( notify ) {
+			this.fire("selectionChange", { selection: this.getSelection( ), empty: false } );
+		}
 	}
 
 	/**
@@ -1340,7 +1445,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 
 		const ids = [...this._selection.values() ];
-		return ids.map( id => this._dataview.getByIndex(id) );
+		return ids.map( id => this._dataview.getById(id) );
 	}
 
 	/**
@@ -1353,7 +1458,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		}
 
 		const id = this._selection.values().next().value;
-		return this._dataview.getByIndex( id );
+		return this._dataview.getById( id );
 	}
 
 	/**
