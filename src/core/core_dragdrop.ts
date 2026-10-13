@@ -25,7 +25,7 @@ export interface DropInfo {
 }
 
 export type DropCallback = ( command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo ) => void;
-export type FilterCallback = ( el: Component, data: DataTransfer ) => boolean;
+export type DropFilterCallback = ( el: Component, data: DataTransfer ) => boolean;
 
 /** 
  * Manages drag and drop operations within the application.
@@ -92,7 +92,7 @@ class DragManager {
 	/**
 	 * Registers a component as a drop target.
 	 * This sets up DOM event listeners for `dragenter`, `dragover`, `dragleave`, and `drop`.
-	 * It uses a `DropCallback` to notify the component about drag events and an optional `FilterCallback`
+	 * It uses a `DropCallback` to notify the component about drag events and an optional `DropFilterCallback`
 	 * to determine if the target should accept the dragged item.
 	 *
 	 * @param el - The component to make a drop target.
@@ -100,7 +100,7 @@ class DragManager {
 	 * @param filterCB - An optional callback to filter which draggable items can be dropped.
 	 */
 
-	registerDropTarget(el: Component, cb: DropCallback, filterCB?: FilterCallback ) {
+	registerDropTarget(el: Component, cb: DropCallback, filterCB?: DropFilterCallback ) {
 
 		const dragEnter = (ev: DragEvent) => {
 			if( filterCB && !filterCB(this.dragSource,ev.dataTransfer) ) {
