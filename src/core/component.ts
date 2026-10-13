@@ -234,7 +234,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 				this.setStyle( props.style );
 			}
 
-			if( props.content ) {
+			if( props.content || props.content===0 ) {
 				this.setContent( props.content );
 			}
 
