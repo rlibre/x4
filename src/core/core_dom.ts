@@ -19,7 +19,7 @@ export const COMPONENT = Symbol( "component" );
 /** @ignore this events must be defined on domNode (do not bubble) */
 export const unbubbleEvents = {
 	mouseleave: 1, mouseenter: 1, load: 1, unload: 1, scroll: 1, focus: 1, blur: 1, rowexit: 1, beforeunload: 1, stop: 1,
-	dragdrop: 1, dragenter: 1, dragexit: 1, draggesture: 1, dragover: 1, contextmenu: 1, created: 2, removed: 2, sizechange: 2
+	dragdrop: 1, dragenter: 1, dragexit: 1, draggesture: 1, dragover: 1, contextmenu: 1, created: 2, removed: 2, resized: 2
 };
 
 export type DOMEventHandler = ( ev: Event ) => void;
