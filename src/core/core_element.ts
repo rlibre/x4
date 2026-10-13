@@ -232,7 +232,7 @@ export class CoreElement<E extends EventMap = EventMap> {
 			return;
 		}
 
-		// Entries no longer mutate the map in clear(), so plain iteration is safe.
+		// clear() of an entry does not touch the map, so plain iteration is safe.
 		for (const entry of this.#timers.values()) {
 			entry.clear();
 		}

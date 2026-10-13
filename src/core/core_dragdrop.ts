@@ -78,6 +78,12 @@ class DragManager {
 		el.addDOMEvent('dragend', (ev: DragEvent) => {
 			el.removeClass( 'dragging' );
 			this.dragGhost.remove();
+
+			// the target that was left is told now, while the source is known.
+			// Then the source is forgotten: the next drag may be one of files
+			// that come from the desktop, which has none
+			this._check( );
+			this.dragSource = null;
 		});
 
 		el.setAttribute('draggable', "true");

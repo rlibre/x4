@@ -34,8 +34,7 @@ export interface TagProps extends ComponentProps {
  * @cssvar
  * ```
  * --tag-border
- * --tag-border-focus
- * --tag-selection
+ * --tag-background
  * --tag-color
  * --tag-icon-color
  * ```
