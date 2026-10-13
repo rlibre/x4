@@ -51,7 +51,7 @@ interface Keys {
 	key: string;
 }
 
-const isMac = typeof navigator!=="undefined" && /mac|iphone|ipad/i.test( navigator.platform ?? "" );
+const isMac = /mac|iphone|ipad/i.test( navigator.platform ?? "" );
 
 /**
  * "Shift+Mod+K" -> shift, ctrl (cmd on a Mac), k
