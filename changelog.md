@@ -7,12 +7,12 @@ A version gets its date when it is published.
 
 ### Clipboard
 
-- New: the clipboard of the system, in `core_clipboard`: a text, an image, files. An application does not have to call `navigator.clipboard` anymore.
+- New: the clipboard of the system, in `core_clipboard`: a text, an image, files. It keeps `navigator.clipboard` out of the applications: that it is missing out of https, and that the browser may refuse, is handled there.
 - `setClipboard( data )` and `getClipboard( )`: from a menu or a button. They are asynchronous and never fail: `setClipboard` gives `false` when the system refused. What the application set last is kept, and it is what `getClipboard` gives when the system refuses or cannot be asked (a page that is not served in https): copy and paste still work inside the application.
 - `canReadClipboard( )`: `false` when `getClipboard` has nothing to give, to disable a "Paste" item.
 - `setEventClipboard( ev, data )` and `getEventClipboard( ev )`: in a `copy`, `cut` or `paste` event, where the browser gives its clipboard at once and asks nothing. `getEventClipboard` is the only way to read files.
 - An image is written as a PNG: another format is converted. Files cannot be written.
-- The events `copy`, `cut` and `paste` are known to `addDOMEvent` and to `dom_events`: no `dom.addEventListener` and no cast for them.
+- The events `copy`, `cut` and `paste` are known to `addDOMEvent` and to `dom_events`, with a `ClipboardEvent`.
 
 ```ts
 // the keys of the user
@@ -38,6 +38,25 @@ new Button( { label: "Paste", click: async ( ) => {
 	}
 } } )
 ```
+
+### TextArea
+
+- A `TextArea` and a `SimpleTextArea` handle all the props of `BaseProps`, as an `Input` does: they are the props they take.
+- `placeholder` is shown, drawn as the one of an `Input`.
+- `autofocus` and `required` are set on the field.
+- The events `change` (at each key that is typed, the text is `ev.value`) and `focus` (`ev.focus_out`) are fired.
+- New method `isValid( )`: `false` when the text is required and empty. A `Form` reads it: `validate( )` fails on a `TextArea` that is `required` and empty.
+- `SimpleTextAreaProps`, `TextAreaProps` and `TextAreaEvents` are exported: an application can name them, to type its own props or to derive a class. `TextAreaProps` is `SimpleTextAreaProps` plus `label`: a `SimpleTextArea` has no label.
+
+```ts
+new TextArea( { label: "Comment", name: "comment", placeholder: "A few words...", required: true } )
+new SimpleTextArea( { flex: 1, placeholder: "Your message", change: ev => send.enable( ev.value!=="" ) } )
+```
+
+### Drag and drop
+
+- `dragManager` forgets the dragged component when its drag ends: a drag of files that come from the desktop has no source, and its target must not be given one. The target that was left gets its `leave` at that moment, while the source is known.
+- `DropInfo`, `DropCallback` and `DropFilterCallback`, the types of what `registerDropTarget` takes, are exported.
 
 ## 2.3.17 (2026-10-12)
 

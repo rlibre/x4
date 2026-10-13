@@ -34,13 +34,13 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── Popup → Dialog → MessageBox / InputBox / PromptBox / ProgressionBox
   │     │     │        → Menu, DropdownList, Notification
   │     │     ├── BtnGroup, Tabs, Video, Saturation
-  │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link
+  │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
   │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
-  │     ├── HBox-based: ColorInput, Rating, Switch, Keyboard, TextEdit → AutoComplete, Breadcrumbs
+  │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
   └── Application<E>           singleton, no DOM of its own
 
@@ -537,6 +537,23 @@ class Image extends Component {
 }
 ```
 
+### `Tag` — a short text in a rounded frame, with an icon
+
+```ts
+interface TagProps extends ComponentProps {
+  label?: string | UnsafeHtml              // the text: `label`, not `text` as in Label
+  icon?: string
+}
+class Tag extends HBox {}                  // no method: its text and its icon are those of its props
+// cls "alert": the colors of an alert
+// CSS vars: --tag-background --tag-color --tag-icon-color --tag-border
+```
+
+```ts
+new Tag({ label: 'Draft' })
+new Tag({ label: 'Late', icon: 'assets/clock.svg', cls: 'alert' })
+```
+
 ### `Progress`
 
 ```ts
@@ -619,17 +636,38 @@ class TextEdit extends HBox {
 }
 ```
 
-### `TextArea`
+### `TextArea`, `SimpleTextArea` — native `<textarea>`, with or without a label
 
 ```ts
-interface TextAreaProps extends BaseProps {      // BaseProps: see Input (name, readonly, placeholder...)
-  label?: string; value?: string
-  resize?: boolean | "none" | "vertical" | "horizontal" | "both"
+interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (name, readonly, required, placeholder, autofocus, focus, change)
+  value?: string
+  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // false = "none"
   trim?: boolean                           // getText() trims, unless false
 }
-class TextArea extends VBox { getText(): string; setText(text: string): void }
+interface TextAreaProps extends SimpleTextAreaProps { label?: string }
+
+class SimpleTextArea extends Component {    // the <textarea> alone
+  getText(): string; setText(text: string): void
+  scrollToBottom(): void
+  isValid(): boolean                       // false when it is required and empty
+}
+class TextArea extends VBox {               // a Label above a SimpleTextArea
+  getText(): string; setText(text: string): void
+  scrollToBottom(): void
+  isValid(): boolean
+}
 ```
 
+```ts
+new TextArea({ label: 'Comment', name: 'comment', placeholder: 'A few words...', resize: 'vertical' })   // in a form
+new SimpleTextArea({ flex: 1, placeholder: 'Your message', resize: false })                              // no label
+```
+
+- `TextArea` in a form; `SimpleTextArea` where a label has no place (a message to type, a log).
+- Both are form elements: with a `name`, `Form.getValues()` and `setValues()` read and write them.
+- The value is read and written with `getText()` / `setText()`, not `getValue()` / `setValue()`.
+- `change` is fired at each key that is typed, with the text as `ev.value`; `focus` when the focus comes and goes (`ev.focus_out`). As for an `Input`.
+- `required`: an empty text is not valid. `Form.validate()` then returns `null`, or tells its validator that the form is not valid.
 ### `Checkbox`
 
 ```ts
@@ -784,10 +822,13 @@ interface ListboxProps extends Omit<ComponentProps,"content"> {
   title?: string; icon?: string
   header?: Header; footer?: Component
   checkable?: true; multisel?: true
+  emptyMsg?: string                        // shown in place of the items while there are none
   dblClick?: EventCallback<EvDblClick>
   selectionChange?: EventCallback<EvSelectionChange>
   contextMenu?: EventCallback<EvContextMenu>
 }
+// emptyMsg: without it the text is _tr.global.empty_list ("Empty list"). It is shown by setItems
+//   (the constructor calls it) when there is no item. The listbox then has the class "empty".
 class Listbox extends Component {
   setItems(items: ListItem[], keepSel?: boolean): void
   appendItem(item: ListItem, prepend?: boolean, select?: boolean): void
@@ -837,13 +878,22 @@ class Gridview extends Component {
 
 ```ts
 interface TreeItem extends ListItem { children?: TreeItem[]; open?: boolean }
-interface TreeviewProps extends ComponentProps { /* items, renderer... */ }
+interface TreeviewProps extends Omit<ComponentProps,"content"> {
+  items: TreeItem[]                         // required
+  footer?: Component
+  emptyMsg?: string                        // shown in place of the items while there are none
+  click?: EventCallback<EvClick>
+  dblClick?: EventCallback<EvDblClick>
+  selectionChange?: EventCallback<EvSelectionChange>
+}
+// emptyMsg: as for a Listbox. Without it the text is _tr.global.empty_list ("Empty list").
+// There is no `renderer`: an item is drawn from its `text`, `iconId`, `cls` and `sub_cols`.
 class Treeview extends Component {
   setItems(items: TreeItem[]): void
-  getSelection(): ListboxID
-  selectItem(id): void
+  getSelection(): ListboxID                 // one item, not an array
+  selectItem(id: ListboxID): void
   clearSelection(): void
-  navigate(sens: kbNav): boolean            // see kbTreeNav enum
+  navigate(sens: kbTreeNav): boolean        // first, prev, next, last, parent, child, expand, collapse, toggle
 }
 ```
 
@@ -1256,6 +1306,80 @@ class MyView extends VBox {
 
 ---
 
+## Clipboard (`core_clipboard`)
+
+The clipboard of the system: a text, an image, files. Never call `navigator.clipboard` or `ev.clipboardData`.
+
+```ts
+interface ClipboardContent { text?: string; image?: Blob }
+interface ClipboardRead extends ClipboardContent { files: File[] }   // files: only in an event
+
+// from a menu or a button: asynchronous, never fail
+setClipboard(data: ClipboardContent): Promise<boolean>   // false: the system refused
+getClipboard(): Promise<ClipboardRead>
+canReadClipboard(): boolean                              // false: nothing to paste, disable the item
+
+// in a "copy", "cut" or "paste" event
+setEventClipboard(ev: ClipboardEvent, data: ClipboardContent): void   // prevents the default
+getEventClipboard(ev: ClipboardEvent): ClipboardRead                  // synchronous, default left as it is
+```
+
+```ts
+this.addDOMEvent('copy', ev => setEventClipboard(ev, { text: this.getSelectedText() }))
+
+this.addDOMEvent('paste', ev => {
+  const data = getEventClipboard(ev)
+  if (data.image) {
+    ev.preventDefault()
+    this.setPicture(data.image)
+  }
+})
+
+new Button({ label: 'Paste', click: async () => {
+  const data = await getClipboard()
+  if (data.text) this.insert(data.text)
+} })
+```
+
+- The keys of the user (Ctrl+C, Ctrl+V) are the `copy`, `cut` and `paste` events, not shortcuts: the browser then gives its clipboard without asking for a permission.
+- The events go to the component that has the focus: give it a `tabindex`.
+- Out of an event, the browser may refuse, and there is no system clipboard on a page that is not served in https. What the application set last is then what `getClipboard` gives: copy and paste still work inside the application.
+- An image is written as a PNG; another format is converted. Files can be read in a `paste` event only, and cannot be written.
+
+---
+
+## Drag and drop (`core_dragdrop`)
+
+`dragManager` makes a component something the user drags, and another one a place where things are dropped: components of the application, or files that come from the desktop.
+
+```ts
+interface DropInfo { pt: Point; data: DataTransfer }
+type DropCallback = (command: 'enter' | 'leave' | 'drag' | 'drop', el: Component, infos: DropInfo) => void
+type DropFilterCallback = (el: Component, data: DataTransfer) => boolean   // false: nothing can be dropped here
+
+dragManager.registerDraggableElement(el: Component): void
+dragManager.registerDropTarget(el: Component, cb: DropCallback, filterCB?: DropFilterCallback): void
+```
+
+```ts
+dragManager.registerDraggableElement(card)
+
+dragManager.registerDropTarget(column, (cmd, el, infos) => {
+  if (cmd == 'drop') {
+    if (infos.data.files.length) this.upload(infos.data.files)   // files from the desktop
+    else this.moveCard(el, infos.pt)                              // el: the component that was dragged
+  }
+})
+```
+
+- `registerDraggableElement`: while it is dragged, the component has the class `dragging`, and a copy of it with the class `dragged`, added to the body, follows the pointer. Nothing else is done: no data of the application goes with the drag, the target gets the component itself.
+- The callback of a target: `enter` and `leave` when the pointer comes over it and goes away, `drag` again and again while it is over it, `drop`. Only `drag` and `drop` have `infos`; `pt` is in the coordinates of the page.
+- `enter` and `leave` are found by a timer: they may come up to 300 ms late, and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
+- `el` in the callbacks is the dragged component, not the target. There is none for files that come from the desktop: read `infos.data.files`.
+- `Image` (`candrop`) and `FileDrop` already use it for files.
+
+---
+
 ## i18n (`core_i18n`)
 
 Two built-in languages (`fr` default, and `en`).
@@ -1351,7 +1475,8 @@ interface ITabHandler  { focusNext(next: boolean): boolean }
 interface ITipHandler  { getTip(): string }
 
 // Other variables
-const dragManager; const svgLoader; const linearColorStops; const simpleColorStop
+const dragManager                           // see Drag and drop
+const svgLoader; const linearColorStops; const simpleColorStop
 const unbubbleEvents       // set of DOM event names that do NOT bubble through the x4 tree
 const makeUniqueComponentId  // () => string, "x4-<n>" (exported as a value)
 ```
