@@ -255,7 +255,17 @@ export interface GlobalDOMEvents {
 	 * @param ev The mouse event.
 	 */
 	contextmenu?: (ev: MouseEvent) => any;
+	/**
+	 * Fires when the user copies (the keys, or the menu of the browser).
+	 * @param ev The clipboard event: see setEventClipboard.
+	 */
+	copy?: (ev: ClipboardEvent) => any;
 	cuechange?: (ev: Event) => any;
+	/**
+	 * Fires when the user cuts.
+	 * @param ev The clipboard event: see setEventClipboard.
+	 */
+	cut?: (ev: ClipboardEvent) => any;
 	/**
 	 * Fires when the user double-clicks the object.
 	 * @param ev The mouse event.
@@ -391,6 +401,11 @@ export interface GlobalDOMEvents {
 	 * @param ev The event.
 	 */
 	pause?: (ev: Event) => any;
+	/**
+	 * Fires when the user pastes.
+	 * @param ev The clipboard event: see getEventClipboard.
+	 */
+	paste?: (ev: ClipboardEvent) => any;
 	/**
 	 * Occurs when the play method is requested.
 	 * @param ev The event.

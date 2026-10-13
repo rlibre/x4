@@ -15,6 +15,7 @@
  **/
 export * from "./core/component";
 export * from "./core/core_application";
+export * from "./core/core_clipboard";
 export * from "./core/core_colors";
 export * from "./core/core_data";
 export * from "./core/core_dom";

@@ -3,6 +3,42 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.18
+
+### Clipboard
+
+- New: the clipboard of the system, in `core_clipboard`: a text, an image, files. An application does not have to call `navigator.clipboard` anymore.
+- `setClipboard( data )` and `getClipboard( )`: from a menu or a button. They are asynchronous and never fail: `setClipboard` gives `false` when the system refused. What the application set last is kept, and it is what `getClipboard` gives when the system refuses or cannot be asked (a page that is not served in https): copy and paste still work inside the application.
+- `canReadClipboard( )`: `false` when `getClipboard` has nothing to give, to disable a "Paste" item.
+- `setEventClipboard( ev, data )` and `getEventClipboard( ev )`: in a `copy`, `cut` or `paste` event, where the browser gives its clipboard at once and asks nothing. `getEventClipboard` is the only way to read files.
+- An image is written as a PNG: another format is converted. Files cannot be written.
+- The events `copy`, `cut` and `paste` are known to `addDOMEvent` and to `dom_events`: no `dom.addEventListener` and no cast for them.
+
+```ts
+// the keys of the user
+this.addDOMEvent( "copy", ev => {
+	setEventClipboard( ev, { text: this.getSelectedText( ) } );
+} );
+
+this.addDOMEvent( "paste", ev => {
+	const data = getEventClipboard( ev );		// { text, image, files }
+	if( data.image ) {
+		ev.preventDefault( );
+		this.setPicture( data.image );
+	}
+} );
+
+// a menu, a button
+new Button( { label: "Copy", click: ( ) => setClipboard( { text: this.getSelectedText( ) } ) } )
+
+new Button( { label: "Paste", click: async ( ) => {
+	const data = await getClipboard( );
+	if( data.text ) {
+		this.insert( data.text );
+	}
+} } )
+```
+
 ## 2.3.17 (2026-10-12)
 
 ### ColorInput, ColorPicker
