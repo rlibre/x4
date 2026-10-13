@@ -19,7 +19,13 @@
 
 import { Color } from './core_colors.js'
 import { isArray, isFunction, isNumber, isPlainObject, isString } from './core_tools.js'
+import { SvgBuilder, SvgGroup } from './core_svg.js'
 
+
+/**
+ * the widths of the characters, by their code in WinAnsiEncoding, from 32 to 255:
+ * the AFM of Adobe for the core fonts. 0: a code that has no character
+ */
 
 const WIDTHS: number[] = [
 	278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
@@ -27,17 +33,540 @@ const WIDTHS: number[] = [
 	1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
 	667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
 	333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
-	556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584
+	556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584, 0,
+	556, 0, 222, 556, 333, 1000, 556, 556, 333, 1000, 667, 333, 1000, 0, 611, 0,
+	0, 222, 222, 333, 333, 350, 556, 1000, 333, 1000, 500, 333, 944, 0, 500, 667,
+	278, 333, 556, 556, 556, 556, 260, 556, 333, 737, 370, 556, 584, 333, 737, 333,
+	400, 584, 333, 333, 333, 556, 537, 278, 333, 333, 365, 556, 834, 834, 834, 611,
+	667, 667, 667, 667, 667, 667, 1000, 722, 667, 667, 667, 667, 278, 278, 278, 278,
+	722, 722, 778, 778, 778, 778, 778, 584, 778, 722, 722, 722, 722, 667, 667, 611,
+	556, 556, 556, 556, 556, 556, 889, 500, 556, 556, 556, 556, 278, 278, 278, 278,
+	556, 556, 556, 556, 556, 556, 556, 584, 611, 556, 556, 556, 556, 500, 556, 500,
 ]
+
+const WIDTHS_BOLD: number[] = [
+	278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 333, 278, 278,
+	556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 333, 333, 584, 584, 584, 611,
+	975, 722, 722, 722, 722, 667, 611, 778, 722, 278, 556, 722, 611, 833, 722, 778,
+	667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 333, 278, 333, 584, 556,
+	333, 556, 611, 556, 611, 556, 333, 611, 611, 278, 278, 556, 278, 889, 611, 611,
+	611, 611, 389, 556, 333, 611, 556, 778, 556, 556, 500, 389, 280, 389, 584, 0,
+	556, 0, 278, 556, 500, 1000, 556, 556, 333, 1000, 667, 333, 1000, 0, 611, 0,
+	0, 278, 278, 500, 500, 350, 556, 1000, 333, 1000, 556, 333, 944, 0, 500, 667,
+	278, 333, 556, 556, 556, 556, 280, 556, 333, 737, 370, 556, 584, 333, 737, 333,
+	400, 584, 333, 333, 333, 611, 556, 278, 333, 333, 365, 556, 834, 834, 834, 611,
+	722, 722, 722, 722, 722, 722, 1000, 722, 667, 667, 667, 667, 278, 278, 278, 278,
+	722, 722, 778, 778, 778, 778, 778, 584, 778, 722, 722, 722, 722, 667, 667, 611,
+	556, 556, 556, 556, 556, 556, 889, 556, 556, 556, 556, 556, 278, 278, 278, 278,
+	611, 611, 611, 611, 611, 611, 611, 584, 611, 611, 611, 611, 611, 556, 611, 556,
+]
+
+/**
+ * WinAnsiEncoding is Windows-1252: from 0x20 to 0x7e and from 0xa0 to 0xff
+ * the codes of Unicode, between them these characters
+ */
+
+const CP1252: Record<number, number> = {
+	0x20ac: 0x80, 0x201a: 0x82, 0x0192: 0x83, 0x201e: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87,
+	0x02c6: 0x88, 0x2030: 0x89, 0x0160: 0x8a, 0x2039: 0x8b, 0x0152: 0x8c, 0x017d: 0x8e,
+	0x2018: 0x91, 0x2019: 0x92, 0x201c: 0x93, 0x201d: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97,
+	0x02dc: 0x98, 0x2122: 0x99, 0x0161: 0x9a, 0x203a: 0x9b, 0x0153: 0x9c, 0x017e: 0x9e, 0x0178: 0x9f,
+}
+
+/**
+ * the codes of a text in WinAnsiEncoding; a character that it does not have is a '?'
+ */
+
+function winAnsiCodes(str: string): number[] {
+	const codes: number[] = []
+	for (const ch of str) {
+		const code = ch.codePointAt(0)
+		if ((code >= 0x20 && code <= 0x7e) || (code >= 0xa0 && code <= 0xff)) {
+			codes.push(code)
+		}
+		else {
+			codes.push(CP1252[code] ?? 0x3f)
+		}
+	}
+	return codes
+}
 
 export interface TextOptions {
 	align?: 'left' | 'center' | 'right'
 	width?: number
 	color?: string
+	bold?: boolean		// Helvetica-Bold
+}
+
+/**
+ * m: moveto, l: lineto, c: bezier curve (two control points, then the end), h: closepath
+ */
+
+export type PathSegment =
+	| ['m', number, number]
+	| ['l', number, number]
+	| ['c', number, number, number, number, number, number]
+	| ['h']
+
+export interface PDFProps {
+	title?: string		// shown by the reader in place of the name of the file
+	author?: string
+	subject?: string
 }
 
 export interface LinkOptions {
 	underline?: string
+}
+
+// :: BARCODES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+export interface BarcodeOptions {
+	/**
+	 * the text is a GS1 element string, its AIs between parentheses:
+	 * "(01)03400930000120(17)270101(10)AB12". FNC1 starts the code and
+	 * ends the fields of variable length
+	 */
+	gs1?: boolean
+	color?: string		// of the modules; black when not given
+}
+
+const FNC1 = -1
+
+// the AIs of fixed length, by their first two digits: they need no FNC1 after them
+const GS1_FIXED = ['00', '01', '02', '03', '04', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '31', '32', '33', '34', '35', '36', '41']
+
+/**
+ * the characters of the code, FNC1 for the separators of GS1
+ */
+
+function barcodeChars( text: string, opts: BarcodeOptions ): number[] {
+	if (!opts.gs1) {
+		return [...text].map( ch => ch.codePointAt(0) )
+	}
+
+	const re = /\((\d{2,4})\)([^(]*)/y
+	const out: number[] = [FNC1]
+	let m: RegExpExecArray
+	let fixed = true
+
+	while ((m = re.exec(text)) !== null) {
+		if (!fixed) {
+			out.push(FNC1)
+		}
+
+		for (const ch of m[1] + m[2]) {
+			out.push(ch.codePointAt(0))
+		}
+
+		fixed = GS1_FIXED.includes(m[1].substring(0, 2))
+		if (re.lastIndex === text.length) {
+			return out
+		}
+	}
+
+	throw new Error(`not a GS1 element string: ${text}`)
+}
+
+/**
+ * Data Matrix (ECC200): square, 10 x 10 to 26 x 26 modules, ASCII encoding
+ * (the digits by pairs). Its sizes: symbol, data codewords, error codewords
+ */
+
+const DM_SIZES: [number, number, number][] = [
+	[10, 3, 5], [12, 5, 7], [14, 8, 10], [16, 12, 12], [18, 18, 14],
+	[20, 22, 18], [22, 30, 20], [24, 36, 24], [26, 44, 28],
+]
+
+const isDigit = ( c: number ) => c >= 0x30 && c <= 0x39
+
+function dmCodewords( chars: number[] ): number[] {
+	const cw: number[] = []
+	for (let i = 0; i < chars.length; i++) {
+		const c = chars[i]
+		if (c === FNC1) {
+			cw.push(232)
+		}
+		else if (isDigit(c) && isDigit(chars[i + 1])) {
+			cw.push(130 + (c - 0x30) * 10 + (chars[i + 1] - 0x30))
+			i++
+		}
+		else if (c < 128) {
+			cw.push(c + 1)
+		}
+		else if (c < 256) {
+			cw.push(235, c - 128 + 1)		// upper shift
+		}
+		else {
+			throw new Error(`character not encodable in a Data Matrix: ${String.fromCodePoint(c)}`)
+		}
+	}
+	return cw
+}
+
+// GF(256), x^8 + x^5 + x^3 + x^2 + 1
+const GF_EXP: number[] = []
+const GF_LOG: number[] = []
+{
+	let v = 1
+	for (let i = 0; i < 255; i++) {
+		GF_EXP[i] = v
+		GF_LOG[v] = i
+		v <<= 1
+		if (v & 0x100) {
+			v ^= 0x12d
+		}
+	}
+}
+
+const gfMul = ( a: number, b: number ) => (a && b) ? GF_EXP[(GF_LOG[a] + GF_LOG[b]) % 255] : 0
+
+/**
+ * the error codewords of Reed-Solomon, generator ( x - a^1 )...( x - a^n )
+ */
+
+function dmErrors( data: number[], n: number ): number[] {
+	let gen = [1]
+	for (let i = 1; i <= n; i++) {
+		const next = new Array(gen.length + 1).fill(0)
+		gen.forEach( ( g, j ) => {
+			next[j] ^= g
+			next[j + 1] ^= gfMul(g, GF_EXP[i])
+		} )
+		gen = next
+	}
+
+	const ecc = new Array(n).fill(0)
+	for (const d of data) {
+		const k = d ^ ecc[0]
+		ecc.shift()
+		ecc.push(0)
+		for (let j = 0; j < n; j++) {
+			ecc[j] ^= gfMul(gen[j + 1], k)
+		}
+	}
+	return ecc
+}
+
+/**
+ * the place of each bit in the data region (ISO 16022, annex F):
+ * 10 * codeword + bit (1 the highest), 1 for a module always dark, 0 for one always light
+ */
+
+function dmPlacement( nrow: number, ncol: number ): number[] {
+	const array = new Array(nrow * ncol).fill(0)
+
+	const module = ( row: number, col: number, chr: number, bit: number ) => {
+		if (row < 0) {
+			row += nrow
+			col += 4 - ((nrow + 4) % 8)
+		}
+		if (col < 0) {
+			col += ncol
+			row += 4 - ((ncol + 4) % 8)
+		}
+		array[row * ncol + col] = 10 * chr + bit
+	}
+
+	const utah = ( row: number, col: number, chr: number ) => {
+		module(row - 2, col - 2, chr, 1); module(row - 2, col - 1, chr, 2)
+		module(row - 1, col - 2, chr, 3); module(row - 1, col - 1, chr, 4); module(row - 1, col, chr, 5)
+		module(row, col - 2, chr, 6); module(row, col - 1, chr, 7); module(row, col, chr, 8)
+	}
+
+	const corner = ( chr: number, places: number[][] ) => {
+		places.forEach( ( [r, c], i ) => module(r, c, chr, i + 1) )
+	}
+
+	const R = nrow, C = ncol
+	let row = 4, col = 0, chr = 1
+
+	do {
+		if (row === R && col === 0) {
+			corner(chr++, [[R - 1, 0], [R - 1, 1], [R - 1, 2], [0, C - 2], [0, C - 1], [1, C - 1], [2, C - 1], [3, C - 1]])
+		}
+		if (row === R - 2 && col === 0 && C % 4) {
+			corner(chr++, [[R - 3, 0], [R - 2, 0], [R - 1, 0], [0, C - 4], [0, C - 3], [0, C - 2], [0, C - 1], [1, C - 1]])
+		}
+		if (row === R - 2 && col === 0 && C % 8 === 4) {
+			corner(chr++, [[R - 3, 0], [R - 2, 0], [R - 1, 0], [0, C - 2], [0, C - 1], [1, C - 1], [2, C - 1], [3, C - 1]])
+		}
+		if (row === R + 4 && col === 2 && !(C % 8)) {
+			corner(chr++, [[R - 1, 0], [R - 1, C - 1], [0, C - 3], [0, C - 2], [0, C - 1], [1, C - 3], [1, C - 2], [1, C - 1]])
+		}
+
+		do {
+			if (row < R && col >= 0 && !array[row * C + col]) {
+				utah(row, col, chr++)
+			}
+			row -= 2
+			col += 2
+		} while (row >= 0 && col < C)
+		row += 1
+		col += 3
+
+		do {
+			if (row >= 0 && col < C && !array[row * C + col]) {
+				utah(row, col, chr++)
+			}
+			row += 2
+			col -= 2
+		} while (row < R && col >= 0)
+		row += 3
+		col += 1
+	} while (row < R || col < C)
+
+	if (!array[R * C - 1]) {
+		array[R * C - 1] = array[R * C - C - 2] = 1
+	}
+
+	return array
+}
+
+/**
+ * The modules of a Data Matrix (ECC200), its rows from the top: true for a dark one.
+ * The smallest square that holds the text, up to 26 x 26 (44 codewords: 44
+ * characters, 88 digits). Characters from 0 to 255. Without its quiet zone, one module wide.
+ * "G1234K7" is a 12 x 12
+ */
+
+function encodeDataMatrix( text: string, opts: BarcodeOptions = {} ): boolean[][] {
+	const data = dmCodewords( barcodeChars(text, opts) )
+	const size = DM_SIZES.find( s => s[1] >= data.length )
+	if (!size) {
+		throw new Error(`too long for a Data Matrix of 26 x 26: ${text}`)
+	}
+
+	const [n, ndata, necc] = size
+
+	// pads: 129, then pseudo random from their position (counted from 1)
+	const first = data.length
+	while (data.length < ndata) {
+		const p = data.length + 1
+		let v = 129
+		if (data.length > first) {
+			v = 129 + ((149 * p) % 253) + 1
+			if (v > 254) {
+				v -= 254
+			}
+		}
+		data.push(v)
+	}
+
+	const cw = [...data, ...dmErrors(data, necc)]
+	const region = n - 2
+	const place = dmPlacement(region, region)
+
+	const rows: boolean[][] = []
+	for (let r = 0; r < n; r++) {
+		const row: boolean[] = []
+		for (let c = 0; c < n; c++) {
+			if (c === 0 || r === n - 1) {
+				row.push(true)						// the L
+			}
+			else if (r === 0) {
+				row.push(c % 2 === 0)				// the clocks
+			}
+			else if (c === n - 1) {
+				row.push(r % 2 === 1)
+			}
+			else {
+				const v = place[(r - 1) * region + (c - 1)]
+				row.push(v === 1 || (v > 1 && (cw[Math.floor(v / 10) - 1] & (1 << (8 - v % 10))) !== 0))
+			}
+		}
+		rows.push(row)
+	}
+
+	return rows
+}
+
+/**
+ * Code 128: the 107 symbols, as the widths of their bars and spaces
+ */
+
+const C128 = (
+	'212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 ' +
+	'123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 ' +
+	'232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 ' +
+	'313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 ' +
+	'111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 ' +
+	'111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 ' +
+	'114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112'
+).split(' ')
+
+const C128_START_A = 103, C128_START_B = 104, C128_START_C = 105
+const C128_TO_A = 101, C128_TO_B = 100, C128_TO_C = 99, C128_FNC1 = 102
+
+function c128Values( chars: number[] ): number[] {
+	const digitsAt = ( i: number ) => {
+		let n = 0
+		while (i + n < chars.length && isDigit(chars[i + n])) {
+			n++
+		}
+		return n
+	}
+
+	for (const c of chars) {
+		if (c !== FNC1 && (c < 0 || c > 127)) {
+			throw new Error(`character not encodable in a Code 128: ${String.fromCodePoint(c)}`)
+		}
+	}
+
+	// in C, the digits by pairs; else A for the controls, B for the rest
+	const textSet = ( c: number ) => (c >= 0 && c < 32) ? 'A' : 'B'
+	const values: number[] = []
+	let set: string
+
+	let i = 0
+	const lead = chars[0] === FNC1 ? 1 : 0
+	const d0 = digitsAt(lead)
+	if (d0 >= 4 || (d0 >= 2 && lead + d0 === chars.length && d0 % 2 === 0)) {
+		set = 'C'
+		values.push(C128_START_C)
+	}
+	else {
+		set = textSet(chars.find( c => c !== FNC1 ) ?? 0x20)
+		values.push(set === 'A' ? C128_START_A : C128_START_B)
+	}
+
+	while (i < chars.length) {
+		const c = chars[i]
+		if (c === FNC1) {
+			values.push(C128_FNC1)
+			i++
+			continue
+		}
+
+		if (set === 'C') {
+			if (digitsAt(i) >= 2) {
+				values.push((c - 0x30) * 10 + (chars[i + 1] - 0x30))
+				i += 2
+				continue
+			}
+
+			set = textSet(c)
+			values.push(set === 'A' ? C128_TO_A : C128_TO_B)
+		}
+
+		// a run of digits worth C: 4 at the end, 6 elsewhere (C costs a switch to it, and one back)
+		const d = digitsAt(i)
+		if (d >= 6 || (d >= 4 && i + d === chars.length)) {
+			if (d % 2) {
+				values.push(c - 32)		// the odd digit, in A or B
+				i++
+			}
+			set = 'C'
+			values.push(C128_TO_C)
+			continue
+		}
+
+		const want = (set === 'A' && c >= 96) ? 'B' : (set === 'B' && c < 32) ? 'A' : set
+		if (want !== set) {
+			set = want
+			values.push(set === 'A' ? C128_TO_A : C128_TO_B)
+		}
+
+		values.push(c < 32 ? c + 64 : c - 32)
+		i++
+	}
+
+	let sum = values[0]
+	for (let k = 1; k < values.length; k++) {
+		sum += values[k] * k
+	}
+	values.push(sum % 103)
+
+	values.push(106)		// stop
+	return values
+}
+
+/**
+ * The modules of a Code 128, from the left: true for a bar. Its sets A, B and C
+ * are chosen for the shortest code. ASCII only. Without its quiet zone (10 modules on each side).
+ */
+
+function encodeCode128( text: string, opts: BarcodeOptions = {} ): boolean[] {
+	const modules: boolean[] = []
+	for (const v of c128Values( barcodeChars(text, opts) )) {
+		[...C128[v]].forEach( ( w, k ) => {
+			for (let n = +w; n > 0; n--) {
+				modules.push(k % 2 === 0)
+			}
+		} )
+	}
+	return modules
+}
+
+export type BarcodeType = 'datamatrix' | 'code128'
+
+/**
+ * the rows of the modules (one for a Code 128), and the runs of dark
+ * modules on them: [row, column, length]
+ */
+
+function barcodeRuns( type: BarcodeType, text: string, opts: BarcodeOptions ) {
+	const rows = type === 'datamatrix' ? encodeDataMatrix(text, opts) : [encodeCode128(text, opts)]
+	const runs: [number, number, number][] = []
+
+	rows.forEach( ( row, r ) => {
+		let c = 0
+		while (c < row.length) {
+			if (!row[c]) {
+				c++
+				continue
+			}
+			let end = c
+			while (end < row.length && row[end]) {
+				end++
+			}
+			runs.push([r, c, end - c])
+			c = end
+		}
+	} )
+
+	return { rows: rows.length, cols: rows[0].length, runs }
+}
+
+export interface BarcodeImageOptions extends BarcodeOptions {
+	module?: number		// the size of a module, in px; 4 when not given
+}
+
+/**
+ * A barcode as an image, for the screen: "data:image/svg+xml,...", for the
+ * src of an Image or an Icon. Drawn on white, with its quiet zone (1 module
+ * around a Data Matrix, 10 on the sides of a Code 128): it can be read on a dark theme too.
+ * A Code 128 is 50 modules high.
+ *
+ * @example
+ * new Image( { src: renderBarcodeImage( "datamatrix", "G1234K7" ) } )
+ * new Image( { src: renderBarcodeImage( "code128", "(01)03400930000120(17)270101", { gs1: true, module: 2 } ) } )
+ */
+
+export function renderBarcodeImage( type: BarcodeType, text: string, opts: BarcodeImageOptions = {} ): string {
+	const { rows, cols, runs } = barcodeRuns(type, text, opts)
+	const qx = type === 'datamatrix' ? 1 : 10
+	const qy = type === 'datamatrix' ? 1 : 0
+	const h = type === 'datamatrix' ? 1 : 50			// height of a row, in modules
+	const W = cols + 2 * qx
+	const H = rows * h + 2 * qy
+	const m = opts.module ?? 4
+
+	const svg = new SvgGroup('svg')
+	svg.setAttr('viewBox', `0 0 ${W} ${H}`)
+	svg.setAttr('width', `${W * m}`)
+	svg.setAttr('height', `${H * m}`)
+
+	const bld = svg.append(new SvgBuilder())
+	bld.rect(0, 0, W, H).fill('#ffffff')
+
+	const path = bld.path()
+	for (const [r, c, len] of runs) {
+		const x = qx + c, y = qy + r * h
+		path.moveTo(x, y).lineTo(x + len, y).lineTo(x + len, y + h).lineTo(x, y + h).closePath()
+	}
+	path.fill(opts.color ?? '#000000').antiAlias(false)
+
+	return 'data:image/svg+xml,' + encodeURIComponent(new XMLSerializer().serializeToString(svg.getDom()))
 }
 
 type PDFValue = null | boolean | number | string | PDFValue[] | Ref | { [key: string]: PDFValue }
@@ -48,12 +577,11 @@ interface PDFObject {
 	stream: Uint8Array | null
 }
 
-export function measureText(str: string, size: number): number {
+export function measureText(str: string, size: number, bold = false): number {
+	const widths = bold ? WIDTHS_BOLD : WIDTHS
 	let width = 0
-	for (let i = 0; i < str.length; i++) {
-		const code = str.charCodeAt(i)
-		const w = (code >= 32 && code <= 126) ? WIDTHS[code - 32] : 556
-		width += w
+	for (const code of winAnsiCodes(str)) {
+		width += widths[code - 32]
 	}
 	return (width * size) / 1000
 }
@@ -62,9 +590,36 @@ function fx( v:number, n:number ) {
 	return (+v.toFixed(n)).toString();
 }
 
+// the components of a color go from 0 to 1
 function formatColor( clr: Color, suffix: string ) : string {
 	const rgb = clr.toNumber( );
-	return `${fx((rgb>>16)&0xff,3)} ${fx((rgb>>8)&0xff,3)} ${fx(rgb&0xff,3)} ${suffix}`;
+	return `${fx(((rgb>>16)&0xff)/255,3)} ${fx(((rgb>>8)&0xff)/255,3)} ${fx((rgb&0xff)/255,3)} ${suffix}`;
+}
+
+function hex( codes: number[] ): string {
+	return codes.map( c => c.toString(16).padStart(2,'0') ).join('');
+}
+
+/**
+ * a text of the content, in WinAnsiEncoding: written in hex, the content
+ * stays in ASCII
+ */
+
+function pdfWinAnsi(str: string): string {
+	return '<' + hex( winAnsiCodes(str) ) + '>';
+}
+
+/**
+ * a text of the document (its title...): in UTF-16BE, any character passes
+ */
+
+function pdfTextString(str: string): string {
+	const codes = [0xfe, 0xff];
+	for (let i = 0; i < str.length; i++) {
+		const c = str.charCodeAt(i);
+		codes.push( c >> 8, c & 0xff );
+	}
+	return '<' + hex( codes ) + '>';
 }
 
 
@@ -98,8 +653,8 @@ function serialize(val: PDFValue): string {
 			return val  // name
 		}
 
-		if (val.startsWith('(')) {
-			return val  // already escaped string
+		if (val.startsWith('(') || val.startsWith('<')) {
+			return val  // already escaped string, or hex string
 		}
 
 		return pdfString(val)
@@ -124,18 +679,34 @@ function serialize(val: PDFValue): string {
 	return String(val)
 }
 
+/**
+ * zlib, as FlateDecode reads it
+ */
+
+async function deflate(data: Uint8Array): Promise<Uint8Array> {
+	const stream = new Blob([data as BlobPart]).stream().pipeThrough(new CompressionStream('deflate'))
+	return new Uint8Array(await new Response(stream).arrayBuffer())
+}
+
 // @internal
 class Ref {
 	id: number
 	constructor(id: number) { this.id = id }
 }
 
-interface PageContext {
+export interface PageContext {
 	text(str: string, x: number, y: number, size: number, opts?: TextOptions): void;
 	rect(x: number, y: number, w: number, h: number, fill: string): void;
 	line(x1: number, y1: number, x2: number, y2: number, stroke: string, lineWidth?: number): void;
 	image(jpegBytes: Uint8Array, x: number, y: number, w: number, h: number): void;
 	link(url: string, x: number, y: number, w: number, h: number, opts?: LinkOptions): void;
+	/** filled with fill, its outline drawn with stroke; null for none of them */
+	path(segments: PathSegment[], fill: string, stroke?: string, lineWidth?: number): void;
+	/**
+	 * a Data Matrix: the square of side min( w, h ), (x, y) its bottom left corner;
+	 * a Code 128: its bars on w x h. Without the quiet zone, left to the caller
+	 */
+	barcode(type: BarcodeType, text: string, x: number, y: number, w: number, h: number, opts?: BarcodeOptions): void;
 }
 
 export class X4PDFBuilder {
@@ -143,6 +714,11 @@ export class X4PDFBuilder {
 	private objects: PDFObject[] = [];
 	private pages: Ref[] = [];
 	private nextId = 1;
+	private props: PDFProps;
+
+	constructor( props: PDFProps = {} ) {
+		this.props = props;
+	}
 
 	private _addObject(dict: Record<string, PDFValue>, streamBytes: Uint8Array = null): Ref {
 		const id = this.nextId++;
@@ -159,11 +735,11 @@ export class X4PDFBuilder {
 		let imageCount = 0;
 
 		const text = (str: string, x: number, y: number, size: number, opts: TextOptions = {}) => {
-			const { align = 'left', width: boxWidth, color = '#000000' } = opts;
+			const { align = 'left', width: boxWidth, color = '#000000', bold = false } = opts;
 
 			let tx = x;
 			if (align !== 'left' && boxWidth !== undefined) {
-				const textWidth = measureText(str, size);
+				const textWidth = measureText(str, size, bold);
 				if (align === 'center') {
 					tx = x + (boxWidth - textWidth) / 2;
 				}
@@ -173,36 +749,49 @@ export class X4PDFBuilder {
 				}
 			}
 
-			const rgb = new Color(color);
-			if (rgb) {
-				ops.push( formatColor(rgb, 'rg') );
-			}
+			ops.push( formatColor(new Color(color), 'rg') );
 
 			ops.push('BT')
-			ops.push(`/F1 ${size} Tf`)
+			ops.push(`/${bold ? 'F2' : 'F1'} ${size} Tf`)
 			ops.push(`${fx(tx,2)} ${fx(y,2)} Td`)
-			ops.push(`${str.startsWith('(') ? str : pdfString(str)} Tj`)
+			ops.push(`${str.startsWith('(') ? str : pdfWinAnsi(str)} Tj`)
 			ops.push('ET')
 		}
-		
+
 		const rect = (x: number, y: number, w: number, h: number, fill: string) => {
-			const rgb = new Color(fill)
-			if (rgb) {
-				ops.push( formatColor(rgb, 'rg' ) );
-				ops.push(`${fx(x,2)} ${fx(y,2)} ${fx(w,2)} ${fx(h,2)} re`);
-				ops.push('f');
-			}
+			ops.push( formatColor(new Color(fill), 'rg' ) );
+			ops.push(`${fx(x,2)} ${fx(y,2)} ${fx(w,2)} ${fx(h,2)} re`);
+			ops.push('f');
 		}
-		
+
 		const line = (x1: number, y1: number, x2: number, y2: number, stroke: string, lineWidth: number = 1) => {
-			const rgb = new Color(stroke)
-			if (rgb) {
-				ops.push(`${fx(lineWidth,2)} w`);
-				ops.push( formatColor( rgb,'RG') );
-				ops.push(`${fx(x1,2)} ${fx(y1,2)} m`);
-				ops.push(`${fx(x2,2)} ${fx(y2,2)} l`);
-				ops.push('S')
+			ops.push(`${fx(lineWidth,2)} w`);
+			ops.push( formatColor( new Color(stroke),'RG') );
+			ops.push(`${fx(x1,2)} ${fx(y1,2)} m`);
+			ops.push(`${fx(x2,2)} ${fx(y2,2)} l`);
+			ops.push('S')
+		}
+
+		const path = (segments: PathSegment[], fill: string, stroke?: string, lineWidth: number = 1) => {
+			if (!fill && !stroke) {
+				return
 			}
+
+			if (fill) {
+				ops.push( formatColor(new Color(fill), 'rg') );
+			}
+
+			if (stroke) {
+				ops.push(`${fx(lineWidth,2)} w`);
+				ops.push( formatColor(new Color(stroke), 'RG') );
+			}
+
+			for (const [op, ...coords] of segments) {
+				ops.push( [...coords.map( v => fx(v,2) ), op].join(' ') );
+			}
+
+			// f: fill, S: stroke, B: both
+			ops.push( fill ? (stroke ? 'B' : 'f') : 'S' );
 		}
 		
 		const image = (jpegBytes: Uint8Array, x: number, y: number, w: number, h: number) => {
@@ -238,15 +827,33 @@ export class X4PDFBuilder {
 		const link = (url: string, x: number, y: number, w: number, h: number, opts: LinkOptions = {}) => {
 			links.push({ url, rect: [x, y, x + w, y + h] })
 			if (opts.underline) {
-				const rgb = new Color(opts.underline)
-				if (rgb) {
-					ops.push(`0.75 w`)
-					ops.push( formatColor(rgb, 'RG' ) );
-					ops.push(`${fx(x,2)} ${fx(y + 2,2)} m`);
-					ops.push(`${fx(x + w,2)} ${fx(y + 2,2)} l`);
-					ops.push('S')
-				}
+				ops.push(`0.75 w`)
+				ops.push( formatColor(new Color(opts.underline), 'RG' ) );
+				ops.push(`${fx(x,2)} ${fx(y + 2,2)} m`);
+				ops.push(`${fx(x + w,2)} ${fx(y + 2,2)} l`);
+				ops.push('S')
 			}
+		}
+
+		const barcode = (type: BarcodeType, str: string, x: number, y: number, w: number, h: number, opts: BarcodeOptions = {}) => {
+			const { rows, cols, runs } = barcodeRuns(type, str, opts)
+
+			// a module: square in a Data Matrix, the whole height in a Code 128
+			let mw: number, mh: number
+			if (type === 'datamatrix') {
+				mw = mh = Math.min(w, h) / cols
+			}
+			else {
+				mw = w / cols
+				mh = h
+			}
+
+			const top = y + rows * mh
+			ops.push( formatColor(new Color(opts.color ?? '#000000'), 'rg') )
+			for (const [r, c, len] of runs) {
+				ops.push(`${fx(x + c * mw,3)} ${fx(top - (r + 1) * mh,3)} ${fx(len * mw,3)} ${fx(mh,3)} re`)
+			}
+			ops.push('f')
 		}
 
 		const ctx: PageContext = {
@@ -254,7 +861,9 @@ export class X4PDFBuilder {
 			rect,
 			line,
 			image,
-			link
+			link,
+			path,
+			barcode
 		}
 
 		let width: number
@@ -295,7 +904,7 @@ export class X4PDFBuilder {
 			MediaBox: [0, 0, width, height],
 			Contents: contentRef,
 			Resources: {
-				Font: { F1: null },
+				Font: { F1: null, F2: null },
 				XObject: Object.keys(xobjects).length > 0 ? xobjects : undefined
 			},
 			Annots: annots.length > 0 ? annots : undefined
@@ -304,11 +913,39 @@ export class X4PDFBuilder {
 		this.pages.push(pageRef)
 	}
 
+	/**
+	 * the document, its streams compressed (FlateDecode). The images, already
+	 * JPEG, are left as they are
+	 */
+
+	async buildAsync(): Promise<Uint8Array> {
+		for (const obj of this.objects) {
+			if (obj.stream && !obj.dict.Filter) {
+				obj.stream = await deflate(obj.stream)
+				obj.dict.Filter = '/FlateDecode'
+				obj.dict.Length = obj.stream.length
+			}
+		}
+
+		return this.build()
+	}
+
+	/**
+	 * the document, its streams not compressed
+	 */
+
 	build(): Uint8Array {
 		const fontRef = this._addObject({
 			Type: '/Font',
 			Subtype: '/Type1',
 			BaseFont: '/Helvetica',
+			Encoding: '/WinAnsiEncoding'
+		})
+
+		const boldRef = this._addObject({
+			Type: '/Font',
+			Subtype: '/Type1',
+			BaseFont: '/Helvetica-Bold',
 			Encoding: '/WinAnsiEncoding'
 		})
 
@@ -323,20 +960,33 @@ export class X4PDFBuilder {
 				obj.dict.Parent = pagesRef
 				const resources = obj.dict.Resources as Record<string, PDFValue> | undefined
 				if (resources?.Font) {
-					(resources.Font as Record<string, PDFValue>).F1 = fontRef
+					const fonts = resources.Font as Record<string, PDFValue>
+					fonts.F1 = fontRef
+					fonts.F2 = boldRef
 				}
 			}
 		}
 
+		// printed at its size, not fitted to the paper
 		const catalogRef = this._addObject({
 			Type: '/Catalog',
-			Pages: pagesRef
+			Pages: pagesRef,
+			ViewerPreferences: { PrintScaling: '/None', DisplayDocTitle: true }
+		})
+
+		const { title, author, subject } = this.props
+		const infoRef = this._addObject({
+			Title: title ? pdfTextString(title) : undefined,
+			Author: author ? pdfTextString(author) : undefined,
+			Subject: subject ? pdfTextString(subject) : undefined,
+			Producer: pdfTextString('x4js')
 		})
 
 		const parts: (string | Uint8Array)[] = []
 		const offsets: number[] = []
 
-		parts.push('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n')
+		// 1.6: PrintScaling
+		parts.push('%PDF-1.6\n%\xFF\xFF\xFF\xFF\n')
 
 		for (const obj of this.objects) {
 			offsets[obj.id] = parts.reduce((sum, p) => sum + (typeof p === 'string' ? new TextEncoder().encode(p).length : p.length), 0)
@@ -363,7 +1013,7 @@ export class X4PDFBuilder {
 		}
 		parts.push(xref)
 
-		parts.push(`trailer\n${serialize({ Size: this.objects.length + 1, Root: catalogRef })}\n`)
+		parts.push(`trailer\n${serialize({ Size: this.objects.length + 1, Root: catalogRef, Info: infoRef })}\n`)
 		parts.push(`startxref\n${xrefOffset}\n%%EOF\n`)
 
 		const totalLength = parts.reduce((sum, p) => sum + (typeof p === 'string' ? new TextEncoder().encode(p).length : p.length), 0)

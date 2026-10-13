@@ -13,6 +13,40 @@ A version gets its date when it is published.
 - `mode` gives the page that is shown: `"alpha"`, `"accents"`, `"symbols"`, `"number"` or `"date"`. On the page of the letters it was `"lower"` or `"upper"`: the case is now the new field `upper`. The class of the page follows `mode`: a stylesheet that styled `.lower` or `.upper` has to style `.alpha`.
 - The keys of each page have a color of their own: white for the letters, `--keyboard-accents-color` for the letters of the language, `--keyboard-symbols-color` for the signs. The key that calls a page has its color. New CSS variables: `--keyboard-key-color`, `--keyboard-accents-color`, `--keyboard-symbols-color`.
 
+### PDF
+
+- Accented letters and the signs of Windows-1252 (`é à ç œ € … « » ’ ™`...) are written as they are. The text was written in UTF-8, which the font does not read: `é` came out as `Ã©`. A character that Windows-1252 does not have comes out as `?`. `measureText` gives these characters their own width: `align: "center"` and `"right"` are right with them.
+- Bold: `bold: true` in the options of `text( )` writes in Helvetica-Bold. `measureText( str, size, bold )` measures it.
+- New `path( segments, fill, stroke?, lineWidth? )` on the page: a path of `m` (move), `l` (line), `c` (curve) and `h` (close), filled, outlined, or both. `null` for what is not drawn.
+- Colors were wrong, all but black: their components were written from 0 to 255, where PDF reads them from 0 to 1. `#808080` came out white.
+- New props of the builder: `title`, `author`, `subject`. The reader shows the title in place of the name of the file.
+- The document is printed at its size, not fitted to the paper (`PrintScaling /None`). It is a PDF 1.6.
+- New `buildAsync( )`: the same document, its streams compressed (`FlateDecode`, by the `CompressionStream` of the browser). `build( )` does not compress, as before.
+
+```ts
+const pdf = new X4PDFBuilder( { title: "Invoice 42" } );
+pdf.page( 595, 842, ctx => {
+	ctx.text( "Total : 1 250 €", 50, 800, 14, { bold: true } );
+	ctx.path( [ ["m", 50, 700], ["l", 150, 700], ["c", 170, 720, 170, 760, 150, 780], ["h"] ], "#7cc7ff", "#000000" );
+} );
+const bytes = await pdf.buildAsync( );
+```
+
+- New `ctx.barcode( type, text, x, y, w, h, opts? )`: a Data Matrix (`"datamatrix"`) or a Code 128 (`"code128"`), drawn in the PDF without any dependency. A Data Matrix is the square of side min( w, h ), (x, y) its bottom left corner; a Code 128 has its bars on w x h. The quiet zone is left to the page: 1 module around a Data Matrix, 10 on the sides of a Code 128. `opts.color`: black when not given.
+- `opts.gs1`: the text is a GS1 element string, its AIs between parentheses (`"(01)03400930000120(17)270101(10)AB12"`). FNC1 starts the code and ends the fields of variable length: a GS1 DataMatrix, a GS1-128.
+- Data Matrix: ECC200, square, from 10 x 10 to 26 x 26: up to 44 characters or 88 digits, characters from 0 to 255. Code 128: ASCII, its sets A, B and C chosen for the shortest code. A text that does not fit, or a character that cannot be encoded, throws an error: a code is never cut.
+- New `renderBarcodeImage( type, text, opts? )`, for the screen: the same codes as an SVG image (`data:image/svg+xml,...`), for the `src` of an `Image` or of an `Icon`. On white, with its quiet zone: it can be read on a dark theme too. `opts.module`: the size of a module in px, 4 when not given; a Code 128 is 50 modules high. It is in `core_pdf` because it shares its encoders; it is the only function of the module that needs the DOM.
+- `PageContext`, the type of the `ctx` given to `page( )`, is exported: a function that draws on a page can name it.
+
+```ts
+pdf.page( 595, 842, ctx => {
+	ctx.barcode( "datamatrix", "G1234K7", 50, 700, 21, 21 );
+	ctx.barcode( "code128", "(01)03400930000120(17)270101", 50, 600, 200, 40, { gs1: true } );
+} );
+
+new Image( { src: renderBarcodeImage( "datamatrix", "G1234K7" ) } )
+```
+
 ## 2.3.18 (2026-10-13)
 
 ### Clipboard
