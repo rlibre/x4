@@ -228,7 +228,7 @@ static parentElement<T>(dom: Node, cls?: Constructor<T>): T
 ```ts
 show(vis?: boolean): this              // toggles "x4hidden" class (not display:none)
 hide(): this
-enable(ena?: boolean): this            // sets "disabled" + propagates to child <input>/<button>
+enable(ena?: boolean): this            // sets or removes "disabled" and "inert" on the component
 disable(): this
 isDisabled(): string | null
 isVisible(): boolean
@@ -842,7 +842,6 @@ class Listbox extends Component {
   ensureSelectionVisible(): void
   renderItem(item: ListItem): Component     // override to customize
   defaultRenderer(item: ListItem): Component
-  preventFocus: boolean
 }
 ```
 
@@ -853,25 +852,29 @@ interface GridviewProps extends ComponentProps {
   store: DataStore                          // required
   columns: GridColumn[]                     // required
   footer?: boolean; emptyMsg?: string
-  sort?: object
-  click?: EventCallback<EvClick>
-  dblClick?: EventCallback<EvDblClick>
+  multisel?: boolean                        // Ctrl+click adds or removes a row, Shift+click a range, Ctrl+A all
+  sort?: { field_id: string; asc?: boolean }   // the first sort; ascending only when asc is true
+  click?: EventCallback<EvClick>               // a click on a row; ev.context is its record
+  dblClick?: EventCallback<EvDblClick>         // ev.context is the record of the row
   contextMenu?: EventCallback<EvContextMenu>
   selectionChange?: EventCallback<EvSelectionChange>
 }
 class Gridview extends Component {
   setStore(store: DataStore): void
-  setColumns(columns: GridColumn[]): void
   setColTitle(col_name: string, title: string): void
-  sortCol(colIdx: number, ascending: boolean): void
+  sortCol(colId: any, ascending: boolean): void     // colId: the id of the column, not its index
   getView(): DataView
-  getSelection(): DataRecord[]
-  getFirstSel(): DataRecord
+  getSelection(): DataRecord[]              // null when nothing is selected
+  getFirstSel(): DataRecord                 // null when nothing is selected
   selectItem(id, ensureVisible?: boolean): void
   clearSelection(): void
+  selectAll(): void                         // multisel only; keeps the id of every record: costs memory on a very large view
   navigate(sens: kbNav): boolean
   lock(lock: boolean): void
 }
+// Selection: the selected records, not their rows. It survives a sort; a record that leaves the view (filter, delete) leaves it, with a selectionChange.
+// getSelection(): every selected record, or null. selectionChange: ev.selection has them all.
+// Column sizer: dragging it gives the column that width (it is not flex anymore); a double click on it makes the column flex again.
 ```
 
 ### `Treeview`
@@ -921,6 +924,7 @@ class Spreadsheet extends Component {
   stopEdit(commit = true): void;  isEditing(): boolean
 }
 
+// Column sizer: dragging it gives the column that width (it is not flex anymore); a double click on it makes the column flex again.
 // Inline edition: F2 / Enter / double-click / typing starts, Enter / Tab / click elsewhere validates, Escape cancels,
 // Delete clears, editable checkboxes toggle on double-click or Space (a single click only selects).
 // Default editor is an Input matching the column type.
@@ -1166,7 +1170,13 @@ class ColorPicker extends VBox {           // props: color, swatches?, nullable?
 }
 class Panel extends VBox { setTitle(title: string): void }
 class Breadcrumbs extends HBox { setItems(elements): void }
-class Keyboard extends HBox                // virtual keyboard
+interface KeyboardProps extends BoxProps { locale?: string }   // "fr-FR" (default), "de-CH", "pl"...
+class Keyboard extends HBox {               // virtual keyboard, shown while an <input> has the focus
+  setLocale(locale: string): void
+  setZoom(perc: number): void
+  showOn(el: Component): void
+}
+// languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```
@@ -1239,6 +1249,8 @@ class DataView extends CoreElement {
   getRecId(rec): any; indexOfId(id): number
   getStore(): DataStore; getModel(): DataModel
   forEach(cb): void; changed(): void
+  close(): void                            // stops following the store; call it on a view you made (createView) and do not use anymore
+  open(): void                             // follows the store again after a close(), filtered and sorted with its data of the moment
 }
 ```
 
@@ -1477,7 +1489,7 @@ interface ITipHandler  { getTip(): string }
 // Other variables
 const dragManager                           // see Drag and drop
 const svgLoader; const linearColorStops; const simpleColorStop
-const unbubbleEvents       // set of DOM event names that do NOT bubble through the x4 tree
+const unbubbleEvents       // the events that stay on their node: see "Important stupid notes"
 const makeUniqueComponentId  // () => string, "x4-<n>" (exported as a value)
 ```
 
@@ -1781,7 +1793,7 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - Numbers passed to `setStyle`/`setStyleValue` are auto-suffixed with `"px"` except for unitless properties (see the `unitless` set: `zIndex`, `opacity`, `flexGrow`...).
 - `show(false)` / `hide()` toggle the `"x4hidden"` CSS class, not `display:none`.
 - x4 sets `user-select: none` on every element (`*`): text that must be selectable needs `user-select: text` on it and on its descendants.
-- `enable(false)` / `disable()` propagate the `disabled` state to child `<input>` and `<button>` elements.
+- `enable(false)` / `disable()` put `disabled` and `inert` on the component itself. Its children are not changed: the browser makes all that is inside an `inert` element inactive (no click, no focus).
 - `Application` is a strict singleton — one instance per page (an assertion fails otherwise).
 - `Popup.show()` routes to `displayCenter()`. To position, call `displayAt()` or `displayNear()` instead.
 - `BtnGroup` accepts predefined strings (`"ok"`, `"cancel"`...) with options after a dot: `"ok.outline.default.disabled"`.
@@ -1791,4 +1803,5 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
 - `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma; 
-- `unbubbleEvents` is the set of DOM events that do not bubble through the x4 component tree.
+- A DOM handler of an ancestor is called for the events of its descendants, as in the browser. Not for the events that do not bubble: `focus`, `blur`, `mouseenter`, `mouseleave` (use `focusin` / `focusout`, `mouseover` / `mouseout`), nor for those of x4: `created`, `removed`, `resized`.
+- Several handlers of one event on one node are called in the order they were added. One that returns `true` stops those that follow it.

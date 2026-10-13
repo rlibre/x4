@@ -43,8 +43,49 @@ new Button( { label: "Paste", click: async ( ) => {
 
 - With a fixed column, the flex columns fill the grid up to its right edge: the width they share is the one of the scrolled part, which the fixed columns are not in.
 - When a column was resized by its sizer, the body of the grid gets the width of its columns once the flex columns have taken what is left: every column is shown, and there is nothing to scroll beyond the last one.
+- A double click on the sizer of a column makes it flex: a column that is not (it was given no flex, or its sizer was dragged) takes its share of the place that is left, with a flex of 1. To stop being flex, a column has its sizer dragged. In a `Gridview` the column is not sorted: this is the double click on the rest of its header.
 
-- A double click on the sizer of a column makes it flex: a column that is not (it was given no flex, or its sizer was dragged) takes its share of the place that is left, with a flex of 1. To stop being flex, a column has its sizer dragged. The column is not sorted: this is the double click on the rest of its header.
+### Gridview
+
+- The selection is made of records, not of rows: when the grid is sorted or filtered, the same records stay selected, and `getSelection( )` and `getFirstSel( )` give them. What they return is the same: records, or `null`.
+- A record that leaves the view leaves the selection, and `selectionChange` is fired: a filter that hides it, a record that is deleted, data that is replaced. The selected records that are still in the view stay selected.
+- A click in a column header keeps the selection: it sorts or sizes the column. After a sort by a double click on a header, the grid scrolls to what is selected.
+- New prop `multisel`: several rows can be selected. Ctrl + click (Cmd on a Mac) adds a row or removes it, Shift + click selects from the row that was selected last to the one that is clicked, Ctrl + A selects every record of the view, as the new method `selectAll( )` does. A click alone selects one row. `getSelection( )` gives all the selected records, and `selectionChange` too, in its `selection`. To select all keeps the id of each record: on a very large view it costs memory.
+
+```ts
+const grid = new Gridview( {
+	store,
+	columns,
+	multisel: true,
+	selectionChange: ev => remove.enable( !ev.empty ),
+} );
+
+const records = grid.getSelection( );		// every selected record, or null
+```
+
+- `setStore( )` closes the view of the store it replaces: a store that is not shown anymore does not redraw the grid, and does not keep it alive.
+- A grid that leaves the document closes its view, and opens it when it comes back: out of the document it is not redrawn by its store, and its store does not keep it alive. Nothing has to be called by the application.
+- A grid that comes back in the document (the one of a dialog that is opened again) draws its rows, and has its mouse handlers once: `dblClick`, `contextMenu` and the wheel act once for one gesture.
+- A column whose `id` is not a field of the model (a column of actions) is drawn by its `renderer`: it has nothing else to draw it. A column that is a field still gives its `renderer` the records where the field has a value.
+- The event `click` is fired by a click on a row, once the row is selected: `ev.context` is its record, as for `dblClick`. A handler given as `click` in the props is called from now on.
+- One column has the mark of the sort, the one that is sorted, also when the sort comes from `sortCol( )`.
+- The sort given in the props (`sort`) is applied whenever the grid comes in the document, however long after it was made. The sorted column is kept with the columns, not read in the header: a grid that leaves the document and comes back still shows it.
+- With 200 rows and more, a notch of the wheel over a fixed column scrolls one row, as it does over the rest of the grid.
+- The arrow keys do nothing in a grid that has no row.
+- `getSelection( )` and `getFirstSel( )` only give records that exist: one that was deleted while the grid was out of the document is left out.
+
+### DataView
+
+- New methods `close( )` and `open( )`: the view stops following its store, and follows it again, filtered and sorted with what the store holds at that moment. A store keeps every view that listens to it, so a view that is not used anymore has to be closed, or it is still filtered and sorted at each change of the store. A view is open when it is made.
+- A sorted view is sorted once when its store changes: records that compare equal keep the order they have after `sort( )`.
+
+- One `view_change` for one change: `change` when the store changes, `filter` when the view is filtered. The view is filtered and sorted again before it, without an event for each of these steps: a `Gridview` is redrawn once.
+
+```ts
+const view = store.createView( { filter } );
+...
+view.close( );		// done with it
+```
 
 ### Spreadsheet
 
