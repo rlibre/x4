@@ -1152,41 +1152,72 @@ export class DataView extends CoreElement<DataViewEventMap>
 
 	protected m_props: DataViewProps;
 
+	private m_unlink: ( ) => void;	// stops listening to the store
+
 	constructor( props: DataViewProps ) {
 		super( );
 
 		this.m_props = props;
 		this.m_store = props.store;
 		this.m_index = null;
-		this.m_filter = null;
-		this.m_sort = null;
 		this.m_model = this.m_store.getModel();
+		this.m_filter = props.filter;
 
-		this.filter( props.filter );
-		
-		if( props.order ) {
-			if( isString(props.order) ) {
-				this.sort( [ { field: props.order, ascending: true } ] );
-			}
-			else if( isArray(props.order) ) {
-				this.sort( props.order );
-			}
-			else {
-				this.sort( [props.order] );
-			}
+		if( !props.order ) {
+			this.m_sort = null;
+		}
+		else if( isString(props.order) ) {
+			this.m_sort = [ { field: props.order, ascending: true } ];
+		}
+		else if( isArray(props.order) ) {
+			this.m_sort = props.order;
 		}
 		else {
-			this.sort( null );
+			this.m_sort = [props.order];
 		}
 
-		this.m_store.addListener( 'data_change', ( e ) => this._storeChange(e) );
+		// listens to the store, then filters and sorts
+		this.open( );
 	}
 
-	private _storeChange( ev: EvDataChange ) {
-		
-		this._filter( this.m_filter, ev.type!='change' );
-		this._sort( this.m_sort, ev.type!='change' );
-		
+	/**
+	 * The view follows its store: it is filtered and sorted with what the
+	 * store holds now, and again at each of its changes.
+	 * Called when the view is made, and to use it again after a close( ).
+	 */
+
+	open( ) {
+		if( this.m_unlink ) {
+			return;
+		}
+
+		this.m_unlink = this.m_store.addListener( 'data_change', ( ) => this._storeChange( ) );
+		this._storeChange( );
+	}
+
+	/**
+	 * The view stops following its store, until open( ) is called.
+	 * A store keeps every view that listens to it: without this, a view
+	 * that is not used anymore would still be filtered, sorted and heard at
+	 * each change.
+	 */
+
+	close( ) {
+		if( this.m_unlink ) {
+			this.m_unlink( );
+			this.m_unlink = null;
+		}
+	}
+
+	private _storeChange( ) {
+
+		// filtered and sorted again without telling: the event that follows says it all.
+		// _filter sorts when the view is sorted; when it is not, it is by id
+		this._filter( this.m_filter, false );
+		if( !this.m_sort ) {
+			this._sort( null, false );
+		}
+
 		this.fire( 'view_change', { change_type: 'change' } );
 	}
 
@@ -1206,9 +1237,9 @@ export class DataView extends CoreElement<DataViewEventMap>
 		this.m_index = this.m_store.createIndex( filter );
 		this.m_filter = filter;
 
-		// need to sort again:
+		// need to sort again, without telling: the filter is what changed
 		if( this.m_sort ) {
-			this.sort( this.m_sort );
+			this._sort( this.m_sort, false );
 		}
 		
 		if( notify ) {
