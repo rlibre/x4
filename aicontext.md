@@ -1177,6 +1177,7 @@ class Keyboard extends HBox {               // virtual keyboard, shown while an 
   showOn(el: Component): void
 }
 // languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
+// bottom row: 123 (numeric pad), the letters of the language (éè, none in en), the signs (#+=); Abc comes back
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```

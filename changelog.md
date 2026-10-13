@@ -3,6 +3,16 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.19
+
+### Keyboard
+
+- The letters of the language (`é è à ç`, `ä ö ü ß`...) are no longer on rows of their own above the space bar: they are on a page of their own, called by a key of the bottom row that shows the first two of them (`éè`, `äö`). The page of the letters has its five rows again, whatever the language. A language that adds no letter (`en`) has no such key.
+- New page of the signs that the letters do not have (`- / : ; ( ) € & @ "`, `\ | ~ _ § £ $ ^ %`, `[ ] { } < > = + * #`), called by the key `#+=` of the bottom row.
+- On these two pages, `Abc`, at the place of the key that called the page, comes back to the letters. Shift changes the case of the letters of the language, as it does on the page of the letters.
+- `mode` gives the page that is shown: `"alpha"`, `"accents"`, `"symbols"`, `"number"` or `"date"`. On the page of the letters it was `"lower"` or `"upper"`: the case is now the new field `upper`. The class of the page follows `mode`: a stylesheet that styled `.lower` or `.upper` has to style `.alpha`.
+- The keys of each page have a color of their own: white for the letters, `--keyboard-accents-color` for the letters of the language, `--keyboard-symbols-color` for the signs. The key that calls a page has its color. New CSS variables: `--keyboard-key-color`, `--keyboard-accents-color`, `--keyboard-symbols-color`.
+
 ## 2.3.18 (2026-10-13)
 
 ### Clipboard
