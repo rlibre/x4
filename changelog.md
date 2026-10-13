@@ -39,6 +39,18 @@ new Button( { label: "Paste", click: async ( ) => {
 } } )
 ```
 
+### Keyboard
+
+- New prop `locale` and new method `setLocale( locale )`: the language of the keys of the virtual keyboard, with or without its country (`"fr-FR"`, `"de-CH"`, `"pl"`). `"fr-FR"` when nothing is said.
+- 22 languages: `cs` `da` `de` `en` `es` `et` `fi` `fr` `ga` `hr` `hu` `it` `lt` `lv` `mt` `nl` `pl` `pt` `ro` `sk` `sl` `sv`. A layout is an AZERTY, a QWERTY or a QWERTZ, plus the letters of the language (`é è à ç`, `ä ö ü ß`, `ą ć ę ł`...) on rows of their own, above the space bar.
+- The countries whose keyboard is not the one of their language have theirs: `de-CH` (no `ß`), `fr-CH`, `it-CH` and `fr-LU` (QWERTZ), `nl-BE` (AZERTY). Any other country gets the keyboard of its language, and a language that is not in the list a QWERTY.
+- `en` is a QWERTY.
+
+```ts
+const keyboard = new Keyboard( { locale: "de-CH" } );
+keyboard.setLocale( "pl" );
+```
+
 ### TextArea
 
 - A `TextArea` and a `SimpleTextArea` handle all the props of `BaseProps`, as an `Input` does: they are the props they take.

@@ -28,75 +28,166 @@ import icon_hide from "./eye-slash.svg";
 
 
 
-const kb_def: any = {
-    'fr-FR': {
-        lines: {
-            lower: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "a z e r t y u i o p {2}",
-                "q s d f g h j k l m {3}",
-                "{4} w x c v b n , . {4}",
-                "{5} {6} ' {7}"
-            ],
-            upper: [
-                "! @ # $ % ^ & * ( ) _ +",
-                "A Z E R T Y U I O P {2}",
-                "Q S D F G H J K L M {3}",
-                "{4} W X C V B N ? : {4}",
-                "{5} {6} ' {7}",
-            ],
-            number: [
-				"1 2 3 {2}",
-				"4 5 6 {8}",
-				"7 8 9 {9}",
-				"0 . {3} {9}"
-            ],
-            date: [
-				"1 2 3 {2}",
-				"4 5 6 {8}",
-				"7 8 9 {9}",
-				"0 / {3} {9}"
-            ]
-        }
-    },
-    'en-GB': {
-        lines: {
-            lower: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "a z e r t y u i o p {2}",
-                "q s d f g h j k l m {3}",
-                "{4} w x c v b n , . {4}",
-                "{5} {6} ' {7}"
-            ],
-            upper: [
-                "! @ # $ % ^ & * ( ) _ +",
-                "A Z E R T Y U I O P {2}",
-                "Q S D F G H J K L M {3}",
-                "{4} W X C V B N ? : {4}",
-                "{5} {6} ' {7}",
-            ],
-            number: [
-                "1 2 3 {2}",
-				"4 5 6 {8}",
-				"7 8 9 {9}",
-				"0 . {3} {9}"
-            ],
-			date: [
-				"1 2 3 {2}",
-				"4 5 6 {8}",
-				"7 8 9 {9}",
-				"0 / {3} {9}"
-            ]
-        }
-    },
-    'en-US': 'en-GB'
+/**
+ * A layout is the place of the 26 letters (its base) and the letters that
+ * a language adds to them (its extra), shown on rows of their own. The
+ * upper case is computed, the digits and the signs are the same for all.
+ *
+ * base: the countries where it is not QWERTY are those that
+ *   https://en.wikipedia.org/wiki/QWERTZ and /AZERTY list.
+ * extra: the main letters of the language in the CLDR of Unicode
+ *   (cldr-json, cldr-misc-full/main/<lang>/characters.json), without a..z.
+ */
+
+type KbBase = "azerty" | "qwerty" | "qwertz";
+
+interface KbLayout {
+	base: KbBase;
+	extra: string;
+}
+
+const kb_bases: Record<KbBase,string[]> = {
+	azerty: [ "a z e r t y u i o p", "q s d f g h j k l m", "w x c v b n" ],
+	qwerty: [ "q w e r t y u i o p", "a s d f g h j k l", "z x c v b n m" ],
+	qwertz: [ "q w e r t z u i o p", "a s d f g h j k l", "y x c v b n m" ],
+};
+
+// by language
+const kb_langs: Record<string,KbLayout> = {
+	cs: { base: "qwertz", extra: "á č ď é ě í ň ó ř š ť ú ů ý ž" },
+	da: { base: "qwerty", extra: "æ ø å" },
+	de: { base: "qwertz", extra: "ä ö ü ß" },
+	en: { base: "qwerty", extra: "" },
+	es: { base: "qwerty", extra: "á é í ñ ó ú ü" },
+	et: { base: "qwerty", extra: "õ ä ö ü š ž" },
+	fi: { base: "qwerty", extra: "å ä ö š ž" },
+	fr: { base: "azerty", extra: "é è ê ë à â æ ç î ï ô œ ù û ü ÿ" },
+	ga: { base: "qwerty", extra: "á é í ó ú" },
+	hr: { base: "qwertz", extra: "č ć đ š ž" },
+	hu: { base: "qwertz", extra: "á é í ó ö ő ú ü ű" },
+	it: { base: "qwerty", extra: "à è é ì ò ù" },
+	lt: { base: "qwerty", extra: "ą č ę ė į š ų ū ž" },
+	lv: { base: "qwerty", extra: "ā č ē ģ ī ķ ļ ņ š ū ž" },
+	mt: { base: "qwerty", extra: "à ċ è ġ ħ ì ò ù ż" },
+	nl: { base: "qwerty", extra: "á ä é ë í ï ó ö ú ü" },
+	pl: { base: "qwerty", extra: "ą ć ę ł ń ó ś ź ż" },
+	pt: { base: "qwerty", extra: "á à â ã ç é ê í ó ò ô õ ú" },
+	ro: { base: "qwerty", extra: "ă â î ș ț" },
+	sk: { base: "qwertz", extra: "á ä č ď é í ĺ ľ ň ó ô ŕ š ť ú ý ž" },
+	sl: { base: "qwertz", extra: "č š ž" },
+	sv: { base: "qwerty", extra: "å ä ö é à" },
+};
+
+// the countries that do not have the keyboard of their language
+const kb_countries: Record<string,Partial<KbLayout>> = {
+	"de-CH": { extra: "ä ö ü" },		// no ß in Switzerland
+	"fr-CH": { base: "qwertz" },
+	"it-CH": { base: "qwertz" },
+	"fr-LU": { base: "qwertz" },		// the Swiss French keyboard
+	"nl-BE": { base: "azerty" },
+};
+
+const kb_digits = "1 2 3 4 5 6 7 8 9 0";
+const kb_signs = "! @ # $ % ^ & * ( ) _ +";
+
+const kb_pads = {
+	number: [
+		"1 2 3 {2}",
+		"4 5 6 {8}",
+		"7 8 9 {9}",
+		"0 . {3} {9}"
+	],
+	date: [
+		"1 2 3 {2}",
+		"4 5 6 {8}",
+		"7 8 9 {9}",
+		"0 / {3} {9}"
+	]
+};
+
+const KB_MAX_EXTRA = 12;		// keys on a row of extra letters, as many as there are signs
+
+/**
+ * "de-CH", "de_ch", "de": the layout of the country, or else the one of
+ * its language. A language that is not known gets a QWERTY.
+ */
+
+function findLayout( locale: string ): KbLayout {
+	const [lang, country] = locale.replace( "_", "-" ).split( "-" );
+
+	let layout = kb_langs[lang.toLowerCase( )];
+	if( !layout ) {
+		layout = kb_langs.en;
+	}
+
+	if( country ) {
+		const own = kb_countries[lang.toLowerCase( ) + "-" + country.toUpperCase( )];
+		if( own ) {
+			layout = { ...layout, ...own };
+		}
+	}
+
+	return layout;
+}
+
+function upperKeys( line: string ): string {
+	return line.split( " " ).map( key => {
+		const up = key.toUpperCase( );
+		return up.length===1 ? up : key;		// ß has no upper case of one letter
+	} ).join( " " );
+}
+
+/**
+ * the extra letters, on rows of the same length
+ */
+
+function extraLines( extra: string ): string[] {
+	if( !extra ) {
+		return [];
+	}
+
+	const keys = extra.split( " " );
+	const count = Math.ceil( keys.length / KB_MAX_EXTRA );
+	const size = Math.ceil( keys.length / count );
+
+	const lines: string[] = [];
+	for( let i=0; i<keys.length; i+=size ) {
+		lines.push( keys.slice( i, i+size ).join( " " ) );
+	}
+
+	return lines;
+}
+
+function letterLines( layout: KbLayout, upper: boolean ): string[] {
+	let [l1, l2, l3] = kb_bases[layout.base];
+	let extra = extraLines( layout.extra );
+
+	if( upper ) {
+		l1 = upperKeys( l1 );
+		l2 = upperKeys( l2 );
+		l3 = upperKeys( l3 );
+		extra = extra.map( upperKeys );
+	}
+
+	return [
+		upper ? kb_signs : kb_digits,
+		l1 + " {2}",
+		l2 + " {3}",
+		"{4} " + l3 + ( upper ? " ? : {4}" : " , . {4}" ),
+		...extra,
+		"{5} {6} ' {7}",
+	];
 }
 
 
 const RE_sel = /text|password|search|tel|url/i;
 
 interface KeyboardProps extends BoxProps {
-
+	/**
+	 * the language of the keys, with or without its country: "fr-FR",
+	 * "de-CH", "pl"... "fr-FR" when it is not given
+	 */
+	locale?: string;
 }
 
 /**
@@ -120,7 +211,7 @@ export class Keyboard extends HBox<KeyboardProps>
         super( { ...props, id: 'v-keyboard' } );
 
         this.mode   = 'lower';
-        this.locale = 'fr-FR';
+        this.locale = props.locale ?? 'fr-FR';
 		this.visible = false;
         
         document.addEventListener( 'focusin', (e) => this.handleFocus(e.target as Element,true), false );
@@ -150,6 +241,24 @@ export class Keyboard extends HBox<KeyboardProps>
 
 	setZoom( perc: number ) {
 		this.setStyleVariable( '--keyboard-zoom', perc+'%' );
+	}
+
+	/**
+	 * Change the language of the keys.
+	 * @param locale - "fr-FR", "de-CH", "pl"... A country that has no keyboard
+	 * of its own gets the one of its language, a language that is not known a QWERTY.
+	 *
+	 * @example
+	 * keyboard.setLocale( "de-CH" );
+	 */
+
+	setLocale( locale: string ) {
+		this.locale = locale;
+
+		// drawn at least once
+		if( this.keyboard ) {
+			this._redraw( );
+		}
 	}
 
 	/**
@@ -436,7 +545,14 @@ export class Keyboard extends HBox<KeyboardProps>
 	 */
 
     private _createContent( ) {
-        let     lines = kb_def[this.locale].lines[this.mode];
+        let     lines: string[];
+		if( this.mode=="number" || this.mode=="date" ) {
+			lines = kb_pads[this.mode];
+		}
+		else {
+			lines = letterLines( findLayout( this.locale ), this.mode=="upper" );
+		}
+
         let     result: Box[] = [];
         
 		for( let j=0; j<lines.length; j++ ) {
