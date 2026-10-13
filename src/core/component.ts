@@ -897,7 +897,8 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 	/**
      * Enables or disables the component.
-     * This sets the `disabled` attribute and also propagates the disabled state to child input elements.
+     * This sets or removes the `disabled` and `inert` attributes of the component itself. Its children
+     * are not changed: the browser makes all that is inside an `inert` element inactive.
      * @param ena - If `true`, the component is enabled; if `false`, it's disabled. Defaults to `true`.
      * @returns The component instance for chaining.
      */
