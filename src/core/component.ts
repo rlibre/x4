@@ -321,7 +321,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 			}
 		
 		if( cls.indexOf(' ')>=0 ) {
-			const ccs = cls.split( " " );
+			const ccs = cls.split( " " ).filter( x => x );
 			this.dom.classList.remove(...ccs);
 			}
 			else {
@@ -358,7 +358,7 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 		}
 
 		if( cls.indexOf(' ')>=0 ) {
-			const ccs = cls.split( " " );
+			const ccs = cls.split( " " ).filter( x => x );
 			ccs.forEach( toggle );
 				}
 				else {
@@ -1230,11 +1230,17 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 		const state = makeState( raw );
 
-		// the state is what is saved, not raw: makeState works on a copy of it
+		// the state is what is saved, not raw: makeState works on a copy of it.
+		// The write waits for the changes to stop. Its timer is the one of the
+		// browser, not this.setTimeout: the timers of a component are cleared
+		// when it leaves the DOM, and what changed just before must still be written
+		let timer: ReturnType<typeof setTimeout>;
+
 		state.on( "change", ( ) => {
-			this.setTimeout( key, 500, ( ) => {
+			clearTimeout( timer );
+			timer = setTimeout( ( ) => {
 				Application.instance().setStorage( key, JSON.stringify( state ) );
-		} );
+			}, 500 );
 		});
 
 		this.#pstate[name] = state;
