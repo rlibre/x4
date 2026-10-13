@@ -29,12 +29,15 @@ import { class_ns, IFormElement } from '../../core/core_tools';
  * 
  */
 
-export interface TextAreaProps extends BaseProps {
-	label?: string;
+export interface SimpleTextAreaProps extends BaseProps {
 	value?: string;
 	resize?: boolean | "none" | "vertical" | "horizontal" | "both";
 	readonly?: boolean;
 	trim?: boolean;
+}
+
+export interface TextAreaProps extends SimpleTextAreaProps {
+	label?: string;
 }
 
 export interface TextAreaEvents extends ComponentEvents {
@@ -48,9 +51,9 @@ export interface TextAreaEvents extends ComponentEvents {
  */
 
 @class_ns( "x4" )
-export class SimpleTextArea extends Component<TextAreaProps,TextAreaEvents> {
+export class SimpleTextArea extends Component<SimpleTextAreaProps,TextAreaEvents> {
 
-	constructor( props: TextAreaProps ) {
+	constructor( props: SimpleTextAreaProps ) {
 		super( { ...props, tag: "textarea" } );
 
 		this.mapPropEvents( props, "focus", "change" );
@@ -144,11 +147,11 @@ export class TextArea extends VBox {
 		super( props );
 
 
-		const { label, value, resize, readonly, trim, name, placeholder, required, autofocus, focus, change } = props;
+		const { value, resize, readonly, trim, name, placeholder, required, autofocus, focus, change } = props;
 
 		this.setContent( [
 			new Label( { text: props.label }),
-			this._input = new SimpleTextArea( { label,value,resize,readonly,trim,name,placeholder,required,autofocus,focus,change } )
+			this._input = new SimpleTextArea( { value,resize,readonly,trim,name,placeholder,required,autofocus,focus,change } )
 		])
 	}
 
