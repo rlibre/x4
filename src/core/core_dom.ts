@@ -118,8 +118,12 @@ function observeSize(entries: ResizeObserverEntry[]) {
 
 export function dispatchEvent(ev: Event) {
 
-	let target = ev.target as Node,
-		noup = (unbubbleEvents as any)[ev.type] === 2;
+	// 2: an event of x4, for its node only.
+	// 1: stops at its node when the browser does not bubble it (focus, mouseenter...)
+	const flag = (unbubbleEvents as any)[ev.type];
+	const noup = flag===2 || ( flag===1 && !ev.bubbles );
+
+	let target = ev.target as Node;
 
 	while (target) {
 		const store = event_handlers.get( target );
@@ -127,8 +131,11 @@ export function dispatchEvent(ev: Event) {
 			const callback = store[ev.type];
 			if( callback ) {
 				if( Array.isArray(callback) ) {
-					callback.some( c => c( ev ) );
-				}	
+					// a handler that returns true stops those that follow it on this node.
+					// true only: an arrow function returns what its expression does
+					// (ev => this.show( ) returns this), and this must stop nothing
+					callback.some( c => (c( ev ) as any)===true );
+				}
 				else {
 					callback( ev );
 				}
