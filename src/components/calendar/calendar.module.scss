@@ -41,7 +41,10 @@
 .x4calendar {
 	border: 1px solid var( --border );
 	padding: 4px;
-	
+
+	// too short for its weeks (6 in some months): what does not fit is cut, not drawn over what follows
+	overflow: hidden;
+
 	.month-sel {
 		height: 2em;
 		align-items: center;
@@ -146,6 +149,18 @@
 				background-color: var( --calendard-day-background-hover );
 				color: var( --calendard-day-color-hover );
 			}
+		}
+
+		// out of minDate..maxDate: cannot be chosen
+		.disabled {
+			color: var( --calendar-out-color );
+			text-decoration: line-through;
+			cursor: default;
+		}
+
+		.disabled:hover .text {
+			background-color: transparent;
+			color: var( --calendar-out-color );
 		}
 	}
 

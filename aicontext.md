@@ -1166,7 +1166,9 @@ class Video extends Box {
   get volume(): number; get videoWidth(): number; get videoHeight(): number
   set stream(stream: MediaStream)
 }
-class Calendar extends VBox { getDate(): Date; setDate(date: Date): void }
+class Calendar extends VBox {               // props: date?, minDate?, maxDate? (days out of them cannot be chosen), change ("change": the day clicked)
+  getDate(): Date; setDate(date: Date): void   // copies: the calendar keeps its own date
+}
 class ColorPicker extends VBox {           // props: color, swatches?, nullable?; "change": EvColorChange, also fired once when built
   getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
 }

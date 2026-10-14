@@ -78,7 +78,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		super(props);
 
 		this.mapPropEvents( props, 'change' );
-		this.m_date = props.date ? date_clone( props.date ) : new Date();
+		this.m_date = this._clamp( props.date ? date_clone( props.date ) : new Date() );
 
 		this._update( );
 	}
@@ -130,7 +130,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 				}),
 				new Flex( ),
 				new Button({ icon: icon_prev, click: () => this._next(false) } ),
-				new Button({ icon: icon_today, click: () => this.setDate(new Date()), tooltip: _tr.global.today } ),
+				new Button({ icon: icon_today, click: () => this.setDate( this._clamp( new Date() ) ), tooltip: _tr.global.today } ),
 				new Button({ icon: icon_next, click: () => this._next(true) } )
 			]
 		});
@@ -159,6 +159,9 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		}));
 
 		let cmonth = this.m_date.getMonth();
+		const { minDate, maxDate } = this.props;
+		const min_hash = minDate ? date_hash( minDate ) : null;
+		const max_hash = maxDate ? date_hash( maxDate ) : null;
 
 		// weeks
 		let first = true;
@@ -184,6 +187,13 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 					cls += ' out';
 				}
 
+				// out of minDate..maxDate: shown, not chosen
+				const hash = date_hash( dte );
+				const off = (min_hash!==null && hash < min_hash) || (max_hash!==null && hash > max_hash);
+				if( off ) {
+					cls += ' disabled';
+				}
+
 				const mkItem = ( dte: Date ) => {
 					return new HBox({
 						cls,
@@ -192,7 +202,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 							cls: "text",
 							content: unsafeHtml( `<span>${formatIntlDate(dte, 'd')}</span>` ),
 						}),
-						dom_events: {
+						dom_events: off ? undefined : {
 							click: () => this.select(dte)
 						}
 					})
@@ -230,8 +240,40 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 	 */
 
 	private _next(n: boolean) {
-		this.m_date.setMonth(this.m_date.getMonth() + (n ? 1 : -1));
-		this._update();
+		this._goto( this.m_date.getFullYear( ), this.m_date.getMonth() + (n ? 1 : -1) );
+	}
+
+	/**
+	 * shows another month: the day is kept, not past the end of the month
+	 * (31 January → 28 February), and the date stays between minDate and maxDate
+	 */
+
+	private _goto( year: number, month: number ) {
+		const day = this.m_date.getDate( );
+		const d = date_clone( this.m_date );
+		d.setDate( 1 );
+		d.setFullYear( year, month );		// month 12: January of the next year
+		d.setDate( Math.min( day, new Date( d.getFullYear( ), d.getMonth( )+1, 0 ).getDate( ) ) );
+
+		this.m_date = this._clamp( d );
+		this._update( );
+	}
+
+	/**
+	 * the date brought between minDate and maxDate
+	 */
+
+	private _clamp( d: Date ) {
+		const { minDate, maxDate } = this.props;
+		if( minDate && d < minDate ) {
+			return date_clone( minDate );
+		}
+
+		if( maxDate && d > maxDate ) {
+			return date_clone( maxDate );
+		}
+
+		return d;
 	}
 
 	/**
@@ -246,7 +288,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 			for (let m = 0; m < 12; m++) {
 				items.push(({
 					text: _tr.global.month_long[m],
-					click: () => { this.m_date.setMonth(m); this._update(); }
+					click: () => { this._goto( this.m_date.getFullYear( ), m ); }
 				}));
 			}
 		}
@@ -258,7 +300,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 			for (let m = max; m >= min; m--) {
 				items.push({
 					text: '' + m,
-					click: () => { this.m_date.setFullYear(m); this._update(); }
+					click: () => { this._goto( m, this.m_date.getMonth( ) ); }
 				});
 			}
 		}
@@ -271,12 +313,13 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		menu.displayAt(rc.left, rc.top);
 	}
 
+	// a copy: the calendar and its caller do not share the object
 	getDate() {
-		return this.m_date;
+		return date_clone( this.m_date );
 	}
 
 	setDate(date: Date) {
-		this.m_date = date;
+		this.m_date = date_clone( date );
 		this._update();
 	}
 }

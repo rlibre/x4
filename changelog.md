@@ -19,6 +19,13 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Calendar
+
+- A month further, by ◀ ▶ or by the menus of the month and of the year, keeps the day but not past the end of the month: from 31 January, ▶ gives 28 February (not 3 March); from 29 February 2024, the year 2025 gives 28 February 2025.
+- `minDate` and `maxDate` are applied: the days out of them are struck through and cannot be chosen, and the date stays between them (navigation, the button "today", `date` of the props).
+- `setDate( d )` keeps a copy of `d`, `getDate( )` gives a copy: the calendar and its caller do not share the object.
+- A calendar too short for its weeks (6 in some months) cuts what does not fit: it is not drawn over what follows.
+
 ### Slider
 
 - The thumb is placed from `min`: on `min: 10, max: 20`, the value 10 is at the start of the track, 15 in the middle. `min` and `max` can have decimals.
