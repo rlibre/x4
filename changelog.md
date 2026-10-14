@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.18 (2026-10-13)
 
+### Command line
+
+- `outdir` cannot be a folder that contains the project (`".."`, or a variable that points to a parent): `x4js build` empties the output folder before it builds, so such a folder is refused with an error, as the project root itself is.
+
 ### Clipboard
 
 - New: the clipboard of the system, in `core_clipboard`: a text, an image, files. It keeps `navigator.clipboard` out of the applications: that it is missing out of https, and that the browser may refuse, is handled there.

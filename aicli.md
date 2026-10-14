@@ -124,7 +124,7 @@ The file sits at the root of the project. Every key is optional; without the fil
 | Key | Default | Meaning |
 |---|---|---|
 | `entryPoints` | `["src/main.ts"]` | Files to bundle. `src/main.ts` produces `main.js` and `main.css`. |
-| `outdir` | `"./bin"` | Output folder. It cannot be the project root. |
+| `outdir` | `"./bin"` | Output folder. It cannot be the project root, nor a folder that contains it. |
 | `copy` | `[]` | Files or folders copied to the output after each successful build. `to` is relative to `outdir`. |
 | `external` | `[]` | Module names left out of the bundle. |
 | `define` | `{}` | Constants replaced at build time. Values are JavaScript expressions written as strings, for example `"\"prod\""`. |

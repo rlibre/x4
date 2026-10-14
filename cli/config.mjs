@@ -165,10 +165,13 @@ export function loadConfig(root = process.cwd(), configFile = DEFAULT_CONFIG_FIL
         throw new Error("outdir must be a string");
 
     const outdir = resolvePath(root, outdirRaw, env);
-    if (outdir === root)
-        throw new Error("outdir cannot be the project root");
     if (outdir === path.parse(outdir).root)
         throw new Error("outdir cannot be a filesystem root");
+
+    // the output folder is emptied before each build: it must not be the project, nor a folder that holds it
+    const fromOutdir = path.relative(outdir, root);
+    if (fromOutdir !== ".." && !fromOutdir.startsWith(`..${path.sep}`) && !path.isAbsolute(fromOutdir))
+        throw new Error(`outdir cannot be the project root, nor a folder that contains it: '${outdir}'`);
 
     let esbuildOptions = {};
     if (cfg.esbuild !== undefined) {
