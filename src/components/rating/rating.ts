@@ -106,7 +106,8 @@ export class Rating extends HBox<RatingProps,RatingEventMap> {
 	private _on_click( ev: MouseEvent ) {
 		const n = this.m_els.findIndex( c => c.dom.contains( ev.target as Node ) );
 		if( n>=0 ) {
-			this.setValue( n+1 );
+			// the star of the value, clicked again: none is lit
+			this.setValue( n+1===this.props.value ? 0 : n+1 );
 			this.fire( 'change', { value: this.props.value } );
 		}
 	}

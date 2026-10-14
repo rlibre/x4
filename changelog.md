@@ -27,7 +27,7 @@ A version gets its date when it is published.
 ### Rating
 
 - Without `steps`, a rating has its 5 stars.
-- A click on a star sets the value to its number (1 for the first) and fires `change` once, also after `setSteps( )`. `value` is the count of stars lit, for the props, `setValue` and the click alike.
+- A click on a star sets the value to its number (1 for the first) and fires `change` once, also after `setSteps( )`. `value` is the count of stars lit, for the props, `setValue` and the click alike. The star of the value, clicked again, sets it to 0: none is lit.
 - `setShape( icon )` redraws the stars with the icon.
 - In a `Form`, the `name` is on the rating: `setValues( { note: 3 } )` lights 3 stars, `getValues( )` gives the number. The rating has no hidden `<input>` any more: a `<form>` sent by the browser itself does not get the value.
 

@@ -577,7 +577,7 @@ class Gauge extends Component {
 
 ```ts
 interface RatingProps extends ComponentProps {
-  value?: number; steps?: number; icon?: string; name?: string   // value: the count of stars lit (0 to steps); steps: 5 by default; name: for a Form, which reads a number
+  value?: number; steps?: number; icon?: string; name?: string   // value: the count of stars lit (0 to steps), the star of the value clicked again gives 0; steps: 5 by default; name: for a Form, which reads a number
   change?: EventCallback<EvChange>
 }
 class Rating extends HBox {
