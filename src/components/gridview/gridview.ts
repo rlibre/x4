@@ -699,7 +699,8 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 		if (lock) {
 			this._lock++;
 		}
-		else {
+		// an unlock too many leaves it at 0: the grid goes on drawing
+		else if (this._lock > 0) {
 			if (--this._lock == 0 && this._dirty) {
 				this._update( true );
 			}

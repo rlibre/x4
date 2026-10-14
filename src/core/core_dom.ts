@@ -38,12 +38,14 @@ const observeMutation = (mutations: MutationRecord[], observer: MutationObserver
 	// moves are handled this way
 	const added   = new Set<Node>( );
 	const removed = new Set<Node>( );
+	const moved   = new Set<Node>( );		// out of their place and back in the document in the same task
 
 	for( const mutation of mutations ) {
 		if( mutation.type == "childList" ) {
 			mutation.addedNodes.forEach( n => {
 				if( removed.has( n ) ) {
-					removed.delete( n ); 
+					removed.delete( n );
+					moved.add( n );
 				}
 				else { 
 					added.add( n ); 
@@ -69,6 +71,12 @@ const observeMutation = (mutations: MutationRecord[], observer: MutationObserver
 	}
 
 	const notify = ( node: Node, create: boolean ) => {
+
+		// a node that was only moved was created before, as all that it holds,
+		// even when it is moved into a node that is new
+		if( create && moved.has( node ) ) {
+			return;
+		}
 
 		if( create ) {
 			sendEvent( node, "created" );

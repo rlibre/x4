@@ -98,6 +98,9 @@ view.close( );		// done with it
 ### Spreadsheet
 
 - The cells of a fixed column follow its sizer while it is dragged, as its header does: they have the `data-col` of their column, by which the sizer finds them.
+- A spreadsheet that comes back in the document (the one of a dialog that is opened again) draws its rows, and has its mouse handlers once: `dblClick`, `contextMenu` and the wheel act once for one gesture.
+- With 200 rows and more, a notch of the wheel over a fixed column scrolls one row, as it does over the rest of the grid.
+- `lock( false )` called once too many leaves the spreadsheet unlocked: it goes on drawing. The `Gridview` does the same.
 
 ### Keyboard
 
@@ -127,6 +130,7 @@ new SimpleTextArea( { flex: 1, placeholder: "Your message", change: ev => send.e
 
 ### DOM events
 
+- A component moved from one place of the document to another in the same task gets no `created`, also when it is moved into a node that is new: it was created before. A `DockingView` puts its panels in new boxes at each change of its layout, so a `Gridview` or a `Spreadsheet` in a panel goes on drawing its rows.
 - Of several handlers of one event on one node, one that returns `true` stops those that follow it. Only `true` does: an arrow function without braces returns what its expression does (`( ) => panel.show( false )` returns the panel), and this stops nothing. The handler a component puts for itself is then always called, whatever the one given in `dom_events` returns.
 - An event of `unbubbleEvents` that the browser does not bubble (`focus`, `blur`, `mouseenter`, `mouseleave`...) stops at the node that gets it: the handler of an ancestor is not called for one of its descendants. `focusin` and `focusout` are the ones that go up. Those of the table that the browser bubbles (`contextmenu`, `dragenter`, `dragover`) go up.
 - `resized` is for the node that changed size only, as `created` and `removed` are for theirs: the handler of an ancestor is not called when one of its descendants changes size. `unbubbleEvents` has `resized`, the name that is sent.

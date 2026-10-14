@@ -348,6 +348,11 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			this.lock(false);
 		});
 
+		// out of the document: nothing is drawn, as before its first insertion
+		this.addDOMEvent("removed", () => {
+			this.lock(true);
+		});
+
 		this.addDOMEvent("resized", () => {
 			this._updateFlexs();
 			this._computeFullSize();
@@ -357,6 +362,139 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		this.addDOMEvent("keydown", (e) => {
 			this._on_key(e);
 		})
+
+		// the handlers of the grid itself are put once, here. _init builds what is
+		// inside the grid, each time it comes in the document
+
+		// WHEEL
+		this.addDOMEvent("wheel", (ev: WheelEvent) => {
+			// many rows: one pixel of the scroll bar is one row, wherever the pointer is
+			if (ev.deltaY && this._store && this._store.getRowCount() >= SCROLL_LIMIT) {
+				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
+				ev.stopPropagation();
+				ev.preventDefault();
+			}
+			else if (this._has_fixed && ev.deltaY) {
+				// wheel on fixed part
+				//	fixed part do not have scrollbar, so we need to handle it by hand
+				let t = ev.target as Node;
+				while (t != this.dom) {
+					if (t == this._vheader.dom) {
+						this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
+						ev.stopPropagation();
+						ev.preventDefault();
+						break;
+					}
+
+					t = t.parentNode;
+				}
+			}
+		})
+
+		const targetCell = (e: MouseEvent) => {
+			let el = e.target as Element;
+			while (el && !el.classList.contains("cell")) {
+				el = el.parentElement;
+			}
+
+			if (el) {
+				const cel = componentFromDOM(el);
+				return {
+					ref: cel.getIntData("ref"),
+					row: cel.getInternalData("row"),
+					col: cel.getInternalData("col"),
+				}
+			}
+
+			return undefined;
+		}
+
+
+		// MOUSEDOWN
+		this.addDOMEvent("mousedown", (e) => {
+			if( !this._edit || this._inEditor(e) ) {
+				return;
+			}
+
+			// click on another cell while editing:
+			// validate now, rows may be rebuilt before the click event (and the click lost)
+			const ref = targetCell(e);
+			if( ref && ref.row!==undefined ) {
+				this._endEdit( true, true );
+
+				if (!this._selection.has(ref.ref)) {
+					this._clearSelection( false );
+					this._addSelection(ref.ref,true);
+				}
+
+				e.preventDefault( );
+			}
+		});
+
+		// CLICK
+		this.addDOMEvent("click", (e) => {
+			if( this._inEditor(e) ) {
+				return;
+			}
+
+			const ref = targetCell(e);
+			if (ref) {
+				//TODO: multiselection
+				if (!this._selection.has(ref.ref)) {
+					this._clearSelection( false );
+					this._addSelection(ref.ref,true);
+				}
+			}
+		});
+
+		// DBLCLICK
+		this.addDOMEvent("dblclick", (e) => {
+			if( this._inEditor(e) ) {
+				return;
+			}
+
+			const ref = targetCell(e);
+			if (ref) {
+				//TODO: multiselection
+				if (!this._selection.has(ref.ref)) {
+					this._clearSelection(false);
+					this._addSelection(ref.ref,true);
+				}
+
+				const dev: EvDblClick = { context: { row: ref.row, col: ref.col } };
+				this.fire( "dblClick", dev );
+
+				// checkboxes are toggled, other cells are edited
+				if( !dev.defaultPrevented && !this._toggleCell( ref.row, ref.col ) ) {
+					this.editCell( ref.row, ref.col );
+				}
+			}
+		});
+
+		// CONTEXT
+		this.addDOMEvent("contextmenu", (e) => {
+			// keep the native menu of the editor (copy/paste)
+			if( this._inEditor(e) ) {
+				return;
+			}
+
+			const ref = targetCell(e);
+			if (ref) {
+				//TODO: multiselection
+				if (!this._selection.has(ref.ref)) {
+					this._clearSelection( false );
+					this._addSelection(ref.ref, true );
+				}
+
+				this.fire( "contextMenu", { uievent: e, context: { row: ref.row, col: ref.col } } );
+			}
+			else {
+				this.fire( "contextMenu", { uievent: e, context: null } );
+			}
+
+			e.preventDefault();
+			e.stopPropagation();
+		});
 
 		if (props.store) {
 			this.setStore(props.store);
@@ -643,7 +781,8 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		if (lock) {
 			this._lock++;
 		}
-		else {
+		// an unlock too many leaves it at 0: the grid goes on drawing
+		else if (this._lock > 0) {
 			if (--this._lock == 0 && this._dirty) {
 				this._update(true);
 			}
@@ -1119,136 +1258,6 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			//this.setTimeout( "update", 0, ( ) => this._update( ) );
 			this._update()
-		});
-
-		// WHEEL
-		this.addDOMEvent("wheel", (ev: WheelEvent) => {
-			if (ev.deltaY && this._store && this._store.getRowCount() >= SCROLL_LIMIT) {
-				this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -1 : 1);
-				ev.stopPropagation();
-				ev.preventDefault();
-			}
-
-			if (this._has_fixed && ev.deltaY) {
-				// wheel on fixed part
-				//	fixed part do not have scrollbar, so we need to handle it by hand
-				let t = ev.target as Node;
-				while (t != this.dom) {
-					if (t == this._vheader.dom) {
-						this._viewport.dom.scrollBy(0, ev.deltaY < 0 ? -this._row_height : this._row_height);
-						ev.stopPropagation();
-						ev.preventDefault();
-						break;
-					}
-
-					t = t.parentNode;
-				}
-			}
-		})
-
-		const targetCell = (e: MouseEvent) => {
-			let el = e.target as Element;
-			while (el && !el.classList.contains("cell")) {
-				el = el.parentElement;
-			}
-
-			if (el) {
-				const cel = componentFromDOM(el);
-				return {
-					ref: cel.getIntData("ref"),
-					row: cel.getInternalData("row"),
-					col: cel.getInternalData("col"),
-				}
-			}
-
-			return undefined;
-		}
-
-
-		// MOUSEDOWN
-		this.addDOMEvent("mousedown", (e) => {
-			if( !this._edit || this._inEditor(e) ) {
-				return;
-			}
-
-			// click on another cell while editing:
-			// validate now, rows may be rebuilt before the click event (and the click lost)
-			const ref = targetCell(e);
-			if( ref && ref.row!==undefined ) {
-				this._endEdit( true, true );
-
-				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
-					this._addSelection(ref.ref,true);
-				}
-
-				e.preventDefault( );
-			}
-		});
-
-		// CLICK
-		this.addDOMEvent("click", (e) => {
-			if( this._inEditor(e) ) {
-				return;
-			}
-
-			const ref = targetCell(e);
-			if (ref) {
-				//TODO: multiselection
-				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
-					this._addSelection(ref.ref,true);
-				}
-			}
-		});
-
-		// DBLCLICK
-		this.addDOMEvent("dblclick", (e) => {
-			if( this._inEditor(e) ) {
-				return;
-			}
-
-			const ref = targetCell(e);
-			if (ref) {
-				//TODO: multiselection
-				if (!this._selection.has(ref.ref)) {
-					this._clearSelection(false);
-					this._addSelection(ref.ref,true);
-				}
-
-				const dev: EvDblClick = { context: { row: ref.row, col: ref.col } };
-				this.fire( "dblClick", dev );
-
-				// checkboxes are toggled, other cells are edited
-				if( !dev.defaultPrevented && !this._toggleCell( ref.row, ref.col ) ) {
-					this.editCell( ref.row, ref.col );
-				}
-			}
-		});
-
-		// CONTEXT
-		this.addDOMEvent("contextmenu", (e) => {
-			// keep the native menu of the editor (copy/paste)
-			if( this._inEditor(e) ) {
-				return;
-			}
-
-			const ref = targetCell(e);
-			if (ref) {
-				//TODO: multiselection
-				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
-					this._addSelection(ref.ref, true );
-				}
-
-				this.fire( "contextMenu", { uievent: e, context: { row: ref.row, col: ref.col } } );
-			}
-			else {
-				this.fire( "contextMenu", { uievent: e, context: null } );
-			}
-
-			e.preventDefault();
-			e.stopPropagation();
 		});
 
 		this._updateFlexs();
