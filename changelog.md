@@ -16,6 +16,7 @@ A version gets its date when it is published.
 ### PDF
 
 - Accented letters and the signs of Windows-1252 (`é à ç œ € … « » ’ ™`...) are written as they are. The text was written in UTF-8, which the font does not read: `é` came out as `Ã©`. A character that Windows-1252 does not have comes out as `?`. `measureText` gives these characters their own width: `align: "center"` and `"right"` are right with them.
+- `text( )` writes every text in WinAnsiEncoding, one that starts with `(` too: `"(note) total"` is shown as it is.
 - Bold: `bold: true` in the options of `text( )` writes in Helvetica-Bold. `measureText( str, size, bold )` measures it.
 - New `path( segments, fill, stroke?, lineWidth? )` on the page: a path of `m` (move), `l` (line), `c` (curve) and `h` (close), filled, outlined, or both. `null` for what is not drawn.
 - Colors were wrong, all but black: their components were written from 0 to 255, where PDF reads them from 0 to 1. `#808080` came out white.

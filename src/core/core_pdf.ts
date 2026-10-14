@@ -754,7 +754,7 @@ export class X4PDFBuilder {
 			ops.push('BT')
 			ops.push(`/${bold ? 'F2' : 'F1'} ${size} Tf`)
 			ops.push(`${fx(tx,2)} ${fx(y,2)} Td`)
-			ops.push(`${str.startsWith('(') ? str : pdfWinAnsi(str)} Tj`)
+			ops.push(`${pdfWinAnsi(str)} Tj`)
 			ops.push('ET')
 		}
 
