@@ -117,13 +117,14 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 
 	setValidator( validator: ValidationFn ) {
 
+		// focusout: once, the first time
 		if( !this.validator ) {
-			this.validator = validator;
-			
 			// validation en live des valeurs
 			// disable du bouton ok si pas bon
 			this.addDOMEvent( "focusout", ( ) => this.validate() );
 		}
+
+		this.validator = validator;
 	}
 
 	/**
@@ -155,11 +156,14 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 				return null;
 			}
 
-			for( let name in result ) {
+			// the elements already found: a select, a textarea, a rating... every radio of a group
+			for( const x of items ) {
+				const name = x.getAttribute( "name" );
 				if( new_values[name] != result[name] ) {
-					const x = this.query( `input[name="${name}"]` );
 					const ifx = x.queryInterface( "form-element" ) as IFormElement;
-					ifx.setRawValue( new_values[name] );
+					if( ifx ) {
+						ifx.setRawValue( new_values[name] );
+					}
 				}
 			}
 

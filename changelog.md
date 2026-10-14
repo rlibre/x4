@@ -19,6 +19,11 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Form
+
+- `validate( )`: the values that the validator changes are written back in the fields that carry the name, whatever they are (`Select`, `TextArea`, `Combobox`, `Rating`...), and in every radio of a group: the one that holds the value is checked.
+- `setValidator( )` called again replaces the validator.
+
 ### Rating
 
 - Without `steps`, a rating has its 5 stars.

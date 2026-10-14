@@ -1134,8 +1134,8 @@ class Form extends Box {
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
   setAutoComplete(on?: boolean): void
-  setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void
-  validate(): FormValues                   // null if invalid
+  setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void   // a new call replaces the validator
+  validate(): FormValues                   // null if invalid; the values the validator changes are written back in their fields (any element with the name, every radio of a group)
 }
 // Collects all children (recursive) that have a "name" attribute and implement queryInterface("form-element").
 ```
