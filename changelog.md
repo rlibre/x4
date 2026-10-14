@@ -3,6 +3,24 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.20
+
+### PDF
+
+- New `ctx.svgPath( d, x, y, scale, fill, stroke?, lineWidth? )`: the `d` of a SVG path, drawn in the PDF. The origin of the SVG falls on (x, y), its y going down as in SVG; `scale` is in points by unit of the SVG. `fill` and `stroke` as for `path( )`, `null` for what is not drawn. `M L H V C S Q T A Z`, absolute and relative: the quadratic curves and the arcs become Bézier curves. Another command throws an error: a drawing is never cut short.
+- New `ctx.icon( svg, x, y, w, h, opts? )`: a whole SVG icon, as an `Icon` takes it (`"<svg..."`, `"data:image/svg+xml,..."`, an imported `.svg`, `"var:name"`). Its viewBox is fitted and centered in w x h, (x, y) the bottom left corner. `path`, `rect` (rounded too), `circle`, `ellipse`, `line`, `polyline`, `polygon`, in groups with their `transform`; `fill`, `stroke`, `stroke-width`, `opacity`, `fill-opacity`, `fill-rule`, as attributes or in `style`. Gradients, texts, images, `<use>` and the rules of a `<style>` are not drawn.
+- `opts.color`: the color of `currentColor` and of what has no fill, black when not given: a one-color icon takes the color of the page. `opts.background`: an opacity is mixed with it, white when not given. A PDF has no transparency, which printers do not like: the part at 40 % of a duotone icon is its color mixed with the background.
+- A file (`"icons/pills.svg"`) cannot be read while a page is drawn: `ctx.icon` throws. Load it first, with `await svgLoader.load( url )`.
+
+```ts
+import pills from "./assets/pills-duotone-solid.svg";
+
+pdf.page( 595, 842, ctx => {
+	ctx.icon( pills, 50, 700, 40, 40, { color: "#ffffff", background: "#D55E00" } );
+	ctx.svgPath( "M0 0 A20 20 0 0 1 40 0 Z", 100, 760, 1, "#f2c94c" );
+} );
+```
+
 ## 2.3.19 (2026-10-14)
 
 ### Application

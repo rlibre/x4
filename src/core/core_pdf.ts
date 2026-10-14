@@ -569,6 +569,466 @@ export function renderBarcodeImage( type: BarcodeType, text: string, opts: Barco
 	return 'data:image/svg+xml,' + encodeURIComponent(new XMLSerializer().serializeToString(svg.getDom()))
 }
 
+// :: SVG :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+/**
+ * the endpoint arc of SVG as Bézier curves, a quarter of turn at most each
+ * (SVG 1.1, appendix F.6.5)
+ */
+
+function arcToCurves( x1: number, y1: number, rx: number, ry: number, phi: number, large: boolean, sweep: boolean, x2: number, y2: number ): PathSegment[] {
+	if (x1 === x2 && y1 === y2) {
+		return []
+	}
+
+	rx = Math.abs(rx)
+	ry = Math.abs(ry)
+	if (!rx || !ry) {
+		return [['l', x2, y2]]
+	}
+
+	const cos = Math.cos(phi * Math.PI / 180), sin = Math.sin(phi * Math.PI / 180)
+	const dx = (x1 - x2) / 2, dy = (y1 - y2) / 2
+	const xp = cos * dx + sin * dy, yp = -sin * dx + cos * dy
+
+	// radii too small: scaled up
+	const lambda = (xp * xp) / (rx * rx) + (yp * yp) / (ry * ry)
+	if (lambda > 1) {
+		rx *= Math.sqrt(lambda)
+		ry *= Math.sqrt(lambda)
+	}
+
+	const num = rx * rx * ry * ry - rx * rx * yp * yp - ry * ry * xp * xp
+	const den = rx * rx * yp * yp + ry * ry * xp * xp
+	const k = (large === sweep ? -1 : 1) * Math.sqrt(Math.max(0, num / den))
+	const cxp = k * rx * yp / ry, cyp = -k * ry * xp / rx
+	const cx = cos * cxp - sin * cyp + (x1 + x2) / 2
+	const cy = sin * cxp + cos * cyp + (y1 + y2) / 2
+
+	const angle = ( ux: number, uy: number, vx: number, vy: number ) => {
+		const a = Math.acos(Math.max(-1, Math.min(1, (ux * vx + uy * vy) / (Math.hypot(ux, uy) * Math.hypot(vx, vy)))))
+		return (ux * vy - uy * vx < 0) ? -a : a
+	}
+
+	const t1 = angle(1, 0, (xp - cxp) / rx, (yp - cyp) / ry)
+	let dt = angle((xp - cxp) / rx, (yp - cyp) / ry, (-xp - cxp) / rx, (-yp - cyp) / ry)
+	if (!sweep && dt > 0) {
+		dt -= 2 * Math.PI
+	}
+	else if (sweep && dt < 0) {
+		dt += 2 * Math.PI
+	}
+
+	const n = Math.ceil(Math.abs(dt) / (Math.PI / 2) - 1e-9)
+	const step = dt / n
+	const kappa = 4 / 3 * Math.tan(step / 4)
+
+	// a point of the ellipse, and its derivative
+	const pt = ( t: number ) => [cx + rx * Math.cos(t) * cos - ry * Math.sin(t) * sin, cy + rx * Math.cos(t) * sin + ry * Math.sin(t) * cos]
+	const dv = ( t: number ) => [-rx * Math.sin(t) * cos - ry * Math.cos(t) * sin, -rx * Math.sin(t) * sin + ry * Math.cos(t) * cos]
+
+	const out: PathSegment[] = []
+	for (let i = 0; i < n; i++) {
+		const a = t1 + i * step, b = a + step
+		const [ax, ay] = pt(a), [bx, by] = pt(b)
+		const [adx, ady] = dv(a), [bdx, bdy] = dv(b)
+		const last = i === n - 1
+		out.push(['c', ax + kappa * adx, ay + kappa * ady, bx - kappa * bdx, by - kappa * bdy, last ? x2 : bx, last ? y2 : by])
+	}
+	return out
+}
+
+/**
+ * The "d" of a SVG path as absolute segments, in its own coordinates (y goes down).
+ * M L H V C S Q T A Z, absolute and relative; Q and T become exact cubic curves,
+ * A becomes Bézier curves. Another command throws: better than a drawing cut short.
+ */
+
+function parseSvgPath( d: string ): PathSegment[] {
+	let pos = 0
+
+	const skip = () => {
+		while (pos < d.length && /[\s,]/.test(d[pos])) {
+			pos++
+		}
+	}
+
+	const number = () => {
+		skip()
+		const m = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/.exec(d.substring(pos))
+		if (!m) {
+			throw new Error(`svg path: number expected at ${pos}: ${d.substring(pos, pos + 20)}`)
+		}
+		pos += m[0].length
+		return parseFloat(m[0])
+	}
+
+	// the flags of an arc are one digit, without a separator: "a1 1 0 001 1"
+	const flag = () => {
+		skip()
+		const f = d[pos++]
+		if (f !== '0' && f !== '1') {
+			throw new Error(`svg path: flag expected at ${pos - 1}`)
+		}
+		return f === '1'
+	}
+
+	const out: PathSegment[] = []
+	let cx = 0, cy = 0				// current point
+	let sx = 0, sy = 0				// start of the subpath
+	let qx = 0, qy = 0				// last control point, reflected by S and T
+	let last = ''					// last command, uppercase
+	let cmd = ''
+
+	const curve = ( x1: number, y1: number, x2: number, y2: number, x: number, y: number ) => {
+		out.push(['c', x1, y1, x2, y2, x, y])
+		qx = x2; qy = y2
+		cx = x; cy = y
+	}
+
+	const quad = ( x1: number, y1: number, x: number, y: number ) => {
+		out.push(['c', cx + 2 / 3 * (x1 - cx), cy + 2 / 3 * (y1 - cy), x + 2 / 3 * (x1 - x), y + 2 / 3 * (y1 - y), x, y])
+		qx = x1; qy = y1
+		cx = x; cy = y
+	}
+
+	skip()
+	while (pos < d.length) {
+		if (/[a-zA-Z]/.test(d[pos])) {
+			cmd = d[pos++]
+		}
+		else if (!cmd) {
+			throw new Error(`svg path: command expected at ${pos}`)
+		}
+
+		const rel = cmd === cmd.toLowerCase()
+		const ox = rel ? cx : 0, oy = rel ? cy : 0
+		const C = cmd.toUpperCase()
+
+		switch (C) {
+			case 'Z':
+				out.push(['h'])
+				cx = sx; cy = sy
+				break
+
+			case 'M':
+				cx = sx = number() + ox
+				cy = sy = number() + oy
+				out.push(['m', cx, cy])
+				cmd = rel ? 'l' : 'L'		// the next pairs are lines
+				break
+
+			case 'L':
+				cx = number() + ox
+				cy = number() + oy
+				out.push(['l', cx, cy])
+				break
+
+			case 'H':
+				cx = number() + ox
+				out.push(['l', cx, cy])
+				break
+
+			case 'V':
+				cy = number() + oy
+				out.push(['l', cx, cy])
+				break
+
+			case 'C':
+				curve(number() + ox, number() + oy, number() + ox, number() + oy, number() + ox, number() + oy)
+				break
+
+			case 'S': {
+				const x1 = (last === 'C' || last === 'S') ? 2 * cx - qx : cx
+				const y1 = (last === 'C' || last === 'S') ? 2 * cy - qy : cy
+				curve(x1, y1, number() + ox, number() + oy, number() + ox, number() + oy)
+				break
+			}
+
+			case 'Q':
+				quad(number() + ox, number() + oy, number() + ox, number() + oy)
+				break
+
+			case 'T': {
+				const x1 = (last === 'Q' || last === 'T') ? 2 * cx - qx : cx
+				const y1 = (last === 'Q' || last === 'T') ? 2 * cy - qy : cy
+				quad(x1, y1, number() + ox, number() + oy)
+				break
+			}
+
+			case 'A': {
+				const rx = number(), ry = number(), phi = number()
+				const large = flag(), sweep = flag()
+				const x = number() + ox, y = number() + oy
+				out.push(...arcToCurves(cx, cy, rx, ry, phi, large, sweep, x, y))
+				cx = x; cy = y
+				break
+			}
+
+			default:
+				throw new Error(`svg path: command not handled: ${cmd}`)
+		}
+
+		last = C
+		skip()
+	}
+
+	return out
+}
+
+// a 2d affine transform: [a b c d e f], x' = a x + c y + e, y' = b x + d y + f
+type Matrix = [number, number, number, number, number, number]
+
+const IDENTITY: Matrix = [1, 0, 0, 1, 0, 0]
+
+function mulMatrix( m: Matrix, n: Matrix ): Matrix {
+	return [
+		m[0] * n[0] + m[2] * n[1], m[1] * n[0] + m[3] * n[1],
+		m[0] * n[2] + m[2] * n[3], m[1] * n[2] + m[3] * n[3],
+		m[0] * n[4] + m[2] * n[5] + m[4], m[1] * n[4] + m[3] * n[5] + m[5],
+	]
+}
+
+function parseTransform( tr: string ): Matrix {
+	let m = IDENTITY
+	for (const [, fn, args] of tr.matchAll(/(\w+)\s*\(([^)]*)\)/g)) {
+		const v = args.split(/[\s,]+/).filter(s => s).map(Number)
+		let t: Matrix
+		switch (fn) {
+			case 'matrix': t = v.slice(0, 6) as Matrix; break
+			case 'translate': t = [1, 0, 0, 1, v[0], v[1] ?? 0]; break
+			case 'scale': t = [v[0], 0, 0, v[1] ?? v[0], 0, 0]; break
+			case 'rotate': {
+				const a = v[0] * Math.PI / 180, c = Math.cos(a), s = Math.sin(a)
+				const [px, py] = [v[1] ?? 0, v[2] ?? 0]
+				t = [c, s, -s, c, px - c * px + s * py, py - s * px - c * py]
+				break
+			}
+			case 'skewX': t = [1, 0, Math.tan(v[0] * Math.PI / 180), 1, 0, 0]; break
+			case 'skewY': t = [1, Math.tan(v[0] * Math.PI / 180), 0, 1, 0, 0]; break
+			default: continue
+		}
+		m = mulMatrix(m, t)
+	}
+	return m
+}
+
+function transformSegments( segs: PathSegment[], m: Matrix ): PathSegment[] {
+	const X = ( x: number, y: number ) => m[0] * x + m[2] * y + m[4]
+	const Y = ( x: number, y: number ) => m[1] * x + m[3] * y + m[5]
+
+	return segs.map( ( s ): PathSegment => {
+		switch (s[0]) {
+			case 'm': return ['m', X(s[1], s[2]), Y(s[1], s[2])]
+			case 'l': return ['l', X(s[1], s[2]), Y(s[1], s[2])]
+			case 'c': return ['c', X(s[1], s[2]), Y(s[1], s[2]), X(s[3], s[4]), Y(s[3], s[4]), X(s[5], s[6]), Y(s[5], s[6])]
+			default: return ['h']
+		}
+	} )
+}
+
+/**
+ * The text of a svg, as an Icon takes it: "var:name" (a CSS variable), "data:image/svg+xml,...",
+ * "data:image/svg+xml;base64,..." (a svg imported by the bundler), "<svg...". A file (".svg") cannot
+ * be read while a page is drawn: load it first, with svgLoader.load( )
+ */
+
+function svgSource( icon: string ): string {
+	while (icon.startsWith('var:')) {
+		icon = document.documentElement.style.getPropertyValue(icon.substring(4)).trim()
+	}
+
+	if (icon.startsWith('data:image/svg+xml;base64,')) {
+		return atob(icon.substring(26))
+	}
+
+	if (icon.startsWith('data:image/svg+xml,')) {
+		const body = icon.substring(19)
+		return body.startsWith('<') ? body : decodeURIComponent(body)
+	}
+
+	if (icon.trimStart().startsWith('<')) {
+		return icon
+	}
+
+	throw new Error(`icon: not a svg (a file is loaded first, by svgLoader.load): ${icon.substring(0, 40)}`)
+}
+
+export interface IconOptions {
+	color?: string			// currentColor, and a fill that is not given; black when not given
+	background?: string		// an opacity is mixed with it (a PDF without transparency); white when not given
+}
+
+interface SvgShape {
+	segs: PathSegment[]			// in the coordinates of the viewBox
+	fill: string				// null: not filled
+	stroke: string				// null: not stroked
+	width: number				// of the stroke, in the coordinates of the viewBox
+	alpha: number
+	evenOdd: boolean
+}
+
+const SVG_SKIP = ['defs', 'clipPath', 'mask', 'symbol', 'style', 'title', 'desc', 'metadata', 'linearGradient', 'radialGradient', 'pattern', 'marker', 'filter', 'text', 'image', 'use', 'foreignObject']
+
+/**
+ * the shapes of a svg: path, rect, circle, ellipse, line, polyline, polygon, in groups,
+ * with their transforms. fill, stroke, stroke-width, opacity, fill-opacity, fill-rule:
+ * as attributes or in style="". currentColor, and a fill that is not given, are `color`
+ */
+
+function svgShapes( source: string, color: string ) {
+	const doc = new DOMParser().parseFromString(source, 'image/svg+xml')
+	const root = doc.documentElement
+	if (root.nodeName !== 'svg') {
+		throw new Error('icon: not a svg')
+	}
+
+	let vb = (root.getAttribute('viewBox') ?? '').split(/[\s,]+/).filter(s => s).map(Number)
+	if (vb.length !== 4) {
+		vb = [0, 0, parseFloat(root.getAttribute('width')), parseFloat(root.getAttribute('height'))]
+	}
+	if (!(vb[2] > 0 && vb[3] > 0)) {
+		throw new Error('icon: no viewBox, nor width and height')
+	}
+
+	interface Paint { fill: string; stroke: string; width: number; alpha: number; fillAlpha: number; evenOdd: boolean }
+
+	const shapes: SvgShape[] = []
+	const n = ( el: Element, name: string, def = 0 ) => {
+		const v = parseFloat(el.getAttribute(name))
+		return isNaN(v) ? def : v
+	}
+
+	const visit = ( el: Element, m: Matrix, inherited: Paint ) => {
+		if (SVG_SKIP.includes(el.nodeName)) {
+			return
+		}
+
+		// the properties of the element: its attributes, then its style
+		const props: Record<string, string> = {}
+		for (const name of ['fill', 'stroke', 'stroke-width', 'opacity', 'fill-opacity', 'fill-rule', 'display', 'visibility']) {
+			const v = el.getAttribute(name)?.trim()
+			if (v) {
+				props[name] = v
+			}
+		}
+		for (const decl of (el.getAttribute('style') ?? '').split(';')) {
+			const [k, v] = decl.split(':').map(s => s?.trim())
+			if (k && v) {
+				props[k] = v
+			}
+		}
+
+		if (props.display === 'none' || props.visibility === 'hidden') {
+			return
+		}
+
+		const paint = (v: string, cur: string) => {
+			if (v === undefined || v === 'inherit') {
+				return cur
+			}
+			if (v === 'none' || v === 'transparent') {
+				return null
+			}
+			return (v === 'currentColor' || v.startsWith('url(')) ? color : v
+		}
+
+		const p: Paint = {
+			fill: paint(props.fill, inherited.fill),
+			stroke: paint(props.stroke, inherited.stroke),
+			width: props['stroke-width'] !== undefined ? parseFloat(props['stroke-width']) : inherited.width,
+			alpha: inherited.alpha * (props.opacity !== undefined ? parseFloat(props.opacity) : 1),
+			fillAlpha: props['fill-opacity'] !== undefined ? parseFloat(props['fill-opacity']) : inherited.fillAlpha,
+			evenOdd: props['fill-rule'] !== undefined ? props['fill-rule'] === 'evenodd' : inherited.evenOdd,
+		}
+
+		const tr = el.getAttribute('transform')
+		const mm = tr ? mulMatrix(m, parseTransform(tr)) : m
+
+		let d: string = null
+		switch (el.nodeName) {
+			case 'svg':
+			case 'g':
+			case 'a':
+				for (const child of Array.from(el.children)) {
+					visit(child, mm, p)
+				}
+				return
+
+			case 'path':
+				d = el.getAttribute('d')
+				break
+
+			case 'rect': {
+				const x = n(el, 'x'), y = n(el, 'y'), w = n(el, 'width'), h = n(el, 'height')
+				let rx = n(el, 'rx', -1), ry = n(el, 'ry', -1)
+				rx = rx < 0 ? Math.max(ry, 0) : rx
+				ry = ry < 0 ? rx : ry
+				rx = Math.min(rx, w / 2)
+				ry = Math.min(ry, h / 2)
+				d = (rx && ry)
+					? `M${x + rx},${y}H${x + w - rx}A${rx},${ry} 0 0 1 ${x + w},${y + ry}V${y + h - ry}A${rx},${ry} 0 0 1 ${x + w - rx},${y + h}H${x + rx}A${rx},${ry} 0 0 1 ${x},${y + h - ry}V${y + ry}A${rx},${ry} 0 0 1 ${x + rx},${y}Z`
+					: `M${x},${y}H${x + w}V${y + h}H${x}Z`
+				break
+			}
+
+			case 'circle':
+			case 'ellipse': {
+				const cx = n(el, 'cx'), cy = n(el, 'cy')
+				const rx = el.nodeName === 'circle' ? n(el, 'r') : n(el, 'rx')
+				const ry = el.nodeName === 'circle' ? rx : n(el, 'ry')
+				d = `M${cx - rx},${cy}A${rx},${ry} 0 1 0 ${cx + rx},${cy}A${rx},${ry} 0 1 0 ${cx - rx},${cy}Z`
+				break
+			}
+
+			case 'line':
+				d = `M${n(el, 'x1')},${n(el, 'y1')}L${n(el, 'x2')},${n(el, 'y2')}`
+				break
+
+			case 'polyline':
+			case 'polygon':
+				d = 'M' + (el.getAttribute('points') ?? '').trim() + (el.nodeName === 'polygon' ? 'Z' : '')
+				break
+		}
+
+		if (!d) {
+			return
+		}
+
+		// the stroke width grows with the transform
+		const scale = Math.sqrt(Math.abs(mm[0] * mm[3] - mm[1] * mm[2]))
+
+		shapes.push({
+			segs: transformSegments(parseSvgPath(d), mm),
+			fill: p.fill,
+			stroke: p.stroke,
+			width: p.width * scale,
+			alpha: p.alpha * p.fillAlpha,
+			evenOdd: p.evenOdd,
+		})
+	}
+
+	// by default, a svg is filled in black: here in the color asked
+	visit(root, IDENTITY, { fill: color, stroke: null, width: 1, alpha: 1, fillAlpha: 1, evenOdd: false })
+	return { box: vb, shapes }
+}
+
+/**
+ * a color with an opacity, mixed with the background: a PDF without transparency
+ * (printers do not like it)
+ */
+
+function mixColor( color: string, background: string, alpha: number ): Color {
+	const c = new Color(color)
+	if (alpha >= 1) {
+		return c
+	}
+
+	const f = c.toRgb(), b = new Color(background).toRgb()
+	const mix = ( x: number, y: number ) => Math.round(alpha * x + (1 - alpha) * y)
+	return new Color(mix(f.red, b.red), mix(f.green, b.green), mix(f.blue, b.blue))
+}
+
 type PDFValue = null | boolean | number | string | PDFValue[] | Ref | { [key: string]: PDFValue }
 
 interface PDFObject {
@@ -707,6 +1167,16 @@ export interface PageContext {
 	 * a Code 128: its bars on w x h. Without the quiet zone, left to the caller
 	 */
 	barcode(type: BarcodeType, text: string, x: number, y: number, w: number, h: number, opts?: BarcodeOptions): void;
+	/**
+	 * the "d" of a svg path: the origin of the svg on (x, y), its y going down;
+	 * scale: points by unit of the svg. fill and stroke as for path
+	 */
+	svgPath(d: string, x: number, y: number, scale: number, fill: string, stroke?: string, lineWidth?: number): void;
+	/**
+	 * a svg icon, as an Icon takes it (not a file: load it first, by svgLoader.load),
+	 * its viewBox fitted and centered in w x h, (x, y) the bottom left corner
+	 */
+	icon(svg: string, x: number, y: number, w: number, h: number, opts?: IconOptions): void;
 }
 
 export class X4PDFBuilder {
@@ -772,26 +1242,58 @@ export class X4PDFBuilder {
 			ops.push('S')
 		}
 
-		const path = (segments: PathSegment[], fill: string, stroke?: string, lineWidth: number = 1) => {
+		const draw = (segments: PathSegment[], fill: Color, stroke: Color, lineWidth: number, evenOdd = false) => {
 			if (!fill && !stroke) {
 				return
 			}
 
 			if (fill) {
-				ops.push( formatColor(new Color(fill), 'rg') );
+				ops.push( formatColor(fill, 'rg') );
 			}
 
 			if (stroke) {
 				ops.push(`${fx(lineWidth,2)} w`);
-				ops.push( formatColor(new Color(stroke), 'RG') );
+				ops.push( formatColor(stroke, 'RG') );
 			}
 
 			for (const [op, ...coords] of segments) {
 				ops.push( [...coords.map( v => fx(v,2) ), op].join(' ') );
 			}
 
-			// f: fill, S: stroke, B: both
-			ops.push( fill ? (stroke ? 'B' : 'f') : 'S' );
+			// f: fill, S: stroke, B: both; * for the even-odd rule
+			const star = evenOdd ? '*' : ''
+			ops.push( fill ? (stroke ? 'B' + star : 'f' + star) : 'S' );
+		}
+
+		const path = (segments: PathSegment[], fill: string, stroke?: string, lineWidth: number = 1) => {
+			draw(segments, fill ? new Color(fill) : null, stroke ? new Color(stroke) : null, lineWidth)
+		}
+
+		const svgPath = (d: string, x: number, y: number, scale: number, fill: string, stroke?: string, lineWidth: number = 1) => {
+			// the origin of the svg on (x, y), its y going down
+			const segs = transformSegments(parseSvgPath(d), [scale, 0, 0, -scale, x, y])
+			draw(segs, fill ? new Color(fill) : null, stroke ? new Color(stroke) : null, lineWidth)
+		}
+
+		const icon = (svg: string, x: number, y: number, w: number, h: number, opts: IconOptions = {}) => {
+			const { box: [bx, by, bw, bh], shapes } = svgShapes(svgSource(svg), opts.color ?? '#000000')
+			const background = opts.background ?? '#ffffff'
+
+			// the viewBox fits in w x h, centered, its y going down
+			const s = Math.min(w / bw, h / bh)
+			const ox = x + (w - bw * s) / 2 - bx * s
+			const oy = y + h - (h - bh * s) / 2 + by * s
+			const m: Matrix = [s, 0, 0, -s, ox, oy]
+
+			for (const shape of shapes) {
+				draw(
+					transformSegments(shape.segs, m),
+					shape.fill ? mixColor(shape.fill, background, shape.alpha) : null,
+					shape.stroke ? mixColor(shape.stroke, background, shape.alpha) : null,
+					shape.width * s,
+					shape.evenOdd
+				)
+			}
 		}
 		
 		const image = (jpegBytes: Uint8Array, x: number, y: number, w: number, h: number) => {
@@ -863,7 +1365,9 @@ export class X4PDFBuilder {
 			image,
 			link,
 			path,
-			barcode
+			barcode,
+			svgPath,
+			icon
 		}
 
 		let width: number
