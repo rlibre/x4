@@ -102,6 +102,10 @@ view.close( );		// done with it
 - With 200 rows and more, a notch of the wheel over a fixed column scrolls one row, as it does over the rest of the grid.
 - `lock( false )` called once too many leaves the spreadsheet unlocked: it goes on drawing. The `Gridview` does the same.
 
+### Dialog, MessageBox, InputBox, PromptBox
+
+- The promise of `showAsync( )` is settled whatever closes the box: with the name of the button that was clicked, or with `null` when the box is closed without a button (Escape, the close box). The code that awaits it goes on.
+
 ### Keyboard
 
 - New prop `locale` and new method `setLocale( locale )`: the language of the keys of the virtual keyboard, with or without its country (`"fr-FR"`, `"de-CH"`, `"pl"`). `"fr-FR"` when nothing is said.

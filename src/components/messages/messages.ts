@@ -106,9 +106,12 @@ export class MessageBox extends Dialog<DialogProps>
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button );
-					box.close() 
+					box.close()
 				});
 			});
+
+			// closed without a button (Escape, the close box): nothing was chosen
+			box.on( "closed", ( ) => resolve( null ) );
 
 			box.show();
 		} );
@@ -175,9 +178,12 @@ export class InputBox extends Dialog<DialogProps>
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button=="ok" ? box.getValue( ) : null );
-					box.close() 
+					box.close()
 				});
 			});
+
+			// closed without a button (Escape, the close box): nothing was chosen
+			box.on( "closed", ( ) => resolve( null ) );
 
 			box.show();
 		} );
@@ -233,9 +239,12 @@ export class PromptBox extends Dialog<DialogProps>
 			box.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
 					resolve( ev.button );
-					box.close() 
+					box.close()
 				});
 			});
+
+			// closed without a button (Escape, the close box): nothing was chosen
+			box.on( "closed", ( ) => resolve( null ) );
 
 			box.show();
 		} );

@@ -257,10 +257,13 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 
 			this.on( "btnclick", ( ev ) => {
 				asap( ( ) => {
-					this.close( );
 					resolve( ev.button );
+					this.close( );
 				});
 			});
+
+			// closed without a button (Escape, the close box): nothing was chosen
+			this.on( "closed", ( ) => resolve( null ) );
 
 			this.show();
 		} );

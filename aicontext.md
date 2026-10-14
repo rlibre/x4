@@ -1083,7 +1083,7 @@ class Dialog extends Popup {
   getButton(name: string): Button
   getBtnBar(): BtnGroup
   setTitle(title: string): void
-  showAsync(): Promise<string>             // resolves with the clicked button name
+  showAsync(): Promise<string>             // the name of the clicked button; null when closed without a button (Escape, close box)
 }
 ```
 
@@ -1096,7 +1096,7 @@ class MessageBox extends Dialog {
 }
 class InputBox extends Dialog {
   getValue(): string
-  // static showAsync(msg, value, title?, options?: {password?, trim?}): Promise<string>  (null if cancelled)
+  // static showAsync(msg, value, title?, options?: {password?, trim?}): Promise<string>  (null if cancelled or closed)
 }
 class PromptBox extends Dialog {
   static showAsync(msg: string|UnsafeHtml, editor: Component, title?: string): Promise<string>
