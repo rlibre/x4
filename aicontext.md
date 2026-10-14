@@ -1269,7 +1269,7 @@ class DataProxy extends CoreElement { load(url?): Promise<void> }   // Event "ch
 ```ts
 class Router extends EventSource {
   constructor(useHash?: boolean)           // default true (# URLs)
-  get(uri: string|RegExp, handler: (params: any, path: string) => void): void
+  get(uri: string|RegExp, handler: (params: any, path: string) => void): void   // the first route that matches is called, in the order of get: "/*" last is the route for the rest (params.wild)
   init(): void                             // trigger the current route
   navigate(uri: string, notify?: boolean, replace?: boolean): boolean
   // Events: "change" → { value: string } ; "error" → { code: 404, message: string }

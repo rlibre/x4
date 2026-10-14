@@ -19,6 +19,12 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Router
+
+- The back button of the browser calls the route that `navigate( )` calls: the first that matches, in the order of `get( )`. `"/*"`, declared last, is the route for the rest (`params.wild`); for what runs at each navigation, the event `change`.
+- The handler gets the same `path` from both, as in the address: `"/detail/5"`, without `#`.
+- The parameters are decoded: `/detail/caf%C3%A9` gives `params.id === "café"`. A lone `%` is left as it is.
+
 ### Command line
 
 - `x4js <command> --help` (or `-h`) shows the help, which now gives the options of every command.

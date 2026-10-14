@@ -93,6 +93,23 @@ export function parseRoute(str: string | RegExp, loose = false): Segment {
 }
 
 /**
+ * the parameters of the url are encoded (%C3%A9): decoded; a lone % is left as it is
+ */
+
+function decode( s: string ) {
+	if( s===undefined ) {
+		return s;		// an optional parameter that is not there
+	}
+
+	try {
+		return decodeURIComponent( s );
+	}
+	catch {
+		return s;
+	}
+}
+
+/**
  * Defines the events that the `Router` can emit.
  */
 
@@ -144,15 +161,13 @@ export class Router extends EventSource< RouterEvents > {
 			const url = this._getLocation( );
 			const found = this._find(url);
 
-			if( found.handlers.length==0 ) {
+			if( !found ) {
 				console.log( 'route not found: '+url );
 				this.fire( "error", {code: 404, message: "route not found" } );
 				return;
 			}
 
-			found.handlers.forEach(h => {
-				h(found.params,url);
-			});
+			found.handler( found.params, url );
 
 			this.fire( "change", { value: this._getLocation() } );
 		});
@@ -201,7 +216,8 @@ export class Router extends EventSource< RouterEvents > {
 	 * Behavior summary:
 	 * - If no matching route or no handlers are found, logs a message, fires an "error" event with
 	 *   { code: 404, message: "route not found" } and returns false.
-	 * - If notify is true, invokes the first handler of the matched route with (params, uri).
+	 * - If notify is true, invokes the handler of the first route that matches, in the order of get,
+	 *   with (params, path): the params decoded, the path as the back button gives it ("/detail/5").
 	 * - Always fires a "change" event with { value: this._getLocation() } after performing the navigation.
 	 *
 	 * @param uri - Target URI to navigate to. If it does not start with '/', a leading '/' will be added.
@@ -227,7 +243,7 @@ export class Router extends EventSource< RouterEvents > {
 
 		const found = this._find( uri );
 
-		if( !found || found.handlers.length==0 ) {
+		if( !found ) {
 			//window.history.pushState({}, '', 'error')
 			console.log( 'route not found: '+uri );
 			this.fire( "error", {code: 404, message: "route not found" } );
@@ -249,12 +265,9 @@ export class Router extends EventSource< RouterEvents > {
 			window.history.pushState({}, '', uri );
 		}
 
+		// the path as popstate gives it: "/detail/5", encoded as in the address
 		if( notify ) {
-			//found.handlers.forEach( h => {
-			//	h( found.params, uri );
-			//} );
-			
-			found.handlers[0]( found.params, uri );
+			found.handler( found.params, this._getLocation( ) );
 		}
 
 		this.fire( "change", { value: this._getLocation() } );
@@ -262,47 +275,32 @@ export class Router extends EventSource< RouterEvents > {
 	}
 
 	/**
-	 * 
+	 * the first route that matches, in the order of get, and its parameters decoded; null when none
 	 */
 
-	private _find( url: string ): { params: Record<string,any>, handlers: RouteHandler[] } {
-		
-		let matches = [];
-		let params: Record<string,any> = {};
-		let handlers: RouteHandler[] = [];
+	private _find( url: string ): { params: Record<string,any>, handler: RouteHandler } {
 
 		for (const tmp of this.m_routes ) {
-			if (!tmp.keys ) {
-				matches = tmp.pattern.exec(url);
-				if (!matches) {
-					continue;
-				}
-
-				if (matches['groups']) {
-					for (const k in matches['groups']) {
-						params[k] = matches['groups'][k];
-					}
-				}
-
-				handlers = [...handlers, tmp.handler];
-			} 
-			else if (tmp.keys.length > 0) {
-				matches = tmp.pattern.exec(url);
-				if (matches === null) {
-					continue;
-				}
-
-				for ( let j = 0; j < tmp.keys.length;) {
-					params[tmp.keys[j]] = matches[++j];
-				}
-
-				handlers = [...handlers, tmp.handler];
-			} 
-			else if (tmp.pattern.test(url)) {
-				handlers = [...handlers, tmp.handler];
+			const matches = tmp.pattern.exec( url );
+			if( !matches ) {
+				continue;
 			}
+
+			const params: Record<string,any> = {};
+			if( !tmp.keys ) {
+				for (const k in matches.groups ) {
+					params[k] = decode( matches.groups[k] );
+				}
+			}
+			else {
+				tmp.keys.forEach( ( k, j ) => {
+					params[k] = decode( matches[j+1] );
+				} );
+			}
+
+			return { params, handler: tmp.handler };
 		}
 
-		return { params, handlers };
+		return null;
 	}
 }
