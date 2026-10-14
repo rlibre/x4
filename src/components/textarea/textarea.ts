@@ -63,8 +63,9 @@ export class SimpleTextArea extends Component<SimpleTextAreaProps,TextAreaEvents
 			this.setText( props.value+'' );
 		}
 
+		// none by default (the stylesheet); true: "both", false: "none"
 		if( props.resize!==undefined ) {
-			this.setStyleValue( "resize", props.resize===false ? "none" : props.resize as string );
+			this.setStyleValue( "resize", props.resize===true ? "both" : props.resize===false ? "none" : props.resize );
 		}
 
 		if( props.readonly ) {

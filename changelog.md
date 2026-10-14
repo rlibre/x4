@@ -26,6 +26,7 @@ A version gets its date when it is published.
 ### SimpleTextArea
 
 - Alone in a box, it keeps its height (`flex-shrink: 0`): a box short of room does not crush it. In a `TextArea`, it follows the size of the `TextArea`.
+- No handle to resize it by default (`resize: none`), in a `TextArea` too: `resize` asks for one. `resize: true` gives `"both"`. A textarea that has to keep its handle needs `resize: true`.
 
 ### Calendar
 

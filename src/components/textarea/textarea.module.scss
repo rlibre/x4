@@ -25,6 +25,7 @@
 .x4simpletextarea {
 
 		flex-shrink: 0;		// alone in a box, it keeps its height: the box does not crush it
+		resize: none;		// no handle unless the prop resize asks for one
 		padding: 4px;
 		outline: none;
 		font: inherit;
@@ -44,10 +45,6 @@
 		&::placeholder {
 			color: var( --input-placeholder );
 			font-style: italic;
-		}
-
-		&[resize=false] {
-			resize: none;
 		}
 	}
 

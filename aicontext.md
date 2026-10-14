@@ -642,7 +642,7 @@ class TextEdit extends HBox {
 ```ts
 interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (name, readonly, required, placeholder, autofocus, focus, change)
   value?: string
-  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // false = "none"
+  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // no handle by default; true = "both", false = "none"
   trim?: boolean                           // getText() trims, unless false
 }
 interface TextAreaProps extends SimpleTextAreaProps { label?: string }
