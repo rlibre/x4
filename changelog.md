@@ -19,6 +19,12 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Slider
+
+- The thumb is placed from `min`: on `min: 10, max: 20`, the value 10 is at the start of the track, 15 in the middle. `min` and `max` can have decimals.
+- `change` is fired when the user moves the thumb (drag, arrows): not at the construction, nor by `setValue`, `setMin`, `setMax`.
+- New `name`: a `Form` reads the slider, as a number, and `setValues` moves its thumb. New `getValue( )`.
+
 ### Listbox
 
 - The arrows go on from the item selected, by a click or by `select( )` in the code. After `setItems( )` or `clearSelection( )`, they start from the first item. An item of id `0` is one: ↓ goes to the next.

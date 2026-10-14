@@ -16,7 +16,7 @@
 
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
-import { class_ns, Rect } from '../../core/core_tools';
+import { class_ns, IComponentInterface, IFormElement, Rect } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Input } from '../input/input';
@@ -33,6 +33,8 @@ interface SliderProps extends ComponentProps {
 	max: number;
 	step?: number;
 	vertical?: boolean;
+	/** for a Form: it reads the value as a number */
+	name?: string;
 	change?: EventCallback<EvChange>;
 }
 
@@ -83,6 +85,12 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 
 		this.setAttribute( "tabindex", 0 );
 
+		// the name is on the slider: a Form finds it (queryInterface). The hidden range keeps
+		// the value: the browser brings it between min and max, on the step
+		if( props.name ) {
+			this.setAttribute( "name", props.name );
+		}
+
 		this.setDOMEvents( {
 			pointerdown: ( ev ) => this._on_mousedown( ev ),
 			pointermove: ( ev ) => this._on_mousemove( ev ),
@@ -106,8 +114,8 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 	}
 
 	private _getMinMax( ) {
-		const min = parseInt( this._range.getAttribute( 'min' ) );
-		const max = parseInt( this._range.getAttribute( 'max' ) );
+		const min = parseFloat( this._range.getAttribute( 'min' ) );
+		const max = parseFloat( this._range.getAttribute( 'max' ) );
 		return [min,max];
 	}
 
@@ -134,15 +142,17 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 			const [min,max] = this._getMinMax( );
 
 			this._range.setNumValue( min + (perc * (max-min) ) );
-			this._update( );
+			this._update( true );
 		}
 	}
 
-	private _update( ) {
+	// notify: a change made by the user (drag, arrows); not by the code, nor at the construction
+	private _update( notify = false ) {
 		const value = this._range.getNumValue( );
 		const [min,max] = this._getMinMax( );
 
-		let perc = max>min ? value / Math.abs(max-min) * 100 : 0;
+		// from min: min is at 0%, max at 100%
+		let perc = max>min ? (value-min) / (max-min) * 100 : 0;
 
 		if( !this.props.vertical ) {
 			this._thumb.setStyleValue( "left", perc+"%" );
@@ -155,7 +165,9 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 			this._bar.setStyleValue( "height", perc+"%" );
 		}
 
-		this.fire( "change", { value } );
+		if( notify ) {
+			this.fire( "change", { value } );
+		}
 	}
 
 	private _on_mouseup( ev: PointerEvent ) {
@@ -184,7 +196,7 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 			}
 
 			this._range.setNumValue( this._range.getNumValue()+inc );
-			this._update( );
+			this._update( true );
 		}
 	}
 
@@ -201,5 +213,23 @@ export class Slider extends Component<SliderProps,SliderEvents> {
 	setValue( v: number ) {
 		this._range.setNumValue( v );
 		this._update( );
+	}
+
+	getValue( ) {
+		return this._range.getNumValue( );
+	}
+
+	override queryInterface<T extends IComponentInterface>( name: string ): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ) => this.getValue( ),
+				setRawValue: ( v: any ) => { this.setValue( +v ); },
+				isValid: ( ) => true,
+			};
+
+			return i as unknown as T;
+		}
+
+		return super.queryInterface( name );
 	}
 }

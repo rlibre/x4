@@ -713,10 +713,12 @@ class Switch extends HBox {}
 interface SliderProps extends ComponentProps {
   value: number; min: number; max: number  // required
   step?: number; vertical?: boolean
-  change?: EventCallback<EvChange>
+  name?: string                            // for a Form, which reads a number
+  change?: EventCallback<EvChange>         // when the user moves the thumb (drag, arrows), not by the code
 }
 class Slider extends Component {
-  setMin(min: number): void; setMax(max: number): void; setValue(v: number): void
+  getValue(): number
+  setMin(min: number): void; setMax(max: number): void; setValue(v: number): void   // the value is kept between min and max, on the step
 }
 ```
 
