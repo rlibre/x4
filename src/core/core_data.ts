@@ -371,7 +371,7 @@ export class DataModel<T = any> {
 		});
 
 		if( id!==undefined ) {
-			rec[fields[0].name] = id;
+			rec[_getMetas( this, false ).id] = id;		// the field of the id, as getID reads it
 		}
 		else {
 			console.assert( this.getID(rec)!==undefined ); // store do not have ID field
@@ -965,9 +965,11 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		let bads = 0;		// unknown fields
 		let fidxs: sort_info[] = [];		// fields indexes
 
-		// if no fields are given, reset sort by id
+		// if no fields are given, reset sort by id: the field marked by data.id( ),
+		// which is not always the first one, and the order in which indexOfId searches
 		if ( sort===null ) {
-			fidxs.push( { fidx: 0, asc: true, cb: null } );
+			const id = _getMetas( this.m_model, false ).id;
+			fidxs.push( { fidx: this.m_model.getFieldIndex( id ), asc: true, cb: null } );
 		}
 		else {
 			fidxs = sort.map( (si) => {

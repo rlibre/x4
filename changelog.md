@@ -78,6 +78,10 @@ const records = grid.getSelection( );		// every selected record, or null
 - The arrow keys do nothing in a grid that has no row.
 - `getSelection( )` and `getFirstSel( )` only give records that exist: one that was deleted while the grid was out of the document is left out.
 
+### DataStore
+
+- A store finds its records by id when the model declares its id after other fields: its index is sorted by the field marked `@data.id( )`, the one `getById`, `update` and `delete` search, and no more by the first field. A view without a sort is in the order of the ids too. `unSerialize( data, id )` puts `id` in that field.
+
 ### DataView
 
 - New methods `close( )` and `open( )`: the view stops following its store, and follows it again, filtered and sorted with what the store holds at that moment. A store keeps every view that listens to it, so a view that is not used anymore has to be closed, or it is still filtered and sorted at each change of the store. A view is open when it is made.
