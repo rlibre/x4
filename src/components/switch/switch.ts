@@ -53,7 +53,8 @@ export class Switch extends HBox<SwitchProps> {
 			new Component( {
 				cls: "switch",
 				content: [
-					new Input( { type: "checkbox", id: inputId, name: props.name, checked: props.checked } ),
+					// value: sent by a <form> of the browser when checked; a Form of x4 reads a boolean
+					new Input( { type: "checkbox", id: inputId, name: props.name, value: props.value, checked: props.checked } ),
 					new Component( { cls: "track" } ),
 					new Component( { cls: "thumb" } ),
 				]

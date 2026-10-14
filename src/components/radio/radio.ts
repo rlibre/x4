@@ -19,7 +19,7 @@ import { class_ns } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
 import { Label } from '../label/label';
-import { Input } from '../input/input'
+import { Input, getRadioOwner } from '../input/input'
 import { HBox } from '../boxes/boxes';
 
 import icons from "../assets/icons"
@@ -152,10 +152,14 @@ export class Radio extends Component<RadioProps,RadioEvents> {
 	 */
 
 	checkValue( vname: string ) {
-		const grp = this.props.name;
-		const el = this.parentElement().query<Radio>( `input[name="${grp}"][value="${vname}"]` );
+		// the radios of the group: in the form that holds this one, else in
+		// its dialog, else in the document (as a Form reads them)
+		const owner = getRadioOwner( this.dom );
+		const selector = `input[name="${this.props.name}"][value="${vname}"]`;
+
+		const el = owner.querySelector( selector ) as HTMLInputElement;
 		if( el ) {
-			el.setCheck( true );
+			el.checked = true;
 		}
 	}
 }

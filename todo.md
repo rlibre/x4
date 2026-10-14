@@ -45,3 +45,28 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 - What a panel shows loses its scroll position when the layout changes: its box is moved.
 - Closing a tool that is beside others does not make its band narrower.
 - A tool cannot be collapsed: kept where it is, reduced to its title, and opened again with a click (asked on 2026-10-12; nothing is designed).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

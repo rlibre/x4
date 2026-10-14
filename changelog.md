@@ -19,6 +19,15 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Checkbox, Switch
+
+- `value` is used. Without it, or with a boolean one, a `Form` reads a boolean, as always. With it, a `Form` reads the value when checked and `null` when not, as a `<form>` of the browser does; `setValues` checks it for that value (or `true`). The `<input>` carries it too.
+
+### Radio
+
+- `checkValue( v )` finds the radios of its group wherever they are in its form (a dialog has one), each in a box of its own too; out of a form, in the page. The radios of the same name in another form, of the page or of a dialog, are not touched.
+- A `Form` reads the radios of its own group: two forms of a page can each have a group of the same name.
+
 ### TextEdit
 
 - Its props go to the box or to the input, not to both: `style`, `tooltip`, `hidden`, `flex`, `stretch`, `height` are on the box; `dom_events` are on the input (`focus` and `blur` work, a `keydown` runs once by key).
@@ -54,6 +63,7 @@ A version gets its date when it is published.
 ### Input
 
 - `required` and `readonly` are set for every type but checkbox and radio: a `date` or a `time` in `readonly` cannot be changed. `placeholder` is set on text, email, password and number, the types on which the browser shows it (`date` and `time` show their own pattern).
+- The wheel on a `number` that has the focus keeps it between `min` and `max`, on the step, and starts from a valid value when the field is empty (`stepUp` / `stepDown` of the browser).
 - A `number` with a `step` shows as many decimals as the step, 4 at most: `step: 0.25` keeps `1.25`, `step: 2.5` keeps `2.5`.
 - The radios of a form are read without error when the form is under an element that is not a component (the element of `mountPoint`), or out of the document.
 

@@ -71,6 +71,7 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 						type:"checkbox", 
 						id: inputId, 
 						name: props.name,
+						value: props.value,		// sent by a <form> of the browser when checked; a Form of x4 reads a boolean
 						checked: props.checked,
 						dom_events: {
 							change: ( ) => this._on_change( ),

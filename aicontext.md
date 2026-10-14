@@ -676,6 +676,7 @@ interface CheckboxProps extends ComponentProps {
   label: string; checked?: boolean; value?: boolean|number|string; name?: string
   change?: EventCallback<EvChange>
 }
+// in a Form: without value (or a boolean one), a boolean; with one, the value when checked, null when not
 class Checkbox extends Component {
   getCheck(): boolean; setCheck(ck: boolean): void
   setLabel(text: string): void; toggle(): void
@@ -696,15 +697,15 @@ interface RadioProps extends ComponentProps {
 class Radio extends Component {
   getValue(): string; setCheck(ck: boolean): void
   setLabel(text: string): void
-  checkValue(vname: string): void          // check the radio whose value === vname (group)
+  checkValue(vname: string): void          // check the radio whose value === vname, in the group of its form (else of the page)
 }
 ```
 
 ### `Switch`
 
 ```ts
-interface SwitchProps extends ComponentProps { label: string; checked?: boolean; name?: string }
-// with a name, a Form reads and writes it as a boolean
+interface SwitchProps extends ComponentProps { label: string; checked?: boolean; value?: string; name?: string }
+// with a name, a Form reads and writes it: a boolean, or with a value, the value when checked and null when not
 class Switch extends HBox {}
 ```
 

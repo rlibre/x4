@@ -15,28 +15,24 @@
  **/
 
 import { EventCallback } from '../../core/core_events';
-import { Component, ComponentEvent, componentFromDOM, ComponentProps, EvChange, EvFocus } from '../../core/component';
+import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
 import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools';
 
 import "./input.module.scss"
 
 
-// where to look for the radios of a group: the dialog that holds them, else the document
-function getRadioOwner( el: Element ): ParentNode {
+/**
+ * @internal where to look for the radios of a group: the form that holds them,
+ * else the document
+ */
 
-	while( el!=document.body ) {
-		// an element that is not a component (the div of mountPoint...) is passed
-		const comp = componentFromDOM(el);
-		if( comp && comp.queryInterface( "tab-handler") ) {
-			return el;
-		}
+export function getRadioOwner( el: Element ): ParentNode {
 
-		// out of the document: the top of its tree
-		if( !el.parentElement ) {
-			return el;
-		}
-
-		el = el.parentElement;
+	// two forms of a page can each have a group of the same name;
+	// a dialog has its form, its radios are in it
+	const form = el.closest( "form" );
+	if( form ) {
+		return form;
 	}
 
 	return document;
@@ -272,12 +268,20 @@ export class Input extends Component<InputProps,InputEvents> {
 				this.addDOMEvent( "wheel", ( e: WheelEvent ) => {
 					if( this.hasFocus() ) { // only if has focus
 						e.preventDefault( );
-						let v = this.getNumValue();
-						const delta = e.deltaY < 0 ? 1 : -1;
-						v += (p.step ? p.step : 1) * delta;
-						this.setNumValue( v, -2 );
 
-						this.dom.dispatchEvent(new Event('input')); 
+						// the browser keeps the value between min and max, on the step,
+						// and starts from a valid one when the field is empty
+						const input = this.dom as HTMLInputElement;
+						if( e.deltaY < 0 ) {
+							input.stepUp( );
+						}
+						else {
+							input.stepDown( );
+						}
+
+						// the decimals of the step: 10.1 shown 10.10 for a step of 0.01
+						this.setNumValue( this.getNumValue( ), -2 );
+						this.dom.dispatchEvent(new Event('input'));
 					}
 				}, );
 				break;
@@ -517,9 +521,16 @@ export class Input extends Component<InputProps,InputEvents> {
 	override queryInterface<T extends IComponentInterface>( name: string ): T {
 		if( name=="form-element" ) {
 			const i: IFormElement = {
-				getRawValue: ( ): any => { 
+				getRawValue: ( ): any => {
+					// checkbox without value, or a boolean one: a boolean; with one: the value when checked,
+					// null when not (as a <form>)
 					if( this.props.type=='checkbox' ) {
-						return this.getCheck( );
+						const value = this.props.value;
+						if( value===undefined || typeof value==="boolean" ) {
+							return this.getCheck( );
+						}
+
+						return this.getCheck( ) ? value : null;
 					}
 					else if( this.props.type=='radio' ) {
 						const owner = getRadioOwner( this.dom );
@@ -534,8 +545,11 @@ export class Input extends Component<InputProps,InputEvents> {
 					}
 				},
 				setRawValue: ( v: any ) => { 
+					// checkbox with a value (not a boolean): checked by that value (or true)
 					if( this.props.type=='checkbox' ) {
-						this.setCheck( !!v );
+						const value = this.props.value;
+						const plain = value===undefined || typeof value==="boolean";
+						this.setCheck( plain ? !!v : ( v===value || v===true ) );
 					}
 					else if( this.props.type=='radio' ) {
 						if( this.props.value==v ) {
