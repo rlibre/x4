@@ -144,30 +144,15 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 		}
 
 		this._popup = new DropdownList( { items: props.items, renderer: props.renderer } );
-		const list = this._popup.getList( );
-
-		const _select = ( sel: ListboxID ) => {
-			const itm = list.getItem(sel);
-			if( itm ) {
-				list.select( sel, false );
-				this._input.setValue( itm.text as string );
-			}
-
-			if( !this._prevent_close ) {
-				this._popup.show( false );
-			}
-		}
-
 		this._popup.on( "click", ( ev ) => {
 			const sel = ev.context as ListboxID;
 			if( sel!==undefined ) {	// no empty sel
-				_select( sel );			
-				this.fire( "selectionChange", { selection: [sel], empty: false }  );
+				this._choose( sel, true );
 			}
 		});
 
 		if( props.value!==undefined && props.value!==null ) {
-			_select( props.value );
+			this._choose( props.value, false );
 		}
 
 		this._button.addDOMEvent( "click", ( ) => this._on_click( ) );
@@ -178,6 +163,27 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			focusout: ( ) => this._on_focusout( ),
 			click: ( ) => this._on_click( ),
 		})
+	}
+
+	/**
+	 * the item chosen: by a click, by the arrows (the popup stays open), or by the props
+	 */
+
+	private _choose( sel: ListboxID, notify: boolean ) {
+		const list = this._getList( );
+		const itm = list.getItem( sel );
+		if( itm ) {
+			list.select( sel, false );
+			this._input.setValue( itm.text as string );
+		}
+
+		if( !this._prevent_close ) {
+			this._popup.show( false );
+		}
+
+		if( notify ) {
+			this.fire( "selectionChange", { selection: [sel], empty: false } );
+		}
 	}
 
 	private _on_key( ev: KeyboardEvent ) {
@@ -197,7 +203,13 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 					this.showDropDown( );
 				}
 				else {
-					this._popup.getList().navigate( kbNav.prev );
+					// the item reached is chosen at once
+					const list = this._getList( );
+					list.navigate( kbNav.prev );
+					const [sel] = list.getSelection( );
+					if( sel!==undefined ) {
+						this._choose( sel, true );
+					}
 				}
 
 				this._prevent_close = false;
@@ -209,7 +221,13 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 					this.showDropDown( );
 				}
 				else {
-					this._popup.getList().navigate( kbNav.next );
+					// the item reached is chosen at once
+					const list = this._getList( );
+					list.navigate( kbNav.next );
+					const [sel] = list.getSelection( );
+					if( sel!==undefined ) {
+						this._choose( sel, true );
+					}
 				}
 
 				this._prevent_close = false;
@@ -229,7 +247,18 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 			this.showDropDown( );
 		}
 
-		this._popup.getList().filter( this._input.getValue( ) );
+		// the text typed is no longer the one of the item chosen: none is chosen
+		const list = this._getList( );
+		const sel = this.getSelection( );
+		if( sel!==undefined ) {
+			const itm = list.getItem( sel );
+			if( !itm || itm.text!==this._input.getValue( ) ) {
+				list.clearSelection( false );
+				this.fire( "selectionChange", { selection: [], empty: true } );
+			}
+		}
+
+		list.filter( this._input.getValue( ) );
 	}
 
 	private _on_focusout( ) {
@@ -268,10 +297,9 @@ export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
 	selectItem( index: ListboxID ) {
 		const list = this._getList( );
 		list.select( index );
+		// no item (null...): the text is emptied too
 		const el = list.getItem( index );
-		if( el ) {
-			this.setValue( el.text as string );
-		}
+		this.setValue( el ? el.text as string : "" );
 	}
 
 	getSelection( ) {

@@ -746,13 +746,13 @@ interface ComboboxProps extends ComponentProps {
   readonly?: boolean                       // true by default: the user picks, and cannot type. false to let him type
   renderer?: (item: ListItem) => Component // draws an item of the list (the field still shows item.text)
   required?: boolean; name?: string
-  selectionChange?: EventCallback<EvSelectionChange>
+  selectionChange?: EventCallback<EvSelectionChange>   // at each item reached with the arrows too
 }
 class Combobox extends Component {
   getValue(): string; setValue(value: string): void
   getInput(): Input
-  getSelection(): ListboxID
-  selectItem(index: number): void
+  getSelection(): ListboxID                // the item chosen (click or arrows); undefined when the text typed is not the one of an item
+  selectItem(index: ListboxID): void       // null: none, the field is emptied
   setItems(items): void
   showDropDown(): void
 }

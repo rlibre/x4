@@ -19,6 +19,12 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Combobox
+
+- The arrows choose: the item reached is shown in the field and `selectionChange` is fired, the popup stays open; Enter and Escape close it on that choice.
+- Editable (`readonly: false`): a text typed that is no longer the one of the item chosen leaves no item chosen, with a `selectionChange` empty. `getSelection( )` and a `Form` read nothing.
+- `selectItem( null )`, and `Form.setValues( { combo: null } )`, empty the field too.
+
 ### Input
 
 - `required` and `readonly` are set for every type but checkbox and radio: a `date` or a `time` in `readonly` cannot be changed. `placeholder` is set on text, email, password and number, the types on which the browser shows it (`date` and `time` show their own pattern).
