@@ -19,6 +19,10 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### SimpleTextArea
+
+- Alone in a box, it keeps its height (`flex-shrink: 0`): a box short of room does not crush it. In a `TextArea`, it follows the size of the `TextArea`, as before.
+
 ### Calendar
 
 - A month further, by ◀ ▶ or by the menus of the month and of the year, keeps the day but not past the end of the month: from 31 January, ▶ gives 28 February (not 3 March); from 29 February 2024, the year 2025 gives 28 February 2025.

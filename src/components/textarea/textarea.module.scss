@@ -24,6 +24,7 @@
 
 .x4simpletextarea {
 
+		flex-shrink: 0;		// alone in a box, it keeps its height: the box does not crush it
 		padding: 4px;
 		outline: none;
 		font: inherit;
