@@ -5,6 +5,11 @@ A version gets its date when it is published.
 
 ## 2.3.19
 
+### Application
+
+- `mountPoint` is honored: the main view is mounted in the element it selects, whenever `setMainView` is called, a page whose script is a module too. An app that gives `mountPoint` has to check its layout: its view is in that element, not in `<body>`.
+- `fireGlobal` right after `setupSocketMessaging( )`: the message is sent once the socket is open, those fired while it connects are dropped (`send` throws on a socket that connects).
+
 ### Command line
 
 - `x4js <command> --help` (or `-h`) shows the help, which now gives the options of every command.

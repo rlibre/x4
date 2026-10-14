@@ -279,7 +279,7 @@ Singleton. Extends `CoreElement` (no DOM of its own). (`src/core/core_applicatio
 interface AppProps { mountPoint?: string }   // CSS selector, default "body"
 
 constructor(props?: AppProps)                // auto-mounts the mainview on page load
-setMainView(view: Component): void
+setMainView(view: Component): void           // once, in the constructor of the app: each call sets up the keyboard (Tab, shortcuts) again
 getMainView(): Component
 static instance<P extends Application>(): P
 setEnv(name: string, value: any): void

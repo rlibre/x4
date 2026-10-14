@@ -104,8 +104,10 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		main_app = this;
 
+		this.props = props;
+
 		const loaded = ( ) => {
-			this.mount( props.mountPoint ?? 'body' )
+			this.mount( this.props.mountPoint )
 		}
 
 		if( document.readyState=='complete' ) {
@@ -141,13 +143,14 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 	/**
      * Sets the main view component for the application.
-     * This component will be mounted to the DOM.
+     * This component will be mounted to the DOM, in `mountPoint`.
+     * Called once: each call sets up the keyboard (Tab, shortcuts) again.
      * @param view - The component to set as the main view.
      */
 	
 	setMainView( view: Component ) {
 		this.mainview = view;
-		this.mount( );
+		this.mount( this.props.mountPoint );
 		this._setupKeyboard( );
 	}
 
@@ -321,7 +324,8 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 				return;
 			}
 
-			if( msg_socket ) {
+			// send throws while the socket is connecting
+			if( msg_socket && opened ) {
 				msg_socket.send( JSON.stringify( {
 					msg: e.msg,
 					params: e.params,
