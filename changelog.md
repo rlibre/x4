@@ -19,6 +19,12 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Input
+
+- `required` and `readonly` are set for every type but checkbox and radio: a `date` or a `time` in `readonly` cannot be changed. `placeholder` is set on text, email, password and number, the types on which the browser shows it (`date` and `time` show their own pattern).
+- A `number` with a `step` shows as many decimals as the step, 4 at most: `step: 0.25` keeps `1.25`, `step: 2.5` keeps `2.5`.
+- The radios of a form are read without error when the form is under an element that is not a component (the element of `mountPoint`), or out of the document.
+
 ### Form
 
 - `validate( )`: the values that the validator changes are written back in the fields that carry the name, whatever they are (`Select`, `TextArea`, `Combobox`, `Rating`...), and in every radio of a group: the one that holds the value is checked.

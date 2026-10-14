@@ -21,12 +21,18 @@ import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString }
 import "./input.module.scss"
 
 
-function getRadioOwner( el: Element )  {
+// where to look for the radios of a group: the dialog that holds them, else the document
+function getRadioOwner( el: Element ): ParentNode {
 
 	while( el!=document.body ) {
+		// an element that is not a component (the div of mountPoint...) is passed
 		const comp = componentFromDOM(el);
-		const ifx = comp.queryInterface( "tab-handler");
-		if( ifx ) {
+		if( comp && comp.queryInterface( "tab-handler") ) {
+			return el;
+		}
+
+		// out of the document: the top of its tree
+		if( !el.parentElement ) {
 			return el;
 		}
 
@@ -222,7 +228,19 @@ export class Input extends Component<InputProps,InputEvents> {
 		if( props.autofocus===true ) {
 			this.setAttribute( "autofocus", true );
 		}
-					
+
+		// every type but checkbox and radio (range and file ignore readonly)
+		if( props.type!="checkbox" && props.type!="radio" ) {
+			this.setAttribute( "required", props.required );
+			this.setAttribute( "readonly", props.readonly );
+		}
+
+		// placeholder: shown by the browser on text, email, password and number only,
+		// not on date nor time (they show their own pattern)
+		if( props.type===undefined || props.type=="text" || props.type=="email" || props.type=="password" || props.type=="number" ) {
+			this.setAttribute( "placeholder", props.placeholder );
+		}
+
 		switch( props.type ) {
 			case "checkbox":
 			case "radio": {
@@ -244,9 +262,7 @@ export class Input extends Component<InputProps,InputEvents> {
 
 			case "number": {
 				const p = this.props as NumberProps;
-			
-				this.setAttribute( "required", p.required );
-				this.setAttribute( "readonly", p.readonly );
+
 				this.setAttribute( "min", p.min );
 				this.setAttribute( "max", p.max );
 				this.setAttribute( "step", p.step );
@@ -268,8 +284,6 @@ export class Input extends Component<InputProps,InputEvents> {
 			}
 
 			case "date": {
-				this.setAttribute( "required", props.required );
-
 				let v = props.value;
 				if( v instanceof Date ) {
 					this.setAttribute( "value", formatIntlDate( v, "Y-M-D" ) );
@@ -295,7 +309,6 @@ export class Input extends Component<InputProps,InputEvents> {
 			}
 
 			case "time": {
-				this.setAttribute( "required", props.required );
 				if( props.value!==null && props.value!==undefined ) {
 					this.setAttribute( "value", props.value );
 				}
@@ -303,19 +316,12 @@ export class Input extends Component<InputProps,InputEvents> {
 			}
 
 			default: {
-				this.setAttribute( "required", props.required );
-				this.setAttribute( "readonly", props.readonly );
-
 				if( props.value!==null && props.value!==undefined ) {
 					this.setAttribute( "value", props.value );
 				}
 
 				if( props.pattern!==null && props.pattern!==undefined ) {
 					this.setAttribute( "pattern", props.pattern );
-				}
-
-				if( props.placeholder!==null && props.placeholder!==undefined ) {
-					this.setAttribute( "placeholder", props.placeholder );
 				}
 
 				if( props.spellcheck===false ) {
@@ -417,14 +423,19 @@ export class Input extends Component<InputProps,InputEvents> {
 		}
 
 		if( ndec==-2 && this.props.type=='number' ) {
-			const p = this.props as NumberProps;
+			const step = (this.props as NumberProps).step;
 
-			if( p.step<1 ) {
-				let ndec = -Math.floor(Math.log10(p.step ?? 1) );
-				return this.setValue( value.toFixed(ndec) );
-			}
-			else if( p.step>1 ) {
-				return this.setValue( value.toFixed() );
+			// as many decimals as the step, 4 at most: the step in 1/10000 is an integer,
+			// each 0 on its right is a decimal less (0.25 → 2500 → 2, 2.5 → 25000 → 1, 2 → 0)
+			if( step!==undefined && step!=1 ) {
+				let n = Math.round( step * 10000 );
+				let decimals = 4;
+				while( n && n%10==0 && decimals ) {
+					n /= 10;
+					decimals--;
+				}
+
+				return this.setValue( value.toFixed( decimals ) );
 			}
 		}
 		else if( ndec>=0 ) {

@@ -598,12 +598,12 @@ type InputProps = TextInputProps | CheckboxProps | RadioProps | RangeProps
 
 interface BaseProps extends ComponentProps {
   name?: string                            // required for Form.getValues/setValues
-  autofocus?: boolean; required?: boolean; readonly?: boolean; placeholder?: string
+  autofocus?: boolean; required?: boolean; readonly?: boolean; placeholder?: string   // required, readonly: not on checkbox, radio; placeholder: text, email, password, number
   focus?: EventCallback<EvFocus>; change?: EventCallback<EvChange>
 }
 // TextInputProps: type?: "text"|"email"|"password"; value?: string|number; maxlength?, minlength?,
 //                 pattern?, spellcheck?, trim?
-// NumberProps:    type: "number"; value?: string|number; min?, max?, step?
+// NumberProps:    type: "number"; value?: string|number; min?, max?, step?   // as many decimals shown as the step, 4 at most
 // RangeProps:     type: "range"; min: number; max: number; step?; value?: number
 // DateProps:      type: "date"; value?: string|Date
 // TimeProps:      type: "time"; value?: string
