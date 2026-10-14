@@ -92,16 +92,20 @@ function readJson(filename) {
     }
 }
 
-function validateCopy(copy) {
+function validateCopy(copy, env) {
     if (!Array.isArray(copy))
         throw new Error("copy must be an array");
 
     for (const item of copy) {
         if (!item || typeof item !== "object" || typeof item.from !== "string" || typeof item.to !== "string")
             throw new Error("Each copy entry must contain string 'from' and 'to' fields");
-        if (path.isAbsolute(item.to))
+
+        // checked once expanded: a $NAME could hold "..".
+        // A root: "D:assets" is not absolute, but goes to the folder of D:
+        const to = expandEnv(item.to, env);
+        if (path.isAbsolute(to) || path.parse(to).root)
             throw new Error(`copy destination must be relative to outdir: '${item.to}'`);
-        const normalized = path.normalize(item.to);
+        const normalized = path.normalize(to);
         if (normalized === ".." || normalized.startsWith(`..${path.sep}`))
             throw new Error(`copy destination escapes outdir: '${item.to}'`);
     }
@@ -125,7 +129,7 @@ export function loadConfig(root = process.cwd(), configFile = DEFAULT_CONFIG_FIL
         throw new Error("entryPoints must be a non-empty array of strings");
 
     const copy = cfg.copy ?? DEFAULTS.copy;
-    validateCopy(copy);
+    validateCopy(copy, env);
 
     const external = cfg.external ?? DEFAULTS.external;
     if (!Array.isArray(external) || external.some((entry) => typeof entry !== "string"))
@@ -187,7 +191,7 @@ export function loadConfig(root = process.cwd(), configFile = DEFAULT_CONFIG_FIL
         outdir,
         copy: copy.map((item) => ({
             from: resolvePath(root, item.from, env),
-            to: path.normalize(item.to),
+            to: path.normalize(expandEnv(item.to, env)),
         })),
         external: [...external],
         define: Object.fromEntries(

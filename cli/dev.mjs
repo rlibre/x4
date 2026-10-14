@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 import esbuild from "esbuild";
 import { DEFAULT_CONFIG_FILE, expandEnv, loadConfig, loadEnvFile, resolveConfigFile, resolveTls } from "./config.mjs";
 import { createBuildOptions } from "./build-options.mjs";
-import { info, success, failure } from "./log.mjs";
+import { info, success, failure, warning } from "./log.mjs";
 
 function openBrowser(url) {
     let command;
@@ -28,6 +28,9 @@ function openBrowser(url) {
         detached: true,
         stdio: "ignore",
     });
+
+    // no browser could be started (xdg-open missing...): the server goes on
+    child.on("error", (error) => warning(`cannot open the browser: ${error.message}`));
     child.unref();
 }
 

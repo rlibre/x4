@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { warning } from "./log.mjs";
 
 async function walk(source) {
     const files = [];
@@ -51,6 +52,13 @@ export function copyPlugin(config, { dev = false } = {}) {
         for (const entry of entries) {
             const result = await walk(entry.from);
             entry.sourceIsDirectory = result.isDirectory;
+
+            // its folder is watched: in dev, its creation starts a build
+            if (!result.files.length && !result.isDirectory) {
+                warning(`copy: not found: ${entry.from}`);
+                dirs.push(path.dirname(entry.from));
+            }
+
             dirs.push(...result.dirs);
             for (const item of result.files) {
                 files.push({ entry, ...item });

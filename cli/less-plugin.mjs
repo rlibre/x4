@@ -28,7 +28,11 @@ export function lessPlugin(projectRoot) {
         setup(build) {
             build.onLoad({ filter: /\.less$/ }, async (args) => {
                 const source = await fs.readFile(args.path, "utf8");
-                lessPromise ??= loadLess(projectRoot);
+                // not kept when it fails: less can be installed while dev runs
+                lessPromise ??= loadLess(projectRoot).catch((error) => {
+                    lessPromise = undefined;
+                    throw error;
+                });
                 const less = await lessPromise;
 
                 const result = await less.render(source, {

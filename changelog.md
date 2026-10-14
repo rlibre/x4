@@ -5,6 +5,17 @@ A version gets its date when it is published.
 
 ## 2.3.19
 
+### Command line
+
+- `x4js <command> --help` (or `-h`) shows the help, which now gives the options of every command.
+- `x4js templates` takes no argument: one given is an error.
+- `dev --open`: when no browser can be started (no `xdg-open` on Linux), a warning is shown and the server goes on.
+- `copy`: `to` accepts environment variables (`$NAME`), as the other paths do. It is checked once expanded: it cannot go out of `outdir`, nor be on a drive of its own (`"D:assets"` on Windows).
+- `copy`: a `from` that does not exist gives a warning (`copy: not found: …`). In `dev`, its folder is watched: the file is copied as soon as it is created.
+- A `.svg` imported from a package (`import icon from "@acme/icons/close.svg"`) is found in `node_modules`, and is a `data:` URL in base64 as a local one.
+- `.less`: when `less` is not installed, the error is not kept: once `less` is installed, the next build of `dev` uses it.
+- `create`: when a file of the template cannot be downloaded, the folder is removed once every other download is over. A path of the template that holds a `\` is refused.
+
 ### Keyboard
 
 - The letters of the language (`é è à ç`, `ä ö ü ß`...) are no longer on rows of their own above the space bar: they are on a page of their own, called by a key of the bottom row that shows the first two of them (`éè`, `äö`). The page of the letters has its five rows again, whatever the language. A language that adds no letter (`en`) has no such key.

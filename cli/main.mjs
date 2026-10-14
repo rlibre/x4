@@ -25,17 +25,27 @@ Usage:
   x4js build [--config <file>] [--env <file>] [--debug]
 
 Options:
-  --config <file>  Config file (default: x4.config.json)
-  --env <file>     File of NAME=value lines, for $NAME in the config
-  -h, --help       Show help
-  -v, --version    Show version`);
+  --config <file>          Config file (default: x4.config.json)
+  --env <file>             File of NAME=value lines, for $NAME in the config
+  -t, --template <name>    create: template to use (default: app)
+  --no-install             create: do not run npm install
+  --host <host>            dev: address to listen on (default: 127.0.0.1)
+  --port <port>            dev: port to listen on (default: the first free port from 8000)
+  --http, --https          dev: force the protocol, whatever the config says
+  --open                   dev: open the browser once the server is ready
+  --debug                  build: not minified, with source maps
+  -h, --help               Show help
+  -v, --version            Show version`);
 }
 
 const version = getVersion();
 const [command, ...argv] = process.argv.slice(2);
 
+// x4js <command> --help: the help, that gives the options of every command
+const help = argv.includes("--help") || argv.includes("-h");
+
 try {
-    switch (command) {
+    switch (help ? "help" : command) {
         case "create": {
             const { create } = await import("./create.mjs");
             await create(argv, { version });

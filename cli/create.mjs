@@ -127,14 +127,20 @@ export async function create(argv = [], { version = "unknown", cwd = process.cwd
     try {
         const files = await fetchTemplateFiles(values.template, version);
 
-        await Promise.all(files.map(async (file) => {
-            if (!file.path || file.path.split("/").includes(".."))
+        // a \ is a separator on Windows: "..\x" would go out of the target
+        // allSettled: every write is over before the cleanup of the catch
+        const results = await Promise.allSettled(files.map(async (file) => {
+            if (!file.path || file.path.includes("\\") || file.path.split("/").includes(".."))
                 throw new Error(`Unsafe template path '${file.path}'`);
             const destination = path.join(target, ...file.path.split("/"));
             await fs.mkdir(path.dirname(destination), { recursive: true });
             const data = await downloadTemplateFile(file.url, version);
             await fs.writeFile(destination, data);
         }));
+
+        const failed = results.find((result) => result.status === "rejected");
+        if (failed)
+            throw failed.reason;
 
         await patchPackage(target, projectName, version);
         projectReady = true;
