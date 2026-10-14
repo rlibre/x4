@@ -19,6 +19,10 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### TextEdit
+
+- Its props go to the box or to the input, not to both: `style`, `tooltip`, `hidden`, `flex`, `stretch`, `height` are on the box; `dom_events` are on the input (`focus` and `blur` work, a `keydown` runs once by key).
+
 ### SimpleTextArea
 
 - Alone in a box, it keeps its height (`flex-shrink: 0`): a box short of room does not crush it. In a `TextArea`, it follows the size of the `TextArea`.

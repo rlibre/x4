@@ -87,7 +87,9 @@ export class TextEdit<E extends ComponentEvents = ComponentEvents> extends HBox<
 	private input: Input;
 
 	constructor( props: TextEditProps ) {
-		super( props );
+		// dom_events are for the input (focus, blur, keydown...): not on the box too,
+		// where keydown would run a second time, and focus never (it does not bubble)
+		super( { ...props, dom_events: undefined } );
 
 		if( !props.inputId ) {
 			props.inputId = makeUniqueComponentId()
@@ -104,8 +106,16 @@ export class TextEdit<E extends ComponentEvents = ComponentEvents> extends HBox<
 
 
 		const iprops: InputProps = { ...props, id: props.inputId, attrs: props.inputAttrs, width: props.inputWidth };
-		// no propagation...
+
+		// the props of the box stay on it: given to the input too, a style would be put
+		// twice, a tooltip twice, the height of the box on the field...
 		delete iprops.cls;
+		delete iprops.style;
+		delete iprops.tooltip;
+		delete iprops.hidden;
+		delete iprops.flex;
+		delete iprops.stretch;
+		delete iprops.height;
 
 		this.setContent( [
 			props.label ? new HBox( { id: "label", width: props.labelWidth, content: [

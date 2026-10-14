@@ -631,6 +631,7 @@ type TextEditProps = (TextInputProps | NumberProps | DateProps | TimeProps) & {
   labelWidth?: number; inputWidth?: number; inputId?: string
   inputGadgets?: Component[]; inputAttrs?: any
 }
+// style, tooltip, hidden, flex, stretch, height: on the box (label + field); dom_events: on the input
 class TextEdit extends HBox {
   getValue(): string; setValue(value: string): void; getInput(): Input
 }
