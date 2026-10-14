@@ -1548,6 +1548,8 @@ export interface PageContext {                // origin bottom left, y goes up
   image(jpegBytes: Uint8Array, x, y, w, h): void
   link(url, x, y, w, h, opts?: { underline?: string }): void
   barcode(type: BarcodeType, text, x, y, w, h, opts?: BarcodeOptions): void   // datamatrix: square min(w,h), (x,y) bottom left; code128: bars on w x h; no quiet zone
+  svgPath(d: string, x, y, scale, fill: string, stroke?: string, lineWidth?): void   // (x,y): the svg origin, its y going down; M L H V C S Q T A Z
+  icon(svg: string, x, y, w, h, opts?: { color?: string; background?: string }): void   // as Icon takes it (not a file); viewBox fitted in w x h; opacity mixed with background
 }
 type PathSegment = ['m', x, y] | ['l', x, y] | ['c', x1, y1, x2, y2, x3, y3] | ['h']
 type BarcodeType = 'datamatrix' | 'code128'
