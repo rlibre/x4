@@ -21,7 +21,7 @@ A version gets its date when it is published.
 
 ### SimpleTextArea
 
-- Alone in a box, it keeps its height (`flex-shrink: 0`): a box short of room does not crush it. In a `TextArea`, it follows the size of the `TextArea`, as before.
+- Alone in a box, it keeps its height (`flex-shrink: 0`): a box short of room does not crush it. In a `TextArea`, it follows the size of the `TextArea`.
 
 ### Calendar
 
