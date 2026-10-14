@@ -1177,6 +1177,7 @@ class Keyboard extends HBox {               // virtual keyboard, shown while an 
   showOn(el: Component): void
 }
 // languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
+// bottom row: 123 (numeric pad), the letters of the language (éè, none in en), the signs (#+=); Abc comes back
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```
@@ -1455,7 +1456,7 @@ centerRect(inner: IRect, outer: IRect, margin?): IRect
 sprintf(format, ...args): string           // replaces {0} {1}...
 pad(what, size, ch?): string               // >0 padEnd, <0 padStart
 pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
-measureText(str, size): number
+measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
 date_format(date, options?): string
@@ -1526,10 +1527,29 @@ class SvgBuilder extends SvgGroup {
 ## PDF (`core_pdf`)
 
 ```ts
+interface PDFProps { title?: string; author?: string; subject?: string }
 class X4PDFBuilder {
-  page(width: number, height: number, callback): void
+  constructor(props?: PDFProps)
+  page(width: number, height: number, callback: (ctx: PageContext) => void): void   // points; without size 612 x 792
   build(): Uint8Array
+  buildAsync(): Promise<Uint8Array>          // streams compressed (FlateDecode)
 }
+export interface PageContext {                // origin bottom left, y goes up
+  text(str, x, y, size, opts?: { align?: 'left'|'center'|'right'; width?; color?; bold? }): void
+  rect(x, y, w, h, fill: string): void
+  line(x1, y1, x2, y2, stroke: string, lineWidth?): void
+  path(segments: PathSegment[], fill: string, stroke?: string, lineWidth?): void   // null: not drawn
+  image(jpegBytes: Uint8Array, x, y, w, h): void
+  link(url, x, y, w, h, opts?: { underline?: string }): void
+  barcode(type: BarcodeType, text, x, y, w, h, opts?: BarcodeOptions): void   // datamatrix: square min(w,h), (x,y) bottom left; code128: bars on w x h; no quiet zone
+}
+type PathSegment = ['m', x, y] | ['l', x, y] | ['c', x1, y1, x2, y2, x3, y3] | ['h']
+type BarcodeType = 'datamatrix' | 'code128'
+interface BarcodeOptions { gs1?: boolean /* "(01)...(17)..." */; color?: string }
+renderBarcodeImage(type, text, opts?: BarcodeOptions & { module?: number }): string   // "data:image/svg+xml,..." for Image / Icon; on white, quiet zone included
+// Data Matrix ECC200 10x10..26x26 (44 chars, 88 digits, Latin-1); Code 128 ASCII. Too long or not encodable: throws.
+measureText(str: string, size: number, bold?: boolean): number   // Helvetica
+// Text: Helvetica, Windows-1252 (é € … ’); another character comes out as '?'. Printed at its size (PrintScaling /None).
 ```
 
 ---
