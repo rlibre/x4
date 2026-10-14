@@ -19,6 +19,10 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Listbox
+
+- The arrows go on from the item selected, by a click or by `select( )` in the code. After `setItems( )` or `clearSelection( )`, they start from the first item. An item of id `0` is one: ↓ goes to the next.
+
 ### Combobox
 
 - The arrows choose: the item reached is shown in the field and `selectionChange` is fired, the popup stays open; Enter and Escape close it on that choice.

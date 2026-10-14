@@ -181,7 +181,8 @@ private _view: Viewport;
 
 	navigate( sens: kbNav ) {
 		
-		if( !this._lastsel ) {
+		// an item of id 0 is one
+		if( this._lastsel===undefined ) {
 			if( sens==kbNav.next )  sens = kbNav.first;
 			else sens = kbNav.last;
 		}
@@ -395,6 +396,7 @@ private _view: Viewport;
 				if( itm ) {
 					this._multisel.add( id );
 					itm.addClass( "selected" );
+					this._lastsel = id;		// the arrows go on from it
 				}
 			});
 
@@ -434,6 +436,9 @@ private _view: Viewport;
 	}
 
 	clearSelection( fireEvent = true ) {
+		// nothing selected: the arrows start from the first item
+		this._lastsel = undefined;
+
 		if( this._multisel.size ) {
 			this._clearSelection( );
 			if( fireEvent ) {
