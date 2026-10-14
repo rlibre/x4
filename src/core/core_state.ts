@@ -75,8 +75,11 @@ function _path_matches( path: string, watched: string ): boolean {
 	return c==='.' || c==='[';
 }
 
+// asked to a proxy of the state, it gives its raw object
+const RAW = Symbol( "raw" );
+
 /**
- * 
+ *
  */
 
 export class StateManager<T extends State> extends EventSource<StateEvents> {
@@ -90,9 +93,11 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 	 * - guarantees referential identity: state.user === state.user
 	 * - WeakMap: entries are collected with their objects, and the whole cache is collected with the manager
 	 * - instance-scoped (not module-level) so the same raw object referenced by two different managers never gets a proxy bound to the wrong manager/path
+	 * - a proxy by object, made for the path it was read at: an object moved
+	 *   in an array (shift, sort...) gets a proxy at its new path
 	 */
 
-	private _cache = new WeakMap<object, any>( );
+	private _cache = new WeakMap<object, { path: string, proxy: any }>( );
 
 	constructor( initialState: T ) {
 		super( );
@@ -127,11 +132,16 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 	private _mk_proxy( obj: any, path: string ): any {
 
 		const cached = this._cache.get( obj );
-		if( cached ) return cached;
+		if( cached && cached.path===path ) return cached.proxy;
 
 		const proxy = new Proxy( obj, {
 
 			get: ( target, prop, receiver ) => {
+
+				// the raw object, for set
+				if( prop === RAW ) {
+					return target;
+				}
 
 				// symbols (Symbol.iterator, Symbol.toPrimitive, devtools inspection...): 
 				// pass-through, never an error nor a wrap
@@ -161,9 +171,16 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 
 			set: ( target, prop, value, receiver ) => {
 
+				// shift, sort, reverse... read the elements through the proxy and write them
+				// back: the raw object is stored, never a proxy
+				if( value && value[RAW] ) {
+					value = value[RAW];
+				}
+
 				// no notification when the value doesn't change
 				// (avoids noise and listener → set → listener loops)
-				if( Reflect.get( target, prop, receiver ) === value ) {
+				// read without the receiver: through the proxy, an object would be a proxy, never the raw value
+				if( Reflect.get( target, prop ) === value ) {
 					return true;
 				}
 
@@ -191,7 +208,7 @@ export class StateManager<T extends State> extends EventSource<StateEvents> {
 			}
 		});
 
-		this._cache.set( obj, proxy );
+		this._cache.set( obj, { path, proxy } );
 		return proxy;
 	}
 

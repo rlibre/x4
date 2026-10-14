@@ -19,6 +19,11 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### State
+
+- The methods of an array that move its elements (`shift`, `unshift`, `splice`, `sort`, `reverse`) keep the state right: the array holds the objects themselves, and a change of an element gives one event, on the path where the element is now (`items[0].n` after a `shift`).
+- An object written back where it already is fires nothing, as for the other values (`state.items[0] = state.items[0]`).
+
 ### Router
 
 - The back button of the browser calls the route that `navigate( )` calls: the first that matches, in the order of `get( )`. `"/*"`, declared last, is the route for the rest (`params.wild`); for what runs at each navigation, the event `change`.
