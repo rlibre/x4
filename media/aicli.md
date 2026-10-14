@@ -7,7 +7,7 @@ x4js create <project> [--template <name>] [--no-install]
 x4js templates
 x4js dev   [--config <file>] [--env <file>] [--host <host>] [--port <port>] [--http|--https] [--open]
 x4js build [--config <file>] [--env <file>] [--debug]
-x4js --help | --version
+x4js [<command>] --help | --version
 ```
 
 ## Install
@@ -124,7 +124,7 @@ The file sits at the root of the project. Every key is optional; without the fil
 | Key | Default | Meaning |
 |---|---|---|
 | `entryPoints` | `["src/main.ts"]` | Files to bundle. `src/main.ts` produces `main.js` and `main.css`. |
-| `outdir` | `"./bin"` | Output folder. It cannot be the project root. |
+| `outdir` | `"./bin"` | Output folder. It cannot be the project root, nor a folder that contains it. |
 | `copy` | `[]` | Files or folders copied to the output after each successful build. `to` is relative to `outdir`. |
 | `external` | `[]` | Module names left out of the bundle. |
 | `define` | `{}` | Constants replaced at build time. Values are JavaScript expressions written as strings, for example `"\"prod\""`. |
@@ -240,7 +240,7 @@ declare const VERSION_ID: number;
 
 | Symptom | Cause |
 |---|---|
-| `index.html` is missing from the output folder | It is not listed in `copy`, or the command that ran is an older global copy. Compare the version on the first line with the project's. |
+| `index.html` is missing from the output folder | `copy: not found: …` in the output: its `from` does not exist. Or it is not listed in `copy`, or the command that ran is an older global copy. Compare the version on the first line with the project's. |
 | A file placed in the output folder disappeared | `x4js build` empties the folder. Move the file to the sources and add it to `copy`. |
 | `Cannot find package 'esbuild'` | The dependencies of the `x4js` copy being run are not installed. Run `npm install` in the project. |
 | `Config file not found` | The file given to `--config` does not exist. Without `--config`, a missing `x4.config.json` is not an error. |

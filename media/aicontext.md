@@ -279,7 +279,7 @@ Singleton. Extends `CoreElement` (no DOM of its own). (`src/core/core_applicatio
 interface AppProps { mountPoint?: string }   // CSS selector, default "body"
 
 constructor(props?: AppProps)                // auto-mounts the mainview on page load
-setMainView(view: Component): void
+setMainView(view: Component): void           // once, in the constructor of the app: each call sets up the keyboard (Tab, shortcuts) again
 getMainView(): Component
 static instance<P extends Application>(): P
 setEnv(name: string, value: any): void
@@ -577,7 +577,7 @@ class Gauge extends Component {
 
 ```ts
 interface RatingProps extends ComponentProps {
-  value?: number; steps?: number; icon?: string; name?: string
+  value?: number; steps?: number; icon?: string; name?: string   // value: the count of stars lit (0 to steps), the star of the value clicked again gives 0; steps: 5 by default; name: for a Form, which reads a number
   change?: EventCallback<EvChange>
 }
 class Rating extends HBox {
@@ -598,12 +598,12 @@ type InputProps = TextInputProps | CheckboxProps | RadioProps | RangeProps
 
 interface BaseProps extends ComponentProps {
   name?: string                            // required for Form.getValues/setValues
-  autofocus?: boolean; required?: boolean; readonly?: boolean; placeholder?: string
+  autofocus?: boolean; required?: boolean; readonly?: boolean; placeholder?: string   // required, readonly: not on checkbox, radio; placeholder: text, email, password, number
   focus?: EventCallback<EvFocus>; change?: EventCallback<EvChange>
 }
 // TextInputProps: type?: "text"|"email"|"password"; value?: string|number; maxlength?, minlength?,
 //                 pattern?, spellcheck?, trim?
-// NumberProps:    type: "number"; value?: string|number; min?, max?, step?
+// NumberProps:    type: "number"; value?: string|number; min?, max?, step?   // as many decimals shown as the step, 4 at most
 // RangeProps:     type: "range"; min: number; max: number; step?; value?: number
 // DateProps:      type: "date"; value?: string|Date
 // TimeProps:      type: "time"; value?: string
@@ -631,6 +631,7 @@ type TextEditProps = (TextInputProps | NumberProps | DateProps | TimeProps) & {
   labelWidth?: number; inputWidth?: number; inputId?: string
   inputGadgets?: Component[]; inputAttrs?: any
 }
+// style, tooltip, hidden, flex, stretch, height: on the box (label + field); dom_events: on the input
 class TextEdit extends HBox {
   getValue(): string; setValue(value: string): void; getInput(): Input
 }
@@ -641,7 +642,7 @@ class TextEdit extends HBox {
 ```ts
 interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (name, readonly, required, placeholder, autofocus, focus, change)
   value?: string
-  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // false = "none"
+  resize?: boolean | "none" | "vertical" | "horizontal" | "both"   // no handle by default; true = "both", false = "none"
   trim?: boolean                           // getText() trims, unless false
 }
 interface TextAreaProps extends SimpleTextAreaProps { label?: string }
@@ -675,6 +676,7 @@ interface CheckboxProps extends ComponentProps {
   label: string; checked?: boolean; value?: boolean|number|string; name?: string
   change?: EventCallback<EvChange>
 }
+// in a Form: without value (or a boolean one), a boolean; with one, the value when checked, null when not
 class Checkbox extends Component {
   getCheck(): boolean; setCheck(ck: boolean): void
   setLabel(text: string): void; toggle(): void
@@ -695,15 +697,15 @@ interface RadioProps extends ComponentProps {
 class Radio extends Component {
   getValue(): string; setCheck(ck: boolean): void
   setLabel(text: string): void
-  checkValue(vname: string): void          // check the radio whose value === vname (group)
+  checkValue(vname: string): void          // check the radio whose value === vname, in the group of its form (else of the page)
 }
 ```
 
 ### `Switch`
 
 ```ts
-interface SwitchProps extends ComponentProps { label: string; checked?: boolean; name?: string }
-// with a name, a Form reads and writes it as a boolean
+interface SwitchProps extends ComponentProps { label: string; checked?: boolean; value?: string; name?: string }
+// with a name, a Form reads and writes it: a boolean, or with a value, the value when checked and null when not
 class Switch extends HBox {}
 ```
 
@@ -713,10 +715,12 @@ class Switch extends HBox {}
 interface SliderProps extends ComponentProps {
   value: number; min: number; max: number  // required
   step?: number; vertical?: boolean
-  change?: EventCallback<EvChange>
+  name?: string                            // for a Form, which reads a number
+  change?: EventCallback<EvChange>         // when the user moves the thumb (drag, arrows), not by the code
 }
 class Slider extends Component {
-  setMin(min: number): void; setMax(max: number): void; setValue(v: number): void
+  getValue(): number
+  setMin(min: number): void; setMax(max: number): void; setValue(v: number): void   // the value is kept between min and max, on the step
 }
 ```
 
@@ -746,13 +750,13 @@ interface ComboboxProps extends ComponentProps {
   readonly?: boolean                       // true by default: the user picks, and cannot type. false to let him type
   renderer?: (item: ListItem) => Component // draws an item of the list (the field still shows item.text)
   required?: boolean; name?: string
-  selectionChange?: EventCallback<EvSelectionChange>
+  selectionChange?: EventCallback<EvSelectionChange>   // at each item reached with the arrows too
 }
 class Combobox extends Component {
   getValue(): string; setValue(value: string): void
   getInput(): Input
-  getSelection(): ListboxID
-  selectItem(index: number): void
+  getSelection(): ListboxID                // the item chosen (click or arrows); undefined when the text typed is not the one of an item
+  selectItem(index: ListboxID): void       // null: none, the field is emptied
   setItems(items): void
   showDropDown(): void
 }
@@ -1083,7 +1087,7 @@ class Dialog extends Popup {
   getButton(name: string): Button
   getBtnBar(): BtnGroup
   setTitle(title: string): void
-  showAsync(): Promise<string>             // resolves with the clicked button name
+  showAsync(): Promise<string>             // the name of the clicked button; null when closed without a button (Escape, close box)
 }
 ```
 
@@ -1096,7 +1100,7 @@ class MessageBox extends Dialog {
 }
 class InputBox extends Dialog {
   getValue(): string
-  // static showAsync(msg, value, title?, options?: {password?, trim?}): Promise<string>  (null if cancelled)
+  // static showAsync(msg, value, title?, options?: {password?, trim?}): Promise<string>  (null if cancelled or closed)
 }
 class PromptBox extends Dialog {
   static showAsync(msg: string|UnsafeHtml, editor: Component, title?: string): Promise<string>
@@ -1134,8 +1138,8 @@ class Form extends Box {
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
   setAutoComplete(on?: boolean): void
-  setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void
-  validate(): FormValues                   // null if invalid
+  setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void   // a new call replaces the validator
+  validate(): FormValues                   // null if invalid; the values the validator changes are written back in their fields (any element with the name, every radio of a group)
 }
 // Collects all children (recursive) that have a "name" attribute and implement queryInterface("form-element").
 ```
@@ -1164,7 +1168,9 @@ class Video extends Box {
   get volume(): number; get videoWidth(): number; get videoHeight(): number
   set stream(stream: MediaStream)
 }
-class Calendar extends VBox { getDate(): Date; setDate(date: Date): void }
+class Calendar extends VBox {               // props: date?, minDate?, maxDate? (days out of them cannot be chosen), change ("change": the day clicked)
+  getDate(): Date; setDate(date: Date): void   // copies: the calendar keeps its own date
+}
 class ColorPicker extends VBox {           // props: color, swatches?, nullable?; "change": EvColorChange, also fired once when built
   getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
 }
@@ -1177,6 +1183,7 @@ class Keyboard extends HBox {               // virtual keyboard, shown while an 
   showOn(el: Component): void
 }
 // languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
+// bottom row: 123 (numeric pad), the letters of the language (éè, none in en), the signs (#+=); Abc comes back
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```
@@ -1237,7 +1244,7 @@ class DataStore<T> extends EventSource {
 ```ts
 interface FilterInfo {
   op: "<"|">"|"<="|"="|">="|"<>"|"empty-result"|FilterFunc
-  field?: string; value?: string|RegExp; caseSensitive?: boolean
+  field?: string; value?: string|number|RegExp; caseSensitive?: boolean   // a RegExp is tested on the field as it is: caseSensitive does not apply, the regexp handles the case (/^jo/i)
 }
 interface SortProp { field: string; ascending: boolean; numeric?: boolean; callback?: SortCallback }
 // Event "view_change" → { change_type: "change"|"filter"|"sort" }
@@ -1268,7 +1275,7 @@ class DataProxy extends CoreElement { load(url?): Promise<void> }   // Event "ch
 ```ts
 class Router extends EventSource {
   constructor(useHash?: boolean)           // default true (# URLs)
-  get(uri: string|RegExp, handler: (params: any, path: string) => void): void
+  get(uri: string|RegExp, handler: (params: any, path: string) => void): void   // the first route that matches is called, in the order of get: "/*" last is the route for the rest (params.wild)
   init(): void                             // trigger the current route
   navigate(uri: string, notify?: boolean, replace?: boolean): boolean
   // Events: "change" → { value: string } ; "error" → { code: 404, message: string }
@@ -1455,7 +1462,7 @@ centerRect(inner: IRect, outer: IRect, margin?): IRect
 sprintf(format, ...args): string           // replaces {0} {1}...
 pad(what, size, ch?): string               // >0 padEnd, <0 padStart
 pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
-measureText(str, size): number
+measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
 date_format(date, options?): string
@@ -1526,10 +1533,29 @@ class SvgBuilder extends SvgGroup {
 ## PDF (`core_pdf`)
 
 ```ts
+interface PDFProps { title?: string; author?: string; subject?: string }
 class X4PDFBuilder {
-  page(width: number, height: number, callback): void
+  constructor(props?: PDFProps)
+  page(width: number, height: number, callback: (ctx: PageContext) => void): void   // points; without size 612 x 792
   build(): Uint8Array
+  buildAsync(): Promise<Uint8Array>          // streams compressed (FlateDecode)
 }
+export interface PageContext {                // origin bottom left, y goes up
+  text(str, x, y, size, opts?: { align?: 'left'|'center'|'right'; width?; color?; bold? }): void
+  rect(x, y, w, h, fill: string): void
+  line(x1, y1, x2, y2, stroke: string, lineWidth?): void
+  path(segments: PathSegment[], fill: string, stroke?: string, lineWidth?): void   // null: not drawn
+  image(jpegBytes: Uint8Array, x, y, w, h): void
+  link(url, x, y, w, h, opts?: { underline?: string }): void
+  barcode(type: BarcodeType, text, x, y, w, h, opts?: BarcodeOptions): void   // datamatrix: square min(w,h), (x,y) bottom left; code128: bars on w x h; no quiet zone
+}
+type PathSegment = ['m', x, y] | ['l', x, y] | ['c', x1, y1, x2, y2, x3, y3] | ['h']
+type BarcodeType = 'datamatrix' | 'code128'
+interface BarcodeOptions { gs1?: boolean /* "(01)...(17)..." */; color?: string }
+renderBarcodeImage(type, text, opts?: BarcodeOptions & { module?: number }): string   // "data:image/svg+xml,..." for Image / Icon; on white, quiet zone included
+// Data Matrix ECC200 10x10..26x26 (44 chars, 88 digits, Latin-1); Code 128 ASCII. Too long or not encodable: throws.
+measureText(str: string, size: number, bold?: boolean): number   // Helvetica
+// Text: Helvetica, Windows-1252 (é € … ’); another character comes out as '?'. Printed at its size (PrintScaling /None).
 ```
 
 ---
