@@ -10,6 +10,15 @@ A version gets its date when it is published.
 - `mountPoint` is honored: the main view is mounted in the element it selects, whenever `setMainView` is called, a page whose script is a module too. An app that gives `mountPoint` has to check its layout: its view is in that element, not in `<body>`.
 - `fireGlobal` right after `setupSocketMessaging( )`: the message is sent once the socket is open, those fired while it connects are dropped (`send` throws on a socket that connects).
 
+### DataStore, DataView
+
+- The filters `<`, `<=`, `=`, `>=`, `>`, `<>` on a field `int`, `float` or `date` compare numbers, a date by its time: `{ op: "<", field: "age", value: 9 }` keeps the ages under 9, not those whose text comes before `"9"`. `value` can be a number. A field that is null passes no comparison but `<>`.
+- Sort on several fields: a `callback` follows `ascending`, and two records it finds equal are sorted by the next field. `numeric: true` sorts by the numbers of the values (Gridview gives it for its columns `number`, `money`, `percent`, `checkbox`): `"9"` comes before `"10"`.
+- A filter whose `value` is a `RegExp` is tested on the field as it is: `caseSensitive` does not apply to it, the regexp handles the case (`/^jo/i`).
+- `moveTo( other )` gives the records to `other` and empties the store: the two stores do not share the same array.
+- A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
+- Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
+
 ### Command line
 
 - `x4js <command> --help` (or `-h`) shows the help, which now gives the options of every command.

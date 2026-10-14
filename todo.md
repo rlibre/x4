@@ -9,6 +9,8 @@ Things noted for later, about the library and its command line. Nothing here is 
 ## DataStore
 
 - A paginated DataStore: one that holds a page of the records at a time and asks for the others when they are needed (asked on 2026-10-13; nothing is designed).
+- The loading from an url is to be reviewed (`url`, `autoload`, `solver`, `load`, `reload`, `DataProxy`, deprecated in 2.3.19): `load(url)` throws on a store created with `data` or without `url` (no proxy); an HTTP error is not reported (`await load()` on a 404 resolves); two `load()` that cross apply the answer that comes last, not the last asked.
+- `_convertField`: a field `array` stops in a `debugger;` (the devtools stop at each `unSerialize`), and its records are not converted (`data.array( ctor )` builds a model that nothing reads). A field `bool` is not converted either: `"false"` stays a string, which is true.
 
 ## Fixes that change what existing code gets
 

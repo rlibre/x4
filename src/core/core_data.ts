@@ -91,11 +91,8 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
 		mfld = Object.prototype.hasOwnProperty.call(ctor,metaFields) ? ctor[metaFields] : undefined;
 	}
 	
+	// a class without decorators of its own comes here too: its metas are made from its parent's
 	if( mfld===undefined ) {
-		if( !create && ctor!=DataModel ) {
-			console.assert( mfld!==undefined );
-		}
-		
 		// construct our metas
 		mfld = new MetaInfos( ctor.name );
 
@@ -105,8 +102,6 @@ function _getMetas( obj: object, create = true ) : MetaInfos {
             if( pctor!=DataModel ) {
                 let pmetas = pctor[metaFields];
                 mfld.fields = [...pmetas.fields, ...mfld.fields ]
-                
-                console.assert( mfld.id===undefined, 'cannot define mutiple record id' );
                 if( !mfld.id ) {
                     mfld.id = pmetas.id;
                 }
@@ -143,6 +138,7 @@ export namespace data {
 			required: true,
 		});
 
+		console.assert( !metas.id, 'cannot define multiple record id' );	// the parent class has one already
 		metas.id = fldName;
 	}
 }
@@ -517,6 +513,10 @@ export interface DataProxyProps {
 	solver?: DataSolver;
 }
 
+/**
+ * @deprecated the loading from an url is to be reviewed
+ */
+
 export class DataProxy extends CoreElement<DataEventMap> {
 
 	protected m_props: DataProxyProps;
@@ -561,8 +561,11 @@ export class DataProxy extends CoreElement<DataEventMap> {
 interface DataStoreProps  {
 	model: DataModel;
 	data?: any[];
+	/** @deprecated the loading from an url is to be reviewed: load the data, then setData */
 	url?: string;
+	/** @deprecated see url */
 	autoload?: false;
+	/** @deprecated see url */
 	solver?: DataSolver;
 }
 
@@ -615,14 +618,15 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 	}
 
 	/**
-	 * 
-	 * @param records 
+	 * @deprecated the loading from an url is to be reviewed: load the data, then setData.
+	 * Only for a store created with url and no data; an HTTP error is not reported
 	 */
 
 	async load( url?: string ) {
 		return this.m_proxy.load( url );
 	}
 
+	/** @deprecated see load */
 	async reload( ) {
 		return this.m_proxy.load( );
 	}
@@ -813,8 +817,13 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		return this.m_records[index] ?? null;
 	}
 
+	/**
+	 * gives the records to other: this store is emptied, they do not share them
+	 */
+
 	public moveTo( other: DataStore ) {
 		other.setRawData( this.m_records );
+		this.setRawData( [] );
 	}
 	
 	/**
@@ -871,32 +880,32 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					return new Uint32Array(0);
 				}
 				
-				let filterValue = filter.value;
+				let filterValue: any = filter.value;
 				if( isString(filterValue) && !filter.caseSensitive ) {
 					filterValue = filterValue.toUpperCase( );
 				}
-				
-				const _lt = ( recval: string ) : boolean => {
+
+				const _lt = ( recval: any ) : boolean => {
 					return recval < filterValue;
 				}
 
-				const _le = ( recval: string ) : boolean => {
+				const _le = ( recval: any ) : boolean => {
 					return recval <= filterValue;
 				}
 
-				const _eq = ( recval: string ) : boolean => {
+				const _eq = ( recval: any ) : boolean => {
 					return recval == filterValue;
 				}
 
-				const _neq = ( recval: string ) : boolean => {
+				const _neq = ( recval: any ) : boolean => {
 					return recval != filterValue;
 				}
 
-				const _ge = ( recval: string ) : boolean => {
+				const _ge = ( recval: any ) : boolean => {
 					return recval >= filterValue;
 				}
 
-				const _gt = ( recval: string ) : boolean => {
+				const _gt = ( recval: any ) : boolean => {
 					return recval > filterValue;
 				}
 
@@ -905,9 +914,10 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					return filterRe.test( recval );
 				}
 
-				let filterFn: ( rec: string ) => boolean;	// filter fn 
+				let filterFn: ( rec: any ) => boolean;	// filter fn
 				let filterRe: RegExp;	// if fielter is regexp
 				if( filterValue instanceof RegExp ) {
+					// tested on the field as it is: the regexp says if the case counts (flag i)
 					filterRe = filterValue;
 					filterFn = _re;
 				}
@@ -921,7 +931,14 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 						case '<>':  { filterFn = _neq; break; }
 					}
 				}
-			
+
+				// int, float, date: compared as numbers, a date by its time
+				const type = this.m_fields[filterFld].type;
+				const numeric = !filterRe && (type==='int' || type==='float' || type==='date');
+				if( numeric ) {
+					filterValue = type==='date' ? new Date( filter.value as any ).getTime( ) : Number( filter.value );
+				}
+
 				// scan all records and append only interesting ones
 				const m = this.m_model;
 
@@ -933,12 +950,16 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					}
 
 					let field = m.getRaw( filterFld, rec );
-					if( field===null || field===undefined ) {
+					if( numeric ) {
+						// +: a Date gives its time, without a new object. A null field: NaN, every comparison is false but <>
+						field = field===null || field===undefined ? NaN : +field;
+					}
+					else if( field===null || field===undefined ) {
 						field = '';
 					}
 					else {
 						field = ''+field;
-						if( !filter.caseSensitive ) {
+						if( !filter.caseSensitive && !filterRe ) {
 							field = field.toUpperCase( );
 						}
 					}
@@ -960,6 +981,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 			fidx: number,
 			asc: boolean,
 			cb: SortCallback,
+			numeric: boolean,
 		}
 
 		let bads = 0;		// unknown fields
@@ -969,7 +991,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 		// which is not always the first one, and the order in which indexOfId searches
 		if ( sort===null ) {
 			const id = _getMetas( this.m_model, false ).id;
-			fidxs.push( { fidx: this.m_model.getFieldIndex( id ), asc: true, cb: null } );
+			fidxs.push( { fidx: this.m_model.getFieldIndex( id ), asc: true, cb: null, numeric: false } );
 		}
 		else {
 			fidxs = sort.map( (si) => {
@@ -980,7 +1002,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					bads++;
 				}
 
-				return { fidx: fi, asc: si.ascending, cb: si.callback };
+				return { fidx: fi, asc: si.ascending, cb: si.callback, numeric: si.numeric };
 			});
 		}
 
@@ -996,6 +1018,7 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 			const field = fidxs[0].fidx;
 			const cb 	= fidxs[0].cb;
+			const numeric = fidxs[0].numeric;
 
 			index.sort( ( ia, ib ) => {
 
@@ -1004,6 +1027,10 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 
 				if( cb ) {
 					return cb( va, vb );
+				}
+
+				if( numeric ) {
+					return Number( va ) - Number( vb );
 				}
 
 				if (va > vb) { return 1; }
@@ -1026,8 +1053,17 @@ export class DataStore<T = any> extends EventSource<DataStoreEventMap> {
 					let va = m.getRaw( fidx, this.getByIndex(ia) ) ?? '';
 					let vb = m.getRaw( fidx, this.getByIndex(ib) ) ?? '';
 
+					// a field that finds them equal gives the hand to the next one
 					if( fi.cb ) {
-						return fi.cb( va, vb );
+						const r = fi.cb( va, vb );
+						if( r ) { return r*mul; }
+						continue;
+					}
+
+					if( fi.numeric ) {
+						const r = Number( va ) - Number( vb );
+						if( r ) { return r*mul; }		// NaN, not a number: equal
+						continue;
 					}
 
 					if (va > vb) { return mul; }
@@ -1123,7 +1159,7 @@ export type FilterFunc = ( rec: DataRecord ) => boolean;
 export interface FilterInfo {
 	op: '<' | '<=' | '=' | '>=' | '>' | '<>' | 'empty-result' | FilterFunc,	// emptydb mean return an empty result always
 	field?: string;
-	value?: string | RegExp; // if regexp then operator is =
+	value?: string | number | RegExp; // if regexp then operator is =
 	caseSensitive?: boolean;
 }
 

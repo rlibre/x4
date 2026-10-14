@@ -1238,7 +1238,7 @@ class DataStore<T> extends EventSource {
 ```ts
 interface FilterInfo {
   op: "<"|">"|"<="|"="|">="|"<>"|"empty-result"|FilterFunc
-  field?: string; value?: string|RegExp; caseSensitive?: boolean
+  field?: string; value?: string|number|RegExp; caseSensitive?: boolean   // a RegExp is tested on the field as it is: caseSensitive does not apply, the regexp handles the case (/^jo/i)
 }
 interface SortProp { field: string; ascending: boolean; numeric?: boolean; callback?: SortCallback }
 // Event "view_change" → { change_type: "change"|"filter"|"sort" }
