@@ -19,6 +19,25 @@ Found by a review of the sources on 2026-10-13. Each one is a real defect, but a
 - `ev.stopPropagation( )` in a handler does not stop this walk: only `preventDefault( )` does (`core_dom.ts`). The handlers of the ancestors are still called: a click on the arrow of a `Treeview` folder, whose handler stops the propagation, also selects the line. To test `ev.cancelBubble` in the walk would stop the handlers of the ancestors of every application that calls `stopPropagation( )`.
 - `prependContent( [a, b, c] )` puts the items in the reverse order (`c b a`): each one is inserted first, one after the other (`component.ts`). An application that gives its array reversed, to get the order it wants, would get the other one. In x4 itself the only call gives one item (`Listbox.appendItem`).
 
+## Spreadsheet
+
+Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means reproduced in the browser (projets/x4test), "read" means followed in the code only.
+
+- A click on a column header selects the cell (0,0), with a `selectionChange`, and nothing is drawn as selected (seen: `npm run sheetsel`). `targetCell` stops on the first element of class `cell`, and the cells of the header and of the footer have that class too; it returns `{ ref: undefined }`, which the `click`, `dblclick` and `contextmenu` handlers take for a cell (`mousedown` tests `ref.row!==undefined`). The end of a column resize, whose `click` comes from the sizer in the header, does the same.
+- `Store.setData` keeps a row index as the count of rows: `if( row > _maxrows ) _maxrows = row`. Filled by `setData` alone, a store has one row less than it holds, and its last row is never shown nor editable (read). `setMaxRowCount` that reduces keeps the row of index `rows` in the map (`row <= rows`), which comes back if the count grows again.
+- After a change of the store, the selection keeps only the cells that hold data (`hasData`): a selected empty cell leaves it without `selectionChange`. When the `cellChange` handler of an application writes another cell, Enter after an edit sends the selection to the row 0 (read).
+- A column of type `date` whose value is a string makes `Intl.DateTimeFormat.format` throw, and no row is drawn; the editor of such a cell starts empty (read). The `Gridview` turns such a string into a `Date`.
+- `setStore` does not detach the store it replaces: the closure given to `off` is a new one. The old store still redraws the grid and keeps it alive; after `setStore( null )`, a change of the old store throws (read).
+- `navigate` on a store without rows selects the row 0, or the row -1 (End, arrows up, left, right), with a `selectionChange` (read). The `Gridview` returns when there is no row.
+- `cellClassifier` is not applied to a fixed column, nor called for an empty cell; `rowClassifier` is not applied to the cells of the fixed part (read).
+- `_scrollToIndex` calls `scrollIntoView` on the cell of column 0, which is in the fixed part when that column is fixed (plausible: the root of the grid may scroll).
+
+## Sizers
+
+- `CSizer` has no minimum: dragged to the left of the column, it gives a negative size, kept as the width of the column by the `Gridview` and the `Spreadsheet`; the body then gets a width smaller than its columns (read).
+- `HSizer` and `VSizer` (types `-next`) leave `_onMouseMove` before they fire `resize`; and `isFlex` tests `flexGrow !== undefined`, which is always true (`""` when it is not set) (read).
+- `pointercancel` is not handled: the sizer keeps its reference and goes on resizing while the pointer moves over it (plausible).
+
 ## DockingView
 
 - What a panel shows loses its scroll position when the layout changes: its box is moved.

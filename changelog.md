@@ -102,6 +102,10 @@ view.close( );		// done with it
 - With 200 rows and more, a notch of the wheel over a fixed column scrolls one row, as it does over the rest of the grid.
 - `lock( false )` called once too many leaves the spreadsheet unlocked: it goes on drawing. The `Gridview` does the same.
 
+### Popup
+
+- A press outside the popups that close by themselves (`autoClose`) closes the group opened last; the next press closes the one before. A color picker or a context menu opened from a popup closes first, then the popup. One listener on the document serves all the popups, and it is removed when the last one closes, whichever it is.
+
 ### Dialog, MessageBox, InputBox, PromptBox
 
 - The promise of `showAsync( )` is settled whatever closes the box: with the name of the button that was clicked, or with `null` when the box is closed without a button (Escape, the close box). The code that awaits it goes on.
