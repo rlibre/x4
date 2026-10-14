@@ -47,6 +47,22 @@ function getRoot( ) {
 }
 
 /**
+ * on the document while the event goes down (capture): a press outside
+ * every popup closes the group opened last, the others at the next presses.
+ * The event is left as it is, what is pressed handles it as usual.
+ * One function for all the popups: it is removed by the one that empties the list.
+ */
+
+function dismissLast( e: UIEvent ) {
+	if( autoclose_list.some( x => x.dom.contains( e.target as Node ) ) ) {
+		return;
+	}
+
+	// the newest popup: dismiss( ) closes its whole group (a menu and its sub-menus)
+	autoclose_list[autoclose_list.length-1].dismiss( );
+}
+
+/**
  * @cssvar
  * ```
  * --modal-mask-background
@@ -233,7 +249,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			if( idx>=0 ) {
 				autoclose_list.splice( idx, 1 );
 				if( autoclose_list.length==0 ) {
-					document.removeEventListener( "pointerdown", this._dismiss, true );
+					document.removeEventListener( "pointerdown", dismissLast, true );
 				}
 			}
 		}
@@ -263,7 +279,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 				
 		if( this.props.autoClose ) {
 			if( autoclose_list.length==0 ) {
-				document.addEventListener( "pointerdown", this._dismiss, true );
+				document.addEventListener( "pointerdown", dismissLast, true );
 			}
 
 			autoclose_list.push( this );
@@ -321,23 +337,6 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 	}
 
 	/**
-	 * binded
-	 *
-	 * listened on the document while the event goes down (capture): a press
-	 * closes the popups even when what is pressed stops its propagation.
-	 * the event is left as it is, what is pressed handles it as usual.
-	 */
-
-	private _dismiss = ( e: UIEvent ) => {
-		const onac = autoclose_list.some( x=> x.dom.contains(e.target as Node) )
-		if( onac ) {
-			return;
-		}
-
-		this.dismiss( );
-	}
-	
-	/**
 	 * dismiss all popup belonging to the same group as 'this'
 	 */
 
@@ -369,7 +368,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		const list = inc_group.reverse( );
 		autoclose_list = excl_group;
 		if( autoclose_list.length==0 ) {
-			document.removeEventListener( "pointerdown", this._dismiss, true );
+			document.removeEventListener( "pointerdown", dismissLast, true );
 		}
 		
 		list.forEach( x => x.close() );
