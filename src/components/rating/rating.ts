@@ -14,12 +14,11 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvents, componentFromDOM, ComponentProps, EvChange } from '../../core/component';
+import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { HBox } from '../boxes/boxes';
-import { Input } from '../input/input';
 import { Icon } from '../icon/icon';
-import { class_ns } from '../../core/core_tools';
+import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools';
 
 import icons from "../assets/icons"
 
@@ -54,50 +53,33 @@ export interface RatingProps extends ComponentProps {
 export class Rating extends HBox<RatingProps,RatingEventMap> {
 
 	private m_els: Component[];
-	private m_input: Input;
-	
+
 	constructor( props: RatingProps ) {
 		super( props );
 
-		props.steps = props.steps ?? 5;
+		// this.props: a copy of props (Box adds its tag)
+		this.props.steps = this.props.steps ?? 5;
+
+		// the name is on the rating: a Form finds it, and reads its value as a number (queryInterface)
+		if( props.name ) {
+			this.setAttribute( "name", props.name );
+		}
+
+		this.addDOMEvent( 'click', (e) => this._on_click(e) );
 		this._update( );
 	}
 
+	// value: the count of stars that are lit, 0 for none
 	private _update( ) {
-		
 		const props = this.props;
-
-		let shape = props.icon ?? icons.star.solid;
-		let value = props.value ?? 0;
-
-		this.m_input = new Input( {
-			type: "text",
-			hidden: true,
-			name: props.name,
-			value: ''+value
-		} );
-
-		this.addDOMEvent( 'click', (e) => this._on_click(e) );
+		const shape = props.icon ?? icons.star.solid;
+		const value = props.value ?? 0;
 
 		this.m_els = [];
 		for( let i=0; i<props.steps; i++ ) {
-			
-			let cls = 'item';
-			if( i+1 <= value ) {
-				cls += ' checked';
-			}
-
-			let c = new Icon( { 
-				cls,
-				iconId: shape,
-			} );
-
-			c.setInternalData( "value", i );
-
-			this.m_els.push( c );
+			this.m_els.push( new Icon( { cls: i < value ? 'item checked' : 'item', iconId: shape } ) );
 		}
 
-		this.m_els.push( this.m_input );
 		this.setContent( this.m_els );
 	}
 
@@ -107,12 +89,7 @@ export class Rating extends HBox<RatingProps,RatingEventMap> {
 
 	setValue( v: number ) {
 		this.props.value = v;
-
-		for( let c=0; c<this.props.steps; c++ ) {
-			this.m_els[c].setClass( 'checked', this.m_els[c].getInternalData('value')<=v );
-		}
-
-		this.m_input.setValue( ''+this.props.value );
+		this.m_els.forEach( ( c, i ) => c.setClass( 'checked', i < v ) );
 	}
 
 	setSteps( n: number ) {
@@ -121,18 +98,30 @@ export class Rating extends HBox<RatingProps,RatingEventMap> {
 	}
 
 	setShape( icon: string ) {
-		this.removeClass( this.props.icon );
 		this.props.icon = icon;
+		this._update( );
 	}
 
+	// the star clicked: its svg, or the Icon itself
 	private _on_click( ev: MouseEvent ) {
-		let item = componentFromDOM( ev.target as HTMLElement );
-		item = item.parentElement( Icon );
-		
-		if( item ) {
-			this.setValue( item.getInternalData("value") );
+		const n = this.m_els.findIndex( c => c.dom.contains( ev.target as Node ) );
+		if( n>=0 ) {
+			this.setValue( n+1 );
+			this.fire( 'change', { value: this.props.value } );
+		}
+	}
+
+	override queryInterface<T extends IComponentInterface>( name: string ): T {
+		if( name=="form-element" ) {
+			const i: IFormElement = {
+				getRawValue: ( ) => this.getValue( ),
+				setRawValue: ( v: any ) => { this.setValue( +v ); },
+				isValid: ( ) => true,
+			};
+
+			return i as unknown as T;
 		}
 
-		this.fire( 'change', {value:this.props.value} );
-	} 
+		return super.queryInterface( name );
+	}
 }

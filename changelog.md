@@ -19,6 +19,13 @@ A version gets its date when it is published.
 - A model whose class declares an id while its parent class has one gives an assertion (`cannot define multiple record id`). A class without decorators of its own gives none.
 - Deprecated: the loading from an url (`url`, `autoload`, `solver`, `load( )`, `reload( )`, `DataProxy`). It is to be reviewed; load the data, then give them to `setData( )`.
 
+### Rating
+
+- Without `steps`, a rating has its 5 stars.
+- A click on a star sets the value to its number (1 for the first) and fires `change` once, also after `setSteps( )`. `value` is the count of stars lit, for the props, `setValue` and the click alike.
+- `setShape( icon )` redraws the stars with the icon.
+- In a `Form`, the `name` is on the rating: `setValues( { note: 3 } )` lights 3 stars, `getValues( )` gives the number. The rating has no hidden `<input>` any more: a `<form>` sent by the browser itself does not get the value.
+
 ### State
 
 - The methods of an array that move its elements (`shift`, `unshift`, `splice`, `sort`, `reverse`) keep the state right: the array holds the objects themselves, and a change of an element gives one event, on the path where the element is now (`items[0].n` after a `shift`).
