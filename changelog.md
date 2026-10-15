@@ -5,6 +5,11 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### i18n
+
+- `addTranslation( )` on the language that is selected: `_tr` has the new translations at once.
+- A key missing in a language is taken from its base at the same path, however it is read: a group kept in a variable (`const g = _tr.app; g.title`) too. A key that no language has is told once, with its path.
+
 ### Color
 
 - `new Color( r, g, b )` and `setRgb( r, g, b )` without alpha give an opaque color: `toRgbString( )` gives `"rgb(255,0,0)"`, `toHexString( )` `"#ff0000"`.

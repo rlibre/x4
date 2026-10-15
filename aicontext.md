@@ -1409,8 +1409,10 @@ Two built-in languages (`fr` default, and `en`).
 ```ts
 export let _tr                             // current translation object (proxy)
 createLanguage(name: string, base: string): void
-addTranslation(name: string, ...parts: any[]): void
+addTranslation(name: string, ...parts: any[]): void   // seen at once, the language being selected or not
 selectLanguage(name: string): typeof _tr
+// a key missing in a language is taken from its base (createLanguage), at the same path;
+// a key no language has: console.error "I18N error: unable to find _tr.x.y", undefined
 getCurrentLanguage(): string
 getAvailableLanguages(): string[]
 isLanguage(name: string): boolean

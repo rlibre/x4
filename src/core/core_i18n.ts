@@ -85,7 +85,12 @@ export function addTranslation( name: string, ...parts: any[] ) {
 		_patch( lang.src_translations, p );
 	} );
 
-	lang.translations = _proxyfy( lang.src_translations, lang.base, true );
+	lang.translations = _proxyfy( lang.src_translations, lang.base, [] );
+
+	// the current language: _tr sees the new translations at once
+	if( name==current.name ) {
+		current.translations = lang.translations;
+	}
 }
 
 /**
@@ -117,96 +122,71 @@ function _patch( obj: any, by: any ) {
 /**
  * create a proxy for all sub objects
  * (deep traverse)
+ * @param path where obj is, from _tr: [] for _tr itself, ["global"] for _tr.global
  */
 
-function _proxyfy( obj: any, base: any, root: any ) {
+function _proxyfy( obj: any, base: string, path: string[] ) {
 
 	const result: any = {}
 
 	for( const n in obj ) {
 		if( typeof obj[n]!=="string" && !Array.isArray(obj[n])) {
-			result[n] = _proxyfy( obj[n], base, false );
+			result[n] = _proxyfy( obj[n], base, [...path, n] );
 		}
 		else {
 			result[n] = obj[n];
 		}
 	}
 
-	return _mk_proxy( result, base, root );
+	return _mk_proxy( result, base, path );
 }
 
 
 /**
  * create a proxy for the given object
+ * what is not found is asked to the base language, at the same path
  */
 
-function _mk_proxy( obj: any, base: string, root: boolean ) : any {
+function _mk_proxy( obj: any, base: string, path: string[] ) : any {
 	return new Proxy( obj, {
 		get: (target, prop) => {
-			if( root ) {
-				req_path = [prop];
-			}
-			else {
-				req_path.push( prop );
-			}
+			const value = target[prop];
 
-			let value = target[prop];
-			if( value===undefined ) {
-				if( base ) {
-					value = _findBaseTrans( base );
-				}
-
-				if( value===undefined ) {
-					console.error( "I18N error: unable to find", '_tr.'+req_path.join('.') );
-				}
+			// a symbol is not a translation
+			if( value!==undefined || typeof prop==="symbol" ) {
+				return value;
 			}
 
-			return value;
+			const asked = [...path, prop];
+
+			// not in this language: in its base, which looks in its own base
+			if( base ) {
+				return _findBaseTrans( base, asked );
+			}
+
+			console.error( "I18N error: unable to find", '_tr.'+asked.join('.') );
+			return undefined;
 		}
 	});
 }
 
-
 /**
- * when we ask for _tr.xxx
- * reqpath is set to [xxx]
- * 
- * then when we try to get _tr.xxx.yyy
- * reqpath is [xxx,yyy]
- * if yyy is not found, we try with base langage for the full reqpath 
- * until no base found
+ * the translation at path in the language base
+ * its proxies look in their own base: the last language of the chain tells what is missing
  */
 
-let req_path: (string | symbol)[];
+function _findBaseTrans( base: string, path: string[] ) {
 
-/**
- * 
- */
+	let trans = languages[base].translations;
 
-function _findBaseTrans( base: any ) {
-
-	while( base ) {
-		const lang = languages[base];
-		let trans = lang.translations;
-		let value;
-
-		for( const p of req_path ) {
-			value = trans[p];
-			if( value===undefined ) {
-				break;
-			}
-
-			trans = value;
+	for( const p of path ) {
+		trans = trans[p];
+		if( trans===undefined ) {
+			return undefined;
 		}
-
-		if( value!==undefined ) {
-			return trans;
-		}
-
-		base = lang.base;
 	}
 
-	return undefined;
+	return trans;
 }
 
 /**
