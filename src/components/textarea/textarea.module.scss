@@ -27,6 +27,12 @@
 		flex-shrink: 0;		// alone in a box, it keeps its height: the box does not crush it
 		resize: none;		// no handle unless the prop resize asks for one
 		padding: 4px;
+
+		// never smaller than one character, its padding and border included (border-box):
+		// 10px = 2 x 4px of padding + 2 x 1px of border
+		min-height: calc( 1lh + 10px );
+		min-width: calc( 1ch + 10px );
+
 		outline: none;
 		font: inherit;
 
@@ -68,6 +74,5 @@
 		// its height of rows when the TextArea has none, the TextArea's height when it has one;
 		// a basis of 0 would leave it the height of its padding: a textarea scrolls, its min-height is 0
 		flex: 1 0 auto;
-		min-width: 0;
 	}
 }

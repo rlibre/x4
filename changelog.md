@@ -12,6 +12,7 @@ A version gets its date when it is published.
 ### TextArea
 
 - Without a height, its textarea has the height of its rows (2), and the height its handle gives (`resize`). Given a height, the `TextArea` is filled by its textarea under the label.
+- A `SimpleTextArea` (the one of a `TextArea` too) is never smaller than one character, its padding and border included: a height or a handle that ask for less give a line high and a character wide.
 
 ### Form
 

@@ -647,7 +647,7 @@ interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (nam
 }
 interface TextAreaProps extends SimpleTextAreaProps { label?: string }
 
-class SimpleTextArea extends Component {    // the <textarea> alone
+class SimpleTextArea extends Component {    // the <textarea> alone; never smaller than one character (min-height/min-width, padding included)
   getText(): string; setText(text: string): void
   scrollToBottom(): void
   isValid(): boolean                       // false when it is required and empty
