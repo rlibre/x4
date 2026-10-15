@@ -3,6 +3,20 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.21
+
+### AutoComplete
+
+- A text shorter than `minChars` closes the suggestions and forgets them: ↓ asks for new ones, on the text of the field (`search` with `ev.text` empty when the field is), and does not show those of the previous text.
+
+### TextArea
+
+- Without a height, its textarea has the height of its rows (2), and the height its handle gives (`resize`). Given a height, the `TextArea` is filled by its textarea under the label.
+
+### Form
+
+- `autoComplete` (and `setAutoComplete( )`) is set on the `<form>`: its fields follow it, those added later too. A field with an `autocomplete` of its own keeps it.
+
 ## 2.3.20 (2026-10-14)
 
 ### PDF

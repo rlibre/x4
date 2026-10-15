@@ -652,7 +652,7 @@ class SimpleTextArea extends Component {    // the <textarea> alone
   scrollToBottom(): void
   isValid(): boolean                       // false when it is required and empty
 }
-class TextArea extends VBox {               // a Label above a SimpleTextArea
+class TextArea extends VBox {               // a Label above a SimpleTextArea; without a height, the textarea has its 2 rows (and the height the handle gives); with one, it fills it
   getText(): string; setText(text: string): void
   scrollToBottom(): void
   isValid(): boolean
@@ -771,7 +771,7 @@ interface AutoCompleteProps extends TextEditProps {   // label, labelWidth, requ
   strict?: boolean                          // only a picked item (or empty) is accepted; default false
   itemValue?: "text" | "id"                 // what goes into the field when an item is picked; default "text"
   delay?: number                            // ms before search, default 250
-  minChars?: number                         // default 1
+  minChars?: number                         // default 1; ↓ searches whatever the length (ev.text may be "")
   renderer?: (item: ListItem) => Component
 }
 class AutoComplete extends TextEdit {
@@ -1137,7 +1137,7 @@ interface FormProps extends BoxProps { autoComplete?: boolean }
 class Form extends Box {
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
-  setAutoComplete(on?: boolean): void
+  setAutoComplete(on?: boolean): void      // attribute on the <form>: fields without their own follow it, added later too
   setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void   // a new call replaces the validator
   validate(): FormValues                   // null if invalid; the values the validator changes are written back in their fields (any element with the name, every radio of a group)
 }

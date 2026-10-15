@@ -158,6 +158,9 @@ export class AutoComplete extends TextEdit<AutoCompleteEvents> {
 		if( text.length<this._min_chars ) {
 			this.clearTimeout( "search" );
 			this._popup.show( false );
+
+			// the suggestions were for another text: ↓ asks for new ones
+			this._count = 0;
 			return;
 		}
 

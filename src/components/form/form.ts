@@ -105,10 +105,9 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	 */
 
 	setAutoComplete( on = true ) {
-		const items = this._get_inputs( );
-		items.forEach( x => {		
-			x.setAttribute( "autocomplete", on ? "on" : "off" );
-		} );
+		// on the <form>: its fields without an autocomplete of their own follow it,
+		// those added later too
+		this.setAttribute( "autocomplete", on ? "on" : "off" );
 	}
 
 	/**
