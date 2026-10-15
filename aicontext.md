@@ -1396,7 +1396,7 @@ dragManager.registerDropTarget(column, (cmd, el, infos) => {
 
 - `registerDraggableElement`: while it is dragged, the component has the class `dragging`, and a copy of it with the class `dragged`, added to the body, follows the pointer. Nothing else is done: no data of the application goes with the drag, the target gets the component itself.
 - The callback of a target: `enter` and `leave` when the pointer comes over it and goes away, `drag` again and again while it is over it, `drop`. Only `drag` and `drop` have `infos`; `pt` is in the coordinates of the page.
-- `enter` and `leave` are found by a timer: they may come up to 300 ms late, and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
+- `enter` comes at once, before the first `drag`. `leave` is found by a timer: it comes up to 300 ms after the pointer went away (over the children of a target the browser sends dragleave and dragover in turn), and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
 - `el` in the callbacks is the dragged component, not the target. There is none for files that come from the desktop: read `infos.data.files`.
 - `Image` (`candrop`) and `FileDrop` already use it for files.
 

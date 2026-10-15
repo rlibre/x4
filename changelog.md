@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Drag and drop
+
+- A drop target is told `enter` at once, before the first `drag`, from the first drag of the page on. `leave` still comes up to 300 ms after the pointer went away.
+
 ### Stylesheet
 
 - All the `Stylesheet` of a page share one `<style id="x4-dynamic-css">`: a rule set again by its name, from any of them, is replaced in its place.
