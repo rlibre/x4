@@ -50,7 +50,7 @@ EventSource<E>                 standalone event registry
   └── StateManager<T>
 
 CoreElement-based (non-DOM): DataProxy, DataView, Store
-Standalone: Rect, Timer, Color, DataModel, Shortcuts, Stylesheet, ComputedStyle,
+Standalone: Rect, Timer, Color, DataModel, Shortcuts, Stylesheet (deprecated: CSS variables), ComputedStyle,
             SvgBuilder, X4PDFBuilder, x4_react, CMover, UnsafeHtml (extends String)
 ```
 
@@ -499,10 +499,11 @@ interface LinkProps extends ComponentProps {
   text?: string | UnsafeHtml
   icon?: string
   align?: "left" | "center" | "right"
-  click?: EventCallback<EvClick>
+  click?: EventCallback<EvClick>           // ev.context = href; the link is followed unless ev.preventDefault()
+  // content: the link is its content (no label: text, icon, align are not used)
 }
 interface LinkEvents extends ComponentEvents { click: EvClick }
-class Link extends Component { setText(text: string|UnsafeHtml): void }
+class Link extends Component { setText(text: string|UnsafeHtml): void }   // the text of its label: the icon stays
 ```
 
 ### `Icon`
@@ -510,9 +511,10 @@ class Link extends Component { setText(text: string|UnsafeHtml): void }
 ```ts
 interface IconProps extends ComponentProps { iconId?: string }
 class Icon extends Component { setIcon(iconId: string): void }
-// iconId resolution: "var:name" → CSS var | "data:image/svg+xml,<svg..." → inline
+// iconId resolution: "var:name" or "var:--name" → the variable --name set on <html> by the code
+//     (document.documentElement.style.setProperty("--name", svg); not one of a stylesheet) | "data:image/svg+xml,<svg..." → inline
 //   | "<svg..." → raw inline | "*.svg" → async load + cache | else → <img src>
-export const svgLoader: SvgLoader          // shared SVG cache
+export const svgLoader: SvgLoader          // shared SVG cache: load(url): Promise<string>; a file not found rejects, and is not asked again
 ```
 
 ### `Image`
@@ -647,12 +649,12 @@ interface SimpleTextAreaProps extends BaseProps {   // BaseProps: see Input (nam
 }
 interface TextAreaProps extends SimpleTextAreaProps { label?: string }
 
-class SimpleTextArea extends Component {    // the <textarea> alone
+class SimpleTextArea extends Component {    // the <textarea> alone; never smaller than one character (min-height/min-width, padding included)
   getText(): string; setText(text: string): void
   scrollToBottom(): void
   isValid(): boolean                       // false when it is required and empty
 }
-class TextArea extends VBox {               // a Label above a SimpleTextArea
+class TextArea extends VBox {               // a Label above a SimpleTextArea; without a height, the textarea has its 2 rows (and the height the handle gives); with one, it fills it
   getText(): string; setText(text: string): void
   scrollToBottom(): void
   isValid(): boolean
@@ -771,7 +773,7 @@ interface AutoCompleteProps extends TextEditProps {   // label, labelWidth, requ
   strict?: boolean                          // only a picked item (or empty) is accepted; default false
   itemValue?: "text" | "id"                 // what goes into the field when an item is picked; default "text"
   delay?: number                            // ms before search, default 250
-  minChars?: number                         // default 1
+  minChars?: number                         // default 1; ↓ searches whatever the length (ev.text may be "")
   renderer?: (item: ListItem) => Component
 }
 class AutoComplete extends TextEdit {
@@ -788,12 +790,15 @@ class AutoComplete extends TextEdit {
 interface ColorInputProps extends BoxProps {
   color: Color | string                    // null: no color shown
   name?: string
-  format?: "rgb" | "hex"                   // text of the field, "rgb" by default
+  format?: "rgb" | "hex"                   // text of the field, "rgb" by default; "rgba(...)" / "#rrggbbaa" when not opaque
   picker?: boolean                         // a click on the swatch opens a ColorPicker
   swatches?: (Color|string)[] | (() => (Color|string)[])   // a function is called each time the picker opens
   nullable?: boolean                       // "no color" can be chosen
+  alpha?: boolean                          // false: colors kept opaque, no alpha slider in the picker (default true)
+  placeholder?: string                     // text of the empty field
   change?: EventCallback<EvColorChange>    // user changes only, not setColor
 }
+// typing: the text is not rewritten while typed; on blur it is written from the color in the typed form (#... or rgb...)
 class ColorInput extends HBox {            // queryInterface("form-element"): "#rrggbb" or null
   getColor(): Color; getValue(): string
   setColor(color: Color | string): void; setSwatches(swatches): void
@@ -870,7 +875,7 @@ class Gridview extends Component {
   getView(): DataView
   getSelection(): DataRecord[]              // null when nothing is selected
   getFirstSel(): DataRecord                 // null when nothing is selected
-  selectItem(id, ensureVisible?: boolean): void
+  selectItem(id, ensureVisible?: boolean): void   // may be called before the grid is shown (then nothing is scrolled)
   clearSelection(): void
   selectAll(): void                         // multisel only; keeps the id of every record: costs memory on a very large view
   navigate(sens: kbNav): boolean
@@ -954,7 +959,7 @@ interface ChartProps extends SvgProps {
   type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
   series: ChartSerie[]                      // required; pie & donut use the first serie
   labels?: string[]                         // default: 1, 2, 3...
-  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default
+  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default; on x: max = number of points, step = points between labels (>= 1), min not used
   legend?: boolean                          // default: shown when 2+ named series
   stacked?: boolean
   formatter?: (value: number) => string     // default: chartFormatUnit (1.5k, 2M...)
@@ -1077,6 +1082,7 @@ interface DialogProps extends PopupProps {
   title: string                            // required
   buttons: BtnGroupItem[]                  // required
   icon?: string; form?: Form
+  content?: ComponentContent                // without form: the content of its form
   closable?: boolean | string; modal?: boolean
   btnclick?: EventCallback<EvBtnClick>
 }
@@ -1087,6 +1093,7 @@ class Dialog extends Popup {
   getButton(name: string): Button
   getBtnBar(): BtnGroup
   setTitle(title: string): void
+  show(): this                             // each time: the focus on its first field
   showAsync(): Promise<string>             // the name of the clicked button; null when closed without a button (Escape, close box)
 }
 ```
@@ -1137,7 +1144,7 @@ interface FormProps extends BoxProps { autoComplete?: boolean }
 class Form extends Box {
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
-  setAutoComplete(on?: boolean): void
+  setAutoComplete(on?: boolean): void      // attribute on the <form>: fields without their own follow it, added later too
   setValidator(validator: (values: FormValues, is_valid: boolean) => boolean): void   // a new call replaces the validator
   validate(): FormValues                   // null if invalid; the values the validator changes are written back in their fields (any element with the name, every radio of a group)
 }
@@ -1162,8 +1169,9 @@ class VSizer extends CSizer                // vertical splitter
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
-class Video extends Box {
-  play(); pause(); mute(set: boolean)
+class Video extends Box {                   // class x4video
+  play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
+  pause(); mute(set: boolean)
   get player(): HTMLVideoElement; get duration(): number; get paused(): boolean
   get volume(): number; get videoWidth(): number; get videoHeight(): number
   set stream(stream: MediaStream)
@@ -1171,10 +1179,10 @@ class Video extends Box {
 class Calendar extends VBox {               // props: date?, minDate?, maxDate? (days out of them cannot be chosen), change ("change": the day clicked)
   getDate(): Date; setDate(date: Date): void   // copies: the calendar keeps its own date
 }
-class ColorPicker extends VBox {           // props: color, swatches?, nullable?; "change": EvColorChange, also fired once when built
+class ColorPicker extends VBox {           // props: color, swatches?, nullable?, alpha? (false: no alpha slider, opaque colors); "change": EvColorChange, also fired once when built
   getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
 }
-class Panel extends VBox { setTitle(title: string): void }
+class Panel extends VBox { setTitle(title: string): void }   // the text of its title: its icon stays
 class Breadcrumbs extends HBox { setItems(elements): void }
 interface KeyboardProps extends BoxProps { locale?: string }   // "fr-FR" (default), "de-CH", "pl"...
 class Keyboard extends HBox {               // virtual keyboard, shown while an <input> has the focus
@@ -1287,7 +1295,7 @@ parseRoute(str: string|RegExp, loose?: boolean): Segment
 
 ## Shortcuts (`core_shortcuts`)
 
-Keyboard shortcuts. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`, `"Alt+ArrowLeft"`.
+Keyboard shortcuts. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`, `"Alt+ArrowLeft"`, `"Ctrl+Space"`.
 Modifiers: `Shift`, `Ctrl`, `Cmd`, `Alt`, and `Mod` = the key of the commands (Ctrl on Windows and Linux, Cmd on a Mac). Prefer `Mod`.
 
 ```ts
@@ -1393,7 +1401,7 @@ dragManager.registerDropTarget(column, (cmd, el, infos) => {
 
 - `registerDraggableElement`: while it is dragged, the component has the class `dragging`, and a copy of it with the class `dragged`, added to the body, follows the pointer. Nothing else is done: no data of the application goes with the drag, the target gets the component itself.
 - The callback of a target: `enter` and `leave` when the pointer comes over it and goes away, `drag` again and again while it is over it, `drop`. Only `drag` and `drop` have `infos`; `pt` is in the coordinates of the page.
-- `enter` and `leave` are found by a timer: they may come up to 300 ms late, and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
+- `enter` comes at once, before the first `drag`. `leave` is found by a timer: it comes up to 300 ms after the pointer went away (over the children of a target the browser sends dragleave and dragover in turn), and a `leave` also follows a `drop`. Between them the target has the class `drop-over`.
 - `el` in the callbacks is the dragged component, not the target. There is none for files that come from the desktop: read `infos.data.files`.
 - `Image` (`candrop`) and `FileDrop` already use it for files.
 
@@ -1406,8 +1414,10 @@ Two built-in languages (`fr` default, and `en`).
 ```ts
 export let _tr                             // current translation object (proxy)
 createLanguage(name: string, base: string): void
-addTranslation(name: string, ...parts: any[]): void
+addTranslation(name: string, ...parts: any[]): void   // seen at once, the language being selected or not
 selectLanguage(name: string): typeof _tr
+// a key missing in a language is taken from its base (createLanguage), at the same path;
+// a key no language has: console.error "I18N error: unable to find _tr.x.y", undefined
 getCurrentLanguage(): string
 getAvailableLanguages(): string[]
 isLanguage(name: string): boolean
@@ -1426,7 +1436,7 @@ isLanguage(name: string): boolean
 ```ts
 class UnsafeHtml extends String            // raw, unescaped HTML marker
 unsafeHtml(x: string): UnsafeHtml
-unsafe(strings, ...values): UnsafeHtml     // template tag: unsafe`<b>${x}</b>`
+unsafe(strings, ...values): UnsafeHtml     // template tag: unsafe`<b>${x}</b>`; values escaped (an UnsafeHtml kept), null/undefined write nothing, 0 and false are written
 sanitizeHtml(input: string): string        // escape &<>"' for safe text insertion
 safeText(v: string | UnsafeHtml): string   // UnsafeHtml passes through; plain string is escaped
 
@@ -1443,10 +1453,12 @@ interface IRect { left; top; height; width: number }
 class Timer { setTimeout; clearTimeout; setInterval; clearInterval; clearAllTimeouts }
 
 class Color {
-  // new Color(value) | new Color(r,g,b,a?)
-  setValue(value): this; setRgb(r,g,b,a): this; setHsv(h,s,v,a?): this; setAlpha(a): this
-  getAlpha(): number; lighten(percent): this; isInvalid(): boolean
-  toHexString(): string; toRgbString(withAlpha?): string; toNumber(): number
+  // new Color(value) | new Color(r,g,b,a?)   a: 0..1, default 1
+  setValue(value): this; setRgb(r,g,b,a?): this; setHsv(h,s,v,a?): this; setAlpha(a): this
+  getAlpha(): number; lighten(percent): this
+  isInvalid(): boolean                     // the last setValue could not be read (the color is red); setRgb/setHsv make it valid
+  toHexString(): string; toNumber(): number
+  toRgbString(withAlpha = false): string   // "rgb(r,g,b)"; true: "rgba(r,g,b,0.500)" when not opaque, "rgb(...)" when opaque
   toRgb(): Rgb; toHsv(): Hsv
 }
 
@@ -1465,10 +1477,11 @@ pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
 measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
-date_format(date, options?): string
-date_diff(date1, date2, options?): string
+date_format(date, options?): string       // options not read yet: formatIntlDate(date)
+date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 heures 5 minutes" (either order); options not read
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
-date_hash(date): number; date_clone(date): Date; date_calc_weeknum(date): number
+date_hash(date): number; date_clone(date): Date
+date_calc_weeknum(date): number            // ISO 8601: weeks from monday, week 1 holds the first thursday (29/12/2025 → 1)
 parseIntlDate(value, fmts?): Date; formatIntlDate(date, fmt?, utc?): string
 calcAge(birth, ref?): number
 
@@ -1504,7 +1517,7 @@ const makeUniqueComponentId  // () => string, "x4-<n>" (exported as a value)
 
 ```
 d day (no zero)    D day (2 digits)     j short day (mon)   J long day (monday)
-w week number      W week (2 digits)    m month (no zero)   M month (2 digits)
+w week number (ISO 8601)      W week (2 digits)    m month (no zero)   M month (2 digits)
 o short month      O long month         y/Y year            h 24h hour
 H hour (2 digits)  i minutes            I minutes (2 dig)   s seconds
 S seconds (2 dig)  a am/pm              l ms                L ms (3 digits)
@@ -1526,6 +1539,9 @@ class SvgBuilder extends SvgGroup {
 }
 // Items: SvgGroup, SvgPath (moveTo/lineTo/curveTo/arc/closePath), SvgText (font/fontSize/textAlign),
 //        SvgShape, SvgIcon, SvgGradient (addStop)
+// arc(x, y, r, start, end): angles in degrees, 0 is the top, 90 the right; it starts a new subpath
+// addStop(offset, color): a number is a percentage (20 → "20%"), "50%" as it is
+// getNumAttr(name): 0 when not set; SvgIcon(svg): its svg needs xmlns="http://www.w3.org/2000/svg"
 ```
 
 ---
@@ -1792,6 +1808,8 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 	"exclude": [ "node_modules", "bin", "**/monaco-editor/**" ]
 }
 ```
+
+`experimentalDecorators` is required: the decorators `@data.*` of a `DataModel` are written for it. Without it esbuild applies the standard JavaScript decorators, and the fields of a model are not declared.
 
 ### `src/index.html`
 
