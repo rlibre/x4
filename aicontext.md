@@ -1290,7 +1290,7 @@ parseRoute(str: string|RegExp, loose?: boolean): Segment
 
 ## Shortcuts (`core_shortcuts`)
 
-Keyboard shortcuts. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`, `"Alt+ArrowLeft"`.
+Keyboard shortcuts. A sequence is written as it is read: `"Mod+C"`, `"Shift+Mod+Z"`, `"Delete"`, `"Alt+ArrowLeft"`, `"Ctrl+Space"`.
 Modifiers: `Shift`, `Ctrl`, `Cmd`, `Alt`, and `Mod` = the key of the commands (Ctrl on Windows and Linux, Cmd on a Mac). Prefer `Mod`.
 
 ```ts

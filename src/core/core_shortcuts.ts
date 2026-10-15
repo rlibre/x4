@@ -91,6 +91,11 @@ function sequenceOf( ev: KeyboardEvent ): string {
 		key = ev.code[3].toLowerCase( );
 	}
 
+	// the space bar ( " " ): written "Space" in a sequence
+	if( key===" " ) {
+		key = "space";
+	}
+
 	return join( { shift: ev.shiftKey, ctrl: ev.ctrlKey, cmd: ev.metaKey, alt: ev.altKey, key } );
 }
 
@@ -158,7 +163,6 @@ const key_names: Record<string,string> = {
 	arrowdown: "↓",
 	escape: "Esc",
 	delete: "Del",
-	" ": "Space",
 };
 
 /**

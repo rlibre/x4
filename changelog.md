@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Shortcuts
+
+- The space bar is written `Space` in a sequence: `"Ctrl+Space"` is a shortcut.
+
 ### Dates
 
 - `date_calc_weeknum( )`, and `w` / `W` of `formatIntlDate`, give the week of ISO 8601: weeks from monday, the week 1 holds the first thursday of the year. The 29/12/2025 is in the week 1, the 01/01/2027 in the week 53; there is no week 0, and summer time does not move the weeks. The weeks of the `Calendar` follow.
