@@ -175,12 +175,13 @@ class DragManager {
 	 */
 
 	private _startCheck() {
+		clearInterval( this.timer );
 
-		if (this.timer) {
-			clearInterval(this.timer);
-			this._check( );
-		}
+		// the target is told at once (and the one that was left)
+		this._check( );
 
+		// then checked again: over the children of a target, dragleave and dragover come
+		// in turn; it is left when no dragover came back in between
 		this.timer = setInterval( () => this._check(), 300 );
 	}
 
