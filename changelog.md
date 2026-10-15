@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Keyboard
+
+- A double click, or a quick double tap of a finger, on a key writes it twice, not three times: a key is read at each contact (`pointerdown`), the focus stays in the field.
+
 ### Video
 
 - Its class is `x4video`: its stylesheet applies (a black background, the player over all the box). A stylesheet of the application that targets `.video` has to target `.x4video`.

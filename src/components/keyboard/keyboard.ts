@@ -284,15 +284,19 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		this.hide( );
 
+		// a key: each contact, a finger or the mouse, the second tap of a quick double tap too
+		this.addDOMEvent( "pointerdown", (e) => {
+			this.handleKeyEvent( e );
+		});
+
+		// the focus stays in the field
 		this.addDOMEvent( "mousedown", (e) => {
-			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
 
-		// for rapid people
+		// a double click or a double tap: its two pointerdown gave the two keys
 		this.addDOMEvent( "dblclick", (e) => {
-			this.handleKeyEvent( e ); 	
 			e.preventDefault( );
 			e.stopPropagation( );
 		});
