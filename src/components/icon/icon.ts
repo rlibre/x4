@@ -27,7 +27,7 @@ type solveCallback = (data:string)=>void;
 
 class SvgLoader {
 	private cache: Map<string,string>;
-	private waiters: Map<string,solveCallback[]>;
+	private waiters: Map<string,{ resolve: solveCallback, reject: ( e: any ) => void }[]>;
 
 	constructor( ) {
 		this.cache = new Map( );
@@ -37,26 +37,35 @@ class SvgLoader {
 	async load( file: string ): Promise<string> {
 
 		if( this.cache.has(file) ) {
-			return Promise.resolve( this.cache.get(file) );
+			// null: the file was not found, it is not asked again
+			const svg = this.cache.get( file );
+			if( svg===null ) {
+				return Promise.reject( new Error( `file not found: ${file}` ) );
+			}
+
+			return Promise.resolve( svg );
 		}
 
 		return new Promise( (resolve,reject) => {
+			// already asked: the same answer
 			if( this.waiters.has(file) ) {
-				this.waiters.get(file).push( resolve );
+				this.waiters.get(file).push( { resolve, reject } );
+				return;
 			}
-			else {
-				this.waiters.set( file, [resolve] );
-				this._load( file )
-					.then( ( data: string ) => {
-						this.cache.set( file, data );
-						const ww = this.waiters.get( file );
-						ww.forEach( cb => cb(data ) );
-					})
-					.catch( e => {
-						this.cache.set( file, null );
-						reject( e );
-					} )
-			}
+
+			this.waiters.set( file, [{ resolve, reject }] );
+			this._load( file )
+				.then( ( data: string ) => {
+					this.cache.set( file, data );
+					this.waiters.get( file ).forEach( w => w.resolve( data ) );
+					this.waiters.delete( file );
+				})
+				.catch( e => {
+					// kept as not found: it is not asked again
+					this.cache.set( file, null );
+					this.waiters.get( file ).forEach( w => w.reject( e ) );
+					this.waiters.delete( file );
+				} );
 		});
 	}
 

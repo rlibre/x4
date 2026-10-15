@@ -5,6 +5,11 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### svgLoader
+
+- A file not found is kept as such: `load( )` rejects it again, without asking for it again, instead of resolving `null`. An `Icon` on it stays empty, without the text `null`.
+- The loads asked while a file is loading all get its answer, a failure too: none waits for ever.
+
 ### Icon
 
 - `var:home` is read as the variable `--home`, as `var:--home` is: the name of the variable may be given without its `--`. It is the variable set on `<html>` by the code (`document.documentElement.style.setProperty( "--home", svg )`). `ctx.icon( )` of the PDF reads the same names.

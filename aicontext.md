@@ -514,7 +514,7 @@ class Icon extends Component { setIcon(iconId: string): void }
 // iconId resolution: "var:name" or "var:--name" → the variable --name set on <html> by the code
 //     (document.documentElement.style.setProperty("--name", svg); not one of a stylesheet) | "data:image/svg+xml,<svg..." → inline
 //   | "<svg..." → raw inline | "*.svg" → async load + cache | else → <img src>
-export const svgLoader: SvgLoader          // shared SVG cache
+export const svgLoader: SvgLoader          // shared SVG cache: load(url): Promise<string>; a file not found rejects, and is not asked again
 ```
 
 ### `Image`
