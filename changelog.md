@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Icon
+
+- `var:home` is read as the variable `--home`, as `var:--home` is: the name of the variable may be given without its `--`. It is the variable set on `<html>` by the code (`document.documentElement.style.setProperty( "--home", svg )`). `ctx.icon( )` of the PDF reads the same names.
+
 ### Link
 
 - With a `click` handler, the link is followed unless the handler calls `ev.preventDefault( )`. A handler that only reacts to the click, without it, now lets the browser go to `href` (a link `href: "#"` goes to the top of the page).

@@ -83,6 +83,8 @@ export interface IconProps extends ComponentProps {
 	/**
      * Identifier for the icon.
      * Can be a URL, a CSS variable (prefixed with `var:`), or inline SVG data.
+     * `var:home` (or `var:--home`) is the variable --home set on <html> by the code:
+     * document.documentElement.style.setProperty( "--home", svg ).
      * @example
      * // Using a CSS variable
      * { iconId: "var:home" }
@@ -139,8 +141,13 @@ export class Icon extends Component<IconProps> {
 		if( iconId ) {
 			if( iconId.startsWith('var:') ) {
 				do {
-					const path = iconId.substring( 4 );
-					iconId = document.documentElement.style.getPropertyValue( path );
+					// "var:home" or "var:--home": the variable --home, set on <html>
+					let name = iconId.substring( 4 );
+					if( !name.startsWith( "--" ) ) {
+						name = "--" + name;
+					}
+
+					iconId = document.documentElement.style.getPropertyValue( name );
 				} while( iconId.startsWith('var:') );
 			} 
 

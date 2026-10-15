@@ -835,7 +835,13 @@ function transformSegments( segs: PathSegment[], m: Matrix ): PathSegment[] {
 
 function svgSource( icon: string ): string {
 	while (icon.startsWith('var:')) {
-		icon = document.documentElement.style.getPropertyValue(icon.substring(4)).trim()
+		// "var:home" or "var:--home": the variable --home, set on <html>
+		let name = icon.substring(4)
+		if (!name.startsWith('--')) {
+			name = '--' + name
+		}
+
+		icon = document.documentElement.style.getPropertyValue(name).trim()
 	}
 
 	if (icon.startsWith('data:image/svg+xml;base64,')) {
