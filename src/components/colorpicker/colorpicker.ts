@@ -94,6 +94,9 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
 		this.mdown = true;
 		this.irect = this.getBoundingRect( );
 		this.setCapture( ev.pointerId );
+
+		// a click takes the point too, without a move
+		this.mousemove( ev );
 	}
 
 	mousemove( ev: PointerEvent ) {
@@ -217,6 +220,9 @@ class HueSlider extends Box<BoxProps,CommonEvents> {
 		this.mdown = true;
 		this.irect = this.getBoundingRect( );
 		this.setCapture( ev.pointerId );
+
+		// a click takes the point too, without a move
+		this.mousemove( ev );
 	}
 
 	mousemove( ev: PointerEvent ) {
@@ -298,6 +304,9 @@ class AlphaSlider extends Box<BoxProps,CommonEvents> {
 		this.mdown = true;
 		this.irect = this.getBoundingRect( );
 		this.setCapture( ev.pointerId );
+
+		// a click takes the point too, without a move
+		this._on_mousemove( ev );
 	}
 
 	_on_mousemove( ev: PointerEvent ) {
@@ -622,6 +631,14 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 				}
 				break;
 			}
+
+			default: {
+				// not for the picker: Tab, Escape... go on
+				return;
+			}
 		}
+
+		// the arrows move the picker, not the page
+		ev.preventDefault( );
 	}
 }

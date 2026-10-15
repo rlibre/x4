@@ -52,6 +52,8 @@ c.toRgbString( true );	// "rgba(255,0,0,0.502)"
 - Opened, it shows its color: the thumb of the saturation on its saturation and its value, the alpha slider on its alpha.
 - New `alpha: false`: no alpha slider, the colors are opaque (the one given, `setColor`, the swatches, the eye dropper, ctrl+↑/↓).
 - The swatches are drawn over checkers: a color that is not opaque is seen as such. The swatch "no color" (`nullable`) is white, crossed out in red (`--colorpicker-none`).
+- A click without a move takes the point, in the saturation, the hue and the alpha.
+- The arrows move the picker only: the page or the popup that holds it does not scroll.
 
 ### ColorInput
 
