@@ -64,7 +64,8 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 	private _title: Label;
 
 	constructor(props: P) {
-		super({ tag: "dialog", modal: true, ...props });
+		// content is the content of its form
+		super({ tag: "dialog", modal: true, ...props, content: undefined });
 
 		this._ismodal = this.props.modal;
 
@@ -95,7 +96,7 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 					}) : null,
 				]
 			}),
-			this.form = props.form ? props.form : new Form({}),
+			this.form = props.form ? props.form : new Form({ content: props.content }),
 			new BtnGroup({
 				id: "btnbar",
 				reverse: true,
@@ -133,9 +134,19 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 			}
 		})
 
-		asap( ( ) => {
-			this.focusNext( true );
-		} );
+	}
+
+	/**
+	 * each time it opens: the focus on its first field
+	 */
+
+	override show( show = true ): this {
+		super.show( show );
+		if( show ) {
+			asap( ( ) => this.focusNext( true ) );
+		}
+
+		return this;
 	}
 
 	private focusNext( next: boolean) : boolean {

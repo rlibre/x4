@@ -39,7 +39,7 @@ interface PanelProps extends ComponentProps {
 @class_ns( "x4" )
 export class Panel extends VBox<PanelProps> {
 
-	private _title: Component;
+	private _title: Label;
 	private _body: Component;
 
 	constructor( props: PanelProps ) {
@@ -57,6 +57,7 @@ export class Panel extends VBox<PanelProps> {
 	}
 
 	setTitle( title: string | UnsafeHtml ) {
-		this._title.setContent( title )
+		// the text of the label: its icon stays
+		this._title.setText( title );
 	}
 }

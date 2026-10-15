@@ -1303,13 +1303,19 @@ export class X4PDFBuilder {
 		}
 		
 		const image = (jpegBytes: Uint8Array, x: number, y: number, w: number, h: number) => {
+			// the size is in the frame header (SOF): the segments are followed, an EXIF
+			// thumbnail inside a segment is skipped
 			let imgWidth = 0, imgHeight = 0
-			for (let i = 0; i < jpegBytes.length - 1; i++) {
-				if (jpegBytes[i] === 0xFF && (jpegBytes[i + 1] === 0xC0 || jpegBytes[i + 1] === 0xC2)) {
+			let i = 2
+			while (i + 9 < jpegBytes.length && jpegBytes[i] === 0xFF) {
+				const marker = jpegBytes[i + 1]
+				if (marker >= 0xC0 && marker <= 0xCF && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC) {
 					imgHeight = (jpegBytes[i + 5] << 8) | jpegBytes[i + 6]
 					imgWidth = (jpegBytes[i + 7] << 8) | jpegBytes[i + 8]
 					break
 				}
+
+				i += 2 + ((jpegBytes[i + 2] << 8) | jpegBytes[i + 3])
 			}
 
 			const imgName = `/Im${imageCount++}`

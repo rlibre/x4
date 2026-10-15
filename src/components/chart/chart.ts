@@ -31,7 +31,7 @@ export interface ChartTick {
 export interface ChartAxis {
 	name?: string;
 	ticks?: ChartTick[];
-	min?: number;
+	min?: number;		// not used on x axis
 	max?: number;		// on x axis: number of points
 	step?: number;		// on x axis: one label every 'step' points
 }
@@ -102,6 +102,11 @@ export function chartFormatUnit( value: number, decimals = 2 ) {
 
 function niceScale( min: number, max: number, maxTicks: number ) {
 
+	// a bound given beyond the values: an empty range at that bound
+	if( max<min ) {
+		max = min;
+	}
+
 	if( min==max ) {
 		if( min==0 ) 		{ max = 1; }
 		else if( min>0 ) 	{ min = 0; }
@@ -152,9 +157,12 @@ function computeStack( series: ChartSerie[], count: number ) {
 	const neg = new Array<number>( count ).fill( 0 );
 
 	return series.map( s => {
+		// a serie without values counts 0
+		const values = s.values || [];
+
 		const out: { lo: number, hi: number }[] = [];
 		for( let i=0; i<count; i++ ) {
-			const v = isNumber( s.values[i] ) ? s.values[i] : 0;
+			const v = isNumber( values[i] ) ? values[i] : 0;
 			const acc = v>=0 ? pos : neg;
 
 			out.push( { lo: acc[i], hi: acc[i]+v } );
@@ -591,7 +599,8 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 			}
 
 			// too many labels: show one every n
-			const every = xaxis.step>0 ? Math.round( xaxis.step ) : Math.max( 1, Math.ceil( ( maxw+8 ) / ( xstep || plot.width ) ) );
+			// at least one point between two labels
+			const every = xaxis.step>0 ? Math.max( 1, Math.round( xaxis.step ) ) : Math.max( 1, Math.ceil( ( maxw+8 ) / ( xstep || plot.width ) ) );
 			for( let i=0; i<count; i+=every ) {
 				xticks.push( { value: i, text: this._label(i) } );
 			}

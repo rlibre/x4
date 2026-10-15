@@ -508,7 +508,7 @@ export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEven
      */
 
 	setTemplate( t: string[] ) {
-		this.setAttribute( "grid-template-areas", t.map( x => '"' + x + '"' ).join(" ") );
+		this.setStyleValue( "gridTemplateAreas", t.map( x => '"' + x + '"' ).join(" ") );
 	}
 
 	/**

@@ -16,30 +16,31 @@
 
 
 :root {
-	--spreadsheet-background: white;
+	// from the theme: a dark theme (its scale --color-primary-* reversed) gives a dark grid
+	--spreadsheet-background: var( --background-primary );
 	--spreadsheet-border: var( --border );
 	
-	--spreadsheet-header-cell-background: white;
-	--spreadsheet-header-cell-color: black;
-	--spreadsheet-header-cell-vline: #f0f0f0;
-	--spreadsheet-header-cell-border: #cccccc;
+	--spreadsheet-header-cell-background: var( --background-primary );
+	--spreadsheet-header-cell-color: var( --text-primary );
+	--spreadsheet-header-cell-vline: var( --border );
+	--spreadsheet-header-cell-border: var( --border );
 
 	--spreadsheet-check-background: var( --accent-background );
-	--spreadsheet-check-color: white;
-	--spreadsheet-check-background-hover: white;
+	--spreadsheet-check-color: var( --accent-color );
+	--spreadsheet-check-background-hover: var( --background-primary );
 	--spreadsheet-check-color-hover: var( --accent-background );
 
 	--spreadsheet-perc-background: var( --accent-background );
-	--spreadsheet-perc-color: white;
-	--spreadsheet-perc-background-hover: white;
+	--spreadsheet-perc-color: var( --accent-color );
+	--spreadsheet-perc-background-hover: var( --background-primary );
 	--spreadsheet-perc-color-hover: var( --accent-background );
 
-	--spreadsheet-cell-color: black;
-	--spreadsheet-cell-color-sel: white;
+	--spreadsheet-cell-color: var( --text-primary );
+	--spreadsheet-cell-color-sel: var( --accent-color );
 	--spreadsheet-cell-vline: var( --border );
 
-	--spreadsheet-row-background: white;
-	--spreadsheet-row-odd-background: white;
+	--spreadsheet-row-background: var( --background-primary );
+	--spreadsheet-row-odd-background: var( --background-primary );
 	--spreadsheet-row-border: var( --border );
 
 	--spreadsheet-row-background-hover: var( --background-secondary );
@@ -70,6 +71,7 @@
 
 	background-color: var( --spreadsheet-background );
 	border: 1px solid var( --spreadsheet-border );
+	color: var( --spreadsheet-cell-color );
 		
 	.cell {
 		padding: 4px;
@@ -180,7 +182,7 @@
 				width: 100%;
 				border: 1px solid var( --border );
 				height: 8px;
-				background-color: white;
+				background-color: var( --spreadsheet-background );
 				overflow: hidden;
 
 				div {
@@ -234,7 +236,7 @@
 		display: inline-flex;
 		align-items: center;
 
-		color: black;
+		color: var( --spreadsheet-header-cell-color );
 		font-weight: 500;
 		justify-content: center;
 
@@ -307,7 +309,7 @@
 		width: var( --fixed-width );
 		bottom: 0;
 		
-		background-color: white;
+		background-color: var( --spreadsheet-background );
 		z-index: 1;
 
 		.row {

@@ -875,7 +875,7 @@ class Gridview extends Component {
   getView(): DataView
   getSelection(): DataRecord[]              // null when nothing is selected
   getFirstSel(): DataRecord                 // null when nothing is selected
-  selectItem(id, ensureVisible?: boolean): void
+  selectItem(id, ensureVisible?: boolean): void   // may be called before the grid is shown (then nothing is scrolled)
   clearSelection(): void
   selectAll(): void                         // multisel only; keeps the id of every record: costs memory on a very large view
   navigate(sens: kbNav): boolean
@@ -959,7 +959,7 @@ interface ChartProps extends SvgProps {
   type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
   series: ChartSerie[]                      // required; pie & donut use the first serie
   labels?: string[]                         // default: 1, 2, 3...
-  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default
+  xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default; on x: max = number of points, step = points between labels (>= 1), min not used
   legend?: boolean                          // default: shown when 2+ named series
   stacked?: boolean
   formatter?: (value: number) => string     // default: chartFormatUnit (1.5k, 2M...)
@@ -1082,6 +1082,7 @@ interface DialogProps extends PopupProps {
   title: string                            // required
   buttons: BtnGroupItem[]                  // required
   icon?: string; form?: Form
+  content?: ComponentContent                // without form: the content of its form
   closable?: boolean | string; modal?: boolean
   btnclick?: EventCallback<EvBtnClick>
 }
@@ -1092,6 +1093,7 @@ class Dialog extends Popup {
   getButton(name: string): Button
   getBtnBar(): BtnGroup
   setTitle(title: string): void
+  show(): this                             // each time: the focus on its first field
   showAsync(): Promise<string>             // the name of the clicked button; null when closed without a button (Escape, close box)
 }
 ```
@@ -1180,7 +1182,7 @@ class Calendar extends VBox {               // props: date?, minDate?, maxDate? 
 class ColorPicker extends VBox {           // props: color, swatches?, nullable?, alpha? (false: no alpha slider, opaque colors); "change": EvColorChange, also fired once when built
   getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
 }
-class Panel extends VBox { setTitle(title: string): void }
+class Panel extends VBox { setTitle(title: string): void }   // the text of its title: its icon stays
 class Breadcrumbs extends HBox { setItems(elements): void }
 interface KeyboardProps extends BoxProps { locale?: string }   // "fr-FR" (default), "de-CH", "pl"...
 class Keyboard extends HBox {               // virtual keyboard, shown while an <input> has the focus
@@ -1537,6 +1539,9 @@ class SvgBuilder extends SvgGroup {
 }
 // Items: SvgGroup, SvgPath (moveTo/lineTo/curveTo/arc/closePath), SvgText (font/fontSize/textAlign),
 //        SvgShape, SvgIcon, SvgGradient (addStop)
+// arc(x, y, r, start, end): angles in degrees, 0 is the top, 90 the right; it starts a new subpath
+// addStop(offset, color): a number is a percentage (20 → "20%"), "50%" as it is
+// getNumAttr(name): 0 when not set; SvgIcon(svg): its svg needs xmlns="http://www.w3.org/2000/svg"
 ```
 
 ---
@@ -1803,6 +1808,8 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 	"exclude": [ "node_modules", "bin", "**/monaco-editor/**" ]
 }
 ```
+
+`experimentalDecorators` is required: the decorators `@data.*` of a `DataModel` are written for it. Without it esbuild applies the standard JavaScript decorators, and the fields of a model are not declared.
 
 ### `src/index.html`
 

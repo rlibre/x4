@@ -5,6 +5,53 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Panel, GridBox
+
+- `Panel.setTitle( )` changes the text of the title: its icon stays.
+- `GridBox.setTemplate( )` lays the box out: `grid-template-areas` is set in its style.
+
+### Dialog, MessageBox
+
+- A dialog puts the focus on its first field each time it is shown, not only the first time.
+- `new Dialog( { content } )`: without `form`, `content` is the content of its form.
+- `MessageBox.show( msg, buttons, title, "question" )` shows the icon of question.
+
+```ts
+new Dialog( { title: "Name", buttons: ["ok","cancel"], content: new TextEdit( { name: "name", label: "Name" } ) } ).show( );
+```
+
+### Chart
+
+- A `yaxis.min` above the values, or a `yaxis.max` under them, draws an empty range at that bound, without NaN.
+- `xaxis.step` under 0.5 shows a label on each point, the page is no longer stuck.
+- A stacked serie without `values` counts 0.
+- `xaxis.min` is not used: the doc says so.
+
+### SVG
+
+- `SvgIcon` keeps all the elements of its svg, and reads a svg that has a `%` (`width="100%"`): a data url is decoded only when it is encoded.
+- `addStop( "50%", ... )` writes `50%`, `addStop( 20, ... )` writes `20%`.
+- `strokeCap( "square" )`.
+- `addClass( "" )` returns the item: it can be chained.
+- `getNumAttr( )` gives 0 for an attribute not set, and the decimals of a value (`1.5`).
+- The doc of `arc( )`: 0 is the top, 90 the right.
+
+### PDF
+
+- `ctx.image( jpeg, ... )` reads the size of the image in its frame header: a JPEG with an EXIF thumbnail gets its own size, not the one of the thumbnail.
+
+### Command line
+
+- `x4js create`: the tsconfig.json of every template sets `experimentalDecorators`, which the decorators `@data.*` of a `DataModel` need. An application created before has to add `"experimentalDecorators": true` to its `compilerOptions`.
+
+### Gridview, Spreadsheet
+
+- Their colours come from the theme: the backgrounds from `--background-primary`, the texts from `--text-primary`, the lines from `--border`. A dark theme (the scale `--color-primary-*` reversed) gives a dark grid, without redefining the variables `--gridview-*` or `--spreadsheet-*`.
+
+### Gridview
+
+- `selectItem( id, true )` on a grid that is not shown yet selects the row without an error; nothing is scrolled.
+
 ### Keyboard
 
 - A double click, or a quick double tap of a finger, on a key writes it twice, not three times: a key is read at each contact (`pointerdown`), the focus stays in the field.

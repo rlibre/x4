@@ -46,6 +46,19 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 - Closing a tool that is beside others does not make its band narrower.
 - A tool cannot be collapsed: kept where it is, reduced to its title, and opened again with a click (asked on 2026-10-12; nothing is designed).
 
+## Stylesheet
+
+- Deprecated in 2.3.21: the CSS variables (`setStyleVariable`, `--x` in the stylesheets) do what rules added at run time did, and nothing in x4 uses it. To remove in a later version.
+
+## Dates
+
+- `date_format( date, options )` does not read `options`: it gives `formatIntlDate( date )`, while its doc passes `Intl` options (`{ day: 'numeric', month: 'long' }`). The `Intl.DateTimeFormat( cur_locale, options )` line is in a comment; `cur_locale` is "fr-FR", changed by `_date_set_locale` only, not by `selectLanguage`.
+- `date_diff( date1, date2, options )`: `options` is read nowhere and no doc says what it is for (to think about: days, a precision, "in 5 minutes" / "5 minutes ago"...).
+
+## i18n
+
+- Translations loaded on demand (asked on 2026-10-15; nothing is designed): a language, or a part of it, fetched when it is selected or first needed, instead of being in the bundle.
+
 ## ColorInput
 
 - `-` typed in the field (asked on 2026-10-15; nothing is decided): transparent, or "no color" (`null`) in a `nullable` field? With `alpha: false`, refused as a text that cannot be read? `transparent` is already read (`Color.setValue`). To keep `-` shown when the field is left, `_format` would return it while the color is transparent.

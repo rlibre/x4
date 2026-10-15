@@ -66,7 +66,7 @@ export class MessageBox extends Dialog<DialogProps>
 				content: [
 					new HBox( {
 						content: [
-							new Icon( { iconId: error_icon }),
+							new Icon( { iconId: icon }),
 							new Label( { text: msg } ),
 						]
 					}),

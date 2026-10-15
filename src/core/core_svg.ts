@@ -156,7 +156,7 @@ class SvgItem {
 	 * @param cap 
 	 */
 
-	strokeCap( cap: "butt" | "round" | "sqaure" ) {
+	strokeCap( cap: "butt" | "round" | "square" ) {
 		return this.setAttr( "stroke-linecap", cap );
 	}
 
@@ -218,12 +218,13 @@ class SvgItem {
 	 */
 
 	getNumAttr( name: string ) {
-		const a = this._dom.getAttribute( name )
-		if( a=='' ) {
+		// not set or empty: 0; "1.5" is 1.5
+		const a = this._dom.getAttribute( name );
+		if( !a ) {
 			return 0;
 		}
 
-		return parseInt( a );
+		return parseFloat( a );
 	}
 
 	/**
@@ -271,7 +272,9 @@ class SvgItem {
 	 */
 	
 	addClass( cls: string ): this {
-		if( !cls ) return;
+		if( !cls ) {
+			return this;
+		}
 		
 		cls = cls.trim();
 		if( cls.indexOf(' ')>=0 ) {
@@ -484,12 +487,13 @@ export class SvgPath extends SvgItem {
 
 	/**
 	 * draw an arc
-	 * Draws an elliptical arc from the current point to a new point.
+	 * A circular arc around (x, y), from the angle start to end in degrees: 0 is the top,
+	 * 90 the right (clockwise). It starts a new subpath at its first point.
 	 *
-	 * @param x - The x-coordinate of the center of the ellipse.
-	 * @param y - The y-coordinate of the center of the ellipse.
+	 * @param x - The x-coordinate of the center.
+	 * @param y - The y-coordinate of the center.
 	 * @param r - The radius of the arc.
-	 * @param start - The start angle of the arc in degrees (0 is right, 90 is down).
+	 * @param start - The start angle of the arc in degrees (0 is the top, 90 is the right).
 	 * @param end - The end angle of the arc in degrees.
 	 * @param clockwise - If `true`, the arc is drawn clockwise; otherwise, counter-clockwise. Defaults to `true`.
 	 *
@@ -612,12 +616,16 @@ export class SvgIcon extends SvgItem {
 	constructor( svg: string ) {
 		super( "svg" );
 
+		// a data url is decoded when it is encoded ("data:image/svg+xml,%3Csvg..."), a raw svg never
 		if( svg.startsWith("data:image/svg+xml,") ) {
 			svg = svg.substring( 19 );
+			if( !svg.startsWith( "<" ) ) {
+				svg = decodeURIComponent( svg );
+			}
 		}
 
 		const parser = new DOMParser();
-		const doc = parser.parseFromString( decodeURIComponent(svg), "image/svg+xml");
+		const doc = parser.parseFromString( svg, "image/svg+xml");
 
 		const parserErrorElement = doc.querySelector("parsererror");
 		if( parserErrorElement ) {
@@ -629,11 +637,9 @@ export class SvgIcon extends SvgItem {
 			this._dom.setAttribute( svgRoot.attributes[i].name, svgRoot.attributes[i].value );
 		}
 
-		for( let i=0; i<svgRoot.childNodes.length; i++) {
-			const child = svgRoot.childNodes[i];
-			if (child.nodeType === 1) { 
-				this._dom.appendChild(child);
-			} 
+		// the elements, all of them: each one moved leaves the list
+		for( const child of Array.from( svgRoot.children ) ) {
+			this._dom.appendChild( child );
 		}
 	}
 }
@@ -707,7 +713,9 @@ export class SvgGradient extends SvgItem {
 	 * @returns The current `SvgGradient` instance for chaining.
 	 */
 	addStop( offset: number_or_perc, color: string ): this {
-		this._dom.insertAdjacentHTML( "beforeend", `<stop offset="${offset}%" stop-color="${color}"></stop>`);
+		// a number is a percentage: 20 is "20%"
+		const o = isString( offset ) ? offset : offset + "%";
+		this._dom.insertAdjacentHTML( "beforeend", `<stop offset="${o}" stop-color="${color}"></stop>`);
 		return this;
 	}
 }

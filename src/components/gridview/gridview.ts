@@ -559,6 +559,11 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 
 	private _scrollToIndex( index: number, block = 'nearest' ) {
 
+		// not built yet: nothing to scroll
+		if( !this._viewport ) {
+			return;
+		}
+
 		// is it already visible ?
 		let rows = this.queryAll(`.row[data-row="${index}"]`);
 		if (rows.length) {
