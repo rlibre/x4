@@ -121,33 +121,42 @@ export function isUnitLess( name: string ) {
 	return unitless[name] ? true : false;
 }
 
+// one sheet for the page, shared by all the Stylesheet: a name is one rule,
+// whatever instance sets it
+let page_sheet: CSSStyleSheet = null;
+const page_rules = new Map<string, CSSRule>( );
+
+function pageSheet( ): CSSStyleSheet {
+	if( !page_sheet ) {
+		// found by its id: a title would make it a "preferred" style sheet,
+		// of which a page applies only one
+		let dom = document.getElementById( 'x4-dynamic-css' ) as HTMLStyleElement;
+		if( !dom ) {
+			dom = document.createElement( 'style' );
+			dom.id = 'x4-dynamic-css';
+			document.head.appendChild( dom );
+		}
+
+		page_sheet = dom.sheet;
+	}
+
+	return page_sheet;
+}
+
 /**
- * 
+ * Rules added to the page while it runs, in one <style id="x4-dynamic-css">.
+ * @deprecated the CSS variables do it: setStyleVariable( ) on a component,
+ * var( --name ) in its stylesheet
  */
 
 export class Stylesheet {
 
 	readonly _sheet: CSSStyleSheet;
-	readonly _rules: Map<string, number> = new Map( );
+	readonly _rules: Map<string, CSSRule>;
 
 	constructor() {
-
-		function getStyleSheet( name: string ) : CSSStyleSheet {
-			for(let i=0; i<document.styleSheets.length; i++) {
-			  	let sheet = document.styleSheets[i];
-			  	if(sheet.title === name ) {
-					return sheet;
-			  	}
-			}
-		}
-
-		this._sheet = getStyleSheet( 'x4-dynamic-css' );
-		if( !this._sheet ) {
-			const dom = document.createElement( 'style' );
-			dom.setAttribute('id', 'x4-dynamic-css' );
-			document.head.appendChild(dom);
-			this._sheet = dom.sheet
-		}
+		this._sheet = pageSheet( );
+		this._rules = page_rules;
 	}
 
     /**
@@ -156,20 +165,31 @@ export class Stylesheet {
      * @param {string} definition - css definition of the rule 
      * @example
      * setRule('xbody', "body { background-color: #ff0000; }" );
+     * @deprecated a CSS variable: setStyleVariable( ) on a component, var( --name ) in its stylesheet
      */
 
 	public setRule(name: string, definition: any ) {
 
 		if( isString(definition) ) {
-			let index = this._rules.get( name );
-			if (index !== undefined) {
-				this._sheet.deleteRule(index);
-			}
-			else {
-				index = this._sheet.cssRules.length;
+			const sheet = this._sheet;
+			const old = this._rules.get( name );
+
+			// in the place of the rule of that name, else at the end
+			let index = sheet.cssRules.length;
+			if( old ) {
+				const at = Array.prototype.indexOf.call( sheet.cssRules, old );
+				if( at>=0 ) {
+					index = at;
+				}
 			}
 
-			this._rules.set( name, this._sheet.insertRule( definition, index) );
+			// inserted first: a definition that is not valid throws, the old rule stays
+			sheet.insertRule( definition, index );
+			if( old && sheet.cssRules[index+1]===old ) {
+				sheet.deleteRule( index+1 );
+			}
+
+			this._rules.set( name, sheet.cssRules[index] );
 		}
 		else {
 			let idx = 1;
@@ -203,6 +223,7 @@ export class Stylesheet {
 	 * ```
 	 * let color = Component.getCss( ).getVar( 'button-color' );
 	 * ```
+	 * @deprecated getStyleVariable( ) of a component, or getComputedStyle( document.documentElement ).getPropertyValue( "--name" )
 	 */
 
 	public static getVar( name: string ) : any {

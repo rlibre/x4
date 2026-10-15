@@ -5,6 +5,12 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Stylesheet
+
+- All the `Stylesheet` of a page share one `<style id="x4-dynamic-css">`: a rule set again by its name, from any of them, is replaced in its place.
+- A definition that is not valid throws its error and leaves the rules as they are: the rule of that name stays, and the next `setRule( )` replaces it.
+- Deprecated: `Stylesheet` (`setRule( )`, `getVar( )`). A CSS variable does it: `setStyleVariable( )` on a component, `var( --name )` in its stylesheet; `getStyleVariable( )` to read one.
+
 ### unsafe
 
 - The template tag `unsafe` writes `0`, `false` and `NaN`, as a template does: `` unsafe`<b>${count}</b>` `` with a count of 0 gives `<b>0</b>`. Only `null` and `undefined` write nothing.

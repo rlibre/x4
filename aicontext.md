@@ -50,7 +50,7 @@ EventSource<E>                 standalone event registry
   └── StateManager<T>
 
 CoreElement-based (non-DOM): DataProxy, DataView, Store
-Standalone: Rect, Timer, Color, DataModel, Shortcuts, Stylesheet, ComputedStyle,
+Standalone: Rect, Timer, Color, DataModel, Shortcuts, Stylesheet (deprecated: CSS variables), ComputedStyle,
             SvgBuilder, X4PDFBuilder, x4_react, CMover, UnsafeHtml (extends String)
 ```
 
