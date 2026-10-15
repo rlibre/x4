@@ -5,6 +5,16 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Link
+
+- With a `click` handler, the link is followed unless the handler calls `ev.preventDefault( )`. A handler that only reacts to the click, without it, now lets the browser go to `href` (a link `href: "#"` goes to the top of the page).
+- `content` given: the link is its content, it is no longer replaced by an empty label.
+- `setText( )` changes the text of the label: its icon and its alignment stay.
+
+```ts
+new Link( { href: "#", text: "Open", click: ( ev ) => { ev.preventDefault( ); this.open( ); } } );
+```
+
 ### Drag and drop
 
 - A drop target is told `enter` at once, before the first `drag`, from the first drag of the page on. `leave` still comes up to 300 ms after the pointer went away.

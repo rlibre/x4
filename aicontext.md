@@ -499,10 +499,11 @@ interface LinkProps extends ComponentProps {
   text?: string | UnsafeHtml
   icon?: string
   align?: "left" | "center" | "right"
-  click?: EventCallback<EvClick>
+  click?: EventCallback<EvClick>           // ev.context = href; the link is followed unless ev.preventDefault()
+  // content: the link is its content (no label: text, icon, align are not used)
 }
 interface LinkEvents extends ComponentEvents { click: EvClick }
-class Link extends Component { setText(text: string|UnsafeHtml): void }
+class Link extends Component { setText(text: string|UnsafeHtml): void }   // the text of its label: the icon stays
 ```
 
 ### `Icon`

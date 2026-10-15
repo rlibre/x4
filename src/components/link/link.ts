@@ -56,11 +56,14 @@ export class Link extends Component<LinkProps,LinkEvents> {
 
 		this.mapPropEvents( props, "click" );
 
-		this.setContent( new Label( {
-			text: props.text,
-			icon: props.icon,
-			align: props.align,
-		} ) );
+		// content given: it is the link; else a label (icon and text)
+		if( props.content===undefined ) {
+			this.setContent( new Label( {
+				text: props.text,
+				icon: props.icon,
+				align: props.align,
+			} ) );
+		}
 
 		this.addDOMEvent('click', (e) => this._on_click(e));
 	}
@@ -71,7 +74,14 @@ export class Link extends Component<LinkProps,LinkEvents> {
 	 */
 
 	setText( text: string | UnsafeHtml ) {
-		this.setContent( text );
+		// the text of the label: its icon and alignment stay
+		const label = this.query<Label>( ":scope > .x4label" );
+		if( label ) {
+			label.setText( text );
+		}
+		else {
+			this.setContent( text );
+		}
 	}
 
 	/**
@@ -83,7 +93,8 @@ export class Link extends Component<LinkProps,LinkEvents> {
 		const xev: EvClick = {context: this.props.href };
 		this.fire('click', xev );
 	
-		if( xev.preventDefault ) {
+		// the handler called ev.preventDefault( ): the link is not followed
+		if( xev.defaultPrevented ) {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
