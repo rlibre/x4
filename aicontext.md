@@ -1472,10 +1472,11 @@ pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
 measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
-date_format(date, options?): string
-date_diff(date1, date2, options?): string
+date_format(date, options?): string       // options not read yet: formatIntlDate(date)
+date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 heures 5 minutes" (either order); options not read
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
-date_hash(date): number; date_clone(date): Date; date_calc_weeknum(date): number
+date_hash(date): number; date_clone(date): Date
+date_calc_weeknum(date): number            // ISO 8601: weeks from monday, week 1 holds the first thursday (29/12/2025 → 1)
 parseIntlDate(value, fmts?): Date; formatIntlDate(date, fmt?, utc?): string
 calcAge(birth, ref?): number
 
@@ -1511,7 +1512,7 @@ const makeUniqueComponentId  // () => string, "x4-<n>" (exported as a value)
 
 ```
 d day (no zero)    D day (2 digits)     j short day (mon)   J long day (monday)
-w week number      W week (2 digits)    m month (no zero)   M month (2 digits)
+w week number (ISO 8601)      W week (2 digits)    m month (no zero)   M month (2 digits)
 o short month      O long month         y/Y year            h 24h hour
 H hour (2 digits)  i minutes            I minutes (2 dig)   s seconds
 S seconds (2 dig)  a am/pm              l ms                L ms (3 digits)

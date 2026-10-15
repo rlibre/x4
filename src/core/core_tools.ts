@@ -561,7 +561,8 @@ export function date_format(date: Date, options?: any): string {
 
 export function date_diff(date1: Date, date2: Date, options?: any): string {
 
-	let dt = (date1.getTime() - date2.getTime()) / 1000;
+	// the gap, whichever date comes first
+	let dt = Math.abs(date1.getTime() - date2.getTime()) / 1000;
 
 	// seconds
 	let sec = dt;
@@ -575,7 +576,7 @@ export function date_diff(date1: Date, date2: Date, options?: any): string {
 		return sprintf(_tr.global.diff_date_minutes, Math.round(min));
 	}
 
-	// hours
+	// hours, and the minutes left
 	let hrs = Math.floor(min / 60);
 	return sprintf(_tr.global.diff_date_hours, hrs, min % 60);
 }
@@ -626,13 +627,20 @@ export function date_clone(date: Date): Date {
 }
 
 /**
- * return the week number of a date
+ * return the week number of a date, ISO 8601: weeks from monday,
+ * the week 1 holds the first thursday of the year (the 29/12/2025 is in the week 1 of 2026)
  */
 
 export function date_calc_weeknum(date: Date): number {
-	const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-	const pastDaysOfYear = (date.valueOf() - firstDayOfYear.valueOf()) / 86400000;
-	return Math.floor((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+	// in UTC: a day of 23 or 25 hours (summer time) does not move the weeks
+	const d = new Date( Date.UTC( date.getFullYear( ), date.getMonth( ), date.getDate( ) ) );
+
+	// the thursday of its week gives the year of the week
+	const day = d.getUTCDay( ) || 7;		// monday 1 .. sunday 7
+	d.setUTCDate( d.getUTCDate( ) + 4 - day );
+
+	const jan1 = Date.UTC( d.getUTCFullYear( ), 0, 1 );
+	return Math.ceil( ( ( d.getTime( ) - jan1 ) / 86400000 + 1 ) / 7 );
 }
 
 

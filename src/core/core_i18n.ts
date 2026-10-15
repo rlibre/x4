@@ -300,7 +300,7 @@ let fr = {
 
 		diff_date_seconds: '{0} secondes',
 		diff_date_minutes: '{0} minutes',
-		diff_date_hours: '{0} heures',
+		diff_date_hours: '{0} heures {1} minutes',
 
 		invalid_date: 'Date non reconnue ({0})',
 		empty_list: 'Liste vide',
@@ -365,7 +365,7 @@ let en = {
 
 		diff_date_seconds: '{0} seconds',
 		diff_date_minutes: '{0} minutes',
-		diff_date_hours: '{0} hours',
+		diff_date_hours: '{0} hours {1} minutes',
 
 		invalid_date: 'Unrecognized date({0})',
 		empty_list: 'Empty list',

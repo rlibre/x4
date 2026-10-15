@@ -5,6 +5,11 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Dates
+
+- `date_calc_weeknum( )`, and `w` / `W` of `formatIntlDate`, give the week of ISO 8601: weeks from monday, the week 1 holds the first thursday of the year. The 29/12/2025 is in the week 1, the 01/01/2027 in the week 53; there is no week 0, and summer time does not move the weeks. The weeks of the `Calendar` follow.
+- `date_diff( )` gives the gap whichever date comes first, and the hours with their minutes: `"2 heures 5 minutes"` (`_tr.global.diff_date_hours`: `'{0} heures {1} minutes'`).
+
 ### i18n
 
 - `addTranslation( )` on the language that is selected: `_tr` has the new translations at once.
