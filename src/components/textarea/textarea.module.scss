@@ -65,7 +65,9 @@
 	}
 
 	.x4simpletextarea {
-		@extend %flex;
-
-	}	
+		// its height of rows when the TextArea has none, the TextArea's height when it has one;
+		// a basis of 0 would leave it the height of its padding: a textarea scrolls, its min-height is 0
+		flex: 1 0 auto;
+		min-width: 0;
+	}
 }
