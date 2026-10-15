@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### unsafe
+
+- The template tag `unsafe` writes `0`, `false` and `NaN`, as a template does: `` unsafe`<b>${count}</b>` `` with a count of 0 gives `<b>0</b>`. Only `null` and `undefined` write nothing.
+
 ### Shortcuts
 
 - The space bar is written `Space` in a sequence: `"Ctrl+Space"` is a shortcut.

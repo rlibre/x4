@@ -124,8 +124,8 @@ export function unsafeHtml(x: string): UnsafeHtml {
 export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeHtml {
 
     const resolve = ( value: any ) : string | UnsafeHtml => {
-        let v: string;
-        if( !value ) {
+        // nothing to write: null, undefined (after the last part of the template)
+        if( value===undefined || value===null ) {
             return "";
         }
         
@@ -137,7 +137,8 @@ export function unsafe(strings: TemplateStringsArray, ...values: any[]): UnsafeH
             return value.toString();
         }
 
-        return sanitizeHtml(value);
+        // a number, a boolean...: its text, escaped
+        return sanitizeHtml( String( value ) );
     }
 
 	const result = strings.reduce((acc, str, i) => {

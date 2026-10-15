@@ -1431,7 +1431,7 @@ isLanguage(name: string): boolean
 ```ts
 class UnsafeHtml extends String            // raw, unescaped HTML marker
 unsafeHtml(x: string): UnsafeHtml
-unsafe(strings, ...values): UnsafeHtml     // template tag: unsafe`<b>${x}</b>`
+unsafe(strings, ...values): UnsafeHtml     // template tag: unsafe`<b>${x}</b>`; values escaped (an UnsafeHtml kept), null/undefined write nothing, 0 and false are written
 sanitizeHtml(input: string): string        // escape &<>"' for safe text insertion
 safeText(v: string | UnsafeHtml): string   // UnsafeHtml passes through; plain string is escaped
 
