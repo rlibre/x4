@@ -19,6 +19,7 @@
 	--colorinput-btn-color: var( --text-secondary );
 	--colorinput-btn-color-hover: var( --text-primary );
 	--colorinput-popup-background: var( --background-primary );
+	--colorinput-none: var( --alert-background );
 }
 
 .x4colorinput {
@@ -35,6 +36,10 @@
 		width: 1rem;
 		height: 1rem;
 
+		// its color over checkers: a color that is not opaque is seen as such
+		background: linear-gradient( var( --swatch-color ), var( --swatch-color ) ),
+			repeating-conic-gradient( #c8c8c8 0% 25%, #ffffff 0% 50% ) 0 0 / 6px 6px;
+
 		// props.picker: a click opens the color picker. It is a button:
 		// wide enough to be aimed at.
 		&.picker {
@@ -50,10 +55,14 @@
 			}
 		}
 
-		// props.nullable, no color: the checkerboard that stands for what is transparent
+		// no color: white, crossed out from bottom left to top right, the edges of the line
+		// blurred by 1px (smooth); checkers are for a transparent color
 		&.none {
 			border: 1px solid var( --border );
-			background: repeating-conic-gradient( #c8c8c8 0% 25%, #ffffff 0% 50% ) 0 0 / 6px 6px;
+			background: linear-gradient( to bottom right,
+					transparent calc( 50% - 1.5px ), var( --colorinput-none ) calc( 50% - 0.5px ),
+					var( --colorinput-none ) calc( 50% + 0.5px ), transparent calc( 50% + 1.5px ) ),
+				white;
 		}
 	}
 

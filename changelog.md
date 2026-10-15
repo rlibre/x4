@@ -5,6 +5,38 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Color
+
+- `new Color( r, g, b )` and `setRgb( r, g, b )` without alpha give an opaque color: `toRgbString( )` gives `"rgb(255,0,0)"`, `toHexString( )` `"#ff0000"`.
+- `isInvalid( )` tells about the last color given: after a text that cannot be read, `setRgb( )` or `setHsv( )` give a valid color.
+- `toRgbString( )` never gives the alpha. `toRgbString( true )` gives it when the color is not opaque (`"rgba(255,0,0,0.500)"`), an opaque color stays `"rgb(...)"`. A code that needs the transparency asks for it with `true`.
+
+```ts
+const c = new Color( "#ff000080" );
+c.toRgbString( );		// "rgb(255,0,0)"
+c.toRgbString( true );	// "rgba(255,0,0,0.502)"
+```
+
+- `setRgb( )` and `setHsv( )` round the components: a color that goes through hsv keeps its value (`#c57c7c` stays `rgb(197,124,124)`).
+
+### ColorPicker
+
+- Opened, it shows its color: the thumb of the saturation on its saturation and its value, the alpha slider on its alpha.
+- New `alpha: false`: no alpha slider, the colors are opaque (the one given, `setColor`, the swatches, the eye dropper, ctrl+↑/↓).
+- The swatches are drawn over checkers: a color that is not opaque is seen as such. The swatch "no color" (`nullable`) is white, crossed out in red (`--colorpicker-none`).
+
+### ColorInput
+
+- A color that is not opaque (its alpha changed in the picker, `rgba(...)` typed) is shown with its alpha: the text in `rgba(...)`, the swatch over checkers (`#00000000` shows the checkers alone).
+- While it is typed, the text is left alone: the color follows it (`#111` then `#111fff`). When the field is left, the text is written from the color, in the form that was typed (`#...` or `rgb...`): a text that could not be read shows the color that was kept. The picker writes in the form of the field, `format` when it has none.
+- New `alpha: false`: the colors are opaque, typed, picked or given, and the picker has no alpha slider.
+- No color: the swatch is white, crossed out in red (`--colorinput-none`); the checkers are for a transparent color.
+- New `placeholder`: the text shown in the field while it is empty.
+
+```ts
+new ColorInput( { color: "#126e9e", picker: true, alpha: false } );
+```
+
 ### AutoComplete
 
 - A text shorter than `minChars` closes the suggestions and forgets them: ↓ asks for new ones, on the text of the field (`search` with `ev.text` empty when the field is), and does not show those of the previous text.

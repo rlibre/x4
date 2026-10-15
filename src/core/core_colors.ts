@@ -83,8 +83,6 @@ export class Color {
 
 	setValue(value: string): this {
 
-		this.invalid = false;
-
 		if( value.startsWith('#') ) {
 			if (value.length == 7 && /#[0-9a-fA-F]{6}/.test(value)) {
 				const hex = parseInt(value.slice(1), 16);
@@ -139,8 +137,10 @@ export class Color {
 			}
 		}
 
+		// red, to be seen, and marked as invalid
+		this.setRgb(255, 0, 0, 1);
 		this.invalid = true;
-		return this.setRgb(255, 0, 0, 1);
+		return this;
 	}
 
 	/**
@@ -205,23 +205,34 @@ export class Color {
 	 * @param r - Red component (0-255).
 	 * @param g - Green component (0-255).
 	 * @param b - Blue component (0-255).
-	 * @param a - Alpha component (0-1).
+	 * @param a - Alpha component (0-1, default 1.0).
 	 * @returns The current Color instance.
 	 */
-	setRgb(r: number, g: number, b: number, a: number): this {
-		this.rgb = [clamp(r | 0, 0, 255), clamp(g | 0, 0, 255), clamp(b | 0, 0, 255), clamp(a, 0, 1)];
+	setRgb(r: number, g: number, b: number, a = 1.0): this {
+		// a new color: valid
+		this.invalid = false;
+		// rounded: hsv gives 123.999 for 124; "| 0" makes a NaN 0
+		const c = ( v: number ) => clamp( Math.round( v ) | 0, 0, 255 );
+		this.rgb = [c(r), c(g), c(b), clamp(a, 0, 1)];
 		return this;
 	}
 
 	/**
 	 * Returns the CSS string representation of the color.
 	 * 
-	 * @param withAlpha - Whether to include the alpha channel (default: true if alpha < 1).
-	 * @returns The CSS color string (e.g. "rgb(255,0,0)" or "rgba(255,0,0,0.5)").
+	 * @param withAlpha - false (default): never the alpha; true: the alpha when the color is not opaque.
+	 * @returns The CSS color string (e.g. "rgb(255,0,0)" or "rgba(255,0,0,0.500)").
 	 */
-	toRgbString(withAlpha?: boolean): string {
+	toRgbString(withAlpha = false): string {
 		const _ = this.rgb;
-		return withAlpha === false || _[3] == 1 ? `rgb(${round(_[0])},${round(_[1])},${round(_[2])})` : `rgba(${round(_[0])},${round(_[1])},${round(_[2])},${_[3].toFixed(3)})`
+		const rgb = `${round(_[0])},${round(_[1])},${round(_[2])}`;
+
+		// an opaque color has no alpha to show
+		if( !withAlpha || _[3] >= 1 ) {
+			return `rgb(${rgb})`;
+		}
+
+		return `rgba(${rgb},${_[3].toFixed(3)})`;
 	}
 
 	/**

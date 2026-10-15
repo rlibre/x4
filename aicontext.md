@@ -788,12 +788,15 @@ class AutoComplete extends TextEdit {
 interface ColorInputProps extends BoxProps {
   color: Color | string                    // null: no color shown
   name?: string
-  format?: "rgb" | "hex"                   // text of the field, "rgb" by default
+  format?: "rgb" | "hex"                   // text of the field, "rgb" by default; "rgba(...)" / "#rrggbbaa" when not opaque
   picker?: boolean                         // a click on the swatch opens a ColorPicker
   swatches?: (Color|string)[] | (() => (Color|string)[])   // a function is called each time the picker opens
   nullable?: boolean                       // "no color" can be chosen
+  alpha?: boolean                          // false: colors kept opaque, no alpha slider in the picker (default true)
+  placeholder?: string                     // text of the empty field
   change?: EventCallback<EvColorChange>    // user changes only, not setColor
 }
+// typing: the text is not rewritten while typed; on blur it is written from the color in the typed form (#... or rgb...)
 class ColorInput extends HBox {            // queryInterface("form-element"): "#rrggbb" or null
   getColor(): Color; getValue(): string
   setColor(color: Color | string): void; setSwatches(swatches): void
@@ -1171,7 +1174,7 @@ class Video extends Box {
 class Calendar extends VBox {               // props: date?, minDate?, maxDate? (days out of them cannot be chosen), change ("change": the day clicked)
   getDate(): Date; setDate(date: Date): void   // copies: the calendar keeps its own date
 }
-class ColorPicker extends VBox {           // props: color, swatches?, nullable?; "change": EvColorChange, also fired once when built
+class ColorPicker extends VBox {           // props: color, swatches?, nullable?, alpha? (false: no alpha slider, opaque colors); "change": EvColorChange, also fired once when built
   getColor(): Color; setColor(color: Color | string): void; setSwatches(swatches): void
 }
 class Panel extends VBox { setTitle(title: string): void }
@@ -1443,10 +1446,12 @@ interface IRect { left; top; height; width: number }
 class Timer { setTimeout; clearTimeout; setInterval; clearInterval; clearAllTimeouts }
 
 class Color {
-  // new Color(value) | new Color(r,g,b,a?)
-  setValue(value): this; setRgb(r,g,b,a): this; setHsv(h,s,v,a?): this; setAlpha(a): this
-  getAlpha(): number; lighten(percent): this; isInvalid(): boolean
-  toHexString(): string; toRgbString(withAlpha?): string; toNumber(): number
+  // new Color(value) | new Color(r,g,b,a?)   a: 0..1, default 1
+  setValue(value): this; setRgb(r,g,b,a?): this; setHsv(h,s,v,a?): this; setAlpha(a): this
+  getAlpha(): number; lighten(percent): this
+  isInvalid(): boolean                     // the last setValue could not be read (the color is red); setRgb/setHsv make it valid
+  toHexString(): string; toNumber(): number
+  toRgbString(withAlpha = false): string   // "rgb(r,g,b)"; true: "rgba(r,g,b,0.500)" when not opaque, "rgb(...)" when opaque
   toRgb(): Rgb; toHsv(): Hsv
 }
 

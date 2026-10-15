@@ -30,6 +30,9 @@ export interface ColorPickerProps extends ComponentProps {
 
 	/** Adds a "no color" swatch: picking it fires `change` with a null color. */
 	nullable?: boolean;
+
+	/** false: the colors are opaque, there is no alpha slider (default true). */
+	alpha?: boolean;
 }
 
 interface HueChangeEvent extends ComponentEvent {
@@ -83,7 +86,8 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
 			created: () => this.updateThumbMarker( ),
 		} );
 
-		this.updateBaseColor( init );
+		// the color at start: its hue, and the thumb on its saturation and value
+		this.setColor( init );
 	}
 
 	mousedown( ev: PointerEvent ) {
@@ -286,8 +290,8 @@ class AlphaSlider extends Box<BoxProps,CommonEvents> {
 			pointerup: ( e ) => this._on_mouseup( e ),
 		} );
 
-		this.updateAlpha( );
-		this.updateBaseColor( init );
+		// the color at start: its gradient, and the thumb on its alpha
+		this.setColor( init );
 	}
 
 	_on_mousedown( ev: PointerEvent ) {
@@ -370,7 +374,10 @@ interface ColorPickerChangeEvents extends ComponentEvents {
 }
 
 /**
- *
+ * @cssvar
+ * ```
+ * --colorpicker-none
+ * ```
  */
 
 @class_ns( "x4" )
@@ -395,6 +402,11 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 			this._base = new Color( props.color );
 		}
 
+		// no alpha: the color is opaque
+		if( props.alpha===false ) {
+			this._base.setAlpha( 1 );
+		}
+
 		const hsv = this._hsv = this._base.toHsv( );
 
 		this.setAttribute( "tabindex", 0 );
@@ -416,6 +428,8 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 			}),
 			this._swatches = new HBox( { cls: "swatches" } ),
 		]);
+
+		this._alpha.show( props.alpha!==false );
 
 		this._sat.on( "sat_change", ( ev ) => {
 			this._hsv.saturation = ev.saturation;
@@ -460,14 +474,21 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 	private _changed( ) {
 		const hsv = this._hsv;
 
-		this._base.setHsv( hsv.hue, hsv.saturation, hsv.value, hsv.alpha );
+		// no alpha: the hidden slider can still be moved by the keys, the color stays opaque
+		let alpha = hsv.alpha;
+		if( this.props.alpha===false ) {
+			alpha = 1;
+		}
+
+		this._base.setHsv( hsv.hue, hsv.saturation, hsv.value, alpha );
 		this._refresh( );
 		this._notify( );
 	}
 
 	private _refresh( ) {
-		this._swatch.setStyleValue( "backgroundColor", this._base.toRgbString() );
-		this._swatch.setAttribute( "tooltip", this._base.toRgbString() );
+		// with its alpha: the swatch is drawn over checkers
+		this._swatch.setStyleValue( "backgroundColor", this._base.toRgbString( true ) );
+		this._swatch.setAttribute( "tooltip", this._base.toRgbString( true ) );
 	}
 
 	private _notify( ) {
@@ -499,8 +520,13 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 	setColor( color: Color | string ) {
 		const rgb = ( color instanceof Color ? color : new Color( color ) ).toRgb( );
 
+		let alpha = rgb.alpha;
+		if( this.props.alpha===false ) {
+			alpha = 1;
+		}
+
 		// the color itself is kept as given: going through hsv could shift it
-		this._base.setRgb( rgb.red, rgb.green, rgb.blue, rgb.alpha );
+		this._base.setRgb( rgb.red, rgb.green, rgb.blue, alpha );
 
 		const hsv = this._base.toHsv( );
 		this._hsv.hue = hsv.hue;
@@ -538,14 +564,17 @@ export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> 
 				continue;
 			}
 
-			items.push( new Component( {
+			const item = new Component( {
 				cls: "item",
 				tooltip: color.toHexString( ),
-				style: { backgroundColor: color.toRgbString( ) },
 				dom_events: {
 					click: ( ) => this._pick( color ),
 				},
-			} ) );
+			} );
+
+			// as it is taken: opaque without alpha; the stylesheet draws it over checkers
+			item.setStyleVariable( "--swatch-color", color.toRgbString( this.props.alpha!==false ) );
+			items.push( item );
 		}
 
 		this._swatches.setContent( items );

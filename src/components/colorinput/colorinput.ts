@@ -59,6 +59,12 @@ export interface ColorInputProps extends BoxProps {
 	/** The field may have no color: emptied, or "no color" picked. */
 	nullable?: boolean;
 
+	/** false: the colors are opaque, the picker has no alpha slider (default true). */
+	alpha?: boolean;
+
+	/** The text shown in the field while it is empty. */
+	placeholder?: string;
+
 	/** The user changed the color (not fired by setColor). */
 	change?: EventCallback<EvColorChange>;
 }
@@ -74,6 +80,7 @@ interface ColorInputEvents extends ComponentEvents {
  * --colorinput-btn-color
  * --colorinput-btn-color-hover
  * --colorinput-popup-background
+ * --colorinput-none
  * ```
  */
 
@@ -100,7 +107,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 
 		this.setContent( [
 			this._swatch = new Component( { cls: "swatch" } ),
-			this._edit = new Input( { type: "text", value: "", spellcheck: false } ),
+			this._edit = new Input( { type: "text", value: "", spellcheck: false, placeholder: props.placeholder } ),
 
 			isFeatureAvailable("eyedropper") ? new Button( { icon: icon, click: ( ) => {
 				const eyeDropper = new (window as any).EyeDropper();
@@ -112,6 +119,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 			} } ) : null
 		])
 
+		// while it is typed, the text is left alone: the color follows it
 		this._edit.addDOMEvent( "input", ( ) => {
 			const txt = this._edit.getValue( );
 
@@ -122,8 +130,14 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 
 			const clr = new Color( txt );
 			if( !clr.isInvalid() ) {
-				this._changed( clr );
+				this._changed( clr, false );
 			}
+		});
+
+		// the field is left: the text is written from the color, in the form that was typed
+		// (a text that could not be read shows the color that was kept)
+		this._edit.addDOMEvent( "change", ( ) => {
+			this._show( this._color );
 		});
 
 		if( props.picker ) {
@@ -160,7 +174,19 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 	}
 
 	private _format( color: Color ): string {
-		return this.props.format=="hex" ? color.toHexString( ) : color.toRgbString( false );
+		// the form of the text in the field: "#..." or "rgb...", else props.format
+		const text = this._edit.getValue( ).trim( ).toLowerCase( );
+
+		let hex = this.props.format=="hex";
+		if( text.startsWith( "#" ) ) {
+			hex = true;
+		}
+		else if( text.startsWith( "rgb" ) ) {
+			hex = false;
+		}
+
+		// rgba / #rrggbbaa when the color is not opaque
+		return hex ? color.toHexString( ) : color.toRgbString( true );
 	}
 
 	/**
@@ -169,10 +195,16 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 	 */
 
 	private _show( color: Color, text = true ) {
+		// no alpha: every color shown is opaque, typed, picked or given
+		if( color && this.props.alpha===false ) {
+			color.setAlpha( 1 );
+		}
+
 		this._color = color;
 
 		this._swatch.setClass( "none", !color );
-		this._swatch.setStyleValue( "backgroundColor", color ? color.toRgbString(false) : null );
+		// the stylesheet draws it over checkers
+		this._swatch.setStyleVariable( "--swatch-color", color ? color.toRgbString( true ) : "" );
 
 		if( text ) {
 			this._edit.setValue( color ? this._format( color ) : "" );
@@ -201,6 +233,7 @@ export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
 			color: this._color ? new Color( this._color.toHexString( ) ) : new Color( 255, 255, 255 ),
 			swatches,
 			nullable: this.props.nullable,
+			alpha: this.props.alpha,
 		} );
 
 		const popup = this._popup = new Popup( { cls: "x4colorinput-popup", autoClose: true, content: picker } );

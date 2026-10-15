@@ -46,6 +46,11 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 - Closing a tool that is beside others does not make its band narrower.
 - A tool cannot be collapsed: kept where it is, reduced to its title, and opened again with a click (asked on 2026-10-12; nothing is designed).
 
+## ColorInput
+
+- `-` typed in the field (asked on 2026-10-15; nothing is decided): transparent, or "no color" (`null`) in a `nullable` field? With `alpha: false`, refused as a text that cannot be read? `transparent` is already read (`Color.setValue`). To keep `-` shown when the field is left, `_format` would return it while the color is transparent.
+- A format selector as in the devtools (shift+click on the swatch: hex, rgb, hsl), instead of the form of the text typed.
+
 
 
 
