@@ -5,6 +5,17 @@ A version gets its date when it is published.
 
 ## 2.3.21
 
+### Video
+
+- Its class is `x4video`: its stylesheet applies (a black background, the player over all the box). A stylesheet of the application that targets `.video` has to target `.x4video`.
+- `play( )` returns a promise of `true` when the playback started, `false` when it could not (the browser wants a click of the user first, the source cannot be played): no "Uncaught (in promise)". Without any source, the browser waits for one.
+
+```ts
+if( !await video.play( ) ) {
+	playButton.show( );		// the user starts it
+}
+```
+
 ### svgLoader
 
 - A file not found is kept as such: `load( )` rejects it again, without asking for it again, instead of resolving `null`. An `Icon` on it stays empty, without the text `null`.

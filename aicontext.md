@@ -1167,8 +1167,9 @@ class VSizer extends CSizer                // vertical splitter
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
-class Video extends Box {
-  play(); pause(); mute(set: boolean)
+class Video extends Box {                   // class x4video
+  play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
+  pause(); mute(set: boolean)
   get player(): HTMLVideoElement; get duration(): number; get paused(): boolean
   get volume(): number; get videoWidth(): number; get videoHeight(): number
   set stream(stream: MediaStream)

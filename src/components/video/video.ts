@@ -14,7 +14,9 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Box, Component, ComponentProps } from 'x4js';
+import { Component, ComponentProps } from '../../core/component';
+import { class_ns } from '../../core/core_tools';
+import { Box } from '../boxes/boxes';
 
 import "./video.module.scss"
 
@@ -29,6 +31,7 @@ interface VideoProps extends ComponentProps {
  * 
  */
 
+@class_ns( "x4" )
 export class Video extends Box {
 	
 	private _vplayer: HTMLVideoElement;
@@ -124,7 +127,18 @@ export class Video extends Box {
 		this.player.pause( );
 	}
 
-	play( ) {
-		this.player.play( );
+	/**
+	 * @returns false when the playback could not start: the browser wants a click
+	 * of the user first, or the source cannot be played
+	 */
+
+	async play( ): Promise<boolean> {
+		try {
+			await this.player.play( );
+			return true;
+		}
+		catch( e ) {
+			return false;
+		}
 	}
 }
