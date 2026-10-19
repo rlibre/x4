@@ -26,6 +26,12 @@ import icon_bksp from "./delete-left.svg";
 import icon_shift from "./arrow-up.svg";
 import icon_hide from "./eye-slash.svg";
 
+// shift, digits, letters, accents, signs: these keys draw the keyboard again. They act on the
+// click of their button: on the pointerdown they would remove the key under the finger, the
+// mousedown that follows would go to a node out of the page, nobody would prevent it and the
+// field would lose the focus ( the keyboard hides )
+const REDRAW_KEYS = new Set( [ 4, 5, 8, 10, 11 ] );
+
 
 
 /**
@@ -286,7 +292,10 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		// a key: each contact, a finger or the mouse, the second tap of a quick double tap too
 		this.addDOMEvent( "pointerdown", (e) => {
-			this.handleKeyEvent( e );
+			const key = this._keyOf( e );
+			if( key && !REDRAW_KEYS.has( key ) ) {
+				this._handleKey( key );
+			}
 		});
 
 		// the focus stays in the field
@@ -339,24 +348,18 @@ export class Keyboard extends HBox<KeyboardProps>
 	 * 
 	 */
 
-    private handleKeyEvent( e: UIEvent ) {
+    private _keyOf( e: UIEvent ): number {
         let target = e.target as HTMLElement;
-        let key;
 
-        while( target!==this.dom ) {
+        while( target && target!==this.dom ) {
             if( target.hasAttribute('data-key') ) {
-                key = parseInt(target.getAttribute('data-key'), 10);
-                break;
+                return parseInt(target.getAttribute('data-key'), 10);
             }
 
             target = target.parentNode as HTMLElement;
         }
 
-		if( !key ) {
-			return;
-		}
-
-		this._handleKey( key );
+		return 0;
 	}
 
 	private _handleKey( key: number ) {
@@ -765,7 +768,7 @@ export class Keyboard extends HBox<KeyboardProps>
 					icon, 
 					autorepeat: repeat, 
 					click: ( e ) => {
-						if( e.repeat ) {
+						if( e.repeat || REDRAW_KEYS.has( key ) ) {
 							this._handleKey( key )
 						}
 					}
