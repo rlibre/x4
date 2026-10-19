@@ -3,6 +3,12 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.22
+
+### Keyboard
+
+- The keys that draw the keyboard again (shift, `123`, `abc`, accents, signs) act on the click of their key: on the pointerdown, the `mousedown` that followed went to a key no longer in the page (WebKitGTK), the field lost the focus and the keyboard hid.
+
 ## 2.3.21 (2026-10-15)
 
 ### Panel, GridBox
