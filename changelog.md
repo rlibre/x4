@@ -3,6 +3,17 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.22
+
+### Keyboard
+
+- The keys that draw the keyboard again (shift, `123`, `abc`, the accents, the signs) act on the click of their key, the others still on the contact (`pointerdown`): under WebKitGTK, the field keeps the focus and the keyboard stays shown.
+- `numpadOnly`: on a number or date field, the keyboard stays on the pad, without the `abc` key back to the letters. The other fields keep all the keys.
+
+```ts
+new Keyboard( { numpadOnly: true } );
+```
+
 ## 2.3.21 (2026-10-15)
 
 ### Panel, GridBox

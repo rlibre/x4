@@ -1184,7 +1184,10 @@ class ColorPicker extends VBox {           // props: color, swatches?, nullable?
 }
 class Panel extends VBox { setTitle(title: string): void }   // the text of its title: its icon stays
 class Breadcrumbs extends HBox { setItems(elements): void }
-interface KeyboardProps extends BoxProps { locale?: string }   // "fr-FR" (default), "de-CH", "pl"...
+interface KeyboardProps extends BoxProps {
+  locale?: string      // "fr-FR" (default), "de-CH", "pl"...
+  numpadOnly?: boolean    // number or date field: the pad has no "abc" key back to the letters
+}
 class Keyboard extends HBox {               // virtual keyboard, shown while an <input> has the focus
   setLocale(locale: string): void
   setZoom(perc: number): void
@@ -1192,6 +1195,7 @@ class Keyboard extends HBox {               // virtual keyboard, shown while an 
 }
 // languages: cs da de en es et fi fr ga hr hu it lt lv mt nl pl pt ro sk sl sv
 // bottom row: 123 (numeric pad), the letters of the language (éè, none in en), the signs (#+=); Abc comes back
+// a key acts on pointerdown; the keys that draw the keyboard again (shift, 123, abc, accents, signs) on the click
 class TickLine extends Component
 class Header extends HBox                  // resizable column header; updates target style "--{name}-width"
 ```

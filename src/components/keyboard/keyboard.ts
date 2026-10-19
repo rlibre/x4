@@ -239,6 +239,14 @@ function accentLabel( layout: KbLayout, upper: boolean ): string {
 	return ( upper ? upperKeys( label ) : label ).replace( " ", "" );
 }
 
+/**
+ * the keys that draw the keyboard again: shift, 123, abc, accents, signs
+ */
+
+function redrawKey( key: number ) {
+	return key==4 || key==5 || key==8 || key==10 || key==11;
+}
+
 
 const RE_sel = /text|password|search|tel|url/i;
 
@@ -248,6 +256,12 @@ interface KeyboardProps extends BoxProps {
 	 * "de-CH", "pl"... "fr-FR" when it is not given
 	 */
 	locale?: string;
+
+	/**
+	 * on a number or date field, the keyboard stays on the pad: no "abc" key
+	 * back to the letters. The other fields keep all the keys.
+	 */
+	numpadOnly?: boolean;
 }
 
 /**
@@ -284,7 +298,8 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		this.hide( );
 
-		// a key: each contact, a finger or the mouse, the second tap of a quick double tap too
+		// a key: each contact, a finger or the mouse, the second tap of a quick double tap too.
+		// not the keys that draw the keyboard again, they act on the click
 		this.addDOMEvent( "pointerdown", (e) => {
 			this.handleKeyEvent( e );
 		});
@@ -352,7 +367,7 @@ export class Keyboard extends HBox<KeyboardProps>
             target = target.parentNode as HTMLElement;
         }
 
-		if( !key ) {
+		if( !key || redrawKey( key ) ) {
 			return;
 		}
 
@@ -631,6 +646,11 @@ export class Keyboard extends HBox<KeyboardProps>
 
 		if( this.mode=="number" || this.mode=="date" ) {
 			lines = kb_pads[this.mode];
+
+			// no key back to the letters: its place stays empty
+			if( this.props.numpadOnly ) {
+				lines = lines.map( line => line.replace( "{8}", "{9}" ) );
+			}
 		}
 		else if( this.mode=="accents" ) {
 			lines = accentLines( layout, this.upper );
@@ -765,7 +785,9 @@ export class Keyboard extends HBox<KeyboardProps>
 					icon, 
 					autorepeat: repeat, 
 					click: ( e ) => {
-						if( e.repeat ) {
+						// the keys that draw the keyboard again act on the click: the mousedown
+						// that follows a pointerdown would go to a key no longer in the page
+						if( e.repeat || redrawKey( key ) ) {
 							this._handleKey( key )
 						}
 					}
