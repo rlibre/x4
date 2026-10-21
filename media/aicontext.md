@@ -285,6 +285,9 @@ static instance<P extends Application>(): P
 setEnv(name: string, value: any): void
 getEnv(name: string, def_value?: any): any
 static fireGlobal(msg: string, params?: any): void
+static setTheme(name: string): void         // the class x4theme-<name> on <html>: "" the light theme (default, no class),
+                                            // "dark" the dark theme of x4, another name a theme of the application
+static getTheme(): string                   // "" for the light theme, "dark", or the name given to setTheme
 focusNext(next: boolean): boolean
 addShortcut(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void   // see Shortcuts
 setupSocketMessaging(path?: string, looseCallback?: () => void): void
@@ -1507,6 +1510,24 @@ isLanguage(name: string): boolean
 //   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
 //   settings.{search,nomatch}
 ```
+
+---
+
+## Theme (`themes.scss`)
+
+```css
+--color-primary-a0 … --color-primary-a100     /* the scale: a0 the background, a100 the text, the accent between */
+/* the globals the components use: --background-primary / -secondary / -ternary / -hover / -active / -input,
+   --text-primary / -secondary / -ternary, --border / -light / -hover / -focus, --accent-background / -hover /
+   -focus / -active / -light, --accent-color (the text on the accent), --disabled-*, --icon-color / -active,
+   --alert-*, --warning-*, --success-* */
+```
+// The greys are mixes of a0 and a100: a theme that reverses the scale gets them light on dark.
+// Each component reads its own variables (the @cssvar of its class), which point to these globals:
+//   a theme redefines the globals, or one variable of a component.
+// Themes: Application.setTheme(name) puts the class x4theme-<name> on <html>. "" is the light theme (by default),
+//   "dark" the dark theme of x4 (the colours of VS Code Dark Modern). An application adds its own theme in its css,
+//   html.x4theme-pink { --color-primary-a0: ...; ... }, then Application.setTheme("pink").
 
 ---
 
