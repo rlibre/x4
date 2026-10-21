@@ -6,6 +6,19 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 - Add a page about State (`makeState`, `on`, `watch`, `loadPState`) to the documentation of x4js.org, in `C:\dev\rlibre\x4-site\astro`. It is no longer experimental.
 
+## Theme
+
+Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done: the base variables of `themes.scss` (2.3.23). Agreed, one block at a time, the light theme unchanged to the pixel:
+
+- the variables of the components that are `white` or `black` (listbox, treeview, menu, btngroup, tickline, chart, propertygrid, input, tag, gauge, label, button icon, outline button, switch, tooltip);
+- the colours written without a variable: Dialog background, Listbox title, Panel legend, `#sub-text` of MessageBox, Checkbox, Radio, hovered tab, the arrow of Select (drawn by two gradients in a variable), `--textarea-background` and `--textarea-color`;
+- the variables used but never defined, given the look they have today: `--color-form` (`--form-background: transparent`), `--color-gray-7` and `-9` (`--text-primary`), and the lines with `--color-gray-0`, `--color-gray-3`, `--border-dark` removed;
+- MessageBox and InputBox: the title bar and the icon by kind (only an error in red); `fill="currentColor"` on `pen-field.svg`;
+- then a dark theme of x4, like the one of VS Code (asked on 2026-10-21);
+- aiguide §18: what a dark theme defines (the danger scale, `--color-dialog-caption*`), to ask before writing it.
+
+`Color` (asked by Timex on 2026-10-21, not decided): `mix( other, amount )`, `darken( percent )`, `luminance( )`, `contrast( other )` (WCAG ratio), `textColor( light, dark )`.
+
 ## DataStore
 
 - A paginated DataStore: one that holds a page of the records at a time and asks for the others when they are needed (asked on 2026-10-13; nothing is designed).

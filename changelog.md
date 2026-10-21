@@ -3,6 +3,24 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.23
+
+### Theme
+
+- The greys of the theme are mixes of the two ends of the scale, `--color-primary-a0` and `--color-primary-a100`. This covers `--background-ternary`, `--text-secondary`, `--text-ternary`, `--disabled-background`, `--disabled-color-dark`, `--border`, `--border-light` and `--border-hover`. With the scale of x4 they keep their values (`#999`, `#e1e1e1`…); a theme that reverses the scale gets them light on dark. `--disabled-color` is `--color-primary-a0`.
+- `--alert-color`, `--warning-color` and `--success-color` are white: the red, orange and green do not follow the scale.
+
+```scss
+:root {
+	--color-primary-a0: #1e1e1e;		// the greys and the borders follow
+	--color-primary-a100: #f0f0f0;
+}
+```
+
+### Color
+
+- `new Color( )` reads every colour the browser knows: `hsl( )`, `oklch( )`, `color-mix( )`, and a variable that holds one (`"var(--border)"`).
+
 ## 2.3.22 (2026-10-21)
 
 ### SettingsView, SettingItem

@@ -44,21 +44,24 @@ $color--interval: 8.4%;
 	--color-success-a60: #{color.adjust(#10c01f, $lightness: -10%)};
 }
 
+// the greys are mixes of the two ends of the scale: #999 with a0 white and a100 black,
+// light on dark when a theme reverses the scale
+
 :root {
 	// Backgrounds
 	--background-primary: var(--color-primary-a0);
 	--background-secondary: var(--color-primary-a10);
-	--background-ternary: #f4f4f4;
+	--background-ternary: color-mix(in srgb, var(--color-primary-a100) 4.3%, var(--color-primary-a0));		// #f4f4f4
 
 	// Texts
 	--text-primary: var(--color-primary-a100);
-	--text-secondary: #999;
-	--text-ternary: #666;
+	--text-secondary: color-mix(in srgb, var(--color-primary-a100) 40%, var(--color-primary-a0));		// #999
+	--text-ternary: color-mix(in srgb, var(--color-primary-a100) 60%, var(--color-primary-a0));		// #666
 
 	// Disabled
-	--disabled-background: #ccc;
-	--disabled-color: white;
-	--disabled-color-dark: #aaa;
+	--disabled-background: color-mix(in srgb, var(--color-primary-a100) 20%, var(--color-primary-a0));	// #ccc
+	--disabled-color: var(--color-primary-a0);
+	--disabled-color-dark: color-mix(in srgb, var(--color-primary-a100) 33.3%, var(--color-primary-a0));	// #aaa
 
 	// Accents
 	--accent-background: var(--color-primary-a60);
@@ -72,19 +75,20 @@ $color--interval: 8.4%;
 	--accent-color-active: var(--color-primary-a0);
 
 	// Borders
-	--border: #e1e1e1;
-	--border-light: #eaeaea;
-	--border-hover: #c2c2c2;
+	--border: color-mix(in srgb, var(--color-primary-a100) 11.8%, var(--color-primary-a0));			// #e1e1e1
+	--border-light: color-mix(in srgb, var(--color-primary-a100) 8.2%, var(--color-primary-a0));		// #eaeaea
+	--border-hover: color-mix(in srgb, var(--color-primary-a100) 23.9%, var(--color-primary-a0));		// #c2c2c2
 	--border-focus: var(--accent-background);
 
+	// the red, orange and green do not follow the scale: their text stays white
 	--alert-background: var(--color-danger-a50);
 	--alert-background-active: var(--color-danger-a60);
-	--alert-color: var(--color-primary-a0);
+	--alert-color: #ffffff;
 
 	--warning-background: var(--color-warning-a50);
-	--warning-color: var(--color-primary-a0);
+	--warning-color: #ffffff;
 
 	--success-background: var(--color-success-a50);
 	--success-background-active: var(--color-success-a60);
-	--success-color: var(--color-primary-a0);
+	--success-color: #ffffff;
 }

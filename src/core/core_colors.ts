@@ -26,6 +26,34 @@ function round(v: number) {
 	return Math.round(v);
 }
 
+let ctx2d: CanvasRenderingContext2D = null;
+
+/**
+ * a colour of css as the browser paints it: [red, green, blue, alpha 0-1];
+ * null when the browser does not know it
+ */
+
+function browserColor( value: string ) {
+	if( !ctx2d ) {
+		const canvas = document.createElement( "canvas" );
+		canvas.width = canvas.height = 1;
+		ctx2d = canvas.getContext( "2d", { willReadFrequently: true } );
+	}
+
+	// a value the canvas refuses leaves fillStyle as it was
+	ctx2d.fillStyle = "#010203";
+	ctx2d.fillStyle = value;
+	if( ctx2d.fillStyle=="#010203" ) {
+		return null;
+	}
+
+	// fillStyle keeps the colour as it was written (oklch, color(srgb ...)): the pixel is in rgb
+	ctx2d.clearRect( 0, 0, 1, 1 );
+	ctx2d.fillRect( 0, 0, 1, 1 );
+	const px = ctx2d.getImageData( 0, 0, 1, 1 ).data;
+	return [ px[0], px[1], px[2], px[3] / 255 ];
+}
+
 
 export interface Rgb {
 	red: number;
@@ -79,6 +107,7 @@ export class Color {
 	 *  var( --color-5 )
 	 *  cyan
 	 *  transparent
+	 *  any other colour of css the browser knows: hsl( ), oklch( ), color-mix( )...
 	 */
 
 	setValue(value: string): this {
@@ -135,6 +164,12 @@ export class Color {
 					return this.setRgb( 0, 0, 0, 0 );
 				}
 			}
+		}
+
+		// another colour the browser knows (color-mix, hsl, oklch...)
+		const known = browserColor( value );
+		if( known ) {
+			return this.setRgb( known[0], known[1], known[2], known[3] );
 		}
 
 		// red, to be seen, and marked as invalid

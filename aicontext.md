@@ -1531,6 +1531,8 @@ class Timer { setTimeout; clearTimeout; setInterval; clearInterval; clearAllTime
 
 class Color {
   // new Color(value) | new Color(r,g,b,a?)   a: 0..1, default 1
+  // value: "#rgb", "#rrggbb", "#rrggbbaa", "rgb()", "rgba()", a name ("cyan", "transparent"), "var(--name)",
+  //   and any other colour the browser knows (hsl(), oklch(), color-mix()), read from the pixel it paints
   setValue(value): this; setRgb(r,g,b,a?): this; setHsv(h,s,v,a?): this; setAlpha(a): this
   getAlpha(): number; lighten(percent): this
   isInvalid(): boolean                     // the last setValue could not be read (the color is red); setRgb/setHsv make it valid
