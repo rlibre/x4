@@ -284,7 +284,10 @@ export class Keyboard extends HBox<KeyboardProps>
 	keyboard: Box;
 	visible: boolean;
 	input: HTMLInputElement;
-		
+
+	// the pointerdown handled last (see handleKeyEvent)
+	private handled: UIEvent = null;
+
     constructor( props: KeyboardProps )  {
         super( { ...props, id: 'v-keyboard' } );
 
@@ -355,6 +358,13 @@ export class Keyboard extends HBox<KeyboardProps>
 	 */
 
     private handleKeyEvent( e: UIEvent ) {
+		// the key backspace listens to pointerdown too (its autorepeat): this handler is
+		// called for its node and for the keyboard, the same event twice; one key only
+		if( e===this.handled ) {
+			return;
+		}
+		this.handled = e;
+
         let target = e.target as HTMLElement;
         let key;
 

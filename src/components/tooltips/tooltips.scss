@@ -18,9 +18,9 @@
 
 :root {
 	--tooltip-caption-background: var( --color-primary-a70 );
-	--tooltip-caption-color: var( --color-primary-a0 );
+	--tooltip-caption-color: var( --accent-color );
 
-	--tooltip-icon-background: var( --color-primary-a0 );
+	--tooltip-icon-background: var( --accent-color );
 	--tooltip-icon-color: var( --color-primary-a70 );
 
 	--tooltip-background: var( --color-primary-a10 );	//white;

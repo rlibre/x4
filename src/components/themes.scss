@@ -101,3 +101,57 @@ $color--interval: 8.4%;
 	--success-background-active: var(--color-success-a60);
 	--success-color: #ffffff;
 }
+
+// :: dark theme :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// Application.setTheme( "dark" ): the class x4theme-dark on <html>, like the theme Dark
+// Modern of VS Code. Its colours are taken in the sources of VS Code:
+// extensions/theme-defaults/themes/dark_modern.json, and for the lists the defaults of
+// src/vs/platform/theme/common/colors/listColors.ts; the values marked "chosen" are not
+// in VS Code. A theme of an application is written the same way, under html.x4theme-<name>.
+
+html.x4theme-dark {
+	// the scale: a0 the background, a100 the text, the surfaces between them, then the blues
+	--color-primary-a0: #1f1f1f;		// editor.background
+	--color-primary-a5: #252526;		// chosen
+	--color-primary-a10: #2a2d2e;		// list.hoverBackground
+	--color-primary-a20: #37373d;		// list.inactiveSelectionBackground
+	--color-primary-a30: #3c3c3c;		// input.border
+	--color-primary-a40: #04395e;		// list.activeSelectionBackground
+	--color-primary-a50: #0078d4;		// button.background, focusBorder
+	--color-primary-a55: #026ec1;		// button.hoverBackground
+	--color-primary-a60: #0078d4;
+	--color-primary-a70: #026ec1;
+	--color-primary-a80: #04395e;
+	--color-primary-a90: #cccccc;
+	--color-primary-a100: #cccccc;		// foreground
+
+	// what the scale does not give
+	--background-ternary: #181818;		// sideBar.background
+	--background-hover: #2b2b2b;		// button.secondaryHoverBackground
+	--background-active: #37373d;		// list.inactiveSelectionBackground
+	--background-input: #313131;		// input.background
+
+	--text-secondary: #9d9d9d;			// descriptionForeground
+	--text-ternary: #bbbbbb;			// chosen: between the description and the text
+
+	--border: #3c3c3c;					// input.border
+	--border-light: #2b2b2b;			// panel.border
+	--border-hover: #616161;			// chosen (badge.background)
+
+	--disabled-background: #313131;		// chosen
+	--disabled-color: #6e6e6e;			// chosen
+	--disabled-color-dark: #6e6e6e;		// chosen
+	--disabled-color-light: #4f4f4f;	// chosen
+
+	--accent-color: #ffffff;			// button.foreground: the text on the accent
+	--accent-color-hover: #ffffff;
+	--accent-color-focus: #ffffff;
+	--accent-color-active: #ffffff;
+
+	// the title bar of a Dialog: the one of the window of VS Code
+	--color-dialog-caption: #181818;			// titleBar.activeBackground
+	--color-dialog-caption-text: #cccccc;		// titleBar.activeForeground
+	--color-dialog-background: #202020;			// editorWidget.background
+
+	color-scheme: dark;		// the native parts: select, scroll bars, number spinners
+}

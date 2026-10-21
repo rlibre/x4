@@ -3,6 +3,30 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.24
+
+### Theme
+
+- Themes: `Application.setTheme( name )` puts the class `x4theme-<name>` on `<html>`. `""` is the light theme, by default; `"dark"` a dark theme, like the one of VS Code. An application adds its own under `html.x4theme-<name>` in its css. `Application.getTheme( )` gives the name of the theme.
+
+```ts
+Application.setTheme( "dark" );
+```
+
+### Label
+
+- The classes `right` and `al-right` put its content on its right.
+
+### ProgressionBox
+
+- Its lines are in a textarea read only: they are text, a markup is shown as it is written.
+- `done( )` shows the button OK. After an error it waits for it; else it counts the seconds left, "OK (5s)", and closes the box at 0. A click on OK closes it at once.
+- `clear( )` puts the box back as at the start: no line, no error, no button OK.
+
+### Keyboard
+
+- Backspace pressed once erases one letter.
+
 ## 2.3.23 (2026-10-21)
 
 ### Theme

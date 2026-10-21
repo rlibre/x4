@@ -221,7 +221,6 @@
 		width: 16px;
 		height: 16px;
 		line-height: 16px;
-		border-radius: 3px;
 		text-align: center;
 		font-weight: 400;
 		cursor: pointer;
@@ -269,7 +268,6 @@
 
 		background: var( --dock-float-background );
 		border: 1px solid var( --dock-line );
-		border-radius: 4px;
 		box-shadow: var( --dock-float-shadow );
 	}
 
@@ -282,7 +280,6 @@
 
 		background: var( --dock-preview-background );
 		border: 1px solid var( --dock-accent );
-		border-radius: 3px;
 	}
 
 	// It holds the pointer during a drag: its cursor is the one that shows.

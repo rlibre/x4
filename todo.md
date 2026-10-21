@@ -10,10 +10,22 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components; the colours of the rules go through variables; the variables read are all defined; MessageBox, InputBox and PromptBox by kind. Agreed, one block at a time, the light theme unchanged to the pixel:
 
-- then a dark theme of x4, like the one of VS Code (asked on 2026-10-21); then use it in demo/gallery, in place of the dark rules of its main.scss (the gallery runs on the npm package: it needs the version that brings the theme);
+- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`): once that version is published, demo/gallery takes it (update x4js, call `Application.setTheme`, remove the block `html.x4dark` of its main.scss, and the class x4dark in its test);
 - aiguide §18: what a dark theme defines (the danger scale, `--color-dialog-caption*`), to ask before writing it.
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
 - Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
+
+## `@class_ns( "x4" )` → a static member
+
+- To discuss (asked on 2026-10-21): replace the decorator `@class_ns( "x4" )` (80 classes) by a static member of the class, e.g. `static ns = "x4"`. Today the decorator writes the namespace on the constructor (`x4_class_ns_sym`), and the classes of a component are built by reading it on each constructor of the chain with `hasOwnProperty` (component.ts), so a class without it gets no prefix (FileDialog and SvgComponent have none, seen by the gallery). A static member is an own property of each class too, so the same reading works. To weigh: the classes of the applications that use the decorator, and `experimentalDecorators`, which `@data.*` of DataModel still needs.
+
+## Dialog: the cursor of its title bar
+
+- Change the cursor of the title bar of a Dialog (asked on 2026-10-21). Today its title bar (`.caption.caption-element`, dialog.ts) has no cursor of its own, even when the dialog can be moved by it (Popup gives it a `CMover` when `movable`); only a popup of class `popup-caption` gets `cursor: move` (popup.module.scss). To decide: `move` or `grab` / `grabbing` while dragged, and only when the dialog is movable.
+
+## Timeline
+
+- A Timeline (asked on 2026-10-21, from a picture of a GitHub-like activity): events one under the other on a vertical line, each with an icon in a round mark on the line, a title in bold, a sentence under it in grey, then its time in small ("2 hours ago"). The events done have the mark filled in the accent and a solid line in the accent; the ones to come a grey mark and a dashed grey line. Nothing is designed: the items (icon, title, text, time, state), a renderer of its own, the time written by `date_diff` or given as text.
 
 ## Drawer
 
@@ -50,7 +62,7 @@ A `Box` is a `<fieldset>`, so that `disabled` reaches every field inside it. The
 Found by a review of the sources on 2026-10-13. Each one is a real defect, but an application may have been written around it: to do in a version that says so.
 
 - `addDOMEvent( name, handler, prepend )`: `prepend` is not read by `addEvent` (`core_dom.ts`), the handler always goes last. Honouring it puts first the handlers of the applications that pass `true`. In x4 itself only `DropdownList` passes it (`combobox.ts`, its `mousedown`), on a node where it is the only handler unless `dom_events` has one.
-- A DOM handler is called once for each ancestor that listens to the same event (`dispatchEvent`, `core_dom.ts`): every node that has a handler has its own native listener, and each of them walks again from the target to the top. Enter on a `Button` in a `Dialog` (both listen to `keydown`) clicks the button twice. To walk once for an event changes how many times the handlers of every application are called.
+- A DOM handler is called once for each ancestor that listens to the same event (`dispatchEvent`, `core_dom.ts`): every node that has a handler has its own native listener, and each of them walks again from the target to the top. Enter on a `Button` in a `Dialog` (both listen to `keydown`) clicks the button twice. Seen on 2026-10-21: the backspace of `Keyboard` erased two letters (its key listens to `pointerdown` for its autorepeat, the keyboard too); worked around in `Keyboard`, which skips an event it already handled. To walk once for an event (e.g. a mark on the event, set by the first walk) changes how many times the handlers of every application are called.
 - `ev.stopPropagation( )` in a handler does not stop this walk: only `preventDefault( )` does (`core_dom.ts`). The handlers of the ancestors are still called: a click on the arrow of a `Treeview` folder, whose handler stops the propagation, also selects the line. To test `ev.cancelBubble` in the walk would stop the handlers of the ancestors of every application that calls `stopPropagation( )`.
 - `prependContent( [a, b, c] )` puts the items in the reverse order (`c b a`): each one is inserted first, one after the other (`component.ts`). An application that gives its array reversed, to get the order it wants, would get the other one. In x4 itself the only call gives one item (`Listbox.appendItem`).
 

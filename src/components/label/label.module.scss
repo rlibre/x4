@@ -30,8 +30,8 @@
 	background-color: var( --label-background );
 	gap: 0.2em;
 
-	&.al-right
-	&.right  {
+	&.al-right,
+	&.right {
 		text-align: right;
 		justify-content: end;
 	}

@@ -42,6 +42,9 @@ export interface ApplicationEvents extends EventMap {
 // singleton
 let main_app: Application = null;
 
+// the class of a theme on <html>: x4theme-<name> (see Application.setTheme)
+const THEME_PREFIX = "x4theme-";
+
 /**
  * Provides information about the user's device and browser capabilities.
  */
@@ -199,6 +202,50 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 	static fireGlobal( msg: string, params?: any ) {
 		Application.instance().fire( "global", { msg, params } );
+	}
+
+	/**
+	 * Selects the theme of the page: the class `x4theme-<name>` on `<html>`, in place
+	 * of the one of the theme before.
+	 * - `""`: the light theme of x4, the one by default: no class.
+	 * - `"dark"`: the dark theme of x4, like the theme Dark Modern of VS Code
+	 *   (`html.x4theme-dark` in themes.scss).
+	 * - any other name: a theme of the application, defined in its own css under
+	 *   `html.x4theme-<name>`, with the variables of themes.scss it changes.
+	 * @param name - the name of the theme; "" for the light theme.
+	 * @example
+	 * Application.setTheme( "dark" );		// the dark theme of x4
+	 * Application.setTheme( "pink" );		// html.x4theme-pink { --color-primary-a0: ...; } in the css of the application
+	 * Application.setTheme( "" );			// back to the light theme
+	 */
+
+	static setTheme( name: string ) {
+		const classes = document.documentElement.classList;
+
+		const current = Application.getTheme( );
+		if( current ) {
+			classes.remove( THEME_PREFIX + current );
+		}
+
+		if( name ) {
+			classes.add( THEME_PREFIX + name );
+		}
+	}
+
+	/**
+	 * The name of the theme of the page, as setTheme got it: `""` for the light theme
+	 * of x4, `"dark"` for its dark theme, or the name of a theme of the application.
+	 */
+
+	static getTheme( ): string {
+		const classes = document.documentElement.classList;
+		for( let i = 0; i < classes.length; i++ ) {
+			if( classes[i].startsWith( THEME_PREFIX ) ) {
+				return classes[i].replace( THEME_PREFIX, "" );
+			}
+		}
+
+		return "";
 	}
 
 	/**
