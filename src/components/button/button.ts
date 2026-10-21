@@ -71,6 +71,14 @@ export interface ButtonProps extends ComponentProps {
 	 */
 	click?: EventCallback<EvClick>;
 
+	/**
+	 * A menu that a click opens under the button, in place of the click event.
+	 * A function is called at each click: it gives the items of that time.
+	 * The button gets the class "with-menu".
+	 *
+	 * @example
+	 * new Button( { label: "File", menu: [ { text: "Open", click: open }, "-", { text: "Quit", click: quit } ] } );
+	 */
 	menu?: MenuElement[] | (( ) => MenuElement[]);
 }
 

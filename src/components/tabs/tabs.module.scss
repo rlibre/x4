@@ -3,6 +3,9 @@
 :root {
 	--tab-border-selected: var( --accent-background );
 	--tab-border-hover: var( --accent-background-hover );
+	--tab-color-hover: var( --text-primary );
+	--tab-color: var( --text-primary );
+	--tab-color-selected: var( --text-primary );
 }
 
 .x4tabs {
@@ -20,7 +23,7 @@
 		.x4button {
 			border: none;
 			border-bottom: 2px solid transparent;
-			color: var( --color-gray-7 );
+			color: var( --tab-color );
 			margin: 0;
 			outline: none;
 			transition: border-color 0.2s ease;
@@ -28,12 +31,12 @@
 			&.selected {
 				border-bottom-color: var( --tab-border-selected );
 				font-weight: bold;
-				color: var( --color-gray-9 );
+				color: var( --tab-color-selected );
 			}
 
 			&:hover {
 				background-color: unset;;
-				color: black;
+				color: var( --tab-color-hover );
 				border-bottom-color: var( --tab-border-hover );	
 			}
 

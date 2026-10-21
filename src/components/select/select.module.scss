@@ -1,10 +1,11 @@
 
-/**
- * @cssvar
- * --select-border
- * --select-border-focus
- * --select-background
- */
+:root {
+	--select-border: var( --border );
+	--select-border-focus: var( --accent-background );
+	--select-background: var( --background-primary );
+	--select-color: var( --text-primary );
+	--select-arrow-color: var( --text-ternary );
+}
 
 .x4select,
 ::picker(select) {
@@ -14,22 +15,26 @@
 	outline: none;
 
 	border-radius: 0;
-	border: 1px solid var( --select-border, var( --border ) );
-	background-color: var( --select-background, white );
+	border: 1px solid var( --select-border );
+	background-color: var( --select-background );
+	color: var( --select-color );
 }
 
 .x4select {
 	appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23333' d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+	// the arrow: two halves of a square side by side, in the colour of the variable
+    background-image:
+		linear-gradient( 45deg, transparent 50%, var( --select-arrow-color ) 50% ),
+		linear-gradient( 135deg, var( --select-arrow-color ) 50%, transparent 50% );
     background-repeat: no-repeat;
-    background-position: right 6px center;
-    background-size: 12px 8px;
+    background-position: right 13px center, right 8px center;
+    background-size: 5px 5px, 5px 5px;
     padding-right: 23px;
 
 	&:focus-visible {
-		border-color: var( --select-border-focus, var( --accent-background ) );
+		border-color: var( --select-border-focus );
 	}
 
 	.select-option {

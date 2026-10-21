@@ -146,6 +146,9 @@ interface TabsProps extends Omit<ComponentProps,"content"> {
  * ```
  * --tab-border-selected
  * --tab-border-hover
+ * --tab-color-hover
+ * --tab-color
+ * --tab-color-selected
  * ```
  */
 

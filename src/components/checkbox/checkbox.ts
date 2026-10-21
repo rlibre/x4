@@ -41,6 +41,7 @@ interface CheckboxProps extends ComponentProps {
  * --checkbox-color-disabled
  * --checkbox-check-border
  * --checkbox-check-border-hover
+ * --checkbox-check-color
  * ```
  */
 

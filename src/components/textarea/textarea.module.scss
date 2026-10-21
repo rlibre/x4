@@ -20,6 +20,9 @@
 	--textarea-border: var( --border );
 	--textarea-border-focus: var( --border-focus );
 	--textarea-selection: var( --accent-background );
+	--textarea-selection-color: var( --accent-color );
+	--textarea-background: var( --background-input );
+	--textarea-color: var( --text-primary );
 }
 
 .x4simpletextarea {
@@ -36,6 +39,10 @@
 		outline: none;
 		font: inherit;
 
+		// as the ones of an input
+		background-color: var( --textarea-background );
+		color: var( --textarea-color );
+
 		border: 1px solid var( --textarea-border );
 
 		&:focus {
@@ -44,7 +51,7 @@
 
 		&::selection {
 			background-color: var( --textarea-selection );
-			color: white;
+			color: var( --textarea-selection-color );
 		}
 
 		// as the one of an input

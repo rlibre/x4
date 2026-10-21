@@ -36,6 +36,7 @@
 
 	--calendar-header-color: var( --text-primary );
 	--calendar-out-color: var( --disabled-color-dark );
+	--calendar-day-color: var( --text-primary );
 }
 
 .x4calendar {
@@ -93,7 +94,7 @@
 			min-width: 28px;
 			min-height: 28px;
 			
-			color: var( --gray-900 );
+			color: var( --calendar-day-color );
 			text-align: center;
 			
 			.text {

@@ -26,6 +26,7 @@
 	--tooltip-background: var( --color-primary-a10 );	//white;
 	--tooltip-color: var( --color-primary-a90 );
 	--tooltip-border: var( --color-primary-a20 );
+	--tooltip-image-background: var( --background-primary );
 }
 
 .x4tooltip {
@@ -67,7 +68,7 @@
 	img {
 		max-width: 100px;
 		max-height: 50px;
-		background-color: white;
+		background-color: var( --tooltip-image-background );
 		margin: 4px;
 	}
 }

@@ -18,7 +18,8 @@
 
 :root {
 	--panel-border: var( --border );
-	--panel-title-color: var( --border );
+	--panel-title-color: var( --text-primary );
+	--panel-title-background: var( --background-primary );
 }
 
 
@@ -34,9 +35,9 @@
 		position: absolute;
 		left: 4px;
 		top: -0.7em;
-		background-color: white;
+		background-color: var( --panel-title-background );
 		font-weight: bold;
-		color: var(--color-gray-9);
+		color: var( --panel-title-color );
 	}
 
 	& > .body {

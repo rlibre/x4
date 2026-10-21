@@ -136,6 +136,9 @@ export class SimpleTextArea extends Component<SimpleTextAreaProps,TextAreaEvents
  * --textarea-border
  * --textarea-border-focus
  * --textarea-selection
+ * --textarea-selection-color
+ * --textarea-background
+ * --textarea-color
  * ```
  */
 

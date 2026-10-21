@@ -19,8 +19,10 @@
 
 	--treeview-background: var( --background-primary );
 
+	--treeitem-color: var( --text-primary );
+
 	--treeitem-backgound-hover: var( --background-secondary );
-	--treeitem-color-hover: var( );
+	--treeitem-color-hover: var( --text-primary );
 
 	--treeitem-background-sel: var( --accent-background );
 	--treeitem-color-sel: var( --accent-color );
@@ -97,6 +99,8 @@
 
 					&:hover {
 						background-color: var( --treeitem-backgound-hover );
+						--label-color: var( --treeitem-color-hover );
+						--label-icon-color: var( --treeitem-color-hover );
 					}
 
 					&.selected {

@@ -24,6 +24,7 @@
 	--checkbox-color-disabled: var( --disabled-background );
 	--checkbox-check-border: var( --border );
 	--checkbox-check-border-hover: var( --border-hover );
+	--checkbox-check-color: var( --accent-color );
 }
 
 .x4checkbox {
@@ -41,7 +42,7 @@
 	.inner {
 		height: 1rem;
 		width: 1rem;
-		color: white;
+		color: var( --checkbox-check-color );
 		position: relative;
 		order: 1;
 		

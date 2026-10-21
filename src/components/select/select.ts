@@ -46,6 +46,15 @@ interface SelectEvents extends ComponentEvents {
 /**
  * simple select
  * cf. Combobox
+ *
+ * @cssvar
+ * ```
+ * --select-border
+ * --select-border-focus
+ * --select-background
+ * --select-color
+ * --select-arrow-color
+ * ```
  */
 
 @class_ns( "x4" )

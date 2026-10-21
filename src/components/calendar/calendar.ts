@@ -54,7 +54,7 @@ interface CalendarProps extends ComponentProps {
  * ```
  * --calendar-btn-background
  * --calendar-btn-color
- * --calendar-btn-color
+ * --calendar-btn-color-hover
  * --calendar-week-color
  * --calendar-week-color-hover
  * --calendard-day-background-hover
@@ -66,6 +66,7 @@ interface CalendarProps extends ComponentProps {
  * --calendar-today-border
  * --calendar-header-color
  * --calendar-out-color
+ * --calendar-day-color
  * ```
  */
 

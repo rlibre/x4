@@ -1030,6 +1030,8 @@ interface ButtonProps extends ComponentProps {
   tabindex?: number | boolean
   autorepeat?: number | boolean            // true=200ms; number=interval (first fire after 500ms)
   click?: EventCallback<EvClick>
+  menu?: MenuElement[] | (() => MenuElement[])   // a click opens this Menu under the button, in place of the click event;
+                                           // a function is called at each click; the button gets the class "with-menu"
 }
 class Button extends Component {
   click(): void                            // simulate a click

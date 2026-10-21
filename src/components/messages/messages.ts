@@ -34,7 +34,11 @@ export interface MessageBoxProps extends DialogProps {
  * --msgbox-caption-background
  * --msgbox-caption-color
  * --msgbox-icon-color
+ * --msgbox-question-icon-color
+ * --msgbox-log-background
  * ```
+ * --msgbox-caption-* and --msgbox-icon-color are the ones of an error; a question, an InputBox
+ * and a PromptBox have the title bar of a Dialog and their icon in --msgbox-question-icon-color
  */
 
 @class_ns( "x4" )
@@ -58,7 +62,9 @@ export class MessageBox extends Dialog<DialogProps>
 			}
 		}
 
-		const box = new MessageBox({ 
+		// the kind as a class: an error has its own title bar
+		const box = new MessageBox({
+			cls: icon_type ?? "error",
 			modal: true,
 			title: title ?? _tr.global.error,
 			movable: true,

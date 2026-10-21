@@ -33,6 +33,7 @@ interface PanelProps extends ComponentProps {
  * ```
  * --panel-border
  * --panel-title-color
+ * --panel-title-background
  * ```
  */
 

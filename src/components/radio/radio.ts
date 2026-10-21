@@ -48,7 +48,13 @@ interface RadioProps extends ComponentProps {
 }
 
 /**
- * 
+ *
+ * @cssvar
+ * ```
+ * --radio-background
+ * --radio-check-color
+ * --radio-square-border-checked
+ * ```
  */
 
 @class_ns( "x4" )

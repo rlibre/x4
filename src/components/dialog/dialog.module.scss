@@ -19,6 +19,7 @@
 :root {
 	--color-dialog-caption: var( --color-primary-a80 );
 	--color-dialog-caption-text: var( --color-primary-a0 );
+	--color-dialog-background: var( --background-primary );
 }
 
 .x4dialog {
@@ -26,8 +27,7 @@
 	@extend %vbox;
 
 	position: absolute !important;
-	background-color: white;
-	border: 1px solid var( --border-dark );
+	background-color: var( --color-dialog-background );
 	max-width: 99vw;
 	outline: none;
 	

@@ -17,7 +17,7 @@
  @use "../shared.scss";
 
 :root {
-	--form--background: var( --background-primary );
+	--form-background: transparent;
 }
 
 .x4form {
@@ -25,7 +25,7 @@
 	@extend %flex;
     
     padding: 16px;
-	background-color: var( --color-form );
+	background-color: var( --form-background );
 	
     &.horizontal {
         flex-direction: row;

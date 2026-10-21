@@ -88,6 +88,8 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
  * --listbox-background
  * --listbox-border
  * --listbox-border-focus
+ * --listbox-title-background
+ * --listbox-title-color
  * ```
  */
 

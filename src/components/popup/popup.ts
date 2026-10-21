@@ -66,6 +66,7 @@ function dismissLast( e: UIEvent ) {
  * @cssvar
  * ```
  * --modal-mask-background
+ * --popup-background
  * ```
  */
 

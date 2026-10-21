@@ -31,6 +31,9 @@
 	--listbox-background: var( --background-primary );
 	--listbox-border: var( --border );
 	--listbox-border-focus: var( --accent-background-focus );
+
+	--listbox-title-background: var( --background-primary );
+	--listbox-title-color: var( --text-primary );
 }
 
 .x4listbox {
@@ -48,10 +51,10 @@
 	}
 
 	&>.title {
-	    background: white;
+	    background: var( --listbox-title-background );
 		padding: 4px;
 		font-weight: bold;
-		color: black;
+		color: var( --listbox-title-color );
 		border-bottom: 1px solid var(--border);
 	}
 

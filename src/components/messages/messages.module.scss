@@ -20,12 +20,16 @@
 	--msgbox-caption-color: var( --alert-color );
 
 	--msgbox-icon-color:  var( --alert-background );
+	--msgbox-question-icon-color: var( --accent-background );		// a question, an InputBox, a PromptBox
+
+	--msgbox-log-background: var( --background-ternary );		// the lines of a ProgressionBox
 }
 
 .x4messagebox {
 	max-width: 60vw;
 
-	& > .caption {
+	// an error has its own title bar; a question has the one of a Dialog
+	&.error > .caption {
 		background-color: var( --msgbox-caption-background );
 
 		& > #title {
@@ -45,24 +49,20 @@
 			line-height: 1.8em;
 		}
 	}
+
+	&.question .x4form .x4icon {
+		color: var( --msgbox-question-icon-color );
+	}
 }
 
 .x4inputbox,
 .x4promptbox {
 	max-width: 60vw;
 
-	& > .caption {
-		background-color: var( --msgbox-caption-background );
-
-		& > #title {
-			color: var( --msgbox-caption-color );
-		}
-	}
-
 	& .x4form {
 		min-width: 400px;
 		.x4icon {
-			color: var( --msgbox-icon-color );
+			color: var( --msgbox-question-icon-color );
 			height: 64px;
 		}
 
@@ -134,7 +134,7 @@
 			flex-grow: 1;
 			max-height: 400px;
 			overflow: auto;
-			background-color: #f5f5f5;
+			background-color: var( --msgbox-log-background );
 			padding: 4px 8px;
 			margin: 0 16px;
 

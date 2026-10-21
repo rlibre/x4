@@ -39,6 +39,7 @@ interface SwitchProps extends ComponentProps {
  * --switch-background
  * --switch-background-disabled
  * --switch-checked
+ * --switch-thumb
  * ```
  */
 

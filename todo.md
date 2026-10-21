@@ -8,13 +8,36 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 ## Theme
 
-Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components. Agreed, one block at a time, the light theme unchanged to the pixel:
+Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components; the colours of the rules go through variables; the variables read are all defined; MessageBox, InputBox and PromptBox by kind. Agreed, one block at a time, the light theme unchanged to the pixel:
 
-- the colours written without a variable: Dialog background, Listbox title, Panel legend, `#sub-text` of MessageBox, Checkbox, Radio, hovered tab, the arrow of Select (drawn by two gradients in a variable), `--textarea-background` and `--textarea-color`;
-- the variables used but never defined, given the look they have today: `--color-form` (`--form-background: transparent`), `--color-gray-7` and `-9` (`--text-primary`), and the lines with `--color-gray-0`, `--color-gray-3`, `--border-dark` removed;
-- MessageBox and InputBox: the title bar and the icon by kind (only an error in red); `fill="currentColor"` on `pen-field.svg`;
-- then a dark theme of x4, like the one of VS Code (asked on 2026-10-21);
+- then a dark theme of x4, like the one of VS Code (asked on 2026-10-21); then use it in demo/gallery, in place of the dark rules of its main.scss (the gallery runs on the npm package: it needs the version that brings the theme);
 - aiguide §18: what a dark theme defines (the danger scale, `--color-dialog-caption*`), to ask before writing it.
+- Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
+- Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
+
+## Drawer
+
+- A Drawer: a panel that slides in from an edge of the page (left, right, top, bottom) over the content, and goes away by a click outside or Escape (asked on 2026-10-21). x4 has nothing of the kind today. Nothing is designed: a Popup or a Component of its own, a mask behind it or not, pushing the content or over it.
+
+## Button toggle
+
+- A toggle button: a Button that stays pressed after a click and is released by the next one, with its state readable and settable, and an event when it changes (asked on 2026-10-21). Button has nothing of the kind today (no pressed or checked state). Nothing is designed: a prop of Button or a class of its own, its look (the accent while pressed?), its value in a Form.
+
+## Fields with their label above
+
+- A style of `TextEdit` with the label above the field, not on its left (asked on 2026-10-21); the same for the other fields that have a label: `AutoComplete` (a TextEdit), `Combobox` (both have `label` and `labelWidth`), `TextArea` (`label`). Decided: a class (2026-10-21), its name to choose.
+
+## Box is a `<fieldset>`
+
+A `Box` is a `<fieldset>`, so that `disabled` reaches every field inside it. There may be a better way (asked on 2026-10-21): a `<div>` with `inert` (no click, no focus in the subtree) and `aria-disabled`, and a class for the look; or `disabled` given by the code to the fields of the box. What the `<fieldset>` costs:
+
+- Chrome (seen, 2026-10-21): in a fieldset, a fieldset that scrolls loses its scroll (back to 0) when the content of a fieldset beside it changes. All three must be fieldsets: an HBox holding a VBox that scrolls and a VBox whose page is replaced. Found in demo/gallery (its navigation), worked around there with a `<div>` for the page.
+- `min-height` on a Box does not reach the flex box inside it: its children are not stretched nor centered (read in the gallery).
+- the style of a disabled button tests `[disabled]`, which a button in a disabled fieldset does not have (it is `:disabled`), button.module.scss (read in the gallery).
+
+## MasonryBox
+
+- To revisit: it does not seem up to date any more (2026-10-21). Found while building the gallery (read, not checked): `setItems` does not measure the new items (boxes.ts, around line 600: `resizeAllItems( )` is not called), and only the elements of the class `content`, which is not documented, are measured.
 
 ## DataStore
 

@@ -19,12 +19,27 @@ A version gets its date when it is published.
 - Chart: its texts take `--text-ternary` (`#666`), its grid `--border`, its axis `--border-hover`. The dot of the needle of Gauge takes `--text-ternary`.
 - `--accent-background-light`: the accent at 25%. DockingView takes it for a title under the pointer and for the place where a dragged panel will go (`--dock-preview-background`, new).
 - SettingsView: a setting under the pointer takes `--color-primary-a20`.
+- The colours of the rules go through variables of their component, which point to the globals: the background of Dialog (`--color-dialog-background`), the title of Listbox (`--listbox-title-background`, `--listbox-title-color`), the title of Panel (`--panel-title-background`), the lines of a ProgressionBox (`--msgbox-log-background`), Checkbox (`--checkbox-check-color`), Radio (`--radio-background`, `--radio-check-color`, `--radio-square-border-checked`), the thumb of Switch (`--switch-thumb`), a tab under the pointer (`--tab-color-hover`), the image of a tooltip (`--tooltip-image-background`).
+- Select: its variables are defined (`--select-border`, `--select-border-focus`, `--select-background`) with `--select-color` for its text. Its arrow is drawn in `--select-arrow-color` (`--text-ternary`): a small triangle.
+- SimpleTextArea, TextArea: the background and the text of an input (`--textarea-background`, `--textarea-color`), and `--textarea-selection-color` for the text selected.
+- The variables that the rules read are all defined, with the look the components have: the text of the tabs (`--tab-color`, `--tab-color-selected`), of the title of Panel (`--panel-title-color`, which the title reads), of the days of Calendar (`--calendar-day-color`), of the items of Treeview (`--treeitem-color`, and `--treeitem-color-hover`, which the item under the pointer reads), all `--text-primary`; the background of Form (`--form-background`) and of Popup (`--popup-background`), transparent.
+- Dialog, the hue slider of ColorPicker, Menu and Popup have no border colour nor radius read from a variable that does not exist; the empty rows of Gridview and Spreadsheet no background.
 
 ```scss
 :root {
 	--color-primary-a0: #1e1e1e;		// the greys and the borders follow
 	--color-primary-a100: #f0f0f0;
 }
+```
+
+### MessageBox, InputBox, PromptBox
+
+- Only an error has its title bar and its icon in the colour of the alerts (`--msgbox-caption-background`, `--msgbox-caption-color`, `--msgbox-icon-color`). A question, an InputBox and a PromptBox have the title bar of a Dialog, and their icon in `--msgbox-question-icon-color` (the accent).
+- A MessageBox has the class of its kind: `error` (by default) or `question`.
+- The pen of an InputBox and of a PromptBox takes the colour of its icon.
+
+```ts
+MessageBox.show( "Delete it ?", [ "yes", "no" ], "Question", "question" );	// the title bar of a Dialog
 ```
 
 ### Color

@@ -104,6 +104,7 @@ function closeTT( ) {
  * --tooltip-background
  * --tooltip-color
  * --tooltip-border
+ * --tooltip-image-background
  * ```
  */
 

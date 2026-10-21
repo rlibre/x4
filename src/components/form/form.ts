@@ -31,7 +31,7 @@ type ValidationFn = ( values: FormValues, is_valid: boolean ) => boolean;
 /**
  * @cssvar
  * ```
- * --form--background
+ * --form-background
  * ```
  */
 

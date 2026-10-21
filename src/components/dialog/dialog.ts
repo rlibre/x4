@@ -54,6 +54,7 @@ interface DialogEvents extends PopupEvents {
  * ```
  * --color-dialog-caption
  * --color-dialog-caption-text
+ * --color-dialog-background
  * ```
  */
 

@@ -16,15 +16,14 @@
 
 :root {
 	--modal-mask-background: rgb(0 0 0 / 60% );
+	--popup-background: transparent;
 }
 
 .x4popup {
 	position: absolute !important;
-	background-color: var(--fill-color);
-	border: 1px solid var(--border-color);
+	background-color: var( --popup-background );
 	overflow: hidden;
 	z-index: 1000;
-	border-radius: var(--bradius);
 
 	&.popup-caption,
 	.popup-caption {

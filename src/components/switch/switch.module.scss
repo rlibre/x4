@@ -21,6 +21,7 @@
 	--switch-background: var( --background-hover );
 	--switch-background-disabled: var( --disabled-background );
 	--switch-checked: var( --accent-background );
+	--switch-thumb: var( --background-primary );
 }
 
 .x4switch {
@@ -88,7 +89,7 @@
 			height: 1rem;
 
 			border-radius: 8px;
-			background-color: white;
+			background-color: var( --switch-thumb );
 			box-shadow: 0 0 2px rgba(0,0,0,0.5);
 
 			transition: left ease 0.2s;
