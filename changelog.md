@@ -3,7 +3,7 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
-## 2.3.24
+## 2.3.24 (2026-10-21)
 
 ### Theme
 
