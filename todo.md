@@ -17,8 +17,6 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 - then a dark theme of x4, like the one of VS Code (asked on 2026-10-21);
 - aiguide §18: what a dark theme defines (the danger scale, `--color-dialog-caption*`), to ask before writing it.
 
-`Color` (asked by Timex on 2026-10-21, not decided): `mix( other, amount )`, `darken( percent )`, `luminance( )`, `contrast( other )` (WCAG ratio), `textColor( light, dark )`.
-
 ## DataStore
 
 - A paginated DataStore: one that holds a page of the records at a time and asks for the others when they are needed (asked on 2026-10-13; nothing is designed).

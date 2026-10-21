@@ -378,32 +378,92 @@ export class Color {
 	 * @param percent - The percentage to lighten (0-100).
 	 * @returns The current Color instance.
 	 */
-	lighten(percent: number) : this {
+	lighten(percent: number): this {
+		const factor = clamp(percent, 0, 100) / 100;
 
-		if (percent < 0) {
-			percent = 0;
-		}
-		else if (percent > 100) {
-			percent = 100;
-		}
-
-		const factor = percent / 100;
-
-		const adj = (value: number): number => {
-			value = (value + (255 - value) * factor) | 0;
-			if (value > 255) {
-				value = 255;
-			}
-			return value;
-		};
-
-		const _ = this.rgb;
-		this.rgb = [adj(_[0]), adj(_[1]), adj(_[2]), _[3]];
+		const [r, g, b, a] = this.rgb;
+		this.rgb = [round(r + (255 - r) * factor), round(g + (255 - g) * factor), round(b + (255 - b) * factor), a];
 
 		return this;
 	}
+
+	/**
+	 * Darkens the color by a given percentage.
+	 *
+	 * @param percent - The percentage to darken (0-100).
+	 * @returns The current Color instance.
+	 */
+	darken(percent: number): this {
+		const factor = 1 - clamp(percent, 0, 100) / 100;
+
+		const [r, g, b, a] = this.rgb;
+		this.rgb = [round(r * factor), round(g * factor), round(b * factor), a];
+
+		return this;
+	}
+
+	/**
+	 * Mixes the color with another one, alpha included.
+	 *
+	 * @param other - The other color.
+	 * @param amount - The part of the other color (0-1): 0 keeps this color, 1 gives the other one.
+	 * @returns The current Color instance.
+	 */
+	mix(other: Color, amount: number): this {
+		const t = clamp(amount, 0, 1);
+
+		const [r, g, b, a] = this.rgb;
+		const [r2, g2, b2, a2] = other.rgb;
+		this.rgb = [round(r + (r2 - r) * t), round(g + (g2 - g) * t), round(b + (b2 - b) * t), a + (a2 - a) * t];
+
+		return this;
+	}
+
+	/**
+	 * Gets the relative luminance of the color, as WCAG defines it. The alpha is not used.
+	 *
+	 * @returns The luminance (0 for black, 1 for white).
+	 */
+	luminance(): number {
+		// the components in linear light
+		const lin = (v: number) => {
+			v /= 255;
+			return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+		};
+
+		const [r, g, b] = this.rgb;
+		return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+	}
+
+	/**
+	 * Gets the contrast ratio between the color and another one, as WCAG defines it.
+	 *
+	 * @param other - The other color.
+	 * @returns The ratio (1 for the same luminance, 21 for black and white).
+	 */
+	contrast(other: Color): number {
+		const l1 = this.luminance();
+		const l2 = other.luminance();
+		return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+	}
+
+	/**
+	 * Gets, of two colors of text, the one that contrasts most with the color.
+	 *
+	 * @param light - The light text color (white by default).
+	 * @param dark - The dark text color (black by default).
+	 * @returns A copy of light or dark.
+	 */
+	textColor(light = WHITE, dark = BLACK): Color {
+		const best = this.contrast(light) >= this.contrast(dark) ? light : dark;
+
+		const [r, g, b, a] = best.rgb;
+		return new Color(r, g, b, a);
+	}
 }
 
+const WHITE = new Color(255, 255, 255);
+const BLACK = new Color(0, 0, 0);
 
 
 

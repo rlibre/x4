@@ -1534,7 +1534,12 @@ class Color {
   // value: "#rgb", "#rrggbb", "#rrggbbaa", "rgb()", "rgba()", a name ("cyan", "transparent"), "var(--name)",
   //   and any other colour the browser knows (hsl(), oklch(), color-mix()), read from the pixel it paints
   setValue(value): this; setRgb(r,g,b,a?): this; setHsv(h,s,v,a?): this; setAlpha(a): this
-  getAlpha(): number; lighten(percent): this
+  getAlpha(): number
+  lighten(percent): this; darken(percent): this   // toward white / black, 0-100, each component rounded
+  mix(other: Color, amount): this                  // amount 0-1: 0 keeps this color, 1 gives the other one; alpha too
+  luminance(): number                              // WCAG relative luminance, 0 (black) to 1 (white); alpha not used
+  contrast(other: Color): number                   // WCAG ratio, 1 to 21
+  textColor(light?: Color, dark?: Color): Color    // a copy of the one of the two that contrasts most with this color; white and black by default
   isInvalid(): boolean                     // the last setValue could not be read (the color is red); setRgb/setHsv make it valid
   toHexString(): string; toNumber(): number
   toRgbString(withAlpha = false): string   // "rgb(r,g,b)"; true: "rgba(r,g,b,0.500)" when not opaque, "rgb(...)" when opaque

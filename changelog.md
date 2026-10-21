@@ -20,6 +20,15 @@ A version gets its date when it is published.
 ### Color
 
 - `new Color( )` reads every colour the browser knows: `hsl( )`, `oklch( )`, `color-mix( )`, and a variable that holds one (`"var(--border)"`).
+- `mix( other, amount )` mixes two colours, alpha included: 0 gives the colour, 1 the other one.
+- `darken( percent )` goes toward black, as `lighten( percent )` goes toward white. Both round each component.
+- `luminance( )` and `contrast( other )` give the relative luminance and the contrast ratio of WCAG.
+- `textColor( light, dark )` gives a copy of the one of the two colours that contrasts most with the colour: white or black when none is given.
+
+```ts
+const band = new Color( logo ).mix( new Color( "#000000" ), 0.2 ).toHexString( );	// 20% toward black
+label.setStyleValue( "color", new Color( client.color ).textColor( ).toHexString( ) );
+```
 
 ## 2.3.22 (2026-10-21)
 
