@@ -844,6 +844,8 @@ interface ListboxProps extends Omit<ComponentProps,"content"> {
   header?: Header; footer?: Component
   checkable?: boolean                      // a case at the start of each line
   multisel?: true
+  reselect?: boolean                       // a click on the item already selected fires selectionChange again
+                                           // (lists linked together: the view shows what was clicked last)
   emptyMsg?: string                        // shown in place of the items while there are none
   dblClick?: EventCallback<EvDblClick>
   selectionChange?: EventCallback<EvSelectionChange>
@@ -860,7 +862,8 @@ interface ListboxProps extends Omit<ComponentProps,"content"> {
 //   case is ignored (its two clicks change it twice). setChecked fires nothing; updateItem keeps
 //   the state of the case. With a header, the columns start after the case.
 class Listbox extends Component {
-  setItems(items: ListItem[], keepSel?: boolean): void
+  setItems(items: ListItem[], keepSel?: boolean): void   // one selectionChange at the end, with the selection it ends
+                                           // with, when there was one before or there is one after (keepSel: the same ids too)
   appendItem(item: ListItem, prepend?: boolean, select?: boolean): void
   updateItem(id: any, item: ListItem): void
   getItem(id: ListboxID): ListItem

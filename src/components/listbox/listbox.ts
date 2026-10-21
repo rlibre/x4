@@ -77,6 +77,7 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	footer?: Component,
 	checkable?: boolean,	// a case at the start of each line
 	multisel?: true,
+	reselect?: boolean,		// a click on the item already selected fires selectionChange again
 	emptyMsg?: string,
 
 	dblClick?: EventCallback<EvDblClick>;
@@ -88,6 +89,10 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 /**
  * checkable: a click on the case, or Space for the last item selected, changes it and fires
  * checkChange; neither click nor the selection. A double click on the case is ignored.
+ *
+ * reselect: a click of the user on the item already selected fires selectionChange with the
+ * same selection: lists linked together whose view shows what was clicked last. select( ) by
+ * the code, the arrows and a right click do not.
  *
  * @cssvar
  * ```
@@ -312,7 +317,7 @@ private _view: Viewport;
 				}
 
 				if (!fev.defaultPrevented) {
-					this._selectItem( id, c, ev.ctrlKey ? 'toggle' : 'single' );
+					this._selectItem( id, c, ev.ctrlKey ? 'toggle' : 'single', ev.type == 'click' && this.props.reselect );
 				}
 				
 				return;
@@ -361,8 +366,8 @@ private _view: Viewport;
 	 * 
 	 */
 
-	private _selectItem( id: ListboxID, item: Component, mode: "single" | "toggle" ) {
-		
+	private _selectItem( id: ListboxID, item: Component, mode: "single" | "toggle", again = false ) {
+
 		if( !this.props.multisel ) {
 			mode = 'single';
 		}
@@ -370,7 +375,11 @@ private _view: Viewport;
 		this._lastsel = id;
 
 		if( mode=='single' ) {
+			// already selected: nothing changes; again (reselect): its selectionChange all the same
 			if( this._multisel.has(id) ) {
+				if( again ) {
+					this.fire( "selectionChange", { selection: this.getSelection(), empty: false } );
+				}
 				return;
 			}
 
@@ -496,18 +505,24 @@ private _view: Viewport;
 	}
 	
 	/**
-	 * 
+	 * replaces the items of the list
+	 * @param items - the new items; empty or null: the message of an empty list (emptyMsg)
+	 * @param keepSel - true: the items selected before stay selected, when they are in the new items
+	 *
+	 * selectionChange: fired once, after the items are drawn, with the selection they end with,
+	 * when there was a selection before or there is one after. With keepSel and the same ids, it
+	 * is fired too: the items changed, a view that shows the selection draws it again.
+	 * Nothing selected before nor after: no selectionChange.
 	 */
 
 	setItems( items: ListItem[], keepSel = false ) {
 
 		const oldSel = this.getSelection( );
 
-		this.clearSelection( );
+		// the selection changes silently: one selectionChange at the end
+		this.clearSelection( false );
 		this._view.clearContent( );
 		this._items = items ?? [];
-
-		let update_sel = false;
 
 		if( this._items.length ) {
 			this.removeClass( "empty" );
@@ -515,19 +530,18 @@ private _view: Viewport;
 			this._view.setContent( content );
 
 			if( keepSel && oldSel.length>0 ) {
-				this.select( oldSel );
+				this.select( oldSel, false );
 			}
 		}
 		else {
 			this.addClass( "empty" );
-			update_sel = oldSel.length>0;
 			this._view.setContent( new Label( { cls: "empty vertical", icon: icons.empty, text: this.props.emptyMsg ?? _tr.global.empty_list } ) );
 		}
-		
-		if( update_sel ) {
-			this.setTimeout( "sel", 100, ( ) => {
-				this.fire( "selectionChange", { selection: [], empty: true } );
-			} );
+
+		// a selection before or after: one selectionChange, the same ids too (the items changed)
+		const sel = this.getSelection( );
+		if( oldSel.length || sel.length ) {
+			this.fire( "selectionChange", { selection: sel, empty: sel.length==0 } );
 		}
 	}
 

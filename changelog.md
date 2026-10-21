@@ -36,6 +36,13 @@ new Notification( { id: "saving", title: "Saving", text: "report.pdf...", loadin
 ### Listbox
 
 - `appendItem` on an empty list takes off its message "Empty list".
+- `reselect`: a click of the user on the item already selected fires `selectionChange` again, with the same selection. For lists linked together whose view shows what was clicked last. `select( )` by the code, the arrows and a right click do not.
+
+```ts
+new Listbox( { reselect: true, items: clients, selectionChange: ( ev ) => showClient( ev.selection[0] ) } );
+```
+
+- `setItems` fires one `selectionChange`, after the items are drawn, with the selection they end with, when there was a selection before or there is one after; with `keepSel` and the same ids too.
 - `checkable`: a case at the start of each line, with a renderer of yours too. `ListItem.checked` is its starting state. A click on the case, or Space for the last item selected, changes it and fires `checkChange { id, checked }`, without click nor selection. `getChecked( )` gives the ids checked, `setChecked( ids )` changes them without event. Its colours: `--listbox-check-*`.
 
 ```ts

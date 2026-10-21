@@ -117,8 +117,6 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 Noted on 2026-10-21. What was only missing from the docs is now in aicontext and aiguide (`initTooltips`, the Form flex by default and its padding, `sub_cols`, the click of a Listbox, `parentElement`, `refs` on a Box only, the typed `_tr`, the global messages). Left: what asks for a change of the code.
 
-- **`Listbox.setItems( items, true )` fires two `selectionChange`** while the selection does not change: `clearSelection( )` fires an empty one, then `select( oldSel )` a second one with the same selection. Reloading a list after a change makes the view believe the user changed the selection. Worked around in Timex: `clearSelection( false )`, `setItems( items )`, `select( id, false )`.
-- **A new click on the selected item of a `Listbox`** fires no `selectionChange` (normal), but the event `click`, which tells it, cannot be given as a prop (`mapPropEvents` maps only `dblClick`, `selectionChange` and `contextMenu`): `listbox.on( "click", ... )` is needed. A prop `click`? (see also "Listbox: a click on the item already selected").
 - **The tooltips need `initTooltips( )`**: nothing is shown until the application calls it (now in aicontext). The `Application` could call it itself.
 - **The shortcuts of a hidden view stay active**: `Application._setupKeyboard` sends a key typed out of any field to the last view that had shortcuts, testing only `isConnected`, not the visibility. In a `Tabs`, the view of a hidden tab still answers.
 - **A `Form` with `flex: false` has no height**: `.x4form` takes `%flex` (`flex-basis: 0`), and `.no-flex` only sets `flex-grow: 0` back. In a `VBox`, the form is reduced to 0 and its content goes over what follows. `.no-flex` would need `flex: none`. Worked around in Timex: `.x4form.no-flex { flex: none }`. (The gallery saw it too: see "Found while building the gallery".)
@@ -126,12 +124,6 @@ Noted on 2026-10-21. What was only missing from the docs is now in aicontext and
 - **`Label` `align: "right"`** has no visible effect when the width of the `Label` is set by a CSS rule: `justify-content: flex-end` is needed on the element.
 - **`isMac` is not exported** (`core/core_shortcuts.ts`): x4 knows it runs on a Mac for its shortcuts (`Mod` = Cmd, `shortcutText`), but an application that must do the same (a copy by Option+drag, the key "delete" of a Mac that sends Backspace) tests it again. Timex: `IS_MAC` in `tools.ts`.
 - **`this.refs` exists only on `Box`**: `Component` has none, and `this.refs.x = ...` throws a `TypeError` at run time (now said in aicontext). In an async event handler the error goes unnoticed: in Timex, the button OK of the input dialog seemed to do nothing. To decide: initialize `refs` in `Component`.
-
-## Listbox: a click on the item already selected
-
-- An option (e.g. `multiclick: true`) so that a click on the item **already selected** still fires `selectionChange` (asked on 2026-10-21). Today `_selectItem` returns at once in that case (`if( this._multisel.has(id) ) return;`).
-- The use: lists linked together whose view shows "what was clicked last". In Timex, page Clients: a click on a client, then on one of its projects (the view shows the project, the client stays selected); a new click on the client should bring its view back, but nothing is fired.
-- With the option, the view would listen to `selectionChange` only, instead of adding `listbox.on( "click", ... )` and comparing `ev.context` to the current selection (`clients.ts`).
 
 ## Found while building the gallery
 
