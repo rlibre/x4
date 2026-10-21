@@ -15,10 +15,10 @@
  **/
 
 :root {
-	--chart-background: white;
-	--chart-text: #52514e;
-	--chart-grid: #e6e5e0;
-	--chart-axis: #b5b4ae;
+	--chart-background: var( --background-primary );
+	--chart-text: var( --text-ternary );
+	--chart-grid: var( --border );
+	--chart-axis: var( --border-hover );
 
 	// series colors, used in this order
 	--chart-color-1: #2a78d6;

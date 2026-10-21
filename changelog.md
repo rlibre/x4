@@ -9,6 +9,16 @@ A version gets its date when it is published.
 
 - The greys of the theme are mixes of the two ends of the scale, `--color-primary-a0` and `--color-primary-a100`. This covers `--background-ternary`, `--text-secondary`, `--text-ternary`, `--disabled-background`, `--disabled-color-dark`, `--border`, `--border-light` and `--border-hover`. With the scale of x4 they keep their values (`#999`, `#e1e1e1`…); a theme that reverses the scale gets them light on dark. `--disabled-color` is `--color-primary-a0`.
 - `--alert-color`, `--warning-color` and `--success-color` are white: the red, orange and green do not follow the scale.
+- New global variables, which the components use: `--background-hover` (`#eee`), `--background-active` (`#ccc`), `--background-input` (white at 60%), `--disabled-color-light` (`#ccc`), `--icon-color` (black at 44%) and `--icon-color-active` (`--accent-color` at 64%).
+- The variables of the components point to the global ones and follow the scale with them:
+	- backgrounds, `--background-primary`: Listbox, Treeview, Menu, BtnGroup, TickLine, Chart, PropertyGrid and its gadgets;
+	- texts, `--text-primary`: Input, Tag, the gadgets of PropertyGrid, the needle of Gauge;
+	- the fields of Input and PropertyGrid, `--background-input`;
+	- the outline buttons (`--ol-button-*`), the background of Switch, the icons of Label and of a pressed button;
+	- the title and the icon of a tooltip, `--color-primary-a0`.
+- Chart: its texts take `--text-ternary` (`#666`), its grid `--border`, its axis `--border-hover`. The dot of the needle of Gauge takes `--text-ternary`.
+- `--accent-background-light`: the accent at 25%. DockingView takes it for a title under the pointer and for the place where a dragged panel will go (`--dock-preview-background`, new).
+- SettingsView: a setting under the pointer takes `--color-primary-a20`.
 
 ```scss
 :root {

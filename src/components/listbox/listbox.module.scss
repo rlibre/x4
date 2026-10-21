@@ -28,7 +28,7 @@
 	--listbox-item-color-hover: var( --text-primary );;
 	--listbox-item-background-hover: var( --background-secondary );
 
-	--listbox-background: white;
+	--listbox-background: var( --background-primary );
 	--listbox-border: var( --border );
 	--listbox-border-focus: var( --accent-background-focus );
 }

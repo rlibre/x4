@@ -56,7 +56,12 @@ interface BtnGroupProps extends Omit<ComponentProps,"content"> {
 }
 
 /**
- * 
+ *
+ * @cssvar
+ * ```
+ * --btngroup-background
+ * ```
+ * a packed group draws its buttons with the --ol-button-* variables of Button
  */
 
 @class_ns( "x4" )

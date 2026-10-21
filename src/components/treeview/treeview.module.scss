@@ -17,7 +17,7 @@
 
 :root {
 
-	--treeview-background: white;
+	--treeview-background: var( --background-primary );
 
 	--treeitem-backgound-hover: var( --background-secondary );
 	--treeitem-color-hover: var( );

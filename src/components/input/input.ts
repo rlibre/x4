@@ -203,6 +203,9 @@ interface InputEvents extends ComponentEvent {
  * 
  * @cssvar
  * ```
+ * --input-background
+ * --input-color
+ * --input-color-disabled
  * --input-sel-background
  * --input-sel-color
  * --input-placeholder

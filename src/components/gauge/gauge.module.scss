@@ -16,8 +16,8 @@
 
 :root {
 	--gauge-base-color: var( --color-primary-a70 );
-	--gauge-needle-back: black;
-	--gauge-needle-dot: rgb(58, 58, 58);
+	--gauge-needle-back: var( --text-primary );
+	--gauge-needle-dot: var( --text-ternary );
 }
 
 .x4gauge {

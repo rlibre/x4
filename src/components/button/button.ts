@@ -90,7 +90,19 @@ export interface ButtonProps extends ComponentProps {
  * 	--button-background-disabled
  * 	--button-color-disabled
  * 	--button-icon-color
+ * 	--ol-button-background
+ * 	--ol-button-color
+ * 	--ol-button-border
+ * 	--ol-button-icon-color
+ * 	--ol-button-background-hover
+ * 	--ol-button-color-hover
+ * 	--ol-button-background-active
+ * 	--ol-button-color-active
+ * 	--ol-button-color-disabled
+ * 	--ol-button-border-focus
+ * 	--ol-button-color-focus
  * ```
+ * the --ol-button-* variables are the ones of the outline buttons
  */
 
 @class_ns( "x4" )

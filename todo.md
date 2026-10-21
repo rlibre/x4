@@ -8,9 +8,8 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 ## Theme
 
-Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done: the base variables of `themes.scss` (2.3.23). Agreed, one block at a time, the light theme unchanged to the pixel:
+Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components. Agreed, one block at a time, the light theme unchanged to the pixel:
 
-- the variables of the components that are `white` or `black` (listbox, treeview, menu, btngroup, tickline, chart, propertygrid, input, tag, gauge, label, button icon, outline button, switch, tooltip);
 - the colours written without a variable: Dialog background, Listbox title, Panel legend, `#sub-text` of MessageBox, Checkbox, Radio, hovered tab, the arrow of Select (drawn by two gradients in a variable), `--textarea-background` and `--textarea-color`;
 - the variables used but never defined, given the look they have today: `--color-form` (`--form-background: transparent`), `--color-gray-7` and `-9` (`--text-primary`), and the lines with `--color-gray-0`, `--color-gray-3`, `--border-dark` removed;
 - MessageBox and InputBox: the title bar and the icon by kind (only an error in red); `fill="currentColor"` on `pen-field.svg`;

@@ -32,15 +32,15 @@
 	--button-background-disabled: var( --disabled-background );
 	--button-color-disabled: var( --disabled-color );
 
-	--button-icon-color: rgb(255 255 255 / 64%);
+	--button-icon-color: var( --icon-color-active );
 
 	// outline
 	--ol-button-background: var( --background-primary );
-	--ol-button-background-active: #ccc;
+	--ol-button-background-active: var( --background-active );
 	--ol-button-color-active: var( --text-primary );
-	--ol-button-background-hover: #eee;
+	--ol-button-background-hover: var( --background-hover );
 	--ol-button-color-hover: var( --text-primary );
-	--ol-button-color-disabled: #ccc;
+	--ol-button-color-disabled: var( --disabled-color-light );
 
 	--ol-button-color: var( --text-primary );
 	--ol-button-border: var( --border );

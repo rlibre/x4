@@ -52,6 +52,9 @@ $color--interval: 8.4%;
 	--background-primary: var(--color-primary-a0);
 	--background-secondary: var(--color-primary-a10);
 	--background-ternary: color-mix(in srgb, var(--color-primary-a100) 4.3%, var(--color-primary-a0));		// #f4f4f4
+	--background-hover: color-mix(in srgb, var(--color-primary-a100) 6.7%, var(--color-primary-a0));		// #eee
+	--background-active: color-mix(in srgb, var(--color-primary-a100) 20%, var(--color-primary-a0));		// #ccc
+	--background-input: color-mix(in srgb, var(--color-primary-a0) 60%, transparent);					// white at 60%
 
 	// Texts
 	--text-primary: var(--color-primary-a100);
@@ -62,12 +65,18 @@ $color--interval: 8.4%;
 	--disabled-background: color-mix(in srgb, var(--color-primary-a100) 20%, var(--color-primary-a0));	// #ccc
 	--disabled-color: var(--color-primary-a0);
 	--disabled-color-dark: color-mix(in srgb, var(--color-primary-a100) 33.3%, var(--color-primary-a0));	// #aaa
+	--disabled-color-light: color-mix(in srgb, var(--color-primary-a100) 20%, var(--color-primary-a0));	// #ccc
+
+	// Icons
+	--icon-color: color-mix(in srgb, var(--color-primary-a100) 44%, transparent);			// black at 44%
+	--icon-color-active: color-mix(in srgb, var(--accent-color) 64%, transparent);			// white at 64%
 
 	// Accents
 	--accent-background: var(--color-primary-a60);
 	--accent-background-hover: var(--color-primary-a55);
 	--accent-background-focus: var(--color-primary-a70);
 	--accent-background-active: var(--color-primary-a80);
+	--accent-background-light: color-mix(in srgb, var(--accent-background) 25%, transparent);		// the accent at 25%
 
 	--accent-color: var(--color-primary-a0);
 	--accent-color-hover: var(--color-primary-a0);

@@ -19,7 +19,7 @@
 :root {
 	--label-background: transparent;
 	--label-color: var( --text-ternary );
-	--label-icon-color: rgb(0 0 0 / 44%);
+	--label-icon-color: var( --icon-color );
 	--label-color-disa: var( --disabled-color-dark );
 }
 

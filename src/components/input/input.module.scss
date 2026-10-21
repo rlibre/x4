@@ -15,8 +15,8 @@
  **/
 
 :root {
-    --input-background: rgba(255, 255, 255, 0.6);
-    --input-color: black;
+    --input-background: var( --background-input );
+    --input-color: var( --text-primary );
 
 	--input-sel-background: var( --accent-background );
 	--input-sel-color: var( --accent-color );

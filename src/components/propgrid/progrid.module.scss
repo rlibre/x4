@@ -5,16 +5,16 @@
  **/
 
 :root {
-	--propertygrid-background: white;
-    --propertygrid-gadget-background: white;
-    --propertygrid-gadget-color: black;
+	--propertygrid-background: var( --background-primary );
+    --propertygrid-gadget-background: var( --background-primary );
+    --propertygrid-gadget-color: var( --text-primary );
 
 	--propertygrid-odd-background: var(--color-primary-a5);
 	--propertygrid-even-background: transparent;
 	--propertygrid-disabled-background: rgb(170 170 170 / 14%);
 	--propertygrid-hover-background: var(--color-primary-a10);
 	--propertygrid-focus-background: var(--color-primary-a20);
-	--propertygrid-input-background: rgba(255,255,255,0.6);
+	--propertygrid-input-background: var( --background-input );
 
     --propertygrid-group-background: var( --color-primary-a5 );
     --propertygrid-group-color: var( --color-primary-a50 );

@@ -18,7 +18,7 @@
 	--tickline-axis-color: var( --border );
 	--tickline-color: var( --accent-color );
     --tickline-width: 1px;
-	--tickline-background: white;
+	--tickline-background: var( --background-primary );
 }
 
 .x4tickline {

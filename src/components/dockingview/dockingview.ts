@@ -179,6 +179,7 @@ interface Drag {
  * --dock-title-background-hover
  * --dock-title-color
  * --dock-title-color-active
+ * --dock-preview-background
  * --dock-float-background
  * --dock-float-shadow
  * ```

@@ -15,13 +15,14 @@
  **/
 
 .x4dockingview {
-	--dock-line: var( --border, #cfdae0 );						// between two panels, under a title
-	--dock-title-background: var( --background-secondary, #f3f7f9 );
-	--dock-title-background-hover: color-mix( in srgb, var( --dock-accent ) 25%, transparent );
-	--dock-title-color: var( --text-ternary, #607784 );
-	--dock-title-color-active: var( --text-primary, #002a40 );
-	--dock-accent: var( --accent-background, #126e9e );			// the tab in front, the sizer under the pointer, the preview
-	--dock-float-background: var( --background-primary, white );
+	--dock-line: var( --border );						// between two panels, under a title
+	--dock-title-background: var( --background-secondary );
+	--dock-title-background-hover: var( --accent-background-light );
+	--dock-title-color: var( --text-ternary );
+	--dock-title-color-active: var( --text-primary );
+	--dock-accent: var( --accent-background );			// the tab in front, the sizer under the pointer, the border of the preview
+	--dock-preview-background: var( --accent-background-light );	// where the panel that is dragged will go
+	--dock-float-background: var( --background-primary );
 	--dock-float-shadow: 0 6px 24px rgba( 0, 0, 0, 0.35 );
 
 	position: relative;
@@ -279,7 +280,7 @@
 		box-sizing: border-box;
 		pointer-events: none;
 
-		background: color-mix( in srgb, var( --dock-accent ) 30%, transparent );
+		background: var( --dock-preview-background );
 		border: 1px solid var( --dock-accent );
 		border-radius: 3px;
 	}

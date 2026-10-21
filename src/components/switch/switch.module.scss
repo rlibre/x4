@@ -18,7 +18,7 @@
 
 :root {
 	--switch-border: var( --border );
-	--switch-background: #eee;
+	--switch-background: var( --background-hover );
 	--switch-background-disabled: var( --disabled-background );
 	--switch-checked: var( --accent-background );
 }
