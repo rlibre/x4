@@ -2,7 +2,7 @@
 // :: MESSAGEBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 import { _tr } from '../../core/core_i18n';
-import { asap, class_ns, unsafeHtml, UnsafeHtml } from '../../core/core_tools';
+import { asap, class_ns, sprintf, unsafeHtml, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
@@ -11,10 +11,10 @@ import { Dialog, DialogProps } from "../dialog/dialog"
 import { Form } from '../form/form';
 import { BtnGroupItem } from '../btngroup/btngroup';
 import { Input } from '../input/input';
-import { SimpleTextArea } from '../textarea/textarea';
 import { Button } from '../button/button';
 import { Component } from '../../core/component';
 import { Progress } from '../components.js';
+import icons from '../assets/icons';
 
 import "./messages.module.scss";
 
@@ -38,6 +38,11 @@ export interface MessageBoxProps extends DialogProps {
  * --msgbox-icon-color
  * --msgbox-question-icon-color
  * --msgbox-log-background
+ * --msgbox-log-border
+ * --msgbox-log-border-focus
+ * --msgbox-log-error-color
+ * --msgbox-log-warning-color
+ * --msgbox-log-scrollbar
  * ```
  * --msgbox-caption-* and --msgbox-icon-color are the ones of an error; a question, an InputBox
  * and a PromptBox have the title bar of a Dialog and their icon in --msgbox-question-icon-color
@@ -279,15 +284,21 @@ export class PromptBox extends Dialog<DialogProps>
 
 /**
  * a modal box that follows a long task: a title, a bar, and the lines of what is done
- * in a textarea read only (they are text: a markup is shown as it is written).
- * done( ) shows its button OK: after an error it waits for it, else it closes the box
- * after 5s, the seconds left in the button.
+ * in a <pre>: a string is text, an UnsafeHtml is html. An error, a warning have their
+ * icon and their colour. addSection puts the lines that follow in a section that folds.
+ * Ctrl+A selects the lines.
+ * done( ) shows its button OK: after an error or a warning it waits for it, their counts
+ * on the left of the bar; else it closes the box after 5s, the seconds left in the button.
  */
 
 @class_ns( "x4" )
 export class ProgressionBox  extends Dialog {
 
-	#has_errors = false;
+	// an error or a warning: done( ) waits for OK
+	#errors = 0;
+	#warnings = 0;
+
+	#section: Component;		// the last section (a <details>): the lines go in it
 
 	constructor( title: string ) {
 		super( { 
@@ -303,13 +314,15 @@ export class ProgressionBox  extends Dialog {
 							new VBox( { flex: 1, cls: "right", content: [
 								new SimpleText( { id: "title", text: title } ),
 								new Progress( { id:"prog", min: 0, max: 100, value: 0 } ),
-								new SimpleTextArea( { id: "sub-text", readonly: true, trim: false } ),
+								new Component( { tag: "pre", id: "sub-text", attrs: { tabindex: 0 }, dom_events: {
+									keydown: ( ev ) => this._on_log_key( ev ),
+								} } ),
 							]})
 						]
 					}),
 				]
 			}),
-			buttons: [ "ok.outline.default" ]
+			buttons: [ new Label( { id: "alerts", text: "" } ), "-", "ok.outline.default" ]
 		});
 
 		this.query("#btnbar").show( false );
@@ -328,50 +341,131 @@ export class ProgressionBox  extends Dialog {
 		this.query<Progress>( "#prog").setValue( perc );
 	}
 
-	/** a line at the end: done( ) then waits for the button OK */
+	/** a line at the end, with the icon of an error: done( ) then waits for the button OK */
 
 	addError( text: string | UnsafeHtml, perc: number ) {
-		this._addLine( text );
+		this._addLine( text, "error" );
+		this.query<Progress>( "#prog").setValue( perc );
+		this.addClass( "error" );		// the title bar in red, as the one of an error of MessageBox
+
+		this.#errors++;
+	}
+
+	/** a line at the end, with the icon of a warning: done( ) then waits for the button OK */
+
+	addWarning( text: string | UnsafeHtml, perc: number ) {
+		this._addLine( text, "warning" );
 		this.query<Progress>( "#prog").setValue( perc );
 
-		this.#has_errors = true;
+		this.#warnings++;
+	}
+
+	/**
+	 * a section at the end, open: the lines that follow go in it. A click on its title folds
+	 * it; its title has the icon of the worst of its lines (an error, a warning)
+	 */
+
+	addSection( title: string | UnsafeHtml, perc: number ) {
+		const summary = new Component( { tag: "summary", content: new Component( { tag: "span", cls: "alert" } ) } );
+		summary.appendContent( title );
+
+		this.#section = new Component( { tag: "details", attrs: { open: true }, content: summary } );
+
+		const log = this.query( "#sub-text" );
+		log.appendContent( this.#section );
+		log.dom.scrollTop = log.dom.scrollHeight;
+		this.query<Progress>( "#prog").setValue( perc );
 	}
 
 	/** the text in place of all the lines */
 
 	setText( text: string | UnsafeHtml, perc: number ) {
-		this.query<SimpleTextArea>( "#sub-text" ).setText( text.toString( ) );
+		this.#section = null;
+		this.query( "#sub-text" ).setContent( text );
 		this.query<Progress>( "#prog").setValue( perc );
 	}
 
 	/** as at the start: no line, no error, no button OK */
 
 	clear( ) {
-		this.#has_errors = false;
+		this.#errors = 0;
+		this.#warnings = 0;
 		this.clearInterval( "close" );
 		this.query( "#btnbar" ).show( false );
-		this.query<SimpleTextArea>( "#sub-text" ).setText( "" );
+		this.removeClass( "error" );
+		this.query<Label>( "#alerts" ).setText( "" );
+		this.query<Label>( "#alerts" ).setIcon( null );
+		this.#section = null;
+		this.query( "#sub-text" ).clearContent( );
 	}
 
-	// the line after the others, the last one shown
-	private _addLine( text: string | UnsafeHtml ) {
-		const log = this.query<SimpleTextArea>( "#sub-text" );
-		const lines = log.getText( );
+	// the line after the others (in the last section), the last one shown; an error, a
+	// warning in a span of their class, their icon first
+	private _addLine( text: string | UnsafeHtml, kind?: "error" | "warning" ) {
+		const log = this.query( "#sub-text" );
+		const target = this.#section ?? log;
 
-		log.setText( lines ? lines + "\n" + text : text.toString( ) );
-		log.scrollToBottom( );
+		// after the summary of a section, its first line starts below it
+		if( target.dom.lastChild && target.dom.lastChild.nodeName!="SUMMARY" ) {
+			target.appendContent( "\n" );
+		}
+
+		if( kind ) {
+			const icon = kind=="error" ? icons.danger : icons.warning;
+			const line = new Component( { tag: "span", cls: kind, content: unsafeHtml( icon ) } );
+			line.appendContent( text );
+			target.appendContent( line );
+
+			// the title of the section: the icon of the worst, in its colour
+			const alert = this.#section?.query( ".alert" );
+			if( alert && !alert.hasClass( "error" ) ) {
+				alert.setClass( "warning", kind=="warning" );
+				alert.setClass( "error", kind=="error" );
+				alert.setContent( unsafeHtml( icon ) );
+			}
+		}
+		else {
+			target.appendContent( text );
+		}
+
+		log.dom.scrollTop = log.dom.scrollHeight;
+	}
+
+	// Ctrl+A: the lines only, not the whole page
+	private _on_log_key( ev: KeyboardEvent ) {
+		if( ( ev.ctrlKey || ev.metaKey ) && ev.key.toLowerCase( )=="a" ) {
+			document.getSelection( ).selectAllChildren( ev.currentTarget as HTMLElement );
+			ev.preventDefault( );
+		}
 	}
 
 	/**
-	 * the task is over: the button OK is shown. After an error it waits for a click;
-	 * without one it counts the seconds left, "OK (5s)", and closes the box at 0
+	 * the task is over: the button OK is shown. After an error or a warning it waits for
+	 * a click, their counts on the left of the bar ("2 errors / 1 warning"); without one it counts the
+	 * seconds left, "OK (5s)", and closes the box at 0
 	 */
 
 	done( ) {
 		const ok = this.query<Button>( "#ok" );
 		this.query( "#btnbar" ).show( true );
 
-		if( this.#has_errors ) {
+		if( this.#errors || this.#warnings ) {
+			const tr = _tr.global.progression;
+			const counts = [];
+			if( this.#errors ) {
+				counts.push( sprintf( this.#errors>1 ? tr.errors : tr.error, this.#errors ) );
+			}
+			if( this.#warnings ) {
+				counts.push( sprintf( this.#warnings>1 ? tr.warnings : tr.warning, this.#warnings ) );
+			}
+
+			// on the left, the icon of the worst
+			const alerts = this.query<Label>( "#alerts" );
+			alerts.setText( counts.join( " / " ) );
+			alerts.setIcon( this.#errors ? icons.danger : icons.warning );
+			alerts.setClass( "error", this.#errors>0 );
+			alerts.setClass( "warning", this.#errors==0 );
+
 			ok.setText( _tr.global.ok );
 			return;
 		}
