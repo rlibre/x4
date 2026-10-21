@@ -331,6 +331,11 @@ let fr = {
 			numeric: '123',
 			alpha: 'Abc'
 		},
+
+		settings: {
+			search: 'Rechercher un paramètre',
+			nomatch: 'Aucun paramètre trouvé',
+		},
 	}
 };
 
@@ -396,6 +401,151 @@ let en = {
 			numeric: '123',
 			alpha: 'Abc'
 		},
+
+		settings: {
+			search: 'Search settings',
+			nomatch: 'No setting found',
+		},
+	}
+};
+
+/** @ignore */
+
+let es = {
+	global: {
+		ok: 'Aceptar',
+		cancel: 'Cancelar',
+		ignore: 'Ignorar',
+		yes: 'Sí',
+		no: 'No',
+		abort: "Anular",
+		retry: "Reintentar",
+
+		error: "Error",
+		today: "Hoy",
+
+		open: 'Abrir',
+		new: 'Nuevo',
+		delete: 'Eliminar',
+		close: 'Cerrar',
+		save: 'Guardar',
+
+		search: 'Buscar',
+		search_tip: 'Escriba el texto que desea buscar. <b>Intro</b> para iniciar la búsqueda. <b>Esc</b> para cancelar.',
+
+		required_field: "dato obligatorio",
+		invalid_format: "formato no válido",
+		invalid_email: 'dirección de correo no válida',
+		invalid_number: 'valor numérico no válido',
+
+		diff_date_seconds: '{0} segundos',
+		diff_date_minutes: '{0} minutos',
+		diff_date_hours: '{0} horas {1} minutos',
+
+		invalid_date: 'Fecha no reconocida ({0})',
+		empty_list: 'Lista vacía',
+
+		date_input_formats: 'd/m/y|d.m.y|d m y|d-m-y|dmy',
+		date_format: 'D/M/Y',
+        date_time_format: 'D/M/Y H:I:S',
+
+		day_short: [ 'dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb' ],
+		day_long: [ 'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado' ],
+
+		month_short: [ 'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic' ],
+		month_long: [ 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre' ],
+
+		property: 'Propiedad',
+		value: 'Valor',
+
+		err_403: `No tiene permisos suficientes para realizar esta acción`,
+
+		copy: 'Copiar',
+		cut: 'Cortar',
+		paste: 'Pegar',
+
+		filedrop: 'Suelte un archivo',
+
+		keyboard: {
+			next: 'Siguiente',
+			numeric: '123',
+			alpha: 'Abc'
+		},
+
+		settings: {
+			search: 'Buscar un ajuste',
+			nomatch: 'Ningún ajuste encontrado',
+		},
+	}
+};
+
+/** @ignore */
+
+let de = {
+	global: {
+		ok: 'OK',
+		cancel: 'Abbrechen',
+		ignore: 'Ignorieren',
+		yes: 'Ja',
+		no: 'Nein',
+		abort: "Abbrechen",
+		retry: "Wiederholen",
+
+		error: "Fehler",
+		today: "Heute",
+
+		open: 'Öffnen',
+		new: 'Neu',
+		delete: 'Löschen',
+		close: 'Schließen',
+		save: 'Speichern',
+
+		search: 'Suchen',
+		search_tip: 'Geben Sie den zu suchenden Text ein. <b>Enter</b> startet die Suche. <b>Esc</b> bricht ab.',
+
+		required_field: "Pflichtangabe",
+		invalid_format: "ungültiges Format",
+		invalid_email: 'ungültige E-Mail-Adresse',
+		invalid_number: 'ungültiger Zahlenwert',
+
+		diff_date_seconds: '{0} Sekunden',
+		diff_date_minutes: '{0} Minuten',
+		diff_date_hours: '{0} Stunden {1} Minuten',
+
+		invalid_date: 'Datum nicht erkannt ({0})',
+		empty_list: 'Leere Liste',
+
+		date_input_formats: 'd.m.y|d/m/y|d m y|d-m-y|dmy',
+		date_format: 'D.M.Y',
+        date_time_format: 'D.M.Y H:I:S',
+
+		day_short: [ 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa' ],
+		day_long: [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag' ],
+
+		month_short: [ 'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ],
+		month_long: [ 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember' ],
+
+		property: 'Eigenschaft',
+		value: 'Wert',
+
+		err_403: `Sie haben nicht die erforderlichen Rechte für diese Aktion`,
+
+		copy: 'Kopieren',
+		cut: 'Ausschneiden',
+		paste: 'Einfügen',
+
+		filedrop: 'Datei hier ablegen',
+
+		keyboard: {
+			next: 'Weiter',
+			numeric: '123',
+			alpha: 'Abc'
+		},
+
+		settings: {
+			search: 'Einstellungen durchsuchen',
+			nomatch: 'Keine Einstellung gefunden',
+		},
 	}
 };
 
@@ -404,6 +554,13 @@ addTranslation( 'fr', fr );
 
 createLanguage( 'en', 'fr' );
 addTranslation( 'en', en );
+
+// a key they lack is taken in english
+createLanguage( 'es', 'en' );
+addTranslation( 'es', es );
+
+createLanguage( 'de', 'en' );
+addTranslation( 'de', de );
 
 selectLanguage( 'fr' );	// by default
 
