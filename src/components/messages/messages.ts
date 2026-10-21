@@ -11,6 +11,8 @@ import { Dialog, DialogProps } from "../dialog/dialog"
 import { Form } from '../form/form';
 import { BtnGroupItem } from '../btngroup/btngroup';
 import { Input } from '../input/input';
+import { SimpleTextArea } from '../textarea/textarea';
+import { Button } from '../button/button';
 import { Component } from '../../core/component';
 import { Progress } from '../components.js';
 
@@ -275,6 +277,13 @@ export class PromptBox extends Dialog<DialogProps>
 
 // :: PROGRESS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+/**
+ * a modal box that follows a long task: a title, a bar, and the lines of what is done
+ * in a textarea read only (they are text: a markup is shown as it is written).
+ * done( ) shows its button OK: after an error it waits for it, else it closes the box
+ * after 5s, the seconds left in the button.
+ */
+
 @class_ns( "x4" )
 export class ProgressionBox  extends Dialog {
 
@@ -294,7 +303,7 @@ export class ProgressionBox  extends Dialog {
 							new VBox( { flex: 1, cls: "right", content: [
 								new SimpleText( { id: "title", text: title } ),
 								new Progress( { id:"prog", min: 0, max: 100, value: 0 } ),
-								new VBox( { id: "sub-text" } ),
+								new SimpleTextArea( { id: "sub-text", readonly: true, trim: false } ),
 							]})
 						]
 					}),
@@ -305,37 +314,80 @@ export class ProgressionBox  extends Dialog {
 
 		this.query("#btnbar").show( false );
 
-		this.on("btnclick", ( ) => this.show( false ) );
+		// OK: closed at once, the countdown stopped
+		this.on("btnclick", ( ) => {
+			this.clearInterval( "close" );
+			this.show( false );
+		} );
 	}
+
+	/** a line at the end */
 
 	addText( text: string | UnsafeHtml, perc: number ) {
-		this.query<Label>( "#sub-text").appendContent( new SimpleText( { text } ) );
+		this._addLine( text );
 		this.query<Progress>( "#prog").setValue( perc );
 	}
+
+	/** a line at the end: done( ) then waits for the button OK */
 
 	addError( text: string | UnsafeHtml, perc: number ) {
-		this.query<Label>( "#sub-text").appendContent( new SimpleText( { cls:"error", text } ) );
+		this._addLine( text );
 		this.query<Progress>( "#prog").setValue( perc );
 
 		this.#has_errors = true;
 	}
+
+	/** the text in place of all the lines */
 
 	setText( text: string | UnsafeHtml, perc: number ) {
-		this.query<Label>( "#sub-text").setContent( new SimpleText( { text } ) );
+		this.query<SimpleTextArea>( "#sub-text" ).setText( text.toString( ) );
 		this.query<Progress>( "#prog").setValue( perc );
 	}
 
+	/** as at the start: no line, no error, no button OK */
+
 	clear( ) {
-		this.#has_errors = true;
-		this.query<Label>( "#sub-text").clearContent( );
+		this.#has_errors = false;
+		this.clearInterval( "close" );
+		this.query( "#btnbar" ).show( false );
+		this.query<SimpleTextArea>( "#sub-text" ).setText( "" );
 	}
 
+	// the line after the others, the last one shown
+	private _addLine( text: string | UnsafeHtml ) {
+		const log = this.query<SimpleTextArea>( "#sub-text" );
+		const lines = log.getText( );
+
+		log.setText( lines ? lines + "\n" + text : text.toString( ) );
+		log.scrollToBottom( );
+	}
+
+	/**
+	 * the task is over: the button OK is shown. After an error it waits for a click;
+	 * without one it counts the seconds left, "OK (5s)", and closes the box at 0
+	 */
+
 	done( ) {
+		const ok = this.query<Button>( "#ok" );
+		this.query( "#btnbar" ).show( true );
+
 		if( this.#has_errors ) {
-			this.query("#btnbar").show( true );
+			ok.setText( _tr.global.ok );
+			return;
 		}
-		else {
-			this.setTimeout( "close", 5000, ( ) => { this.show(false);} );
-		}
+
+		let left = 5;
+		ok.setText( `${_tr.global.ok} (${left}s)` );
+
+		this.setInterval( "close", 1000, ( ) => {
+			left--;
+			if( left>0 ) {
+				ok.setText( `${_tr.global.ok} (${left}s)` );
+			}
+			else {
+				this.clearInterval( "close" );
+				this.show( false );
+			}
+		} );
 	}
 }

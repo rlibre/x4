@@ -126,21 +126,22 @@
 			line-height: 1.8em;
 		}
 
+		// on the right, the bar and the lines end where the button OK does: the bar of
+		// buttons has a padding of 20px and the button a margin of 2px, the form 16px
 		.x4progress {
-			margin: 0 16px;
+			margin: 0 6px 0 16px;
 		}
 
+		// the lines: a textarea read only, 10 lines high at least, a line is not wrapped
 		#sub-text {
 			flex-grow: 1;
+			min-height: calc( 10lh + 10px );	// its padding and its border too
 			max-height: 400px;
 			overflow: auto;
+			white-space: pre;
 			background-color: var( --msgbox-log-background );
 			padding: 4px 8px;
-			margin: 0 16px;
-
-			.x4simpletext {
-				white-space: nowrap;
-			}
+			margin: 0 6px 0 16px;
 		}
 	}
 }
