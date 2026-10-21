@@ -5,6 +5,31 @@ A version gets its date when it is published.
 
 ## 2.3.22
 
+### SettingsView, SettingItem
+
+- New: `SettingsView`, a page of settings as the settings of VS Code. The summary of the sections is on the left, the sections on the right, one after the other. A click in the summary brings its section to the top, and the summary follows the scroll (event `sectionChange`).
+- `SettingItem`: one setting, its name, what it does, then its controls. Its controls keep their values: in a `Form`, `getValues` / `setValues` read and write them.
+- `searchable`: a field above the sections shows the settings whose name or description holds the words typed, without case nor accents. Escape empties it.
+- The default texts come from `_tr.global.settings` (`search`, `nomatch`).
+
+```ts
+new SettingsView( { searchable: true, sections: [
+	{ id: "editor", title: "Editor", content: [
+		new SettingItem( { title: "Font size", description: "The size of the text, in pixels.", content: new Input( { type: "number", name: "fontSize", value: 14 } ) } ),
+	] },
+] } );
+```
+
+### i18n
+
+- Two new languages, `es` and `de`, with every text of `_tr.global`. A key they lack is taken in `en`, then in `fr`.
+- Their dates: `D/M/Y` in es, `D.M.Y` in de (`21.10.2026`), with their names of days and months.
+
+```ts
+selectLanguage( "de" );
+formatIntlDate( new Date( ) );		// "21.10.2026"
+```
+
 ### Keyboard
 
 - The keys that draw the keyboard again (shift, `123`, `abc`, the accents, the signs) act on the click of their key, the others still on the contact (`pointerdown`): under WebKitGTK, the field keeps the focus and the keyboard stays shown.

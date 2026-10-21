@@ -41,7 +41,7 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
-  │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea
+  │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea, SettingsView, SettingItem
   └── Application<E>           singleton, no DOM of its own
 
 EventSource<E>                 standalone event registry
@@ -1153,6 +1153,78 @@ class Form extends Box {
 
 ---
 
+## `SettingsView` — a page of settings, as the settings of VS Code
+
+The summary of the sections on the left, the sections on the right, one after the other, each a panel with its title on a band; in a section, each `SettingItem` with its name, what it does, then its controls. A click in the summary brings its section to the top; the summary follows the scroll and marks the section at the top of the view.
+
+```ts
+interface SettingItemProps extends BoxProps {
+  title: string
+  description?: string                     // under the name
+  content: Component | Component[]         // its controls, on a line that wraps
+}
+class SettingItem extends VBox {
+  getSearchText(): string                  // the title and the description: what a search looks in
+}
+// A SettingItem has no value of its own: its controls keep theirs. To read and write them together,
+// put the items in a Form (a section can hold a Form of SettingItem), give the controls a name,
+// and use getValues / setValues. The item is marked on its left while one of its controls has the focus.
+
+interface SettingsSection {
+  id: string
+  title: string
+  description?: string                     // under the title
+  content: Component[]                     // SettingItem, Form of SettingItem, or any component
+}
+interface SettingsViewProps extends BoxProps {
+  sections?: SettingsSection[]
+  searchable?: boolean                     // a search field above the sections
+  searchPlaceholder?: string               // _tr.global.settings.search when missing
+  noMatch?: string                         // shown when the search finds nothing; _tr.global.settings.nomatch when missing
+  sectionChange?: EventCallback<EvSectionChange>
+}
+interface EvSectionChange extends ComponentEvent { readonly section: string }   // the id of the section at the top
+class SettingsView<P extends SettingsViewProps = SettingsViewProps> extends VBox<P, SettingsViewEvents> {
+  setSections(sections: SettingsSection[]): void   // replaces the sections
+  showSection(id: string, smooth = true): void     // brings a section to the top
+  getSection(): string                             // the id of the section at the top
+}
+// Search: the words typed are looked for without case nor accents; an item is shown when its title or
+//   its description holds all of them. A section whose title or description holds them is shown whole;
+//   otherwise only its items that hold them, and what holds those items (a Form, a box). What holds no
+//   item (a table, a text) is shown with its whole section only. Escape empties the field.
+// The section marked in the summary is the last one whose top is above the top of the view (40px of
+//   margin); the first one while the view is hidden (in a tab not shown). The last section shown is at
+//   least as high as the view (class "last"): a click in the summary can bring any section to the top.
+// Classes: .x4settingsview > .search > .x4input, > .body > .toc (a Listbox), > .body > .sections;
+//   .section(.last) > .title, .description; .sections > .nomatch; .x4settingitem > .name, .description, .controls
+// CSS variables: --settingsview-toc-width, --settingsview-section-background,
+//   --settingsview-section-title-background, --settingsview-hover-background, --settingsview-marker
+```
+
+A page that builds its sections with references to its own components (`this.refs.x = ...`) cannot give them to `super()`: `this` is not there yet. It calls `setSections` after `super()`. `SettingsView` keeps its own parts in private fields, not in `refs`: `refs` is left to the classes that derive from it.
+
+```ts
+class MySettings extends SettingsView {
+  declare protected refs: { size: Input }
+
+  constructor(props: BoxProps) {
+    super({ ...props, searchable: true })
+
+    this.setSections([
+      { id: "editor", title: "Editor", content: [
+        new Form({ content: [
+          new SettingItem({ title: "Font size", description: "The size of the text, in pixels.",
+            content: this.refs.size = new Input({ type: "number", name: "fontSize", value: 14 }) }),
+        ] }),
+      ] },
+    ])
+  }
+}
+```
+
+---
+
 ## Sizers / viewport / misc
 
 ```ts
@@ -1413,7 +1485,7 @@ dragManager.registerDropTarget(column, (cmd, el, infos) => {
 
 ## i18n (`core_i18n`)
 
-Two built-in languages (`fr` default, and `en`).
+Four built-in languages: `fr` (default), `en` (based on `fr`), `es` and `de` (based on `en`). Dates: `D/M/Y` in fr and es, `M/D/Y` in en, `D.M.Y` in de.
 
 ```ts
 export let _tr                             // current translation object (proxy)
@@ -1430,7 +1502,8 @@ isLanguage(name: string): boolean
 //   search search_tip required_field invalid_format invalid_email invalid_number invalid_date
 //   empty_list err_403 property value copy cut paste filedrop
 //   diff_date_seconds/minutes/hours, date_input_formats, date_format, date_time_format,
-//   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha}
+//   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
+//   settings.{search,nomatch}
 ```
 
 ---
