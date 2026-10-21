@@ -34,6 +34,13 @@
 
 	--listbox-title-background: var( --background-primary );
 	--listbox-title-color: var( --text-primary );
+
+	--listbox-check-border: var( --border );
+	--listbox-check-border-hover: var( --border-hover );
+	--listbox-check-border-sel: var( --accent-color );
+	--listbox-check-background: var( --accent-background );
+	--listbox-check-background-disabled: var( --disabled-background );
+	--listbox-check-color: var( --accent-color );
 }
 
 .x4listbox {
@@ -48,6 +55,11 @@
 	&>.x4header {
 		border-bottom: 1px solid var( --border );
         padding: 0 4px;
+	}
+
+	// the columns start after the case
+	&.checkable>.x4header {
+		padding-left: calc( 4px + 6px + 1rem );
 	}
 
 	&>.title {
@@ -129,9 +141,49 @@
             }
         }
 
+        // checkable: the case at the start of the line
+        &>.x4check {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            align-self: center;
+            vertical-align: middle;
+            box-sizing: border-box;
+            width: 1rem;
+            height: 1rem;
+            margin-left: 6px;
+            border: 1px solid var( --listbox-check-border );
+            color: var( --listbox-check-color );
+            cursor: pointer;
+
+            svg {
+                width: 70%;
+                height: 70%;
+                visibility: hidden;
+            }
+
+            &:hover {
+                border-color: var( --listbox-check-border-hover );
+            }
+        }
+
+        &.checked>.x4check {
+            background-color: var( --listbox-check-background );
+            border-color: var( --listbox-check-background );
+
+            svg {
+                visibility: visible;
+            }
+        }
+
+        &.selected>.x4check {
+            border-color: var( --listbox-check-border-sel );
+        }
+
         .column {
-            background-color: transparent; 
-            overflow: hidden; 
+            background-color: transparent;
+            overflow: hidden;
         }
 
         // 10 columns max (see Header)
@@ -231,6 +283,11 @@
 				.x4item {
 					&.selected {
 						background-color: var( --listbox-item-color-sel-disabled );
+					}
+
+					&.checked>.x4check {
+						background-color: var( --listbox-check-background-disabled );
+						border-color: var( --listbox-check-background-disabled );
 					}
 				}
 			}

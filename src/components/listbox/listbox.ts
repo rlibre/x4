@@ -40,11 +40,20 @@ export interface ListItem {
 	iconId?: string;
 	data?: any;
 	cls?: string;
-	checked?: boolean;
+	checked?: boolean;		// checkable listbox: the starting state of the case, getChecked() gives the current one
 }
 
 /**
- * 
+ * a case changed by the user (click, Space)
+ */
+
+export interface EvCheckChange extends ComponentEvent {
+	readonly id: ListboxID;
+	readonly checked: boolean;
+}
+
+/**
+ *
  */
 
 export interface ListboxEvents extends ComponentEvents {
@@ -52,6 +61,7 @@ export interface ListboxEvents extends ComponentEvents {
 	dblClick?: EvDblClick;
 	contextMenu?: EvContextMenu;
 	selectionChange?: EvSelectionChange;
+	checkChange?: EvCheckChange;
 }
 
 /**
@@ -65,16 +75,20 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
 	icon?: string;
 	header?: Header;
 	footer?: Component,
-	checkable?: true,
+	checkable?: boolean,	// a case at the start of each line
 	multisel?: true,
 	emptyMsg?: string,
 
 	dblClick?: EventCallback<EvDblClick>;
 	selectionChange?: EventCallback<EvSelectionChange>;
 	contextMenu?: EventCallback<EvContextMenu>;
+	checkChange?: EventCallback<EvCheckChange>;
 }
 
 /**
+ * checkable: a click on the case, or Space for the last item selected, changes it and fires
+ * checkChange; neither click nor the selection. A double click on the case is ignored.
+ *
  * @cssvar
  * ```
  * --listbox-item-color
@@ -90,6 +104,12 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
  * --listbox-border-focus
  * --listbox-title-background
  * --listbox-title-color
+ * --listbox-check-border
+ * --listbox-check-border-hover
+ * --listbox-check-border-sel
+ * --listbox-check-background
+ * --listbox-check-background-disabled
+ * --listbox-check-color
  * ```
  */
 
@@ -106,7 +126,8 @@ private _view: Viewport;
 		super( { ...props } );
 
 		this.setAttribute( "tabindex", 0 );
-		this.mapPropEvents( props, "dblClick", "selectionChange", "contextMenu" );
+		this.mapPropEvents( props, "dblClick", "selectionChange", "contextMenu", "checkChange" );
+		this.setClass( "checkable", !!props.checkable );
 		
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
@@ -166,6 +187,18 @@ private _view: Viewport;
 
 			case "End": {
 				this.navigate( kbNav.last );
+				break;
+			}
+
+			case " ": {
+				if( !this.props.checkable || this._lastsel===undefined ) {
+					return;
+				}
+
+				const line = this._itemWithID( this._lastsel );
+				if( line ) {
+					this._toggleCheck( line );
+				}
 				break;
 			}
 
@@ -246,6 +279,7 @@ private _view: Viewport;
 	
 	private _on_click( ev: MouseEvent ) {
 		let target = ev.target as HTMLElement;
+		let on_check = false;
 
 		while( target && target!=this.dom ) {
 			const c = componentFromDOM( target );
@@ -255,7 +289,19 @@ private _view: Viewport;
 				return;
 			}
 
+			if( c && c.hasClass("x4check") ) {
+				on_check = true;
+			}
+
 			if( c && c.hasClass("x4item") ) {
+				// the case changes alone; a double click on it is ignored
+				if( on_check ) {
+					if( ev.type == 'click' ) {
+						this._toggleCheck( c );
+					}
+					return;
+				}
+
 				const id = c.getInternalData( "id" );
 				const fev: EvClick = { context:id };
 				if (ev.type == 'click') {
@@ -492,11 +538,50 @@ private _view: Viewport;
 	renderItem( item: ListItem ) {
 		const renderer = this.props.renderer ?? this.defaultRenderer;
 		const line = renderer( item );
-	
+
 		line.addClass( "x4item" );
 		line.setInternalData( "id", item.id );
-		
+
+		if( this.props.checkable ) {
+			const check = new Component( { cls: "x4check" } );
+			check.dom.insertAdjacentHTML( "beforeend", icons.check );
+			line.prependContent( check );
+			line.setClass( "checked", !!item.checked );
+		}
+
 		return line;
+	}
+
+	/**
+	 * the user changed the case of a line
+	 */
+
+	private _toggleCheck( line: Component ) {
+		line.toggleClass( "checked" );
+		this.fire( "checkChange", { id: line.getInternalData( "id" ), checked: line.hasClass( "checked" ) } );
+	}
+
+	/**
+	 * ids of the items checked, in the order of the list
+	 */
+
+	getChecked( ): ListboxID[] {
+		return this._view.enumChildComponents( false )
+			.filter( x => x.hasClass( "checked" ) )
+			.map( x => x.getInternalData( "id" ) );
+	}
+
+	/**
+	 * check these items, uncheck the others; no event
+	 */
+
+	setChecked( ids: ListboxID[] ) {
+		const checked = new Set( ids );
+		this._view.enumChildComponents( false ).forEach( x => {
+			if( x.hasClass( "x4item" ) ) {
+				x.setClass( "checked", checked.has( x.getInternalData( "id" ) ) );
+			}
+		} );
 	}
 
 	/**
@@ -574,9 +659,15 @@ private _view: Viewport;
 	 */
 
 	appendItem( item: ListItem, prepend = false, select = true ) {
-		
+
 		if( select ) {
 			this._clearSelection( );
+		}
+
+		// the first item: the message of an empty list goes away
+		if( !this._items.length ) {
+			this._view.clearContent( );
+			this.removeClass( "empty" );
 		}
 
 		let el = this.renderItem( item );
@@ -622,6 +713,11 @@ private _view: Viewport;
 			const _new = this.renderItem( item );
 			if( was_sel ) {
 				_new.addClass( "selected" );
+			}
+
+			// the case keeps its state
+			if( this.props.checkable ) {
+				_new.setClass( "checked", old.hasClass( "checked" ) );
 			}
 
 			this._view.dom.replaceChild( _new.dom, old.dom );

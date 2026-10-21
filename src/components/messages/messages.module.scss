@@ -23,6 +23,11 @@
 	--msgbox-question-icon-color: var( --accent-background );		// a question, an InputBox, a PromptBox
 
 	--msgbox-log-background: var( --background-ternary );		// the lines of a ProgressionBox
+	--msgbox-log-border: var( --border );
+	--msgbox-log-border-focus: var( --border-focus );
+	--msgbox-log-error-color: var( --alert-background );
+	--msgbox-log-warning-color: var( --warning-background );
+	--msgbox-log-scrollbar: var( --border-hover );		// the thumb; the track is the background of the lines
 }
 
 .x4messagebox {
@@ -95,6 +100,26 @@
 	min-height: 200px;
 	min-width: 500px;
 
+	// after an error: the title bar of an error of MessageBox
+	&.error > .caption {
+		background-color: var( --msgbox-caption-background );
+
+		& > #title {
+			color: var( --msgbox-caption-color );
+		}
+	}
+
+	// on the left of OK: the counts of the errors and the warnings, the icon of the worst
+	#alerts {
+		&.error {
+			--label-icon-color: var( --msgbox-log-error-color );
+		}
+
+		&.warning {
+			--label-icon-color: var( --msgbox-log-warning-color );
+		}
+	}
+
 	&> .x4form {
 		min-height: unset;
 	}
@@ -122,8 +147,9 @@
 		}
 
 		#title {
-			padding: 4px 16px;
+			padding: 0 16px;
 			line-height: 1.8em;
+			font-weight: bold;
 		}
 
 		// on the right, the bar and the lines end where the button OK does: the bar of
@@ -132,16 +158,58 @@
 			margin: 0 6px 0 16px;
 		}
 
-		// the lines: a textarea read only, 10 lines high at least, a line is not wrapped
+		// the lines: a <pre>, 10 lines high at least; its text gives it no size (contain): it
+		// scrolls, the box does not grow; a line is not wrapped. An error, a warning: their
+		// icon, their colour
 		#sub-text {
 			flex-grow: 1;
 			min-height: calc( 10lh + 10px );	// its padding and its border too
 			max-height: 400px;
 			overflow: auto;
 			white-space: pre;
+			contain: size;
+			font: inherit;
+			line-height: 1.3em;
+			scrollbar-color: var( --msgbox-log-scrollbar ) transparent;
+			outline: none;
+			border: 1px solid var( --msgbox-log-border );
 			background-color: var( --msgbox-log-background );
 			padding: 4px 8px;
 			margin: 0 6px 0 16px;
+
+			&, * {
+				user-select: text;
+			}
+
+			&:focus {
+				border-color: var( --msgbox-log-border-focus );
+			}
+
+			svg {
+				width: 1em;
+				height: 1em;
+				vertical-align: -0.125em;
+				margin-right: 4px;
+			}
+
+			.error {
+				color: var( --msgbox-log-error-color );
+			}
+
+			.warning {
+				color: var( --msgbox-log-warning-color );
+			}
+
+			// a section: its title, a click folds it; its lines below, under the title
+			details {
+				padding-left: 1em;
+			}
+
+			summary {
+				margin-left: -1em;
+				cursor: pointer;
+				font-weight: bold;
+			}
 		}
 	}
 }

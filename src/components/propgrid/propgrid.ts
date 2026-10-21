@@ -90,6 +90,9 @@ export class PropertyGrid extends VBox {
 	private root: Component;
 	private groups: PropertyGroup[];
 
+	// the editor of each property, by its name: no id, a name is not unique in a page
+	private editors = new Map<string, Component>( );
+
 	constructor(props: PropertyProps) {
 		super(props);
 
@@ -117,6 +120,8 @@ export class PropertyGrid extends VBox {
 	 */
 
 	setItems( _grps: PropertyGroup[] ) {
+
+		this.editors.clear( );
 
 		if( !_grps || _grps.length==0 ) {
 			this.root.clearContent( );
@@ -218,7 +223,6 @@ export class PropertyGrid extends VBox {
 		if (item.type === 'boolean') {
 			editor = new Input({ 
 				type: "checkbox", 
-				id: item.name,
 				//name: item.name, 
 				checked: value as boolean, 
 				dom_events: {
@@ -232,7 +236,6 @@ export class PropertyGrid extends VBox {
 		else if (item.type === 'options') {
 			editor = new Select( {
 				value: value as ListboxID,
-				id: item.name,
 				items: item.options,
 				//name: item.name,
 				change: ( e: EvChange ) => {
@@ -243,11 +246,15 @@ export class PropertyGrid extends VBox {
 		else if (item.type === 'password') {
 			editor = new Input({ 
 				type: 'password',
-				id: item.name,
-				//name: item.name, 
-				value: String(value), 
+				//name: item.name,
+				value: String(value),
 				focus: ( e: EvFocus ) => {
 					if( e.focus_out ) {
+						item.callback?.( item.name, (editor as Input).getValue() );
+					}
+				},
+				change: ( ) => {
+					if( item.live ) {
 						item.callback?.( item.name, (editor as Input).getValue() );
 					}
 				}
@@ -256,7 +263,6 @@ export class PropertyGrid extends VBox {
 		else if (item.type === 'number') {
 			editor = new Input({ 
 				type: 'number', 
-				id: item.name,
 				//name: item.name, 
 				value: String(value),
 				step: item.step,
@@ -276,7 +282,6 @@ export class PropertyGrid extends VBox {
 		}
 		else if (item.type === 'color') {
 			editor = new ColorInput({
-				id: item.name,
 				color: value as string,
 				format: "hex",
 				picker: true,
@@ -289,14 +294,12 @@ export class PropertyGrid extends VBox {
 		}
 		else if (item.type === 'label') {
 			editor = new Label({
-				id: item.name,
 				text: value as string,
 			});
 		}
 		else if (item.type === 'button') {
 			use_hdr = false;
 			editor = new Button({ 
-				id: item.name,
                 cls: "button",
 				label: value as string, 
 				click: ( ) => {
@@ -307,7 +310,6 @@ export class PropertyGrid extends VBox {
 		else {
             editor = new Input({ 
                 type: 'text', 
-                id: item.name,
                 //name: item.name, 
                 value: value as string,
                 focus: ( e: EvFocus ) => {
@@ -315,7 +317,16 @@ export class PropertyGrid extends VBox {
                         item.callback?.( item.name, (editor as Input).getValue() );
                     }
                 },
+				change: ( ) => {
+					if( item.live ) {
+						item.callback?.( item.name, (editor as Input).getValue() );
+					}
+				}
             })
+		}
+
+		if( item.name ) {
+			this.editors.set( item.name, editor );
 		}
 		
 		let cls = 'row';
@@ -340,7 +351,7 @@ export class PropertyGrid extends VBox {
 			cls,
 			content: [
                 use_hdr ? new Component({ cls: 'cell hdr', content: item.title ?? item.name, tooltip: item.desc }) : null,
-                new HBox({ cls: 'cell', tag: "label", attrs: { "labelFor": item.name }, content }),
+                new HBox({ cls: 'cell', tag: "label", content }),
             ]
 		});
 	}
@@ -352,45 +363,28 @@ export class PropertyGrid extends VBox {
 	setPropValue( name: string, value: any ) {
 		const all = this.groups.flatMap( x => [ ...x.items ] ) ;
 		const item = all.find( x => x.name==name );
-		if( !item ) {
+		const editor = this.editors.get( name );
+		if( !item || !editor ) {
 			return;
 		}
 
 		if (item.type === 'boolean') {
-			const editor = this.root.query<Input>( '#'+item.name );
-			if( editor ) {
-				editor.setCheck( value as boolean );
-			}
+			(editor as Input).setCheck( value as boolean );
 		}
 		else if (item.type === 'options') {
-			const editor = this.root.query<Select>( '#'+item.name );
-			if( editor ) {
-				editor.setValue( value as string );
-			}
+			(editor as Select).setValue( value as string );
 		}
 		else if (item.type === 'number') {
-			const editor = this.root.query<Input>( '#'+item.name );
-			if( editor ) {
-				editor.setNumValue( value as number, -2 );
-			}
+			(editor as Input).setNumValue( value as number, -2 );
 		}
 		else if (item.type === 'color') {
-			const editor = this.root.query<ColorInput>( '#'+item.name );
-			if( editor ) {
-				editor.setColor( value as string );
-			}
+			(editor as ColorInput).setColor( value as string );
 		}
 		else if (item.type === 'label') {
-			const label = this.root.query<Label>( '#'+item.name );
-			if( label ) {
-				label.setText( value );
-			}
+			(editor as Label).setText( value );
 		}
 		else {
-			const editor = this.root.query<Input>( '#'+item.name );
-			if( editor ) {
-				editor.setValue( value as string );
-			}
+			(editor as Input).setValue( value as string );
 		}
 	}
 

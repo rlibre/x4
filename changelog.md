@@ -3,6 +3,53 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.25
+
+### Notification
+
+- Its props of a component are given to it: `id`, `cls`, `style`...
+- With `loading`, its icon turns.
+
+```ts
+new Notification( { id: "saving", title: "Saving", text: "report.pdf...", loading: true } ).display( 5 );
+```
+
+### Listbox
+
+- `appendItem` on an empty list takes off its message "Empty list".
+- `checkable`: a case at the start of each line, with a renderer of yours too. `ListItem.checked` is its starting state. A click on the case, or Space for the last item selected, changes it and fires `checkChange { id, checked }`, without click nor selection. `getChecked( )` gives the ids checked, `setChecked( ids )` changes them without event. Its colours: `--listbox-check-*`.
+
+```ts
+const list = new Listbox( {
+	checkable: true,
+	items: [ { id: 1, text: "alpha" }, { id: 2, text: "beta", checked: true } ],
+	checkChange: ( ev ) => console.log( ev.id, ev.checked, list.getChecked( ) ),
+} );
+```
+
+### PropertyGrid
+
+- Its editors have no id: the name of a property (`label`, `icon`...) is not an id in the page. `setPropValue` finds an editor by the name of its property.
+- `live` works for a text and a password too: the callback at each key.
+
+```ts
+{ name: "title", type: "string", value: "Save", live: true, callback: ( name, value ) => preview.setText( value ) }
+```
+
+### ProgressionBox
+
+- Its lines are in a `<pre>`, 10 lines high, which scrolls both ways: the box keeps its size. A string is text, an `UnsafeHtml` html.
+- An error has its icon and is in red, and puts the title bar of the box in red, as the one of an error of MessageBox, until `clear( )`. `addWarning( text, perc )` adds a warning, its icon, in orange. After an error or a warning, `done( )` waits for OK, and shows their counts on the left of the bar, with the icon of an error if there is one, else the one of a warning: "2 errors / 1 warning". Their texts: `_tr.global.progression` (`error`, `errors`, `warning`, `warnings`).
+- `addSection( title, perc )` starts a section, open: the lines that follow go in it. A click on its title folds it or opens it. Its title has the icon of the worst of its lines, an error or a warning.
+- Ctrl+A in the lines selects them only, those of a folded section too.
+- Its colours: `--msgbox-log-border`, `--msgbox-log-border-focus`, `--msgbox-log-error-color`, `--msgbox-log-warning-color`, and `--msgbox-log-scrollbar` for the thumb of its scroll bars, whose track is the background of the lines.
+
+```ts
+box.addSection( "folder 1", 0 );
+box.addWarning( "data-4.csv: 2 empty lines skipped", 40 );
+box.addError( "data-6.csv cannot be read", 60 );
+```
+
 ## 2.3.24 (2026-10-21)
 
 ### Theme

@@ -826,21 +826,29 @@ class FileDialog extends Component {}      // programmatic file picker
 interface ListItem {
   id: ListboxID                            // number | string
   text: string | UnsafeHtml
-  iconId?: string; data?: any; cls?: string; checked?: boolean
+  iconId?: string; data?: any; cls?: string
+  checked?: boolean                        // checkable: the starting state of the case (getChecked() gives the current one)
 }
 interface ListboxProps extends Omit<ComponentProps,"content"> {
   items?: ListItem[]
   renderer?: (item: ListItem) => Component
   title?: string; icon?: string
   header?: Header; footer?: Component
-  checkable?: true; multisel?: true
+  checkable?: boolean                      // a case at the start of each line
+  multisel?: true
   emptyMsg?: string                        // shown in place of the items while there are none
   dblClick?: EventCallback<EvDblClick>
   selectionChange?: EventCallback<EvSelectionChange>
   contextMenu?: EventCallback<EvContextMenu>
+  checkChange?: EventCallback<EvCheckChange>   // EvCheckChange { id: ListboxID, checked: boolean }
 }
 // emptyMsg: without it the text is _tr.global.empty_list ("Empty list"). It is shown by setItems
 //   (the constructor calls it) when there is no item. The listbox then has the class "empty".
+// checkable: renderItem puts the case (.x4check) first in the line, with a renderer of yours too;
+//   a checked line has the class "checked". A click on the case, or Space for the last item
+//   selected, changes it and fires checkChange: no click, no selection. A double click on the
+//   case is ignored (its two clicks change it twice). setChecked fires nothing; updateItem keeps
+//   the state of the case. With a header, the columns start after the case.
 class Listbox extends Component {
   setItems(items: ListItem[], keepSel?: boolean): void
   appendItem(item: ListItem, prepend?: boolean, select?: boolean): void
@@ -849,6 +857,8 @@ class Listbox extends Component {
   select(ids: ListboxID | ListboxID[], notify?: boolean): void
   clearSelection(fireEvent?: boolean): void
   getSelection(): ListboxID[]
+  getChecked(): ListboxID[]                // checkable: in the order of the list
+  setChecked(ids: ListboxID[]): void       // these checked, the others not; no event
   filter(filter: string | RegExp): void
   navigate(sens: kbNav): boolean
   ensureSelectionVisible(): void
@@ -1120,10 +1130,22 @@ class PromptBox extends Dialog {
 class ProgressionBox extends Dialog {
   constructor(title: string)
   addText(text: string|UnsafeHtml, perc: number): void
-  addError(text: string|UnsafeHtml, perc: number): void
-  clear(): void
-  done(): void                             // hide after 5s if no error, else show OK button
+  addError(text: string|UnsafeHtml, perc: number): void     // its icon, in red; the title bar in red until clear()
+  addWarning(text: string|UnsafeHtml, perc: number): void   // its icon, in orange
+  addSection(title: string|UnsafeHtml, perc: number): void  // a section (<details>, open): the lines that follow go
+                                           // in it; a click on its title folds it; its title has the icon
+                                           // of the worst of its lines. Without any, the lines go in the log
+  setText(text: string|UnsafeHtml, perc: number): void      // in place of all the lines
+  clear(): void                            // no line, no error, no button OK
+  done(): void                             // shows OK: after an error or a warning it waits for a click,
+                                           // their counts on the left of the bar ("2 errors / 1 warning",
+                                           // from _tr.global.progression), the icon of the worst;
+                                           // else it counts "OK (5s)" and closes the box at 0
 }
+// ProgressionBox: its lines in a <pre>, 10 lines high, scrolled both ways (the box keeps its size);
+//   a string is text, an UnsafeHtml html. Ctrl+A in the lines selects them only (a folded section too).
+//   Colours: --msgbox-log-background, -border, -border-focus, -error-color, -warning-color,
+//   -scrollbar (the thumb of its scroll bars; their track is its background).
 ```
 
 ### `Notification`

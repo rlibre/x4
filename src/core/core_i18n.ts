@@ -336,6 +336,13 @@ let fr = {
 			search: 'Rechercher un paramètre',
 			nomatch: 'Aucun paramètre trouvé',
 		},
+
+		progression: {
+			error: '{0} erreur',
+			errors: '{0} erreurs',
+			warning: '{0} avertissement',
+			warnings: '{0} avertissements',
+		},
 	}
 };
 
@@ -405,6 +412,13 @@ let en = {
 		settings: {
 			search: 'Search settings',
 			nomatch: 'No setting found',
+		},
+
+		progression: {
+			error: '{0} error',
+			errors: '{0} errors',
+			warning: '{0} warning',
+			warnings: '{0} warnings',
 		},
 	}
 };
@@ -476,6 +490,13 @@ let es = {
 			search: 'Buscar un ajuste',
 			nomatch: 'Ningún ajuste encontrado',
 		},
+
+		progression: {
+			error: '{0} error',
+			errors: '{0} errores',
+			warning: '{0} advertencia',
+			warnings: '{0} advertencias',
+		},
 	}
 };
 
@@ -545,6 +566,13 @@ let de = {
 		settings: {
 			search: 'Einstellungen durchsuchen',
 			nomatch: 'Keine Einstellung gefunden',
+		},
+
+		progression: {
+			error: '{0} Fehler',
+			errors: '{0} Fehler',
+			warning: '{0} Warnung',
+			warnings: '{0} Warnungen',
 		},
 	}
 };

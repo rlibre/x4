@@ -66,13 +66,12 @@ export class Notification extends Popup {
 	private static list = new Set<Notification>( );
 
 	constructor( props: NotificationProps ) {
-		super( { } );
+		super( props );
 
 		let icon = props.iconId;
 		if( !icon ) {
 			if( props.loading ) {
 				icon = icons.loading;
-				this.addClass( "")
 			}
 			else if( props.mode=="danger" ) {
 				icon = icons.danger;
@@ -84,10 +83,10 @@ export class Notification extends Popup {
 
 		this.addClass( props.mode );
 
+		// the icon of loading turns (x4rotate, base.scss)
 		const _icon = new Icon( { iconId: icon } );
 		if( props.loading ) {
-			_icon.addClass( "rotate" );
-			//this.props.modal = true;
+			_icon.addClass( "x4rotate" );
 		}
 
 		this.setContent( new HBox( { 
