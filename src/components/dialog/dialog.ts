@@ -125,6 +125,12 @@ export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents 
 				}
 			}
 			else if (ev.key == 'Enter') {
+				// in a text of several lines Enter is a new line: Ctrl+Enter (Cmd+Enter) validates
+				const target = ev.target as HTMLElement;
+				if( ( target.tagName==="TEXTAREA" || target.isContentEditable ) && !ev.ctrlKey && !ev.metaKey ) {
+					return;
+				}
+
 				const def = this.query<Button>('button.default');
 				if (def) {
 					ev.preventDefault();

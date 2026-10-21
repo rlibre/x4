@@ -91,6 +91,8 @@ fire<K>(name: K, ev: E[K]): void
 
 - `capturing = true` inserts at the head of the listener list.
 - `fire()` automatically injects `source`, `type`, `stopPropagation()`, `preventDefault()` when absent.
+- A listener that throws: `fire()` sends its error to `console.error`, calls the next listeners, and returns
+  normally; the one that fires never gets the error of a listener. (An `async` listener rejects its own promise.)
 
 ### `CoreEvent`
 
@@ -220,7 +222,8 @@ childCount(): number
 enumChildComponents(recursive: boolean): Component[]
 enumChildNodes(recursive: boolean): Node[]
 visitChildren(cb: (el: Component) => boolean): void
-static parentElement<T>(dom: Node, cls?: Constructor<T>): T
+static parentElement<T>(dom: Node, cls?: Constructor<T>): T   // starts at the parent of dom, not at dom:
+                                                               // test componentFromDOM(dom) first for the component of dom itself
 ```
 
 ### Visibility / state / focus / geometry
@@ -311,6 +314,9 @@ interface BoxProps extends ComponentProps { tag?: string }
 ```
 
 ### `Box.refs` — typed directory of the children to reach again later
+
+Only a `Box` has `refs`: a class derived from `Component` (not from `Box`) has none, and `this.refs.x = ...` there
+compiles with a `declare refs` but throws a `TypeError` at run time.
 
 `Box` owns a `protected refs: Record<string, Component>`. Declare its shape in the subclass, then assign each child
 to `refs` while building the content: the assignment evaluates to the component, so it is written inline in the
@@ -826,6 +832,8 @@ class FileDialog extends Component {}      // programmatic file picker
 interface ListItem {
   id: ListboxID                            // number | string
   text: string | UnsafeHtml
+  sub_cols?: (string | UnsafeHtml | Component)[]   // extra columns after text (9 at most, ref-c2...ref-c10, see Header);
+                                           // a null value makes no cell. A Treeview draws them too
   iconId?: string; data?: any; cls?: string
   checked?: boolean                        // checkable: the starting state of the case (getChecked() gives the current one)
 }
@@ -844,6 +852,8 @@ interface ListboxProps extends Omit<ComponentProps,"content"> {
 }
 // emptyMsg: without it the text is _tr.global.empty_list ("Empty list"). It is shown by setItems
 //   (the constructor calls it) when there is no item. The listbox then has the class "empty".
+// click: no prop; listbox.on( "click", ev => ... ), ev.context the id of the item. It is fired on the item
+//   already selected too, which fires no selectionChange.
 // checkable: renderItem puts the case (.x4check) first in the line, with a renderer of yours too;
 //   a checked line has the class "checked". A click on the case, or Space for the last item
 //   selected, changes it and fires checkChange: no click, no selection. A double click on the
@@ -1046,6 +1056,7 @@ interface ButtonProps extends ComponentProps {
   menu?: MenuElement[] | (() => MenuElement[])   // a click opens this Menu under the button, in place of the click event;
                                            // a function is called at each click; the button gets the class "with-menu"
 }
+// its <button> is type="button": in a <form>, Enter in a field does not click it. attrs: { type: "submit" } to submit
 class Button extends Component {
   click(): void                            // simulate a click
   setText(text: string|UnsafeHtml): void
@@ -1088,6 +1099,8 @@ class Popup extends Box {
   isOpen(): boolean
   // show()/hide() inherited from Component; show() routes to displayCenter()
 }
+// A modal popup (a Dialog, a MessageBox...) keeps the element that had the focus when it opens and gives
+// it back the focus when it closes, unless the focus was put elsewhere meanwhile.
 ```
 
 ### `Dialog`
@@ -1111,6 +1124,10 @@ class Dialog extends Popup {
   show(): this                             // each time: the focus on its first field
   showAsync(): Promise<string>             // the name of the clicked button; null when closed without a button (Escape, close box)
 }
+// Keys: Escape closes it (or clicks `closable` when it is a button name). Enter clicks its default
+//   button ("ok.default" in buttons), except in a textarea or an element contenteditable, where Enter is
+//   a new line and Ctrl+Enter (Cmd+Enter) clicks it. Out of a dialog, Enter goes to the next field,
+//   except in a textarea or a contenteditable.
 ```
 
 ### `MessageBox` / `InputBox` / `PromptBox` / `ProgressionBox`
@@ -1176,6 +1193,10 @@ class Form extends Box {
   validate(): FormValues                   // null if invalid; the values the validator changes are written back in their fields (any element with the name, every radio of a group)
 }
 // Collects all children (recursive) that have a "name" attribute and implement queryInterface("form-element").
+// Never sent by the browser: its "submit" is prevented (Enter in its only field would send it).
+// A Form is flex by default (flex-basis 0, it takes the free height of its box) and has a padding of 16px.
+//   flex: false (the class "no-flex") only sets flex-grow to 0: in a VBox such a form is crushed to 0;
+//   a Form used as a toolbar or a line gets `flex: none` and its padding by a css rule of the application.
 ```
 
 ---
@@ -1742,6 +1763,7 @@ createPainter(c2d: CanvasRenderingContext2D, w: number, h: number): CanvasEx   /
 initTooltips(): void                                   // initialize the global tooltip system
 ```
 
+No tooltip is shown until the application calls `initTooltips()` once (the prop `tooltip` only sets an attribute).
 `initTooltips()` shows the text of the attribute `tooltip` (the prop `tooltip`), or the one `getTip()`
 of a `"tip-handler"` gives, **as html**. A text that comes from a user is escaped by the application
 with `sanitizeHtml( text )`: `tooltip: \`Open <b>${sanitizeHtml( file.name )}</b>\``.

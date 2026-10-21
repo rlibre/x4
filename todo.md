@@ -10,8 +10,7 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components; the colours of the rules go through variables; the variables read are all defined; MessageBox, InputBox and PromptBox by kind. Agreed, one block at a time, the light theme unchanged to the pixel:
 
-- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`): once that version is published, demo/gallery takes it (update x4js, call `Application.setTheme`, remove the block `html.x4dark` of its main.scss, and the class x4dark in its test);
-- aiguide §18: what a dark theme defines (the danger scale, `--color-dialog-caption*`), to ask before writing it.
+- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`), and demo/gallery calls it (its block `html.x4dark` removed, its test reads `x4theme-dark`). Left: x4js 2.3.24 or later installed in demo/gallery, which has 2.3.23 (2.3.25 for its example of a checkable Listbox).
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
 - Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
 
@@ -62,8 +61,8 @@ A `Box` is a `<fieldset>`, so that `disabled` reaches every field inside it. The
 Found by a review of the sources on 2026-10-13. Each one is a real defect, but an application may have been written around it: to do in a version that says so.
 
 - `addDOMEvent( name, handler, prepend )`: `prepend` is not read by `addEvent` (`core_dom.ts`), the handler always goes last. Honouring it puts first the handlers of the applications that pass `true`. In x4 itself only `DropdownList` passes it (`combobox.ts`, its `mousedown`), on a node where it is the only handler unless `dom_events` has one.
-- A DOM handler is called once for each ancestor that listens to the same event (`dispatchEvent`, `core_dom.ts`): every node that has a handler has its own native listener, and each of them walks again from the target to the top. Enter on a `Button` in a `Dialog` (both listen to `keydown`) clicks the button twice. Seen on 2026-10-21: the backspace of `Keyboard` erased two letters (its key listens to `pointerdown` for its autorepeat, the keyboard too); worked around in `Keyboard`, which skips an event it already handled. To walk once for an event (e.g. a mark on the event, set by the first walk) changes how many times the handlers of every application are called.
-- `ev.stopPropagation( )` in a handler does not stop this walk: only `preventDefault( )` does (`core_dom.ts`). The handlers of the ancestors are still called: a click on the arrow of a `Treeview` folder, whose handler stops the propagation, also selects the line. To test `ev.cancelBubble` in the walk would stop the handlers of the ancestors of every application that calls `stopPropagation( )`.
+- A DOM handler is called once for each ancestor that listens to the same event (`dispatchEvent`, `core_dom.ts`): every node that has a handler has its own native listener, and each of them walks again from the target to the top. Enter on a `Button` in a `Dialog` (both listen to `keydown`) clicks the button twice. Seen on 2026-10-21: the backspace of `Keyboard` erased two letters (its key listens to `pointerdown` for its autorepeat, the keyboard too); worked around in `Keyboard`, which skips an event it already handled. To walk once for an event (e.g. a mark on the event, set by the first walk) changes how many times the handlers of every application are called. Seen in Timex (2026-10-21): Enter on a button of a `Dialog` fired two `btnclick`, OK added the entry twice; worked around by a flag `busy` in the `btnclick` (`entry-dialog.ts`, `preview.ts`). Expected there: one walk for an event, e.g. a `WeakSet` of the events already walked, at the top of `dispatchEvent`.
+- `ev.stopPropagation( )` in a handler does not stop this walk: only `preventDefault( )` does (`core_dom.ts`). The handlers of the ancestors are still called: a click on the arrow of a `Treeview` folder, whose handler stops the propagation, also selects the line. To test `ev.cancelBubble` in the walk would stop the handlers of the ancestors of every application that calls `stopPropagation( )`. Seen in Timex (2026-10-21): to stop Enter in a `textarea` before the `Dialog`, `preventDefault( )` is needed, which also takes off the new line; worked around by `preventDefault( )` + `stopPropagation( )`, then the new line put back with `setRangeText` (`entry-dialog.ts`, `noteKey`).
 - `prependContent( [a, b, c] )` puts the items in the reverse order (`c b a`): each one is inserted first, one after the other (`component.ts`). An application that gives its array reversed, to get the order it wants, would get the other one. In x4 itself the only call gives one item (`Listbox.appendItem`).
 
 ## Spreadsheet
@@ -108,6 +107,53 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 - `-` typed in the field (asked on 2026-10-15; nothing is decided): transparent, or "no color" (`null`) in a `nullable` field? With `alpha: false`, refused as a text that cannot be read? `transparent` is already read (`Color.setValue`). To keep `-` shown when the field is left, `_format` would return it while the color is transparent.
 - A format selector as in the devtools (shift+click on the swatch: hex, rgb, hsl), instead of the form of the text typed.
+
+## Visual inconsistencies
+
+- The labels of `TextEdit` are aligned on the right and followed by ":"; those of `Combobox` are aligned on the left. In the same form, the two columns of labels do not line up (2026-10-21).
+- No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size`, read by Gridview and Spreadsheet, is defined nowhere (see Theme).
+
+## Seen while writing Timex: to decide
+
+Noted on 2026-10-21. What was only missing from the docs is now in aicontext and aiguide (`initTooltips`, the Form flex by default and its padding, `sub_cols`, the click of a Listbox, `parentElement`, `refs` on a Box only, the typed `_tr`, the global messages). Left: what asks for a change of the code.
+
+- **`Listbox.setItems( items, true )` fires two `selectionChange`** while the selection does not change: `clearSelection( )` fires an empty one, then `select( oldSel )` a second one with the same selection. Reloading a list after a change makes the view believe the user changed the selection. Worked around in Timex: `clearSelection( false )`, `setItems( items )`, `select( id, false )`.
+- **A new click on the selected item of a `Listbox`** fires no `selectionChange` (normal), but the event `click`, which tells it, cannot be given as a prop (`mapPropEvents` maps only `dblClick`, `selectionChange` and `contextMenu`): `listbox.on( "click", ... )` is needed. A prop `click`? (see also "Listbox: a click on the item already selected").
+- **The tooltips need `initTooltips( )`**: nothing is shown until the application calls it (now in aicontext). The `Application` could call it itself.
+- **The shortcuts of a hidden view stay active**: `Application._setupKeyboard` sends a key typed out of any field to the last view that had shortcuts, testing only `isConnected`, not the visibility. In a `Tabs`, the view of a hidden tab still answers.
+- **A `Form` with `flex: false` has no height**: `.x4form` takes `%flex` (`flex-basis: 0`), and `.no-flex` only sets `flex-grow: 0` back. In a `VBox`, the form is reduced to 0 and its content goes over what follows. `.no-flex` would need `flex: none`. Worked around in Timex: `.x4form.no-flex { flex: none }`. (The gallery saw it too: see "Found while building the gallery".)
+- **`Form<P>` has no parameter for its events** (`Form<P> extends Box<P>`): a class derived from `Form` cannot declare typed events for `mapPropEvents`.
+- **`Label` `align: "right"`** has no visible effect when the width of the `Label` is set by a CSS rule: `justify-content: flex-end` is needed on the element.
+- **`isMac` is not exported** (`core/core_shortcuts.ts`): x4 knows it runs on a Mac for its shortcuts (`Mod` = Cmd, `shortcutText`), but an application that must do the same (a copy by Option+drag, the key "delete" of a Mac that sends Backspace) tests it again. Timex: `IS_MAC` in `tools.ts`.
+- **`this.refs` exists only on `Box`**: `Component` has none, and `this.refs.x = ...` throws a `TypeError` at run time (now said in aicontext). In an async event handler the error goes unnoticed: in Timex, the button OK of the input dialog seemed to do nothing. To decide: initialize `refs` in `Component`.
+
+## Listbox: a click on the item already selected
+
+- An option (e.g. `multiclick: true`) so that a click on the item **already selected** still fires `selectionChange` (asked on 2026-10-21). Today `_selectItem` returns at once in that case (`if( this._multisel.has(id) ) return;`).
+- The use: lists linked together whose view shows "what was clicked last". In Timex, page Clients: a click on a client, then on one of its projects (the view shows the project, the client stays selected); a new click on the client should bring its view back, but nothing is fired.
+- With the option, the view would listen to `selectionChange` only, instead of adding `listbox.on( "click", ... )` and comparing `ev.context` to the current selection (`clients.ts`).
+
+## Found while building the gallery
+
+Reported by the agent that built demo/gallery (2026-10-21): read, not checked.
+
+- **Form**: without `flex` it is crushed; its fields are stretched horizontally.
+- **Button**: the style of a disabled button with the class `outline` (in a disabled Box: see "Box is a `<fieldset>`").
+- **Box**: `.x4box` has `align-self: stretch`.
+- **Keyboard**: its `focusin` listeners are never removed; its id is fixed (`v-keyboard`).
+- **Calendar**: under 314px wide, Sunday is cut.
+- **ColorPicker**: no prop `change`.
+- **PropertyGrid**: it ignores the width and the height it is given (x4test puts it in a VBox of a fixed height).
+- **`selectionChange`**: a `Treeview` gives items, a `Gridview` may give `null`.
+- **Gridview, Spreadsheet**: they always format in fr-FR and EUR.
+- **Canvas**: no `position: relative`.
+- **Tabs**: its padding has no effect.
+- **BtnGroup**: `reverse` is not used; its icons are white when `packed`.
+- **Breadcrumbs**: the hover is on `#text`; a `margin-bottom` of 2em; `BreadcrumbElement` is not exported.
+- **TextEdit**: the icons of its gadgets cannot be seen.
+- **FileDialog, SvgComponent**: no `@class_ns` (see "`@class_ns( "x4" )` → a static member").
+- **Types not exported**: `ComboboxProps`, `VideoProps`, `HeaderProps`.
+- **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Gridview.getFirstSel`, `Dialog.show`.
 
 
 

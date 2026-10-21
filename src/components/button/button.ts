@@ -134,6 +134,11 @@ export class Button extends Component<ButtonProps,ButtonEvents> {
 	constructor( props: ButtonProps ) {
 		super( { ...props, tag: 'button', content: null } );
 
+		// a button, not a submit: in a <form>, Enter in a field would click the first submit
+		if( !props.attrs?.type ) {
+			this.setAttribute( "type", "button" );
+		}
+
 		this.mapPropEvents( props, 'click' );
 
 		if( props.autorepeat ) {

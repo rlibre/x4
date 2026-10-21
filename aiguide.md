@@ -20,7 +20,7 @@ Prefer:
 - plain objects for application data
 - `State` for observable application state
 - local events for things that happened locally
-- `GlobalEvent` for application-wide or distributed messages
+- a global message (`Application.fireGlobal`) for application-wide or distributed messages
 - `DataStore` for specialized tabular data
 - persistent `Component` objects backed by the real DOM
 - CSS and CSS variables for presentation and theming
@@ -84,13 +84,13 @@ For a simple event payload, `context` can carry the relevant identity or value w
 
 Do not put transient actions into State merely to trigger behavior.
 
-### GlobalEvent
+### Global messages
 
-Use `GlobalEvent` for application-wide messages.
+Use a global message (`Application.fireGlobal`) for application-wide messages.
 
-A GlobalEvent may also be transported between processes, clients or a server.
+A global message may also be transported between processes, clients or a server.
 
-Views should not care how a GlobalEvent is transported.
+Views should not care how a global message is transported.
 
 In particular, do not expose WebSocket details to UI components merely because WebSocket is used as the transport.
 
@@ -295,9 +295,24 @@ Do not use events as a replacement for persistent application state.
 
 ---
 
-## 9. GlobalEvent
+## 9. Global messages
 
-Use `GlobalEvent` for messages whose scope is the application or distributed system rather than a local component relationship.
+A global message is sent by `Application.fireGlobal( msg, params )` and received by
+`component.onGlobalEvent( ev => ... )`, `ev` an `EvMessage { msg, params }`. The listener of
+`onGlobalEvent` is taken off when the component leaves the page.
+
+```ts
+Application.fireGlobal( "device.updated", { id: deviceId } );
+
+this.onGlobalEvent( ( ev ) => {
+	if( ev.msg == "device.updated" ) {
+		this.refresh( ev.params.id );
+	}
+} );
+```
+
+Use a global message for what concerns the application or a distributed system, rather than a
+local component relationship.
 
 Global messages should normally use stable application-level names, for example:
 
@@ -318,11 +333,11 @@ The receiver can obtain the authoritative object through the application's model
 
 For high-frequency realtime information such as telemetry, carrying the actual data can be appropriate.
 
-Do not force every GlobalEvent into the same payload strategy.
+Do not force every global message into the same payload strategy.
 
 Most importantly:
 
-> GlobalEvent represents the message, not its transport.
+> A global message represents the message, not its transport.
 
 A view should normally not contain WebSocket-specific logic.
 
@@ -361,7 +376,7 @@ Model       obtains or modifies domain data
 State       represents current application state
 Component   presents that state
 Events      communicate local occurrences
-GlobalEvent communicates application-wide occurrences
+Global msg  communicates application-wide occurrences (Application.fireGlobal)
 ```
 
 Do not add additional layers unless they solve an actual problem.
@@ -500,11 +515,36 @@ Do not hide a control a component creates: configure the component through its p
 
 If the props cannot express it, say so instead of working around it.
 
-To retheme an application, redefine the primary colour scale (`--color-primary-a5` … `--color-primary-a90`) once per theme.
+A theme is a class on `<html>`. `Application.setTheme( name )` puts `x4theme-<name>` there and
+takes off the one before; `Application.setTheme( "" )` goes back to the light theme, the default;
+`Application.getTheme( )` gives the name. x4 has one theme: `"dark"`, like Dark Modern of VS Code.
 
-Do not recolour components one by one, and do not override the variables derived from the scale.
+An application writes its own theme in its CSS, under `html.x4theme-<name>`, the way
+`themes.scss` writes the dark one:
 
-A dark theme gets its own scale.
+- the colour scale, `--color-primary-a0` (the background) to `--color-primary-a100` (the text).
+  The greys of x4 (backgrounds, texts, borders) are mixes of `a0` and `a100`: a scale whose
+  `a0` is dark and `a100` light gives them dark too;
+- the global variables the scale does not give, when the theme wants other values:
+  `--background-*`, `--text-*`, `--border*`, `--disabled-*`, `--accent-*`, `--icon-color*`,
+  `--alert-*`, `--warning-*`, `--success-*`;
+- `color-scheme: dark` for a dark theme: the native parts (select, scroll bars, spinners).
+
+The variables of a component (`--listbox-*`, `--dialog-*`…, listed in the `@cssvar` of its
+class) point to the global ones: the theme changes them all at once. Set one only when that
+component must differ from the rest; do not recolour components one by one.
+
+```css
+html.x4theme-pink {
+	--color-primary-a0: #fff5f8;
+	/* … a5 to a90 … */
+	--color-primary-a100: #3a1020;
+}
+```
+
+```ts
+Application.setTheme( "pink" );
+```
 
 ---
 
@@ -602,7 +642,7 @@ Component event
        ↓
 Application operation
        ↓
-State change / GlobalEvent
+State change / global message
        ↓
 Existing Components update
 ```
@@ -641,6 +681,15 @@ Type each additional language after the first one, so the compiler reports a mis
 ```ts
 const app_fr = { app: { open: "Ouvrir", close: "Fermer" } };
 const app_en: typeof app_fr = { app: { open: "Open", close: "Close" } };
+```
+
+`_tr` is typed with the texts of x4 only: `_tr.app.open` does not compile. Give the
+application its own typed view of `_tr`, once, from its first language:
+
+```ts
+export const tx = _tr as typeof _tr & typeof app_fr;
+
+new Button( { label: tx.app.open } );
 ```
 
 ---

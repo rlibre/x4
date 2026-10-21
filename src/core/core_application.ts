@@ -255,7 +255,11 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	private _setupKeyboard( ) {
 		
 		document.addEventListener( "keydown", (ev) => {
-			if( ev.key=="Tab" || ev.key=="Enter" ) {
+			// Enter in a text of several lines is a new line, not the next field
+			const target = ev.target as HTMLElement;
+			const multiline = target.tagName==="TEXTAREA" || target.isContentEditable;
+
+			if( ev.key=="Tab" || ( ev.key=="Enter" && !multiline ) ) {
 				if( this.focusNext( !ev.shiftKey ) ) {
 					ev.preventDefault( );
 				}

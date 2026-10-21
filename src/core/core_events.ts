@@ -159,6 +159,8 @@ export class EventSource<E extends EventMap = EventMap > {
 
 	/**
 	 * Dispatches an event with a given name and payload to all registered listeners.
+	 * A listener that throws: its error goes to console.error, the next listeners are
+	 * called, and fire returns normally.
 	 * @param name - The name of the event to fire (must be a key in `E`).
 	 * @param evx - The event payload (event object) to pass to the listeners.
 	 */
@@ -192,14 +194,24 @@ export class EventSource<E extends EventMap = EventMap > {
 				ev.stopPropagation = stopPropagation;
 			}
 
+			// a listener that throws stops neither the others nor the one that fires
+			const call = ( listener: EventCallback ) => {
+				try {
+					listener( ev );
+				}
+				catch( e ) {
+					console.error( e );
+				}
+			};
+
 			// small optimisation
 			if (listeners.length == 1) {
-				listeners[0](ev);
+				call( listeners[0] );
 			}
 			else {
 				const temp = listeners.slice();
 				for (let i = 0, n = temp.length; i < n; i++) {
-					temp[i](ev);
+					call( temp[i] );
 					if (ev.propagationStopped) {
 						break;
 					}

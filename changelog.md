@@ -5,6 +5,25 @@ A version gets its date when it is published.
 
 ## 2.3.25
 
+### Events
+
+- `fire` calls each listener in a `try/catch`: a listener that throws sends its error to `console.error`, the next listeners are called, and the code that fires goes on. This goes for the events of a component and for `Application.fireGlobal`.
+
+### Button, Form
+
+- A `Button` is `type="button"`: in a `<form>`, Enter in a field does not click it (the browser clicks the first `submit` of the form). `attrs: { type: "submit" }` gives a submit.
+- A `Form` is never sent by the browser: its `submit` is prevented (Enter in its only field would send it, and reload the page).
+- Migration: a `Button` that must submit a `<form>` of the page (not a `Form` of x4) gets `attrs: { type: "submit" }`.
+
+```ts
+new Button( { label: "Send", attrs: { type: "submit" } } );
+```
+
+### Dialog
+
+- A modal box (a `Dialog`, a `MessageBox`, an `InputBox`...) keeps the element that had the focus when it opens, and gives it back the focus when it closes, unless the focus was put elsewhere meanwhile. After an `InputBox` over a `Dialog`, Enter and Escape work again in the `Dialog`.
+- Enter in a `textarea` or an element `contenteditable` is a new line: the dialog does not click its default button there; Ctrl+Enter (Cmd+Enter on a Mac) does. Out of a dialog, Enter in such a field is a new line too, not the move to the next field.
+
 ### Notification
 
 - Its props of a component are given to it: `id`, `cls`, `style`...

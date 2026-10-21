@@ -75,6 +75,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 
 	private _isshown = false;
 	protected _ismodal = false;
+	private _prevFocus: HTMLElement;		// modal: the element that had the focus when it opened
 
 	constructor( props: P ) {
 		super( props );
@@ -220,6 +221,11 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			return;
 		}
 
+		// modal: the focus goes back to the element that had it when it opened, unless the
+		// user put it elsewhere (read before the popup leaves the page and its focus with it)
+		const active = document.activeElement;
+		const giveBack = this._ismodal && this._prevFocus && ( !active || active===document.body || this.dom.contains( active ) );
+
 		this.__hide( );
 		this.__remove( );
 
@@ -255,6 +261,11 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			}
 		}
 
+		if( giveBack && this._prevFocus.isConnected ) {
+			this._prevFocus.focus( );
+		}
+		this._prevFocus = null;
+
 		this._isshown = false;
 		this.fire( "closed", {} );
 	}
@@ -272,6 +283,10 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		this.__append( );
 
 		if( this._ismodal ) {
+			// given back the focus when it closes; <body>: nothing had it
+			const active = document.activeElement as HTMLElement;
+			this._prevFocus = active && active!==document.body ? active : null;
+
 			modal_stack.push( this );
 			this._showModalMask( );
 		}

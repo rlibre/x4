@@ -43,6 +43,9 @@ export class Form<P extends FormProps = FormProps> extends Box<P> {
 	constructor( props: P ) {
 		super( { tag: "form", ...props } );
 
+		// read by getValues, never sent by the browser (Enter in its only field would send it)
+		this.addDOMEvent( "submit", ( ev ) => ev.preventDefault( ) );
+
 		if( props.flex===false ) {
 			this.addClass( "no-flex" );
 		}
