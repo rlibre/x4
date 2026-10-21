@@ -32,6 +32,15 @@ let mouse_pos: Point = {x:0, y:0 };
 
 const timer = new Timer( );
 
+/**
+ * the tooltips are shown once this is called: the text of the attribute "tooltip" (the prop
+ * tooltip of a component), or the one getTip( ) of a "tip-handler" gives.
+ * This text is shown as html: a text that comes from a user is escaped by the application,
+ * with sanitizeHtml( text ).
+ * @example
+ * new Button( { label: "Open", tooltip: `Open <b>${sanitizeHtml( file.name )}</b>` } );
+ */
+
 export function initTooltips( ) {
 
 	document.addEventListener( "mouseenter", ( ev: MouseEvent ) => {

@@ -140,7 +140,7 @@ interface ComponentProps {
   flex?: number | boolean                            // true → "x4flex"; number → flex-grow
   disabled?: boolean
   hidden?: boolean
-  tooltip?: string
+  tooltip?: string                                   // shown as html: escape a text from a user (see initTooltips)
   existingDOM?: HTMLElement                          // wrap an existing DOM node
 }
 
@@ -1741,6 +1741,10 @@ class CMover {
 createPainter(c2d: CanvasRenderingContext2D, w: number, h: number): CanvasEx   // Canvas painter
 initTooltips(): void                                   // initialize the global tooltip system
 ```
+
+`initTooltips()` shows the text of the attribute `tooltip` (the prop `tooltip`), or the one `getTip()`
+of a `"tip-handler"` gives, **as html**. A text that comes from a user is escaped by the application
+with `sanitizeHtml( text )`: `tooltip: \`Open <b>${sanitizeHtml( file.name )}</b>\``.
 
 ---
 
