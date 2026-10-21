@@ -267,7 +267,8 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 
 			// The focus is nowhere: the shortcuts of the view the user worked in last.
 			// (when it is in a view, the view has seen the key before us)
-			if( ev.target===document.body && this._active?.owner.dom.isConnected && this._active.shortcuts.handle( ev ) ) {
+			// (a view hidden, in a tab not shown: its shortcuts sleep)
+			if( ev.target===document.body && this._active?.owner.isVisible( ) && this._active.shortcuts.handle( ev ) ) {
 				return;
 			}
 

@@ -1197,9 +1197,8 @@ class Form extends Box {
 }
 // Collects all children (recursive) that have a "name" attribute and implement queryInterface("form-element").
 // Never sent by the browser: its "submit" is prevented (Enter in its only field would send it).
-// A Form is flex by default (flex-basis 0, it takes the free height of its box) and has a padding of 16px.
-//   flex: false (the class "no-flex") only sets flex-grow to 0: in a VBox such a form is crushed to 0;
-//   a Form used as a toolbar or a line gets `flex: none` and its padding by a css rule of the application.
+// A Form is flex by default (it takes the free height of its box) and has a padding of 16px.
+//   flex: false: the height of its content (a toolbar, a line); its padding set back by a css rule.
 ```
 
 ---
@@ -1451,7 +1450,7 @@ class MyView extends VBox {
 }
 ```
 
-- A component shortcut also works while the focus is nowhere, if the component is the last one with shortcuts that had the focus: of two views shown together, the one the user works in answers.
+- A component shortcut also works while the focus is nowhere, if the component is the last one with shortcuts that had the focus: of two views shown together, the one the user works in answers. Not while that component is hidden (in a tab not shown, for instance).
 - A key typed in an `input`, a `textarea` or a `select` is not a shortcut, unless `editable` is set.
 - A key that what has the focus already used (it called `preventDefault` or `stopPropagation`) is not a shortcut.
 - A shortcut always takes its key (`preventDefault`). For a key that must sometimes be left alone, use a `keydown` handler instead.

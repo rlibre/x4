@@ -5,6 +5,10 @@ A version gets its date when it is published.
 
 ## 2.3.25
 
+### Shortcuts
+
+- The shortcuts of a view answer while the focus is nowhere only when the view is shown: the view of a tab not shown does not answer any more.
+
 ### Events
 
 - `fire` calls each listener in a `try/catch`: a listener that throws sends its error to `console.error`, the next listeners are called, and the code that fires goes on. This goes for the events of a component and for `Application.fireGlobal`.
@@ -13,7 +17,7 @@ A version gets its date when it is published.
 
 - A `Button` is `type="button"`: in a `<form>`, Enter in a field does not click it (the browser clicks the first `submit` of the form). `attrs: { type: "submit" }` gives a submit.
 - A `Form` is never sent by the browser: its `submit` is prevented (Enter in its only field would send it, and reload the page).
-- Migration: a `Button` that must submit a `<form>` of the page (not a `Form` of x4) gets `attrs: { type: "submit" }`.
+- A `Form` with `flex: false` has the height of its content (a toolbar, a line).- Migration: a `Button` that must submit a `<form>` of the page (not a `Form` of x4) gets `attrs: { type: "submit" }`.
 
 ```ts
 new Button( { label: "Send", attrs: { type: "submit" } } );

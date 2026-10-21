@@ -117,9 +117,6 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 Noted on 2026-10-21. What was only missing from the docs is now in aicontext and aiguide (`initTooltips`, the Form flex by default and its padding, `sub_cols`, the click of a Listbox, `parentElement`, `refs` on a Box only, the typed `_tr`, the global messages). Left: what asks for a change of the code.
 
-- **The tooltips need `initTooltips( )`**: nothing is shown until the application calls it (now in aicontext). The `Application` could call it itself.
-- **The shortcuts of a hidden view stay active**: `Application._setupKeyboard` sends a key typed out of any field to the last view that had shortcuts, testing only `isConnected`, not the visibility. In a `Tabs`, the view of a hidden tab still answers.
-- **A `Form` with `flex: false` has no height**: `.x4form` takes `%flex` (`flex-basis: 0`), and `.no-flex` only sets `flex-grow: 0` back. In a `VBox`, the form is reduced to 0 and its content goes over what follows. `.no-flex` would need `flex: none`. Worked around in Timex: `.x4form.no-flex { flex: none }`. (The gallery saw it too: see "Found while building the gallery".)
 - **`Form<P>` has no parameter for its events** (`Form<P> extends Box<P>`): a class derived from `Form` cannot declare typed events for `mapPropEvents`.
 - **`Label` `align: "right"`** has no visible effect when the width of the `Label` is set by a CSS rule: `justify-content: flex-end` is needed on the element.
 - **`isMac` is not exported** (`core/core_shortcuts.ts`): x4 knows it runs on a Mac for its shortcuts (`Mod` = Cmd, `shortcutText`), but an application that must do the same (a copy by Option+drag, the key "delete" of a Mac that sends Backspace) tests it again. Timex: `IS_MAC` in `tools.ts`.

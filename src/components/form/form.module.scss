@@ -31,8 +31,9 @@
         flex-direction: row;
     }
 
+	// flex: false: the height of its content (flex-grow alone would leave it at 0, flex-basis 0)
 	&.no-flex {
-		flex-grow: 0;
+		flex: none;
 	}
 }
 
