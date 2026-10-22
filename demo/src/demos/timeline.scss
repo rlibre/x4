@@ -1,0 +1,13 @@
+/* @demo renderer */
+.x4timeline .step {
+	align-items: flex-start;
+	gap: 4px;
+	padding-top: 2px;
+}
+
+/* @demo colors */
+.x4timeline.green {
+	--timeline-done-color: var( --color-green-600 );
+	--timeline-todo-color: var( --color-green-100 );
+	--timeline-todo-icon-color: var( --color-green-800 );
+}

@@ -1,0 +1,13 @@
+// the gallery: a Keyboard listens to every field of the page; it is shown in its own
+// box only, while a field of that box has the focus
+.democard:not( :focus-within ) .x4keyboard,
+.usage > .preview:not( :focus-within ) .x4keyboard {
+	display: none;
+}
+
+/* @demo onField */
+// the box of a keyboard: it is shown at its bottom
+.kb-box {
+	position: relative;
+	gap: 8px;
+}

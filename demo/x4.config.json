@@ -1,0 +1,7 @@
+{
+	"entryPoints": ["src/main.ts"],
+	"outdir": "./bin",
+	"copy": [
+		{ "from": "./src/index.html", "to": "index.html" }
+	]
+}

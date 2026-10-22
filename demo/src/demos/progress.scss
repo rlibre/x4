@@ -1,0 +1,16 @@
+/* @demo colors */
+.bars {
+	gap: 16px;
+}
+
+.x4progress.success {
+	--progress-color: var( --success-background );
+}
+
+.x4progress.thick {
+	height: 14px;
+	--progress-color: var( --color-violet-600 );
+
+	.bar {
+	}
+}

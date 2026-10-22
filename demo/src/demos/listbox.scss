@@ -1,0 +1,12 @@
+/* @demo renderer */
+.x4listbox.prices {
+	.price {
+		padding: 2px 8px;
+		font-variant-numeric: tabular-nums;
+		color: var( --text-ternary );
+	}
+
+	.x4item.selected .price {
+		color: var( --accent-color );
+	}
+}

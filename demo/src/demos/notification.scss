@@ -1,0 +1,4 @@
+// the gallery: a loading notification gives its icon the class "rotate", which turns only the icon of a Label
+.x4notification .x4icon.rotate {
+	animation: rotating 2s linear infinite;
+}

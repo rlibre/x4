@@ -1,0 +1,18 @@
+/* @demo pages */
+.x4stackbox.pages {
+	border: 1px solid var( --border );
+
+	.page {
+		justify-content: center;
+		gap: 10px;
+		font-size: 1.4rem;
+		background: var( --background-secondary );
+		--label-color: var( --text-primary );
+
+		#icon {
+			width: 1.4rem;
+			height: 1.4rem;
+			fill: var( --accent-background );
+		}
+	}
+}

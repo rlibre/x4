@@ -1,0 +1,9 @@
+/* @demo renderer */
+.x4gridview .x4button.delete {
+	margin: 0;
+	padding: 4px;
+	--button-background: transparent;
+	--button-color: var( --text-ternary );
+	--button-background-hover: var( --alert-background );
+	--button-color-hover: var( --alert-color );
+}

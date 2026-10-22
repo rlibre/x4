@@ -1,0 +1,9 @@
+// the <canvas> is absolute in .x4canvas, which is not positioned (canvas.module.scss)
+.x4canvas {
+	position: relative;
+}
+
+/* @demo shapes */
+.x4canvas {
+	border: 1px solid var( --border );
+}

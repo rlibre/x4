@@ -1,0 +1,5 @@
+// the gallery: the padding x4 gives to the body of the tabs is under its pages
+// (they are absolute, at 0 from its edges): given to the pages
+.x4tabs > .body > * {
+	padding: 8px;
+}

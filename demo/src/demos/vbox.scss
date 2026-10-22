@@ -1,0 +1,43 @@
+// the box of the configurator, on this page only: its edges shown
+.componentpage:has( #vbox-form ) .usage > .preview > .x4vbox {
+	outline: 1px dashed var( --border-hover );
+}
+
+/* @demo form */
+.x4vbox.boxcolumn {
+	gap: 6px;
+	padding: 8px;
+	border: 1px dashed var( --border-hover );
+
+	.x4input {
+		padding: 4px 6px;
+		border: 1px solid var( --border );
+	}
+}
+
+/* @demo roomLeft */
+.x4vbox.boxcolumn {
+	.head {
+		font-weight: 600;
+	}
+
+	.body {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var( --background-secondary );
+		color: var( --text-ternary );
+	}
+}
+
+/* @demo nested */
+.x4vbox.boxcolumn {
+	.toolbar {
+		gap: 4px;
+		border-bottom: 1px solid var( --border );
+	}
+
+	.x4hbox {
+		gap: 6px;
+	}
+}

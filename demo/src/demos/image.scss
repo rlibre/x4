@@ -1,0 +1,15 @@
+/* @demo fit */
+.fits {
+	gap: 16px;
+	align-items: flex-start;
+
+	.x4image {
+		border: 1px solid var( --border );
+	}
+}
+
+/* @demo dropFile */
+.x4image.drop {
+	border: 2px dashed var( --border );
+	cursor: pointer;
+}

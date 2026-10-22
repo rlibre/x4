@@ -10,7 +10,7 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components; the colours of the rules go through variables; the variables read are all defined; MessageBox, InputBox and PromptBox by kind. Agreed, one block at a time, the light theme unchanged to the pixel:
 
-- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`), and demo/gallery calls it (its block `html.x4dark` removed, its test reads `x4theme-dark`). Left: x4js 2.3.24 or later installed in demo/gallery, which has 2.3.23 (2.3.25 for its example of a checkable Listbox).
+- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`), and the gallery (demo) calls it (its block `html.x4dark` removed, its test reads `x4theme-dark`). Left: x4js 2.3.24 or later installed in demo, which has 2.3.23 (2.3.25 for its example of a checkable Listbox).
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
 - Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
 
@@ -35,7 +35,7 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 
 Done on 2026-10-22: a Box is a `<div>`, disabled by `inert` and faded. Checked in the browser: a Box of a `min-height` now centers its content (a `<fieldset>` did not). The scroll lost by DockingView is not the fieldset: see DockingView.
 
-- demo/gallery builds its page with `tag: "div"` (page.ts): useless once it uses x4js 2.3.26.
+- The gallery (demo) builds its page with `tag: "div"` (page.ts): useless once it uses x4js 2.3.26.
 
 ## MasonryBox
 
@@ -106,7 +106,7 @@ Noted on 2026-10-21. What was only missing from the docs is now in aicontext and
 
 ## Found while building the gallery
 
-Reported by the agent that built demo/gallery (2026-10-21): read, not checked.
+Reported by the agent that built the gallery, in demo (2026-10-21): read, not checked.
 
 - **Form**: without `flex` it is crushed; its fields are stretched horizontally.
 - **Button**: the style of a disabled button with the class `outline` (in a disabled Box: see "Box is a `<fieldset>`").

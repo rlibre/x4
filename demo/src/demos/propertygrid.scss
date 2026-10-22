@@ -1,0 +1,11 @@
+// the gallery: a PropertyGrid has flex-basis 0, which drops the size it is given
+// in a box; in the demos it keeps its width and height
+.democard .x4propertygrid,
+.usage > .preview > .x4propertygrid {
+	flex: none;
+}
+
+/* @demo object */
+.x4label.json {
+	font-family: monospace;
+}

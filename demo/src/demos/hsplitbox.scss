@@ -1,0 +1,24 @@
+/* @demo sideBySide */
+.panes {
+	border: 1px solid var( --border );
+
+	> .x4vbox, .x4vsplitbox > .x4vbox {
+		padding: 8px;
+		background: var( --background-ternary );
+	}
+
+	.x4csizer {
+		background: var( --border );
+	}
+}
+
+/* @demo edges */
+.resizable {
+	padding: 8px;
+	border: 1px solid var( --border );
+	background: var( --background-ternary );
+
+	> .x4csizer:hover {
+		background: var( --accent-background );
+	}
+}

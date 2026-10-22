@@ -1,0 +1,13 @@
+/* @demo cells */
+.x4gridbox.cells {
+	gap: 6px;
+
+	> .x4simpletext {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 8px;
+		background: var( --background-secondary );
+		color: var( --text-primary );
+	}
+}

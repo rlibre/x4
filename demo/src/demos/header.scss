@@ -1,0 +1,26 @@
+/* @demo namedColumns */
+.own-table {
+	width: 420px;
+	border: 1px solid var( --border );
+
+	> .x4header {
+		border-bottom: 1px solid var( --border );
+	}
+
+	> .row {
+		display: flex;
+
+		> * {
+			padding: 4px;
+			overflow: hidden;
+		}
+
+		> .city {
+			width: var( --city-width );
+		}
+
+		> .country {
+			width: var( --country-width );
+		}
+	}
+}

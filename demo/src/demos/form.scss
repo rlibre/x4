@@ -1,0 +1,11 @@
+// every Box stretches (boxes.module.scss, .x4box align-self): in a horizontal form, the
+// fields would be as high as the form, their line far under their text
+.x4form.horizontal > * {
+	align-self: center;
+}
+
+/* @demo getValues */
+.x4label.result {
+	font-family: monospace;
+	white-space: normal;
+}

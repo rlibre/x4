@@ -1,0 +1,16 @@
+// the box of the configurator, on this page only: its edges shown
+.componentpage:has( #hbox-formLine ) .usage > .preview > .x4hbox {
+	outline: 1px dashed var( --border-hover );
+}
+
+/* @demo formLine */
+.x4hbox.boxline {
+	gap: 8px;
+	padding: 8px;
+	border: 1px dashed var( --border-hover );
+}
+
+/* @demo alignment */
+.x4hbox.boxline.high {
+	height: 90px;
+}

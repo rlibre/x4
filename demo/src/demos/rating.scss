@@ -1,0 +1,22 @@
+// gallery: a Box stretches in the height of the configurator, and the boxes of the configurator are outlined
+.usage > .preview > .x4rating {
+	align-self: center;
+	outline: none;
+}
+
+/* @demo shape */
+.x4rating.hearts {
+	--rating-checked: var( --color-red-600 );
+
+	.item {
+		width: 22px;
+		height: 22px;
+	}
+}
+
+/* @demo inForm */
+// a Form grows in its box (flex-basis 0): in a box as high as its content, it takes its own height
+.x4form.ratings {
+	flex: none;
+	padding: 0;
+}

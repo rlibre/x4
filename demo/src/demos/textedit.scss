@@ -1,0 +1,8 @@
+/* @demo gadgets */
+// the icon of a button is drawn with --button-color: the color of the gadgets
+.x4textedit .gadget {
+	--button-color: var( --textedit-btn-color );
+	--button-color-hover: var( --textedit-btn-color-hover );
+	--button-color-focus: var( --textedit-btn-color-hover );
+	--button-color-active: var( --textedit-btn-color-hover );
+}

@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["DOM", "ES2022",],
+		"module": "es2022",
+		"strict": true,
+		"strictNullChecks": false,
+		"skipLibCheck": true,
+		"types": [],
+		"moduleResolution": "bundler",
+		"experimentalDecorators": true
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "node_modules", "bin" ]
+}

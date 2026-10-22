@@ -1,0 +1,32 @@
+// gallery: a Box stretches in the height of the configurator
+.usage > .preview > .x4tag {
+	align-self: center;
+}
+
+// gallery: the icons of the gallery have no fill of their own
+.x4tag .x4icon {
+	fill: var( --tag-icon-color );
+}
+
+/* @demo icons */
+.tags {
+	gap: 6px;
+	align-items: flex-start;
+
+	&.wrap {
+		flex-wrap: wrap;
+	}
+}
+
+/* @demo colors */
+.x4tag.green {
+	--tag-background: var( --color-green-100 );
+	--tag-border: var( --color-green-600 );
+	--tag-color: var( --color-green-800 );
+}
+
+.x4tag.outline {
+	--tag-background: transparent;
+	--tag-border: var( --accent-background );
+	--tag-color: var( --accent-background );
+}

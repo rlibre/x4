@@ -1,0 +1,300 @@
+// :: the page :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:root {
+	--font-name: montserrat, system-ui, "Segoe UI", sans-serif;
+	--code-background: var( --background-ternary );
+
+	// the sections of a SettingsView on the background of the page (x4js 2.3.26 does it: this
+	// line can go then)
+	--settingsview-section-background: var( --background-primary );
+}
+
+// a SettingsView: its sections without frame, their title in the accent colour without band
+// (x4js 2.3.26 does it: this rule can go then)
+.gallery .x4settingsview .section {
+	border: none;
+
+	> .title {
+		background: transparent;
+		--label-color: var( --accent-background );
+	}
+}
+
+// the icons of src/icons.ts have no fill of their own: the color of the text,
+// where a component does not set one
+.x4icon {
+	fill: currentColor;
+}
+
+body {
+	margin: 0;
+	background-color: var( --background-primary );
+	color: var( --text-primary );
+}
+
+.gallery {
+	height: 100vh;
+}
+
+.header {
+	flex-shrink: 0;
+	height: 56px;
+	padding: 0 16px;
+	gap: 12px;
+	border-bottom: 1px solid var( --border );
+
+	> .brand {
+		width: 248px;			// the navigation at its start: 280px less the padding of the header
+		font-size: 1.25rem;
+		font-weight: 700;
+		--label-color: var( --text-primary );
+	}
+
+	> .search {
+		width: 260px;
+		padding: 6px 10px;
+		border: 1px solid var( --border );
+
+		&:focus {
+			border-color: var( --accent-background );
+		}
+	}
+}
+
+.main {
+	min-height: 0;
+	align-items: stretch;
+}
+
+.nav {
+	flex-shrink: 0;
+	width: 280px;
+	padding: 8px 0;
+	overflow-y: auto;
+	border-right: 1px solid var( --border );
+
+	> .category > .title {
+		padding: 14px 16px 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		--label-color: var( --accent-background );
+	}
+
+	a {
+		padding: 6px 16px 6px 22px;
+		border-left: 2px solid transparent;
+		color: var( --text-primary );
+		text-decoration: none;
+		cursor: pointer;		// an <a> without href
+
+		&:hover {
+			background: var( --background-secondary );
+		}
+
+		&.active {
+			border-left-color: var( --accent-background );
+			background: var( --background-secondary );
+			font-weight: 600;
+		}
+	}
+}
+
+// a <div>: it lays its page out as a VBox would
+.content {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+}
+
+// :: a component ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.componentpage {
+	min-height: 0;
+	padding: 28px 40px 80px;
+	overflow-y: auto;
+	gap: 8px;
+
+	> * {
+		flex-shrink: 0;
+		max-width: 1000px;
+	}
+
+	> .name {
+		font-size: 2rem;
+		font-weight: 700;
+		--label-color: var( --text-primary );
+	}
+
+	> .description {
+		font-size: 1.05rem;
+		line-height: 1.5;
+		color: var( --text-ternary );
+	}
+
+	> .section {
+		margin-top: 28px;
+		font-size: 1.35rem;
+		font-weight: 600;
+		--label-color: var( --text-primary );
+	}
+}
+
+pre {
+	margin: 0;
+	padding: 12px 16px;
+	overflow-x: auto;
+	background: var( --code-background );
+	color: var( --text-primary );
+	font-family: ui-monospace, Consolas, monospace;
+	font-size: 13px;
+	line-height: 1.5;
+	tab-size: 4;
+
+	&, * {
+		user-select: text;
+	}
+
+	.keyword { color: #a626a4; }
+	.string { color: #50a14f; }
+	.number { color: #c18401; }
+	.comment { color: #8a8d93; font-style: italic; }
+	.class { color: #4078f2; }
+}
+
+html.x4theme-dark pre {
+	.keyword { color: #c678dd; }
+	.string { color: #98c379; }
+	.number { color: #d19a66; }
+	.comment { color: #7f848e; }
+	.class { color: #61afef; }
+}
+
+// the configurator: the component, its props, its code under them
+.usage {
+	align-items: stretch;
+	border: 1px solid var( --border );
+
+	// a <div>, not a Box: a Box is a <fieldset>, whose min-height does not reach
+	// the flex box inside it (nothing centered in it, nothing stretched)
+	> .preview {
+		display: flex;
+		min-height: 280px;
+		padding: 24px;
+		justify-content: center;
+		align-items: center;
+		overflow: auto;
+
+		// a view that fills what it is in
+		> .x4settingsview {
+			flex: 1;
+		}
+
+		// a Box stretches (.x4box): the small ones (a TextEdit, a ColorInput) are centered too
+		> .x4box {
+			align-self: center;
+		}
+	}
+
+	> .props {
+		flex: none;
+		width: 340px;
+		border: none;
+		border-left: 1px solid var( --border );
+
+		// the background of the page everywhere: rows not alternated, groups without shadow
+		--propertygrid-odd-background: var( --background-primary );
+		--propertygrid-group-background: var( --background-primary );
+
+		.group {
+			box-shadow: none;
+		}
+	}
+}
+
+.codeview {
+	> .bar {
+		gap: 4px;
+		padding: 4px 8px;
+
+		.x4button {
+			margin: 0;
+			padding: 4px 10px;
+			--button-background: transparent;
+			--button-color: var( --text-ternary );
+			--button-background-hover: var( --background-secondary );
+			--button-color-hover: var( --text-primary );
+			--button-background-focus: transparent;
+			--button-color-focus: var( --text-primary );
+			--button-background-active: var( --background-secondary );
+			--button-color-active: var( --text-primary );
+
+			&.active {
+				color: var( --text-primary );
+				box-shadow: inset 0 -2px 0 var( --accent-background );
+			}
+
+			&:focus #label {
+				text-decoration: none;
+			}
+		}
+	}
+
+	> pre {
+	}
+}
+
+.usage-code {
+	border: 1px solid var( --border );
+	border-top: none;
+	background: var( --code-background );
+}
+
+// a variation
+.democard {
+	gap: 6px;
+	margin-top: 12px;
+	padding: 16px 20px;
+	border: 1px solid var( --border );
+	scroll-margin-top: 16px;
+
+	> .title {
+		align-self: flex-start;
+		color: var( --text-primary );
+		font-size: 1.1rem;
+		font-weight: 600;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	> .text {
+		color: var( --text-ternary );
+		line-height: 1.5;
+	}
+
+	// a VBox: a SettingsView takes the width, a box of buttons too, its buttons on the left
+	> .demo {
+		padding: 12px 0;
+
+		// the boxes of a demo: some room between their children
+		> .x4hbox, > .x4vbox > .x4hbox {
+			gap: 8px;
+		}
+	}
+
+	> .toggle {
+		align-self: flex-start;
+		margin: 0;
+	}
+
+	> .codeview {
+		margin-top: 6px;
+		border: 1px solid var( --border );
+		background: var( --code-background );
+	}
+}

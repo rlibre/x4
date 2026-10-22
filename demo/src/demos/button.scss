@@ -1,0 +1,15 @@
+/* @demo icons */
+.x4button.round {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	justify-content: center;
+}
+
+/* @demo styles */
+.x4button.green {
+	--button-background: var( --color-green-700 );
+	--button-background-hover: var( --color-green-600 );
+	--button-background-focus: var( --color-green-800 );
+	--button-background-active: var( --color-green-900 );
+}

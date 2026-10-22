@@ -1,0 +1,10 @@
+/* @demo tools */
+.x4dockingview.dock {
+	border: 1px solid var( --border );
+
+	.x4simpletext {
+		padding: 8px;
+		white-space: pre-line;
+		color: var( --text-primary );
+	}
+}

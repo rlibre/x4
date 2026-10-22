@@ -1,0 +1,9 @@
+/* @demo renderer */
+.x4dropdownlist .size {
+	padding: 2px 8px;
+	color: var( --text-secondary );
+}
+
+.x4dropdownlist .x4item.selected .size {
+	color: var( --accent-color );
+}

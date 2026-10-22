@@ -1,0 +1,29 @@
+// gallery: x4 misses a comma in label.module.scss ("&.al-right &.right"): a label
+// aligned on the right does not push its content to the right
+.x4label.al-right {
+	justify-content: end;
+	text-align: right;
+}
+
+/* @demo icons */
+.x4label.warning {
+	--label-color: var( --warning-background );
+	--label-icon-color: var( --warning-background );
+}
+
+/* @demo alignment */
+.aligned > .x4label {
+	padding: 4px 8px;
+	border: 1px dashed var( --border );
+}
+
+/* @demo vertical */
+.tiles > .x4label.vertical {
+	width: 96px;
+	padding: 12px;
+	background: var( --background-secondary );
+
+	#icon {
+		height: 32px;
+	}
+}

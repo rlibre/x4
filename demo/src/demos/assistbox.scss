@@ -1,0 +1,33 @@
+/* @demo wizard */
+.x4assistbox.steps {
+	border: 1px solid var( --border );
+
+	.step {
+		justify-content: center;
+		gap: 8px;
+		padding: 16px;
+
+		.x4input {
+			padding: 4px 6px;
+			border: 1px solid var( --border );
+		}
+	}
+}
+
+/* @demo carousel */
+.x4assistbox.slides {
+	background: var( --background-secondary );
+
+	.slide {
+		justify-content: center;
+		gap: 10px;
+		font-size: 1.4rem;
+		--label-color: var( --text-primary );
+
+		#icon {
+			width: 2rem;
+			height: 2rem;
+			fill: var( --accent-background );
+		}
+	}
+}

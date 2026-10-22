@@ -1,0 +1,12 @@
+{
+	"name": "x4-demo-gallery",
+	"version": "1.0",
+	"private": true,
+	"scripts": {
+		"gen": "node gen-sources.mjs",
+		"build": "node gen-sources.mjs && x4js build"
+	},
+	"dependencies": {
+		"x4js": "^2.3.25"
+	}
+}

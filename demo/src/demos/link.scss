@@ -1,0 +1,26 @@
+/* @demo content */
+.x4link.card-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 360px;
+	padding: 12px;
+	border: 1px solid var( --border );
+	color: var( --text-primary );
+	text-decoration: none;
+
+	&:hover {
+		border-color: var( --accent-background );
+	}
+
+	.x4icon {
+		width: 20px;
+		height: 20px;
+		fill: currentColor;
+	}
+
+	.title {
+		font-weight: 600;
+		--label-color: var( --text-primary );
+	}
+}

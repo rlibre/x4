@@ -1,0 +1,18 @@
+/* @demo longContent */
+.scroll-frame {
+	border: 1px solid var( --border );
+
+	.x4viewport {
+		padding: 8px;
+	}
+}
+
+/* @demo bothWays */
+.scroll-frame .big {
+	justify-content: space-between;
+	background: linear-gradient( 135deg, var( --background-ternary ), var( --color-primary-a20 ) );
+
+	> .far {
+		align-self: flex-end;
+	}
+}

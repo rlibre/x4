@@ -1,0 +1,10 @@
+/* @demo toolbar */
+.x4btngroup.packed {
+	align-self: flex-start;
+	border: 1px solid var( --border );
+
+	// the icons of packed buttons are drawn in the color of their text
+	.x4button #icon {
+		fill: var( --ol-button-color );
+	}
+}

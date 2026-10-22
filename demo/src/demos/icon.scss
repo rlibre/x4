@@ -1,0 +1,14 @@
+/* @demo inlineSvg */
+.icon-row {
+	gap: 12px;
+
+	> .x4icon {
+		width: 32px;
+		height: 32px;
+		color: var( --text-primary );
+
+		&.red {
+			color: var( --color-red-600 );
+		}
+	}
+}

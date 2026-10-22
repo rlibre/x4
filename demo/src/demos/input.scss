@@ -1,0 +1,14 @@
+// gallery only: an Input has no border of its own (a TextEdit gives it one);
+// on this page a line under it shows where it is
+.componentpage:has( #input-types ) input.x4input {
+	border-bottom: 1px solid var( --border-hover );
+}
+
+/* @demo types */
+.input-types {
+	gap: 6px;
+
+	> .x4hbox > .x4label {
+		width: 90px;
+	}
+}

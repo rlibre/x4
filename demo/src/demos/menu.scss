@@ -1,0 +1,8 @@
+/* @demo context */
+.menu-zone {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 120px;
+	border: 2px dashed var( --border );
+}
