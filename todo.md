@@ -106,8 +106,6 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 Noted on 2026-10-21. What was only missing from the docs is now in aicontext and aiguide (`initTooltips`, the Form flex by default and its padding, `sub_cols`, the click of a Listbox, `parentElement`, `refs` on a Box only, the typed `_tr`, the global messages). Left: what asks for a change of the code.
 
-- **`Label` `align: "right"`** has no visible effect when the width of the `Label` is set by a CSS rule: `justify-content: flex-end` is needed on the element.
-- **`isMac` is not exported** (`core/core_shortcuts.ts`): x4 knows it runs on a Mac for its shortcuts (`Mod` = Cmd, `shortcutText`), but an application that must do the same (a copy by Option+drag, the key "delete" of a Mac that sends Backspace) tests it again. Timex: `IS_MAC` in `tools.ts`.
 - **`this.refs` exists only on `Box`**: `Component` has none, and `this.refs.x = ...` throws a `TypeError` at run time (now said in aicontext). In an async event handler the error goes unnoticed: in Timex, the button OK of the input dialog seemed to do nothing. To decide: initialize `refs` in `Component`.
 
 ## Found while building the gallery

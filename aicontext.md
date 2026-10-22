@@ -1453,6 +1453,7 @@ component.addShortcut(keys, callback, options?)         // a view: while the foc
 Application.instance().addShortcut(keys, callback, options?)   // the whole application, wherever the focus is
 
 shortcutText(keys: string): string                     // for a tooltip or a menu: "Ctrl+Z", "⌘Z" on a Mac
+isMac: boolean                                          // true on a Mac, an iPhone or an iPad: Mod is Cmd there
 
 class Shortcuts {                                       // the list itself; rarely used directly
   add(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void

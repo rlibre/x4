@@ -51,7 +51,8 @@ interface Keys {
 	key: string;
 }
 
-const isMac = /mac|iphone|ipad/i.test( navigator.platform ?? "" );
+/** true on a Mac, an iPhone or an iPad: Mod is Cmd there */
+export const isMac = /mac|iphone|ipad/i.test( navigator.platform ?? "" );
 
 /**
  * "Shift+Mod+K" -> shift, ctrl (cmd on a Mac), k

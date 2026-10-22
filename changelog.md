@@ -70,6 +70,10 @@ class EntryForm extends Form<FormProps, EntryEvents> { }
 
 - Its sections have no frame and the background of the page (white in the light theme); their title is in the accent colour, without band (`--settingsview-section-title-color`).
 
+### Shortcuts
+
+- `isMac` is exported: true on a Mac, an iPhone or an iPad, where `Mod` is Cmd.
+
 ## 2.3.25 (2026-10-21)
 
 ### Shortcuts
@@ -84,7 +88,8 @@ class EntryForm extends Form<FormProps, EntryEvents> { }
 
 - A `Button` is `type="button"`: in a `<form>`, Enter in a field does not click it (the browser clicks the first `submit` of the form). `attrs: { type: "submit" }` gives a submit.
 - A `Form` is never sent by the browser: its `submit` is prevented (Enter in its only field would send it, and reload the page).
-- A `Form` with `flex: false` has the height of its content (a toolbar, a line).- Migration: a `Button` that must submit a `<form>` of the page (not a `Form` of x4) gets `attrs: { type: "submit" }`.
+- A `Form` with `flex: false` has the height of its content (a toolbar, a line).
+- Migration: a `Button` that must submit a `<form>` of the page (not a `Form` of x4) gets `attrs: { type: "submit" }`.
 
 ```ts
 new Button( { label: "Send", attrs: { type: "submit" } } );
