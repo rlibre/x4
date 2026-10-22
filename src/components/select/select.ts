@@ -17,7 +17,7 @@
 
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvents, ComponentProps, EvChange, EvFocus  } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, isArray } from '../../core/core_tools';
+import { IComponentInterface, IFormElement, isArray } from '../../core/core_tools';
 
 import { ListboxID, ListItem } from '../components';
 
@@ -57,8 +57,8 @@ interface SelectEvents extends ComponentEvents {
  * ```
  */
 
-@class_ns( "x4" )
 export class Select extends Component<SelectProps,SelectEvents> {
+	static classPrefix = "x4";
 
 	private _items: ListItem[];
 

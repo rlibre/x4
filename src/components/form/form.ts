@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns, IFormElement } from '../../core/core_tools';
+import { IFormElement } from '../../core/core_tools';
 import { ComponentEvents } from '../../core/component';
 import { Box, BoxProps } from '../boxes/boxes';
 
@@ -36,8 +36,8 @@ type ValidationFn = ( values: FormValues, is_valid: boolean ) => boolean;
  * ```
  */
 
-@class_ns( "x4" )
 export class Form<P extends FormProps = FormProps, E extends ComponentEvents = ComponentEvents> extends Box<P,E> {
+	static classPrefix = "x4";
 	
 	private validator: ValidationFn;
 

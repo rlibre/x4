@@ -15,7 +15,7 @@
  **/
 
 import { Component, wrapDOM } from '../../core/component';
-import { class_ns, ITipHandler, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
+import { ITipHandler, Point, Rect, Timer, UnsafeHtml, unsafeHtml } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Popup, PopupProps } from '../popup/popup';
@@ -117,8 +117,8 @@ function closeTT( ) {
  * ```
  */
 
-@class_ns( "x4" )
 class Tooltip extends Popup {
+	static classPrefix = "x4";
 
 	constructor( props: PopupProps ) {
 		super( props );

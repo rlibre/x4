@@ -15,7 +15,7 @@
  **/
 
 import { ComponentProps } from '../../core/component';
-import { asap, class_ns, Rect, UnsafeHtml } from '../../core/core_tools';
+import { asap, Rect, UnsafeHtml } from '../../core/core_tools';
 
 import { Popup } from '../popup/popup';
 import { HBox, VBox } from '../boxes/boxes';
@@ -61,8 +61,9 @@ interface NotificationProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Notification extends Popup {
+	static classPrefix = "x4";
+
 	private static list = new Set<Notification>( );
 
 	constructor( props: NotificationProps ) {

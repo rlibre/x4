@@ -2,7 +2,7 @@
 // :: MESSAGEBOX ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 import { _tr } from '../../core/core_i18n';
-import { asap, class_ns, sprintf, unsafeHtml, UnsafeHtml } from '../../core/core_tools';
+import { asap, sprintf, unsafeHtml, UnsafeHtml } from '../../core/core_tools';
 
 import { HBox, VBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
@@ -50,9 +50,10 @@ export interface MessageBoxProps extends DialogProps {
  * and a PromptBox have the title bar of a Dialog and their icon in --msgbox-question-icon-color
  */
 
-@class_ns( "x4" )
 export class MessageBox extends Dialog<DialogProps>
 {
+	static classPrefix = "x4";
+
 	constructor(props: DialogProps) {
 		super(props);
 	}
@@ -141,9 +142,10 @@ interface InputOptions {
 	trim?: boolean;
 }
 
-@class_ns( "x4" )
 export class InputBox extends Dialog<DialogProps>
 {
+	static classPrefix = "x4";
+
 	constructor(props: DialogProps) {
 		super(props);
 	}
@@ -210,9 +212,10 @@ export class InputBox extends Dialog<DialogProps>
 // :: PROMPT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-@class_ns( "x4" )
 export class PromptBox extends Dialog<DialogProps>
 {
+	static classPrefix = "x4";
+
 	constructor(props: DialogProps) {
 		super(props);
 	}
@@ -293,8 +296,8 @@ export class PromptBox extends Dialog<DialogProps>
  * on the left of the bar; else it closes the box after 5s, the seconds left in the button.
  */
 
-@class_ns( "x4" )
 export class ProgressionBox  extends Dialog {
+	static classPrefix = "x4";
 
 	// an error or a warning: done( ) waits for OK
 	private _errors = 0;

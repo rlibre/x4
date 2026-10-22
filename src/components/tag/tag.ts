@@ -16,7 +16,7 @@
 
 
 import { ComponentProps } from '../../core/component';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { UnsafeHtml } from '../../core/core_tools';
 import { HBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
 import { SimpleText } from '../label/label';
@@ -40,8 +40,8 @@ export interface TagProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Tag extends HBox<TagProps> {
+	static classPrefix = "x4";
 
 	constructor( props: TagProps ) {
 		super( props );

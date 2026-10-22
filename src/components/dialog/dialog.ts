@@ -20,7 +20,7 @@ import { BtnGroup, BtnGroupItem } from "../btngroup/btngroup"
 import { HBox } from '../boxes/boxes';
 import { Label } from '../label/label';
 import { CoreEvent, EventCallback } from '../../core/core_events';
-import { asap, class_ns, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
+import { asap, getFocusableElements, IComponentInterface, isString, ITabHandler } from '../../core/core_tools';
 import { ComponentEvent } from '../../core/component';
 import { Button } from '../button/button';
 import icons from "../assets/icons"
@@ -58,8 +58,8 @@ interface DialogEvents extends PopupEvents {
  * ```
  */
 
-@class_ns("x4")
 export class Dialog<P extends DialogProps = DialogProps, E extends DialogEvents = DialogEvents> extends Popup<P, E> {
+	static classPrefix = "x4";
 
 	private form: Form;
 	private _title: Label;

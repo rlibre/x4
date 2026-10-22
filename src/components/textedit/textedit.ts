@@ -16,7 +16,7 @@
 
 //import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvents, makeUniqueComponentId } from '../../core/component';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { UnsafeHtml } from '../../core/core_tools';
 
 import { BoxProps, HBox } from '../boxes/boxes';
 import { DateProps, Input, InputProps, NumberProps, TextInputProps, TimeProps } from "../input/input"
@@ -81,8 +81,8 @@ interface TextEditProps extends InputProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class TextEdit<E extends ComponentEvents = ComponentEvents> extends HBox<BoxProps,E> {
+	static classPrefix = "x4";
 
 	private input: Input;
 

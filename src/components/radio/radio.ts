@@ -15,7 +15,6 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
 import { Label } from '../label/label';
@@ -57,8 +56,8 @@ interface RadioProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Radio extends Component<RadioProps,RadioEvents> {
+	static classPrefix = "x4";
 
 	private _check: HBox;
 	private _input: Input;

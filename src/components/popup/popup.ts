@@ -17,7 +17,7 @@
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM, makeUniqueComponentId } from "../../core/component"
 
 import { CSizer } from '../sizers/sizer';
-import { Rect, Point, class_ns, asap } from '../../core/core_tools';
+import { Rect, Point, asap } from '../../core/core_tools';
 import { Box } from '../boxes/boxes'
 
 import "./popup.module.scss"
@@ -70,8 +70,8 @@ function dismissLast( e: UIEvent ) {
  * ```
  */
 
-@class_ns( "x4" )
 export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = PopupEvents> extends Box<P,E> {
+	static classPrefix = "x4";
 
 	private _isshown = false;
 	protected _ismodal = false;

@@ -23,7 +23,7 @@ import { Label } from '../label/label';
 import { VBox } from '../boxes/boxes';
 
 import "./textarea.module.scss";
-import { class_ns, IFormElement } from '../../core/core_tools';
+import { IFormElement } from '../../core/core_tools';
 
 /**
  * 
@@ -50,8 +50,8 @@ export interface TextAreaEvents extends ComponentEvents {
  *
  */
 
-@class_ns( "x4" )
 export class SimpleTextArea extends Component<SimpleTextAreaProps,TextAreaEvents> {
+	static classPrefix = "x4";
 
 	constructor( props: SimpleTextAreaProps ) {
 		super( { ...props, tag: "textarea" } );
@@ -142,8 +142,8 @@ export class SimpleTextArea extends Component<SimpleTextAreaProps,TextAreaEvents
  * ```
  */
 
-@class_ns( "x4" )
 export class TextArea extends VBox {
+	static classPrefix = "x4";
 	
 	private _input: SimpleTextArea;
 

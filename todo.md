@@ -14,9 +14,6 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
 - Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
 
-## `@class_ns( "x4" )` → a static member
-
-- To discuss (asked on 2026-10-21): replace the decorator `@class_ns( "x4" )` (80 classes) by a static member of the class, e.g. `static ns = "x4"`. Today the decorator writes the namespace on the constructor (`x4_class_ns_sym`), and the classes of a component are built by reading it on each constructor of the chain with `hasOwnProperty` (component.ts), so a class without it gets no prefix (FileDialog and SvgComponent have none, seen by the gallery). A static member is an own property of each class too, so the same reading works. To weigh: the classes of the applications that use the decorator, and `experimentalDecorators`, which `@data.*` of DataModel still needs.
 
 ## Dialog: the cursor of its title bar
 
@@ -130,7 +127,6 @@ Reported by the agent that built demo/gallery (2026-10-21): read, not checked.
 - **BtnGroup**: `reverse` is not used; its icons are white when `packed`.
 - **Breadcrumbs**: the hover is on `#text`; a `margin-bottom` of 2em; `BreadcrumbElement` is not exported.
 - **TextEdit**: the icons of its gadgets cannot be seen.
-- **FileDialog, SvgComponent**: no `@class_ns` (see "`@class_ns( "x4" )` → a static member").
 - **Types not exported**: `ComboboxProps`, `VideoProps`, `HeaderProps`.
 - **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Gridview.getFirstSel`, `Dialog.show`.
 

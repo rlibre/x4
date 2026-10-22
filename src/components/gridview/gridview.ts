@@ -16,7 +16,7 @@
 
 
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
-import { class_ns, formatDate, formatDateTime, formatMoney, formatNumber, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
+import { formatDate, formatDateTime, formatMoney, formatNumber, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
 import { DataModel, DataStore, DataView, DataRecord, EvViewChange, SortCallback } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
@@ -133,8 +133,8 @@ export interface GridviewProps extends ComponentProps {
  * ```
  */
 
-@class_ns("x4")
 export class Gridview<P extends GridviewProps = GridviewProps, E extends GridviewEvents = GridviewEvents> extends Component<P,E> {
+	static classPrefix = "x4";
 
 	private _dataview: DataView;
 	private _datamodel: DataModel;

@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, Flex } from '../../core/component'
-import { class_ns, date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
+import { date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
 import { _tr } from '../../core/core_i18n';
 import { EventCallback } from '../../core/core_events';
 
@@ -70,9 +70,10 @@ interface CalendarProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 {
+	static classPrefix = "x4";
+
 	private m_date: Date;
 
 	constructor(props: CalendarProps) {
@@ -333,6 +334,7 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
  * /
 
 export class PopupCalendar extends Popup {
+	static classPrefix = "x4";
 
 	m_cal: Calendar;
 

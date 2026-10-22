@@ -20,7 +20,6 @@ import { Button, ButtonProps } from '../button/button';
 import { HBox, VBox, StackBox, Box } from '../boxes/boxes';
 
 import "./tabs.module.scss"
-import { class_ns } from '../../core/core_tools';
 
 /**
  * 
@@ -40,8 +39,9 @@ export interface TabItem {
  * 
  */
 
-@class_ns( "x4" )
 class CTab extends Button {
+	static classPrefix = "x4";
+
 	constructor( props: ButtonProps, item: TabItem ) {
 		super( props );
 
@@ -78,8 +78,8 @@ interface TablistEvents extends ComponentEvents {
  * @internal
  */
 
-@class_ns( "x4" )
 class CTabList extends HBox<TablistProps,TablistEvents> {
+	static classPrefix = "x4";
 
 	private _selitem: Button;
 	
@@ -152,8 +152,8 @@ interface TabsProps extends Omit<ComponentProps,"content"> {
  * ```
  */
 
-@class_ns( "x4" )
 export class Tabs extends Box<TabsProps> {
+	static classPrefix = "x4";
 
 	private _list: CTabList;
 	private _stack: StackBox;

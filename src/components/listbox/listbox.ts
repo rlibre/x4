@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { kbNav, class_ns, isArray, UnsafeHtml, asap } from '../../core/core_tools';
+import { kbNav, isArray, UnsafeHtml, asap } from '../../core/core_tools';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Header } from '../header/header';
@@ -118,8 +118,8 @@ export interface ListboxProps extends Omit<ComponentProps,'content'> {
  * ```
  */
 
-@class_ns( "x4" )
 export class Listbox extends Component<ListboxProps,ListboxEvents> {
+	static classPrefix = "x4";
 
 private _view: Viewport;
 	private _lastsel: ListboxID;

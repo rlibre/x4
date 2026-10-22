@@ -17,7 +17,7 @@
 import { ComponentEvent, ComponentEvents } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { SvgBuilder, SvgComponent, SvgGroup, SvgPath, SvgProps, SvgShape } from '../../core/core_svg';
-import { class_ns, clamp, formatNumber, IRect, isNumber, sanitizeHtml } from '../../core/core_tools';
+import { clamp, formatNumber, IRect, isNumber, sanitizeHtml } from '../../core/core_tools';
 
 import "./chart.module.scss"
 
@@ -234,8 +234,8 @@ function drawBar( grp: SvgGroup, x: number, w: number, y0: number, y1: number, r
  * ```
  */
 
-@class_ns( "x4" )
 export class Chart extends SvgComponent<ChartProps,ChartEvents> {
+	static classPrefix = "x4";
 
 	private _type: ChartType;
 	private _series: ChartSerie[];

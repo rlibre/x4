@@ -18,7 +18,7 @@ import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core
 import { EventCallback } from '../../core/core_events';
 import { HBox } from '../boxes/boxes';
 import { Icon } from '../icon/icon';
-import { class_ns, IComponentInterface, IFormElement } from '../../core/core_tools';
+import { IComponentInterface, IFormElement } from '../../core/core_tools';
 
 import icons from "../assets/icons"
 
@@ -49,8 +49,8 @@ export interface RatingProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Rating extends HBox<RatingProps,RatingEventMap> {
+	static classPrefix = "x4";
 
 	private m_els: Component[];
 

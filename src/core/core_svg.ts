@@ -1013,6 +1013,7 @@ export interface SvgProps extends ComponentProps {
  */
 
 export class SvgComponent<P extends SvgProps = SvgProps, E extends ComponentEvents = ComponentEvents> extends Component<P,E> {
+	static classPrefix = "x4";
 
 	/**
 	 * Creates an instance of `SvgComponent`.

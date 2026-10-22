@@ -21,7 +21,7 @@ import { HBox, VBox } from "../boxes/boxes"
 import { Input } from "../input/input"
 import { ListboxID, ListItem } from "../listbox/listbox"
 import { Label, SimpleText } from "../label/label"
-import { asap, class_ns, isFunction, isNumber } from '../../core/core_tools';
+import { asap, isFunction, isNumber } from '../../core/core_tools';
 import { Icon, ScrollView } from '../components'
 import { ColorInput } from '../colorinput/colorinput'
 import { EvColorChange } from '../colorpicker/colorpicker'
@@ -84,8 +84,8 @@ export interface PropertyProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class PropertyGrid extends VBox {
+	static classPrefix = "x4";
 
 	private root: Component;
 	private groups: PropertyGroup[];

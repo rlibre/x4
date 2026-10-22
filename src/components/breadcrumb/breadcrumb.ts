@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { parseRoute, Router } from '../../core/core_router';
 
 import { BoxProps, Button, HBox, Icon } from '../components';
@@ -64,8 +63,8 @@ interface BreadcrumbsProps extends BoxProps{
  * ```
  */
 
-@class_ns( "x4" )
 export class Breadcrumbs extends HBox<BreadcrumbsProps,BreadcrumbEvents> {
+	static classPrefix = "x4";
 
 	constructor( props: BreadcrumbsProps ) {
 		super( props );

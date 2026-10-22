@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvents, ComponentProps, EvClick } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { UnsafeHtml } from '../../core/core_tools';
 import { Label } from '../label/label';
 
 import "./link.module.scss"
@@ -45,8 +45,9 @@ interface LinkProps extends ComponentProps {
  * 
  */
 
-@class_ns( "x4" )
 export class Link extends Component<LinkProps,LinkEvents> {
+	static classPrefix = "x4";
+
 	constructor( props: LinkProps ) {
 		super( { tag: "a", ...props} );
 

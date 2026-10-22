@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { centerRect, class_ns } from '../../core/core_tools';
+import { centerRect } from '../../core/core_tools';
 import { Component, ComponentProps } from '../../core/component'
 import { SvgBuilder, SvgComponent } from '../../core/core_svg';
 
@@ -49,8 +49,8 @@ export const simpleColorStop = [
  * ```
  */
 
-@class_ns( "x4" )
 export class Gauge extends Component<GaugeProps> {
+	static classPrefix = "x4";
 
 	private pos: number;
 	private stops: string[];

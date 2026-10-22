@@ -3,7 +3,6 @@ import { EventCallback } from '../../core/core_events';
 
 import { Input } from '../input/input';
 import { Label } from '../label/label';
-import { class_ns } from '../../core/core_tools';
 
 import icons from "../assets/icons";
 
@@ -45,8 +44,9 @@ interface CheckboxProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
+	static classPrefix = "x4";
+
 	readonly _input: Input;
 
 	/**

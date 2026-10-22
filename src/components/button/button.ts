@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvents, ComponentProps, EvClick } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
-import { class_ns, isFunction, UnsafeHtml } from '../../core/core_tools';
+import { isFunction, UnsafeHtml } from '../../core/core_tools';
 
 import { Icon } from "../icon/icon"
 import { Menu, MenuElement } from '../menu/menu';
@@ -113,8 +113,8 @@ export interface ButtonProps extends ComponentProps {
  * the --ol-button-* variables are the ones of the outline buttons
  */
 
-@class_ns( "x4" )
 export class Button extends Component<ButtonProps,ButtonEvents> {
+	static classPrefix = "x4";
 
 	#text: Component;
 

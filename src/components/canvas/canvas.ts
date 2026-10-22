@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
 import { EventCallback } from "../../core/core_events"
 import { CanvasEx, createPainter } from './canvas_ex';
@@ -45,8 +44,8 @@ export interface CanvasProps extends ComponentProps {
  * Standard Canvas
  */
 
-@class_ns( "x4" )
 export class Canvas extends Component<CanvasProps, CanvasEventMap> {
+	static classPrefix = "x4";
 
 	private m_iwidth: number = -1;
 	private m_iheight: number = -1;

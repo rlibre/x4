@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentProps } from '../../core/component';
 
 import "./icon.module.scss"
@@ -111,8 +110,8 @@ export interface IconProps extends ComponentProps {
  * The CSS class for this component is automatically generated as `x4icon`.
  */
 
-@class_ns( "x4" )
 export class Icon extends Component<IconProps> {
+	static classPrefix = "x4";
 
 	/**
 	 * Create a new Icon.

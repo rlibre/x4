@@ -18,7 +18,7 @@ import { Component, ComponentProps } from "../../core/component"
 import { Icon } from "../icon/icon"
 
 import "./label.module.scss";
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { UnsafeHtml } from '../../core/core_tools';
 
 export interface LabelProps extends ComponentProps {
 	text?: string | UnsafeHtml;
@@ -37,8 +37,8 @@ export interface LabelProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Label extends Component<LabelProps> {
+	static classPrefix = "x4";
 	
 	constructor( p: LabelProps ) {
 		super( { ...p, content: null } );
@@ -79,8 +79,8 @@ export interface SimpleTextProps extends ComponentProps {
 	align?: "left" | "center" | "right";
 }
 
-@class_ns( "x4" )
 export class SimpleText extends Component<SimpleTextProps> {
+	static classPrefix = "x4";
 	
 	/**
 	 * 

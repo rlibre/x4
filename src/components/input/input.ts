@@ -16,7 +16,7 @@
 
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentProps, EvChange, EvFocus } from '../../core/component';
-import { class_ns, formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools';
+import { formatIntlDate, IComponentInterface, IFormElement, isString } from '../../core/core_tools';
 
 import "./input.module.scss"
 
@@ -214,8 +214,9 @@ interface InputEvents extends ComponentEvent {
  * ```
  */
 
-@class_ns( "x4" )
 export class Input extends Component<InputProps,InputEvents> {
+	static classPrefix = "x4";
+
 	constructor( props: InputProps ) {
 		super( { tag: "input", ...props } );
 

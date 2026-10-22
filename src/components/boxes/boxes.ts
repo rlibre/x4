@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { asap, class_ns, isArray, isNumber } from '../../core/core_tools';
+import { asap, isArray, isNumber } from '../../core/core_tools';
 import { Component, ComponentEvents, ComponentProps, EvSelectionChange } from "../../core/component"
 import { EventCallback } from '../../core/core_events';
 import { HSizer, VSizer } from '../sizers/sizer';
@@ -68,8 +68,9 @@ export interface BoxProps extends ComponentProps {
  * 
  */
 
-@class_ns( "x4" )
 export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
+	static classPrefix = "x4";
+
 	protected refs: Record<string,Component> = {};
 	constructor( props: P ) {
 		super( { tag: "div", ...props } );
@@ -82,8 +83,9 @@ export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=Component
  * Arranges child components in a horizontal line.
  */
 
-@class_ns( "x4" )
 export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+	static classPrefix = "x4";
+
 }
 
 /**
@@ -92,8 +94,9 @@ export class HBox<P extends BoxProps=BoxProps,E extends ComponentEvents=Componen
  * The CSS class for this component is automatically generated as `x4vbox`.
  */
 
-@class_ns( "x4" )
 export class VBox<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+	static classPrefix = "x4";
+
 	constructor( p: P ) {
 		super( p );
 	}
@@ -144,8 +147,9 @@ function split_content( panels: Component[], horz: boolean ) {
  * })
  */
 
-@class_ns( "x4" )
 export class HSplitBox<P extends SplitBoxProps=SplitBoxProps,E extends ComponentEvents=ComponentEvents> extends HBox<P,E> {
+	static classPrefix = "x4";
+
 	constructor( props: P ) {
 		super( { ...props, content: split_content( props.content, true ) } );
 	}
@@ -157,8 +161,9 @@ export class HSplitBox<P extends SplitBoxProps=SplitBoxProps,E extends Component
  * The CSS class for this component is automatically generated as `x4vsplitbox`.
  */
 
-@class_ns( "x4" )
 export class VSplitBox<P extends SplitBoxProps=SplitBoxProps,E extends ComponentEvents=ComponentEvents> extends VBox<P,E> {
+	static classPrefix = "x4";
+
 	constructor( props: P ) {
 		super( { ...props, content: split_content( props.content, false ) } );
 	}
@@ -214,8 +219,8 @@ interface StackItemEx extends StackItem {
  * The CSS class for this component is automatically generated as `x4stackbox`.
  */
 
-@class_ns( "x4" )
 export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeBoxEvents = StackeBoxEvents>  extends Box<StackBoxProps,StackeBoxEvents> {
+	static classPrefix = "x4";
 	
 	protected _items: StackItemEx[];
 	protected _cur: number;
@@ -379,8 +384,8 @@ export class StackBox<P extends StackBoxProps = StackBoxProps, E extends StackeB
  * The CSS class for this component is automatically generated as `x4assistbox`.
  */
 
-@class_ns( "x4" )
 export class AssistBox extends StackBox {
+	static classPrefix = "x4";
 
 	/**
      * Selects the next or previous page in the stack.
@@ -441,8 +446,8 @@ export interface GridBoxProps extends Omit<BoxProps,"content"> {
  * Auto-generates CSS class: `x4gridbox`.
  */
 
-@class_ns("x4")
 export class GridBox<P extends GridBoxProps=GridBoxProps,E extends ComponentEvents=ComponentEvents> extends Box<P,E> {
+	static classPrefix = "x4";
 
 	constructor( props: P ) {
 		super( props );
@@ -551,8 +556,8 @@ interface MasonryProps extends Omit<BoxProps,"content"> {
  * Auto-generates CSS class: `x4masonrybox`.
  */
 
-@class_ns("x4")
 export class MasonryBox extends Box<MasonryProps> {
+	static classPrefix = "x4";
 
 	constructor(props: MasonryProps ) {
 		super(props);

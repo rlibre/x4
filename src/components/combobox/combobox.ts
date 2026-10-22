@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvClick, EvSelectionChange, makeUniqueComponentId } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, kbNav } from '../../core/core_tools';
+import { IComponentInterface, IFormElement, kbNav } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 
 import { Listbox, ListboxID, ListItem } from '../listbox/listbox';
@@ -42,8 +42,8 @@ interface DropdownProps extends Omit<PopupProps,"content"> {
 }
 
 
-@class_ns( "x4" )
 export class DropdownList extends Popup<DropdownProps,DropdownEvents> {
+	static classPrefix = "x4";
 
 	private _list: Listbox;
 
@@ -108,8 +108,8 @@ interface ComboboxProps extends Omit<ComponentProps,"content"> {
  * ```
  */
 
-@class_ns( "x4" )
 export class Combobox extends Component<ComboboxProps,ComboboxEvents> {
+	static classPrefix = "x4";
 
 	private _popup: DropdownList;
 	//private _label: Label;

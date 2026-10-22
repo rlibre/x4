@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvent, ComponentEvents, EvChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { class_ns, kbNav } from '../../core/core_tools';
+import { kbNav } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { DropdownList } from '../combobox/combobox';
@@ -96,8 +96,8 @@ const render_id_item = ( item: ListItem ) => {
  * })
  */
 
-@class_ns( "x4" )
 export class AutoComplete extends TextEdit<AutoCompleteEvents> {
+	static classPrefix = "x4";
 
 	private _popup: DropdownList;
 

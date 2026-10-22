@@ -18,7 +18,7 @@
 import { Component, ComponentContent, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { GridColumn } from '../gridview/gridview'
 
-import { class_ns, formatDate, formatMoney, formatNumber, IFormElement, isFunction, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
+import { formatDate, formatMoney, formatNumber, IFormElement, isFunction, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
 import { CoreEvent, EventCallback, EventMap } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -282,8 +282,8 @@ export interface SpreadsheetProps extends ComponentProps {
  * ```
  */
 
-@class_ns("x4")
 export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extends SpreadsheetEvents = SpreadsheetEvents> extends Component<P, E> {
+	static classPrefix = "x4";
 
 	private _columns: SpreadsheetColumn[];
 	private _store: Store;

@@ -15,7 +15,6 @@
  **/
 
 import { Component, ComponentProps } from '../../core/component';
-import { class_ns } from '../../core/core_tools';
 import { Box } from '../boxes/boxes';
 
 import "./video.module.scss"
@@ -31,8 +30,8 @@ interface VideoProps extends ComponentProps {
  * 
  */
 
-@class_ns( "x4" )
 export class Video extends Box {
+	static classPrefix = "x4";
 	
 	private _vplayer: HTMLVideoElement;
 

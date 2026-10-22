@@ -18,7 +18,7 @@ import { Component, ComponentEvents, ComponentProps } from '../../core/component
 import { _tr } from '../../core/core_i18n';
 import { dragManager } from '../../core/core_dragdrop';
 import { CoreEvent, EventCallback } from '../../core/core_events';
-import { class_ns, UnsafeHtml } from '../../core/core_tools';
+import { UnsafeHtml } from '../../core/core_tools';
 
 import { VBox } from '../boxes/boxes';
 import { SimpleText } from '../label/label';
@@ -47,6 +47,7 @@ interface FileDialogProps extends ComponentProps {
  */
 
 export class FileDialog extends Component {
+	static classPrefix = "x4";
 
 	constructor( props: FileDialogProps ) {
 		super( { 
@@ -97,8 +98,8 @@ interface FileDropProps extends ComponentProps {
  * 
  */
 
-@class_ns( "x4" )
 export class FileDrop extends VBox<FileDropProps,FileDropEvents> {
+	static classPrefix = "x4";
 
 	constructor( props: FileDropProps ) {
 		super( props );

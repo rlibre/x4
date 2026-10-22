@@ -19,7 +19,6 @@ import { Box, BoxProps, Button, HBox, VBox } from '../components';
 import { _tr } from '../../core/core_i18n';
 
 import "./keyboard.module.scss"
-import { class_ns } from '../../core/core_tools';
 import { Application } from '../../core/core_application';
 
 import icon_bksp from "./delete-left.svg";
@@ -275,9 +274,10 @@ interface KeyboardProps extends BoxProps {
  * --keyboard-zoom
  * ```
  */
-@class_ns( "x4" )
 export class Keyboard extends HBox<KeyboardProps>
 {
+	static classPrefix = "x4";
+
 	mode: KbMode;
 	upper: boolean;
 	locale: string;

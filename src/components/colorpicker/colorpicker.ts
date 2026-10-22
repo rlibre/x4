@@ -15,7 +15,7 @@
  **/
 
 import { Color, Hsv } from '../../core/core_colors';
-import { Rect, clamp, class_ns, isFeatureAvailable } from '../../core/core_tools';
+import { Rect, clamp, isFeatureAvailable } from '../../core/core_tools';
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
 import { Box, BoxProps, HBox, VBox } from '../boxes/boxes';
@@ -58,8 +58,8 @@ interface CommonEvents extends ComponentEvents {
  * 
  */
 
-@class_ns( "x4" )
 export class Saturation extends Box<BoxProps,CommonEvents> {
+	static classPrefix = "x4";
 
 	private mdown = false;
 	private irect: Rect;
@@ -191,8 +191,8 @@ export class Saturation extends Box<BoxProps,CommonEvents> {
  * @internal
  */
 
-@class_ns( "x4" )
 class HueSlider extends Box<BoxProps,CommonEvents> {
+	static classPrefix = "x4";
 
 	private thumb: Component;
 	private hsv: Hsv = { hue: 1, saturation: 1, value: 1, alpha: 1 };
@@ -271,8 +271,8 @@ class HueSlider extends Box<BoxProps,CommonEvents> {
  * @internal
  */
 
-@class_ns( "x4" )
 class AlphaSlider extends Box<BoxProps,CommonEvents> {
+	static classPrefix = "x4";
 	
 	private thumb: Component;
 	private color: Component;
@@ -389,8 +389,8 @@ interface ColorPickerChangeEvents extends ComponentEvents {
  * ```
  */
 
-@class_ns( "x4" )
 export class ColorPicker extends VBox<ColorPickerProps,ColorPickerChangeEvents> {
+	static classPrefix = "x4";
 
 	private _base: Color;
 	private _hsv: Hsv;

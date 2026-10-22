@@ -3,7 +3,7 @@ import { Color } from '../../core/core_colors';
 import { Component, ComponentProps } from '../../core/component';
 
 import "./tickline.module.scss"
-import { class_ns, formatNumber } from '../../core/core_tools';
+import { formatNumber } from '../../core/core_tools';
 
 export interface TickLineProps extends ComponentProps {
 	values: number[];
@@ -31,8 +31,8 @@ export interface TickLineProps extends ComponentProps {
  * 
  */
 
-@class_ns( "x4" )
 export class TickLine extends Component<TickLineProps> {
+	static classPrefix = "x4";
 	
 	constructor( props: TickLineProps ) {
 		super( props );

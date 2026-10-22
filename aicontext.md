@@ -169,6 +169,15 @@ toggleClass(cls: string): void
 setClass(cls: string, set?: boolean): this
 ```
 
+A component gets one class for each class of its chain: its name in lower case, after the prefix that class
+declares itself with `static classPrefix` (not the one of its parent), then `x4`. Every component of x4 declares
+`static classPrefix = "x4"` (a Button: `x4button x4`); a class of the application declares its own, or none.
+
+```ts
+class Avatar extends Image { static classPrefix = "my"; }     // classes: myavatar x4image x4
+class Badge extends Label { }                                  // classes: badge x4label x4
+```
+
 ### HTML attributes & ARIA
 
 ```ts
@@ -1676,9 +1685,6 @@ getSystemMetrics(part: "scrollbar"|"zoom"): number
 setWaitCursor(wait: boolean): void; beep(): void
 isUnitLess(name): boolean; isFeatureAvailable(name: "eyedropper"): boolean
 
-// Class decorator
-class_ns(ns: string): ClassDecorator
-const x4_class_ns_sym: symbol
 const unitless                              // set of unitless CSS props
 
 // System interfaces

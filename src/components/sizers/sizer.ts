@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, componentFromDOM } from '../../core/component';
-import { class_ns, Point } from '../../core/core_tools';
+import { Point } from '../../core/core_tools';
 
 import "./sizer.module.scss"
 
@@ -43,8 +43,8 @@ type SizerType = "left" | "top" | "right" | "bottom" | "top-left" | "top-right" 
  */
 
 
-@class_ns( "x4" )
 export class CSizer extends Component<ComponentProps,CSizerEvent> {
+	static classPrefix = "x4";
 
 	private _type: SizerType;
 	private _ref: Component;
@@ -185,15 +185,17 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 	}
 }
 
-@class_ns( "x4" )
 export class HSizer extends CSizer {
+	static classPrefix = "x4";
+
 	constructor( next = true ) {
 		super( next ? "hsize-next" : "hsize-prev" );
 	}
 }
 
-@class_ns( "x4" )
 export class VSizer extends CSizer {
+	static classPrefix = "x4";
+
 	constructor( next = true ) {
 		super( next ? "vsize-next" : "vsize-prev" );
 	}

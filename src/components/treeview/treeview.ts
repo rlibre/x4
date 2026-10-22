@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { asap, class_ns } from '../../core/core_tools';
+import { asap } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 
@@ -84,8 +84,8 @@ export interface TreeviewEvents extends ComponentEvents {
  * ```
  */
 
-@class_ns( "x4" )
 class CTreeViewItem extends Box {
+	static classPrefix = "x4";
 
 	private _item: TreeItem;
 	private _label: Component;
@@ -187,8 +187,8 @@ class CTreeViewItem extends Box {
  * 
  */
 
-@class_ns( "x4" )
 export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
+	static classPrefix = "x4";
 
 	private _view: Viewport;
 	private _selection: ListboxID;

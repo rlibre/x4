@@ -16,7 +16,7 @@
 
 import { EventCallback } from '../../core/core_events';
 import { Component, ComponentEvents, ComponentProps, EvChange } from '../../core/component';
-import { class_ns, IComponentInterface, IFormElement, Rect } from '../../core/core_tools';
+import { IComponentInterface, IFormElement, Rect } from '../../core/core_tools';
 
 import { HBox } from '../boxes/boxes';
 import { Input } from '../input/input';
@@ -49,8 +49,8 @@ interface SliderProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Slider extends Component<SliderProps,SliderEvents> {
+	static classPrefix = "x4";
 
 	private _mdown = false;
 	private _irect: Rect = null;

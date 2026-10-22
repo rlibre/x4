@@ -1,4 +1,4 @@
-import { class_ns, getScrollbarSize } from '../../core/core_tools';
+import { getScrollbarSize } from '../../core/core_tools';
 import { Component, ComponentProps } from '../../core/component';
 import { HBox } from '../boxes/boxes';
 import { Label } from '../label/label';
@@ -36,8 +36,8 @@ const MAX_COLS = 10;	// columns with a default name (ref-c1...ref-c10) handled b
  * ```
  */
 
-@class_ns( "x4" )
 export class Header extends HBox<HeaderProps> {
+	static classPrefix = "x4";
 
 	private _els: Component[];
 	private _vwp: Component;

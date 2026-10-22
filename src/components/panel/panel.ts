@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentContent, ComponentProps } from '../../core/component';
-import { UnsafeHtml, Constructor, class_ns } from '../../core/core_tools';
+import { UnsafeHtml, Constructor } from '../../core/core_tools';
 
 import { VBox } from '../boxes/boxes';
 import { Label } from '../label/label';
@@ -37,8 +37,8 @@ interface PanelProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Panel extends VBox<PanelProps> {
+	static classPrefix = "x4";
 
 	private _title: Label;
 	private _body: Component;

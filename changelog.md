@@ -5,6 +5,16 @@ A version gets its date when it is published.
 
 ## 2.3.26
 
+### CSS classes
+
+- A component of x4 declares the prefix of its css class with `static classPrefix = "x4"`. `PopupCalendar`, `FileDialog` and `SvgComponent` have it too: `x4popupcalendar`, `x4filedialog`, `x4svgcomponent`.
+- The decorator `@class_ns` and `x4_class_ns_sym` are removed.
+- Migration: an application had no reason to use `@class_ns`: take it off (its class then has no prefix), or declare `static classPrefix = "my"` in the class. A css rule on `.popupcalendar`, `.filedialog` or `.svgcomponent` gets the prefix `x4`.
+
+```ts
+class Badge extends Label { static classPrefix = "my"; }		// mybadge x4label x4
+```
+
 ### Locale
 
 - The formats of numbers, amounts and dates follow a locale: the one of the language (`_tr.global.locale`: "fr-FR" for fr, "en-US" for en, "es-ES", "de-DE"), or the one `Application.setLocale( locale, currency )` forces. The currency is "EUR" by default. `Application.getLocale( )`, `Application.getCurrency( )`.

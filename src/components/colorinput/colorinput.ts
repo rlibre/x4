@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvents } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { isFeatureAvailable, class_ns, isFunction, IComponentInterface, IFormElement } from '../../core/core_tools';
+import { isFeatureAvailable, isFunction, IComponentInterface, IFormElement } from '../../core/core_tools';
 import { Color } from '../../core/core_colors';
 
 import { BoxProps, HBox } from '../boxes/boxes';
@@ -84,8 +84,9 @@ interface ColorInputEvents extends ComponentEvents {
  * ```
  */
 
-@class_ns( "x4" )
 export class ColorInput extends HBox<ColorInputProps,ColorInputEvents> {
+	static classPrefix = "x4";
+
 	static "$cls-ns" = "x4";
 
 	private _color: Color;				// null: no color

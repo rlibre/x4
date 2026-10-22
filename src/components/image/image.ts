@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentEvents, ComponentProps } from '../../core/component';
 import { EventCallback, CoreEvent } from '../../core/core_events';
 import { dragManager } from '../../core/core_dragdrop';
@@ -56,8 +55,8 @@ export interface ImageProps extends ComponentProps {
  * ```
  */
 
-@class_ns( "x4" )
 export class Image<P extends ImageProps = ImageProps, E extends ImageEvents = ImageEvents> extends Component<P,E> {
+	static classPrefix = "x4";
 
 	private _img: Component;
 

@@ -16,7 +16,7 @@
 
 import { Component, ComponentEvents, ComponentProps, Flex, Space } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { class_ns, isString } from '../../core/core_tools';
+import { isString } from '../../core/core_tools';
 import { _tr } from '../../core/core_i18n'
 
 import { Button } from '../button/button';
@@ -64,8 +64,8 @@ interface BtnGroupProps extends Omit<ComponentProps,"content"> {
  * a packed group draws its buttons with the --ol-button-* variables of Button
  */
 
-@class_ns( "x4" )
 export class BtnGroup extends Box<BtnGroupProps,BtnGroupEvents> {
+	static classPrefix = "x4";
 
 	constructor( props: BtnGroupProps ) {
 		super( props );

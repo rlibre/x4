@@ -16,7 +16,6 @@
 
 import { Component, ComponentEvent, ComponentEvents } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
-import { class_ns } from '../../core/core_tools';
 
 import { BoxProps, HBox, VBox } from '../boxes/boxes';
 import { Input } from '../input/input';
@@ -43,8 +42,8 @@ export interface SettingItemProps extends BoxProps {
  * together, put the items in a Form and give the controls a name.
  */
 
-@class_ns( "x4" )
 export class SettingItem extends VBox<SettingItemProps> {
+	static classPrefix = "x4";
 
 	constructor( props: SettingItemProps ) {
 		// the content goes under the name and the description, not in the box itself
@@ -118,8 +117,8 @@ function normalize( text: string ) {
  * ```
  */
 
-@class_ns( "x4" )
 export class SettingsView<P extends SettingsViewProps = SettingsViewProps> extends VBox<P,SettingsViewEvents> {
+	static classPrefix = "x4";
 
 	// fields, not refs: refs belong to the classes that derive from this one
 	private _search: Input = null;

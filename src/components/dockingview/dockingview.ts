@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { CSizer } from '../sizers/sizer';
@@ -185,8 +184,8 @@ interface Drag {
  * ```
  */
 
-@class_ns( "x4" )
 export class DockingView extends Component<DockingViewProps, DockingViewEvents> {
+	static classPrefix = "x4";
 
 	private layout: DockLayout;
 	private saved: { layout: DockLayout } = null;		// the state that remembers it

@@ -14,7 +14,6 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentProps } from "../../core/component"
 
 import "./viewport.module.scss"
@@ -24,8 +23,9 @@ import { Box, BoxProps } from '../components';
  * 
  */
 
-@class_ns( "x4" )
 export class Viewport extends Component {
+	static classPrefix = "x4";
+
 	constructor( props: ComponentProps ) {
 		super( props );
 	}
@@ -35,8 +35,9 @@ export class Viewport extends Component {
  * 
  */
 
-@class_ns( "x4" )
 export class ScrollView extends Box {
+	static classPrefix = "x4";
+
 	constructor( props: BoxProps ) {
 		super( props );
 		this.setContent( new Viewport( {} ) );
