@@ -22,6 +22,7 @@
 	
 	--gridview-header-cell-background: var( --background-primary );
 	--gridview-header-cell-color: var( --text-primary );
+	--gridview-header-sort-color: var( --gridview-header-cell-color );	// the arrow of the column sorted
 	--gridview-header-cell-vline: var( --border );
 	--gridview-header-cell-border: var( --border );
 
@@ -245,17 +246,19 @@
 				width: 1em;
 			}
 
+			// the arrow is the mask of the box: its colour follows the theme
 			&.sorted .sorter {
-				background-image: url("./arrow-down-light.svg");
 				display: block;
 				width: 20px;
 				height: 0.7em;
-				background-repeat: no-repeat;
-				background-position: 50% 50%;
+				background-color: var( --gridview-header-sort-color );
+				-webkit-mask: url("./arrow-down-light.svg") no-repeat 50% 50% / contain;
+				mask: url("./arrow-down-light.svg") no-repeat 50% 50% / contain;
 			}
-			
+
 			&.sorted.desc .sorter {
-				background-image: url("./arrow-up-light.svg");
+				-webkit-mask-image: url("./arrow-up-light.svg");
+				mask-image: url("./arrow-up-light.svg");
 			}
 			
 			.x-c-sizer:hover {

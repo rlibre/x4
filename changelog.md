@@ -3,6 +3,16 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.26
+
+### Gridview
+
+- The sort arrow of a column takes the colour of the header (`--gridview-header-sort-color`): light in the dark theme.
+
+### SettingsView
+
+- Its sections have no frame and the background of the page (white in the light theme); their title is in the accent colour, without band (`--settingsview-section-title-color`).
+
 ## 2.3.25 (2026-10-21)
 
 ### Shortcuts

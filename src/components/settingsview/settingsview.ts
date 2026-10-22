@@ -112,6 +112,7 @@ function normalize( text: string ) {
  * --settingsview-toc-width
  * --settingsview-section-background
  * --settingsview-section-title-background
+ * --settingsview-section-title-color
  * --settingsview-hover-background
  * --settingsview-marker
  * ```
