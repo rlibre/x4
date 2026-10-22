@@ -1,0 +1,147 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file timeline.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--timeline-done-color: var( --accent-background );
+	--timeline-done-icon-color: var( --accent-color );
+	--timeline-todo-color: var( --border );
+	--timeline-todo-icon-color: var( --text-ternary );
+	--timeline-title-color: var( --text-primary );
+	--timeline-text-color: var( --text-ternary );
+	--timeline-time-color: var( --text-primary );
+}
+
+// side by side: the marks on a line at the top, the content under each one
+
+.x4timeline {
+	display: flex;
+	flex-direction: row;
+
+	.item {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	.rail {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.mark {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background-color: var( --timeline-todo-color );
+
+		.x4icon {
+			height: 12px;
+			color: var( --timeline-todo-icon-color );
+			fill: var( --timeline-todo-icon-color );
+
+			&.empty {
+				display: none;
+			}
+		}
+	}
+
+	// the line to the next mark: only one side has a width
+	.line {
+		flex: 1;
+		border: 0 dashed var( --timeline-todo-color );
+		border-top-width: 2px;
+	}
+
+	.item.done > .rail {
+		.mark {
+			background-color: var( --timeline-done-color );
+
+			.x4icon {
+				color: var( --timeline-done-icon-color );
+				fill: var( --timeline-done-icon-color );
+			}
+		}
+
+		.line {
+			border-style: solid;
+		}
+	}
+
+	.item.next-done > .rail > .line {
+		border-color: var( --timeline-done-color );
+	}
+
+	.item:last-child > .rail > .line {
+		display: none;
+	}
+
+	.content {
+		padding: 8px 12px 0 0;
+	}
+
+	.title {
+		font-weight: bold;
+		color: var( --timeline-title-color );
+	}
+
+	.text {
+		color: var( --timeline-text-color );
+	}
+
+	.time {
+		margin-top: 4px;
+		font-size: 0.85em;
+		font-weight: 500;
+		color: var( --timeline-time-color );
+	}
+
+	// one under the other: the marks on a line on the left, the content beside each one
+
+	&.vertical {
+		flex-direction: column;
+
+		.item {
+			flex-direction: row;
+			flex: 0 0 auto;
+		}
+
+		.rail {
+			flex-direction: column;
+		}
+
+		.line {
+			border-top-width: 0;
+			border-left-width: 2px;
+		}
+
+		.content {
+			flex: 1;
+			min-width: 0;
+			padding: 0 0 1.5em 12px;
+		}
+
+		// the title on the middle of the mark
+		.title {
+			line-height: 24px;
+		}
+	}
+}

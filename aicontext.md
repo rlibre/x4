@@ -36,7 +36,7 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
-  │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── Progress, TickLine, Timeline, Canvas, Image, Spreadsheet, MonacoEditor
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
@@ -227,12 +227,16 @@ queryAll(selector: string): Component[]
 firstChild<T>(): T;  lastChild<T>(): T
 nextElement<T>(): T; prevElement<T>(): T
 parentElement<T>(cls?: Constructor<T>): T
+closest<T>(selector: string): T             // this one or an ancestor whose element matches the css selector; null if none
+contains(other: Component | Node): boolean  // other (a node, or the element of a component) is the element of this one or inside it
 childCount(): number
 enumChildComponents(recursive: boolean): Component[]
 enumChildNodes(recursive: boolean): Node[]
 visitChildren(cb: (el: Component) => boolean): void
 static parentElement<T>(dom: Node, cls?: Constructor<T>): T   // starts at the parent of dom, not at dom:
                                                                // test componentFromDOM(dom) first for the component of dom itself
+static closest<T>(dom: Element, selector: string): T           // starts at dom itself: in a click handler,
+                                                               // Component.closest(ev.target as Element, '.item')
 ```
 
 ### Visibility / state / focus / geometry
@@ -612,6 +616,41 @@ class Rating extends HBox {
   getValue(): number; setValue(v: number): void
   setSteps(n: number): void; setShape(icon: string): void
 }
+```
+
+### `Timeline` — events on a line, each with its icon in a round mark
+
+```ts
+interface TimelineItem {
+  icon?: string                            // in the round mark
+  title: string | UnsafeHtml               // in bold
+  text?: string | UnsafeHtml               // the sentence under it, in grey
+  date?: Date                              // written relative to now, in the locale: "il y a 2 heures", "yesterday"; none: no time shown
+  done?: boolean                           // the mark in the accent; else a grey mark
+}
+interface TimelineProps extends ComponentProps {
+  items?: TimelineItem[]
+  vertical?: boolean                       // true by default; false: the events side by side
+  renderer?: (item: TimelineItem) => Component   // what is beside the mark (the mark and the line stay)
+  click?: EventCallback<EvClick>           // a click anywhere in an event: ev.context is its TimelineItem
+}
+interface TimelineEvents extends ComponentEvents { click: EvClick }
+class Timeline extends Component<TimelineProps, TimelineEvents> {
+  setItems(items: TimelineItem[]): void    // the relative times are written here, not updated after
+}
+// the line to the next mark: in the accent when the next event is done, dashed after an event not done
+// CSS vars: --timeline-done-color --timeline-done-icon-color --timeline-todo-color --timeline-todo-icon-color
+//           --timeline-title-color --timeline-text-color --timeline-time-color
+```
+
+```ts
+new Timeline({
+  items: [
+    { icon: branch, title: 'New branch', text: 'fix-notifications, from master', date: created, done: true },
+    { icon: review, title: 'Code review', text: 'Waiting for a reviewer' },
+  ],
+  click: ev => this.openStep(ev.context as TimelineItem),
+})
 ```
 
 ---

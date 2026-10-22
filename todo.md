@@ -19,10 +19,6 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 
 - Change the cursor of the title bar of a Dialog (asked on 2026-10-21). Today its title bar (`.caption.caption-element`, dialog.ts) has no cursor of its own, even when the dialog can be moved by it (Popup gives it a `CMover` when `movable`); only a popup of class `popup-caption` gets `cursor: move` (popup.module.scss). To decide: `move` or `grab` / `grabbing` while dragged, and only when the dialog is movable.
 
-## Timeline
-
-- A Timeline (asked on 2026-10-21, from a picture of a GitHub-like activity): events one under the other on a vertical line, each with an icon in a round mark on the line, a title in bold, a sentence under it in grey, then its time in small ("2 hours ago"). The events done have the mark filled in the accent and a solid line in the accent; the ones to come a grey mark and a dashed grey line. Nothing is designed: the items (icon, title, text, time, state), a renderer of its own, the time written by `date_diff` or given as text.
-
 ## Drawer
 
 - A Drawer: a panel that slides in from an edge of the page (left, right, top, bottom) over the content, and goes away by a click outside or Escape (asked on 2026-10-21). x4 has nothing of the kind today. Nothing is designed: a Popup or a Component of its own, a mask behind it or not, pushing the content or over it.

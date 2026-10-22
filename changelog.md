@@ -3,6 +3,40 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.27
+
+### MonacoEditor
+
+- `x4js/monaco` builds again: it still used `@class_ns`, removed in 2.3.26.
+
+### Shortcuts
+
+- `isMac` is exported: true on a Mac, an iPhone or an iPad, where `Mod` is Cmd.
+
+### Component
+
+- `closest( selector )` and `Component.closest( dom, selector )`: the nearest component whose element matches a css selector, starting at itself (`parentElement` starts at the parent).
+- `contains( other )`: true when a node, or the element of a component, is the element of the component or inside it.
+- `Listbox` and `Treeview` find the item clicked with `Component.closest`.
+
+```ts
+const item = Component.closest( ev.target as Element, ".x4timeline > .item" );
+```
+
+### Timeline
+
+- `Timeline`: events one under the other on a line, each with its icon in a round mark, a title, a sentence and its date. The date is written relative to now, in the locale ("il y a 2 heures", "yesterday"); without a date, no time is shown. A `done` event has its mark in the accent; the line to the next mark is in the accent when the next event is done, dashed after an event not done. `vertical: false` puts the events side by side; `renderer` gives what is beside the mark. A click anywhere in an event fires `click`, its item as `context`. Its colours: `--timeline-*`.
+
+```ts
+new Timeline( {
+	items: [
+		{ icon: branch, title: "New branch", text: "fix-notifications, from master", date: created, done: true },
+		{ icon: review, title: "Code review", text: "Waiting for a reviewer" },
+	],
+	click: ev => this.openStep( ev.context ),
+} );
+```
+
 ## 2.3.26 (2026-10-22)
 
 ### CSS classes
@@ -69,10 +103,6 @@ class EntryForm extends Form<FormProps, EntryEvents> { }
 ### SettingsView
 
 - Its sections have no frame and the background of the page (white in the light theme); their title is in the accent colour, without band (`--settingsview-section-title-color`).
-
-### Shortcuts
-
-- `isMac` is exported: true on a Mac, an iPhone or an iPad, where `Mod` is Cmd.
 
 ## 2.3.25 (2026-10-21)
 
