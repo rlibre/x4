@@ -264,7 +264,7 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 
 		this.addDOMEvent( "click", ( e ) => {
 			const el = ( e.target as Element ).closest( "[data-index]" );
-			if( el && this.dom.contains( el ) ) {
+			if( el && this.contains( el ) ) {
 				const serie = parseInt( el.getAttribute( "data-serie" ) );
 				const index = parseInt( el.getAttribute( "data-index" ) );
 				this.fire( "click", { serie, index, value: this._series[serie]?.values[index] } );

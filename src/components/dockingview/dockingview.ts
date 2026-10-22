@@ -404,7 +404,7 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 		this.fills.forEach( fill => fill( ) );
 		this.placeFloats( );
 
-		if( focused instanceof HTMLElement && this.dom.contains( focused ) ) {
+		if( focused instanceof HTMLElement && this.contains( focused ) ) {
 			focused.focus( );
 		}
 	}

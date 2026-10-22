@@ -268,7 +268,7 @@ export class AutoComplete extends TextEdit<AutoCompleteEvents> {
 	private _on_focusout( ev: FocusEvent ) {
 		// focus is moving inside the control
 		const to = ev.relatedTarget as Node;
-		if( to && this.dom.contains( to ) ) {
+		if( to && this.contains( to ) ) {
 			return;
 		}
 

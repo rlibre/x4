@@ -54,7 +54,7 @@ function getRoot( ) {
  */
 
 function dismissLast( e: UIEvent ) {
-	if( autoclose_list.some( x => x.dom.contains( e.target as Node ) ) ) {
+	if( autoclose_list.some( x => x.contains( e.target as Node ) ) ) {
 		return;
 	}
 
@@ -224,7 +224,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		// modal: the focus goes back to the element that had it when it opened, unless the
 		// user put it elsewhere (read before the popup leaves the page and its focus with it)
 		const active = document.activeElement;
-		const giveBack = this._ismodal && this._prevFocus && ( !active || active===document.body || this.dom.contains( active ) );
+		const giveBack = this._ismodal && this._prevFocus && ( !active || active===document.body || this.contains( active ) );
 
 		this.__hide( );
 		this.__remove( );

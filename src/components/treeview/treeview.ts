@@ -16,7 +16,7 @@
 
 import { asap } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label, SimpleText } from '../label/label';
@@ -244,30 +244,24 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	}
 
 	private _on_click( ev: UIEvent ) {
-		let target = ev.target as HTMLElement;
-		
-		while( target && target!=this.dom ) {
-			const c = componentFromDOM( target );
-			
-			if( c && c.hasClass("item") ) {
-				const id = c.getInternalData( "id" );
+		// an item of this tree, not of a component around it
+		const c = Component.closest( ev.target as Element, ".item" );
+		if( c && this.contains( c ) ) {
+			const id = c.getInternalData( "id" );
 
-				const fev: ComponentEvent = { context:id };
-				if (ev.type == 'click') {
-					this.fire('click', fev );
-				}
-				else {
-					this.fire('dblClick', fev );
-				}
-
-				if (!fev.defaultPrevented) {
-					this._selectItem( id, c );
-				}
-
-				return;
+			const fev: ComponentEvent = { context:id };
+			if (ev.type == 'click') {
+				this.fire('click', fev );
+			}
+			else {
+				this.fire('dblClick', fev );
 			}
 
-			target = target.parentElement;
+			if (!fev.defaultPrevented) {
+				this._selectItem( id, c );
+			}
+
+			return;
 		}
 
 		this.clearSelection( );

@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { Component, ComponentEvent, ComponentEvents, componentFromDOM, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { kbNav, isArray, UnsafeHtml, asap } from '../../core/core_tools';
 
@@ -283,47 +283,38 @@ private _view: Viewport;
 	 */
 	
 	private _on_click( ev: MouseEvent ) {
-		let target = ev.target as HTMLElement;
-		let on_check = false;
+		const target = ev.target as Element;
 
-		while( target && target!=this.dom ) {
-			const c = componentFromDOM( target );
+		// avoid trapping child click
+		if( Component.closest( target, "input" ) ) {
+			return;
+		}
 
-			// avoid trapping child click
-			if( c && c.dom.tagName==='INPUT' ) {
+		// an item of this list, not of a list around it
+		const c = Component.closest( target, ".x4item" );
+		if( c && this.contains( c ) ) {
+			// the case changes alone; a double click on it is ignored
+			if( Component.closest( target, ".x4check" ) ) {
+				if( ev.type == 'click' ) {
+					this._toggleCheck( c );
+				}
 				return;
 			}
 
-			if( c && c.hasClass("x4check") ) {
-				on_check = true;
+			const id = c.getInternalData( "id" );
+			const fev: EvClick = { context:id };
+			if (ev.type == 'click') {
+				this.fire('click', fev );
+			}
+			else {
+				this.fire('dblClick', fev );
 			}
 
-			if( c && c.hasClass("x4item") ) {
-				// the case changes alone; a double click on it is ignored
-				if( on_check ) {
-					if( ev.type == 'click' ) {
-						this._toggleCheck( c );
-					}
-					return;
-				}
-
-				const id = c.getInternalData( "id" );
-				const fev: EvClick = { context:id };
-				if (ev.type == 'click') {
-					this.fire('click', fev );
-				}
-				else {
-					this.fire('dblClick', fev );
-				}
-
-				if (!fev.defaultPrevented) {
-					this._selectItem( id, c, ev.ctrlKey ? 'toggle' : 'single', ev.type == 'click' && this.props.reselect );
-				}
-				
-				return;
+			if (!fev.defaultPrevented) {
+				this._selectItem( id, c, ev.ctrlKey ? 'toggle' : 'single', ev.type == 'click' && this.props.reselect );
 			}
 
-			target = target.parentElement;
+			return;
 		}
 
 		if (ev.type == 'click') {
@@ -344,19 +335,14 @@ private _view: Viewport;
 
 		ev.preventDefault();		
 
-		let target = ev.target as HTMLElement;
-		while( target && target!=this.dom ) {
-			const c = componentFromDOM( target );
-			if( c && c.hasClass("x4item") ) {
-				const id = c.getInternalData( "id" );
-				
-				this._selectItem(id, c, 'single' );
-				this.fire('contextMenu', {uievent: ev, context: id } );
-			
-				return;
-			}
+		const c = Component.closest( ev.target as Element, ".x4item" );
+		if( c && this.contains( c ) ) {
+			const id = c.getInternalData( "id" );
 
-			target = target.parentElement;
+			this._selectItem(id, c, 'single' );
+			this.fire('contextMenu', {uievent: ev, context: id } );
+
+			return;
 		}
 
 		this.fire('contextMenu', { uievent:ev, context: null } );

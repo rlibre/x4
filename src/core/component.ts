@@ -959,7 +959,24 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
      */
 
 	parentElement<T extends Component>( cls?: Constructor<T> ): T {
-		return Component.parentElement<T>( this.dom, cls );	
+		return Component.parentElement<T>( this.dom, cls );
+	}
+
+	/**
+	 * The nearest component whose element matches a css selector: this one, or one of its ancestors.
+	 * @returns null when there is none
+	 */
+
+	closest<T extends Component = Component>( selector: string ): T {
+		return Component.closest<T>( this.dom, selector );
+	}
+
+	/**
+	 * true when a node, or the element of a component, is the element of this one or inside it
+	 */
+
+	contains( other: Component | Node ): boolean {
+		return this.dom.contains( other instanceof Component ? other.dom : other );
 	}
 
 	/**
@@ -992,8 +1009,20 @@ export class Component<P extends ComponentProps = ComponentProps, E extends Comp
 
 			dom = dom.parentElement;
 		}
-		
+
 		return null;
+	}
+
+	/**
+	 * The nearest component whose element matches a css selector: the one of dom, or one of its ancestors.
+	 * @returns null when there is none
+	 * @example
+	 * // in a click handler: the item hit, wherever the click is in it
+	 * const item = Component.closest( ev.target as Element, ".x4timeline > .item" );
+	 */
+
+	static closest<T extends Component = Component>( dom: Element, selector: string ): T {
+		return componentFromDOM<T>( dom.closest( selector ) );
 	}
 
 	/**

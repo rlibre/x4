@@ -358,7 +358,7 @@ export class PopupCalendar extends Popup {
 		let newfocus = <HTMLElement>e.target;
 
 		// child of this: ok
-		if (this.dom.contains(newfocus)) {
+		if (this.contains(newfocus)) {
 			return;
 		}
 
