@@ -15,6 +15,7 @@
  **/
 
 import { class_ns, IFormElement } from '../../core/core_tools';
+import { ComponentEvents } from '../../core/component';
 import { Box, BoxProps } from '../boxes/boxes';
 
 import "./form.module.scss"
@@ -36,7 +37,7 @@ type ValidationFn = ( values: FormValues, is_valid: boolean ) => boolean;
  */
 
 @class_ns( "x4" )
-export class Form<P extends FormProps = FormProps> extends Box<P> {
+export class Form<P extends FormProps = FormProps, E extends ComponentEvents = ComponentEvents> extends Box<P,E> {
 	
 	private validator: ValidationFn;
 

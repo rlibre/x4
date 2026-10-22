@@ -15,6 +15,15 @@ A version gets its date when it is published.
 :root { --box-disabled-opacity: 0.4; }
 ```
 
+### Form
+
+- `Form` takes the type of its events as a second parameter, as `VBox` does: a class derived from it declares its own events.
+
+```ts
+interface EntryEvents extends ComponentEvents { save: EvChange; }
+class EntryForm extends Form<FormProps, EntryEvents> { }
+```
+
 ### ProgressionBox
 
 - Its lines are in a fixed font, a `<div>` each (class `line`). An error is red, on a light red line with a red bar on its left; a warning the same in orange; no icon on the line (the title of a section and the count beside OK keep theirs). Their colours: `--msgbox-log-error-background`, `--msgbox-log-warning-background`.

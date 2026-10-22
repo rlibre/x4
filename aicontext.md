@@ -1193,7 +1193,8 @@ class Notification extends Popup { display(time_in_s?: number): void }   // 0: u
 ```ts
 type FormValues = Record<string, any>
 interface FormProps extends BoxProps { autoComplete?: boolean }
-class Form extends Box {
+class Form<P extends FormProps = FormProps, E extends ComponentEvents = ComponentEvents> extends Box<P, E> {
+  // a class derived from Form declares its events: class EntryForm extends Form<EntryProps, EntryEvents>
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
   setAutoComplete(on?: boolean): void      // attribute on the <form>: fields without their own follow it, added later too
