@@ -295,10 +295,10 @@ export class PromptBox extends Dialog<DialogProps>
 export class ProgressionBox  extends Dialog {
 
 	// an error or a warning: done( ) waits for OK
-	#errors = 0;
-	#warnings = 0;
+	private _errors = 0;
+	private _warnings = 0;
 
-	#section: Component;		// the last section (a <details>): the lines go in it
+	private _section: Component;		// the last section (a <details>): the lines go in it
 
 	constructor( title: string ) {
 		super( { 
@@ -348,7 +348,7 @@ export class ProgressionBox  extends Dialog {
 		this.query<Progress>( "#prog").setValue( perc );
 		this.addClass( "error" );		// the title bar in red, as the one of an error of MessageBox
 
-		this.#errors++;
+		this._errors++;
 	}
 
 	/** a line at the end, with the icon of a warning: done( ) then waits for the button OK */
@@ -357,7 +357,7 @@ export class ProgressionBox  extends Dialog {
 		this._addLine( text, "warning" );
 		this.query<Progress>( "#prog").setValue( perc );
 
-		this.#warnings++;
+		this._warnings++;
 	}
 
 	/**
@@ -369,10 +369,10 @@ export class ProgressionBox  extends Dialog {
 		const summary = new Component( { tag: "summary", content: new Component( { tag: "span", cls: "alert" } ) } );
 		summary.appendContent( title );
 
-		this.#section = new Component( { tag: "details", attrs: { open: true }, content: summary } );
+		this._section = new Component( { tag: "details", attrs: { open: true }, content: summary } );
 
 		const log = this.query( "#sub-text" );
-		log.appendContent( this.#section );
+		log.appendContent( this._section );
 		log.dom.scrollTop = log.dom.scrollHeight;
 		this.query<Progress>( "#prog").setValue( perc );
 	}
@@ -380,7 +380,7 @@ export class ProgressionBox  extends Dialog {
 	/** the text in place of all the lines */
 
 	setText( text: string | UnsafeHtml, perc: number ) {
-		this.#section = null;
+		this._section = null;
 		this.query( "#sub-text" ).setContent( text );
 		this.query<Progress>( "#prog").setValue( perc );
 	}
@@ -388,14 +388,14 @@ export class ProgressionBox  extends Dialog {
 	/** as at the start: no line, no error, no button OK */
 
 	clear( ) {
-		this.#errors = 0;
-		this.#warnings = 0;
+		this._errors = 0;
+		this._warnings = 0;
 		this.clearInterval( "close" );
 		this.query( "#btnbar" ).show( false );
 		this.removeClass( "error" );
 		this.query<Label>( "#alerts" ).setText( "" );
 		this.query<Label>( "#alerts" ).setIcon( null );
-		this.#section = null;
+		this._section = null;
 		this.query( "#sub-text" ).clearContent( );
 	}
 
@@ -403,7 +403,7 @@ export class ProgressionBox  extends Dialog {
 	// warning in a span of their class, their icon first
 	private _addLine( text: string | UnsafeHtml, kind?: "error" | "warning" ) {
 		const log = this.query( "#sub-text" );
-		const target = this.#section ?? log;
+		const target = this._section ?? log;
 
 		// after the summary of a section, its first line starts below it
 		if( target.dom.lastChild && target.dom.lastChild.nodeName!="SUMMARY" ) {
@@ -417,7 +417,7 @@ export class ProgressionBox  extends Dialog {
 			target.appendContent( line );
 
 			// the title of the section: the icon of the worst, in its colour
-			const alert = this.#section?.query( ".alert" );
+			const alert = this._section?.query( ".alert" );
 			if( alert && !alert.hasClass( "error" ) ) {
 				alert.setClass( "warning", kind=="warning" );
 				alert.setClass( "error", kind=="error" );
@@ -449,22 +449,22 @@ export class ProgressionBox  extends Dialog {
 		const ok = this.query<Button>( "#ok" );
 		this.query( "#btnbar" ).show( true );
 
-		if( this.#errors || this.#warnings ) {
+		if( this._errors || this._warnings ) {
 			const tr = _tr.global.progression;
 			const counts = [];
-			if( this.#errors ) {
-				counts.push( sprintf( this.#errors>1 ? tr.errors : tr.error, this.#errors ) );
+			if( this._errors ) {
+				counts.push( sprintf( this._errors>1 ? tr.errors : tr.error, this._errors ) );
 			}
-			if( this.#warnings ) {
-				counts.push( sprintf( this.#warnings>1 ? tr.warnings : tr.warning, this.#warnings ) );
+			if( this._warnings ) {
+				counts.push( sprintf( this._warnings>1 ? tr.warnings : tr.warning, this._warnings ) );
 			}
 
 			// on the left, the icon of the worst
 			const alerts = this.query<Label>( "#alerts" );
 			alerts.setText( counts.join( " / " ) );
-			alerts.setIcon( this.#errors ? icons.danger : icons.warning );
-			alerts.setClass( "error", this.#errors>0 );
-			alerts.setClass( "warning", this.#errors==0 );
+			alerts.setIcon( this._errors ? icons.danger : icons.warning );
+			alerts.setClass( "error", this._errors>0 );
+			alerts.setClass( "warning", this._errors==0 );
 
 			ok.setText( _tr.global.ok );
 			return;
