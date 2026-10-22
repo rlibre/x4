@@ -5,6 +5,20 @@ A version gets its date when it is published.
 
 ## 2.3.26
 
+### Locale
+
+- The formats of numbers, amounts and dates follow a locale: the one of the language (`_tr.global.locale`: "fr-FR" for fr, "en-US" for en, "es-ES", "de-DE"), or the one `Application.setLocale( locale, currency )` forces. The currency is "EUR" by default. `Application.getLocale( )`, `Application.getCurrency( )`.
+- `formatNumber( value, decimals?, grouping? )`, `formatMoney( value )`, `formatDate( date )`, `formatDateTime( date )`: in the current locale. Gridview and Spreadsheet format their columns number, money, date, date-time with them; Chart its labels, TickLine its tooltips (the decimal separator of the locale).
+- `date_format( date, options )` reads its options: Intl in the current locale.
+- A regional variant: a language based on another, with its locale.
+- Migration: an application in another language than French gets its grids, charts and amounts in the formats of that language. To keep the French formats: `Application.setLocale( "fr-FR" )` at the start.
+
+```ts
+Application.setLocale( "fr-CH", "CHF" );
+createLanguage( "fr-ch", "fr" );
+addTranslation( "fr-ch", { global: { locale: "fr-CH" } } );
+```
+
 ### Box
 
 - A `Box` (so `HBox`, `VBox`, `Form`, `Panel`, `Popup`...) is a `<div>`. Disabled, its content is inert (no click, no focus, no input), as before, and all of it is faded by `--box-disabled-opacity` (0.5): the labels and the components too, not only the native fields. A disabled Box in a disabled Box is faded once.

@@ -291,6 +291,11 @@ static fireGlobal(msg: string, params?: any): void
 static setTheme(name: string): void         // the class x4theme-<name> on <html>: "" the light theme (default, no class),
                                             // "dark" the dark theme of x4, another name a theme of the application
 static getTheme(): string                   // "" for the light theme, "dark", or the name given to setTheme
+static setLocale(locale: string, currency?: string): void   // forces the locale of the formats (formatNumber, formatMoney,
+                                            // formatDate, formatDateTime) over the one of the language; null: the language's
+                                            // again. currency: "EUR" by default, kept when not given
+static getLocale(): string                  // the forced one, else _tr.global.locale ("fr-FR" for fr, "en-US" for en)
+static getCurrency(): string
 focusNext(next: boolean): boolean
 addShortcut(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void   // see Shortcuts
 setupSocketMessaging(path?: string, looseCallback?: () => void): void
@@ -1558,9 +1563,17 @@ isLanguage(name: string): boolean
 //   search search_tip required_field invalid_format invalid_email invalid_number invalid_date
 //   empty_list err_403 property value copy cut paste filedrop
 //   diff_date_seconds/minutes/hours, date_input_formats, date_format, date_time_format,
+//   locale ("fr-FR", "en-US", "es-ES", "de-DE": the formats of numbers, amounts, dates),
 //   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
-//   settings.{search,nomatch}
+//   settings.{search,nomatch}, progression.{error,errors,warning,warnings}
+getCurrentLocale(): string; getCurrentCurrency(): string   // as Application.getLocale / getCurrency
 ```
+
+The language gives the texts and the locale of the formats: `selectLanguage("en")` changes both. A regional
+variant is a language based on another: `createLanguage("fr-ch", "fr")`, `addTranslation("fr-ch", { global: { locale: "fr-CH" } })`.
+`Application.setLocale(locale, currency)` forces the locale over the language's. The fields of date and the
+Calendar follow the patterns of the language (`date_format`...), not the locale. A field of type number is shown
+by the browser, in its own locale, whatever this one.
 
 ---
 
@@ -1635,7 +1648,14 @@ pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
 measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
-date_format(date, options?): string       // options not read yet: formatIntlDate(date)
+date_format(date, options?): string       // options: Intl.DateTimeFormat in the locale; without: formatIntlDate(date)
+
+// Formats in the current locale (Application.setLocale, else the one of the language), Intl made once by locale
+formatNumber(value, decimals?, grouping = true): string   // "1 234,5" in fr-FR; decimals: the most shown
+formatMoney(value): string                 // "1 234,50 €": the currency of Application.getCurrency()
+formatDate(date): string                   // "22/10/2026"
+formatDateTime(date): string               // "22/10/2026 14:05"
+// Gridview and Spreadsheet format their columns number, money, date, date-time with them (a formatter comes first)
 date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 heures 5 minutes" (either order); options not read
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
 date_hash(date): number; date_clone(date): Date

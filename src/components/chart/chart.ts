@@ -17,7 +17,7 @@
 import { ComponentEvent, ComponentEvents } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { SvgBuilder, SvgComponent, SvgGroup, SvgPath, SvgProps, SvgShape } from '../../core/core_svg';
-import { class_ns, clamp, IRect, isNumber, sanitizeHtml } from '../../core/core_tools';
+import { class_ns, clamp, formatNumber, IRect, isNumber, sanitizeHtml } from '../../core/core_tools';
 
 import "./chart.module.scss"
 
@@ -91,7 +91,7 @@ export function chartFormatUnit( value: number, decimals = 2 ) {
 
 	const pow = Math.pow(10, decimals);
 	const roundedValue = Math.round(scaledValue * pow) / pow;
-	const text = roundedValue % 1 == 0 ? `${roundedValue}` : roundedValue.toFixed(decimals).replace(/\.?0+$/, '');
+	const text = formatNumber( roundedValue, decimals );		// the decimal separator of the locale
 
 	return ( value<0 && roundedValue!=0 ? '-' : '' ) + text + units[unitIndex];
 }

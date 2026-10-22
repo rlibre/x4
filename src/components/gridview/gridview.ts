@@ -16,7 +16,7 @@
 
 
 import { Component, ComponentContent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
-import { class_ns, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
+import { class_ns, formatDate, formatDateTime, formatMoney, formatNumber, isNumber, isString, setWaitCursor, UnsafeHtml } from '../../core/core_tools';
 import { DataModel, DataStore, DataView, DataRecord, EvViewChange, SortCallback } from '../../core/core_data';
 import { EventCallback } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
@@ -166,10 +166,6 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 	
 
 	// TODO: that
-	private _num_fmt 	= new Intl.NumberFormat('fr-FR');
-	private _mny_fmt 	= new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-	private _dte_fmt 	= new Intl.DateTimeFormat('fr-FR', {});
-	private _dtetme_fmt = new Intl.DateTimeFormat('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:"2-digit"});
 
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
@@ -1006,7 +1002,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					return "NaN";
 				}
 
-				data = this._num_fmt.format(data as number);
+				data = formatNumber(data as number);
 				break;
 			}
 
@@ -1015,7 +1011,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					return "NaN";
 				}
 
-				data = this._mny_fmt.format(data as number);
+				data = formatMoney(data as number);
 				break;
 			}
 
@@ -1035,7 +1031,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					data = new Date( data );
 				}
 				
-				data = this._dte_fmt.format(data as Date);
+				data = formatDate(data as Date);
 				break;
 			}
 
@@ -1044,7 +1040,7 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 					data = new Date( data );
 				}
 				
-				data = this._dtetme_fmt.format(data as Date);
+				data = formatDateTime(data as Date);
 				break;
 			}
 

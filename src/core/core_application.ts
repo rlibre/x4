@@ -19,6 +19,7 @@ import { CoreElement } from './core_element';
 import { CoreEvent, EventMap } from './core_events';
 import { asap, getFocusableElements, ITabHandler } from './core_tools';
 import { Shortcuts, ShortcutCallback, ShortcutOptions } from './core_shortcuts';
+import { _setLocale, getCurrentLocale, getCurrentCurrency } from './core_i18n';
 
 const socket_sent = Symbol( 'socket' );
 
@@ -249,7 +250,34 @@ export class Application<E extends ApplicationEvents = ApplicationEvents> extend
 	}
 
 	/**
-	 * 
+	 * Forces the locale of the formats of numbers, amounts and dates (formatNumber, formatMoney,
+	 * formatDate, formatDateTime), and the currency of the amounts. Without it, the locale is the one of the language (`_tr.global.locale`: "fr-FR"
+	 * for fr, "en-US" for en...) and the currency "EUR".
+	 * A field of type number is shown by the browser, in its own locale, whatever this one.
+	 * @param locale - "fr-CH", "en-GB"...; null: the one of the language again
+	 * @param currency - "CHF", "USD"...; not given: the currency does not change
+	 * @example
+	 * Application.setLocale( "fr-CH", "CHF" );
+	 */
+
+	static setLocale( locale: string, currency?: string ) {
+		_setLocale( locale, currency );
+	}
+
+	/** The locale of the formats: the one forced by setLocale, else the one of the language. */
+
+	static getLocale( ): string {
+		return getCurrentLocale( );
+	}
+
+	/** The currency of the amounts: "EUR" unless setLocale gave another. */
+
+	static getCurrency( ): string {
+		return getCurrentCurrency( );
+	}
+
+	/**
+	 *
 	 */
 
 	private _setupKeyboard( ) {

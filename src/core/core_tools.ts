@@ -14,7 +14,7 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
-import { _tr } from "./core_i18n.js";
+import { _tr, _setLocale, getCurrentLocale, getCurrentCurrency } from "./core_i18n.js";
 
 
 // todo: split into 2 files
@@ -528,31 +528,101 @@ export function camelCase(text: string) {
 
 // :: DATES ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-let cur_locale: string = 'fr-FR';
-
 /**
- * change the current locale for misc translations (date...)
- * @param locale 
- * TODO: ????
+ * forces the locale of the formats (see Application.setLocale)
+ * @param locale
  */
 
 export function _date_set_locale(locale: string) {
-	cur_locale = locale;
+	_setLocale( locale );
 }
 
 /**
- * 
- * @param date 
- * @param options 
+ * a date as text: with options, the ones of Intl.DateTimeFormat in the current locale;
+ * without, the format of the language (_tr.global.date_format)
+ * @param date
+ * @param options
  * @example
  * let date = new Date( );
- * let options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+ * let options = { day: 'numeric', month: 'long', year: 'numeric' };
  * let text = date_format( date, options );
  */
 
-export function date_format(date: Date, options?: any): string {
-	//return new Intl.DateTimeFormat(cur_locale, options).format( date );
+export function date_format(date: Date, options?: Intl.DateTimeFormatOptions): string {
+	if( options ) {
+		return new Intl.DateTimeFormat( getCurrentLocale( ), options ).format( date );
+	}
+
 	return formatIntlDate(date);
+}
+
+// :: FORMATS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+// numbers, amounts and dates in the current locale (the one of the language, or the one
+// Application.setLocale forced): the objects of Intl, made once by locale and options
+const intl_formats = new Map<string, Intl.NumberFormat | Intl.DateTimeFormat>( );
+
+function numberFormat( key: string, options: Intl.NumberFormatOptions ) {
+	const locale = getCurrentLocale( );
+	const id = locale + "|" + key;
+	let fmt = intl_formats.get( id ) as Intl.NumberFormat;
+	if( !fmt ) {
+		fmt = new Intl.NumberFormat( locale, options );
+		intl_formats.set( id, fmt );
+	}
+	return fmt;
+}
+
+function dateFormat( key: string, options: Intl.DateTimeFormatOptions ) {
+	const locale = getCurrentLocale( );
+	const id = locale + "|" + key;
+	let fmt = intl_formats.get( id ) as Intl.DateTimeFormat;
+	if( !fmt ) {
+		fmt = new Intl.DateTimeFormat( locale, options );
+		intl_formats.set( id, fmt );
+	}
+	return fmt;
+}
+
+/**
+ * a number as text in the current locale: "1 234,5" in fr-FR, "1,234.5" in en-US
+ * @param value
+ * @param decimals - the most decimals shown (Intl: 3 when not given)
+ * @param grouping - the separator of thousands, true by default
+ */
+
+export function formatNumber( value: number, decimals?: number, grouping = true ): string {
+	const options: Intl.NumberFormatOptions = { useGrouping: grouping };
+	if( decimals!==undefined ) {
+		options.maximumFractionDigits = decimals;
+	}
+
+	return numberFormat( "n" + decimals + grouping, options ).format( value );
+}
+
+/**
+ * an amount as text in the current locale and currency: "1 234,50 €" in fr-FR
+ */
+
+export function formatMoney( value: number ): string {
+	const currency = getCurrentCurrency( );
+	return numberFormat( "m" + currency, { style: "currency", currency } ).format( value );
+}
+
+/**
+ * a date as text in the current locale: "22/10/2026" in fr-FR, "10/22/2026" in en-US
+ */
+
+export function formatDate( date: Date ): string {
+	return dateFormat( "d", { } ).format( date );
+}
+
+/**
+ * a date and its time (hours, minutes) as text in the current locale: "22/10/2026 14:05" in fr-FR
+ */
+
+export function formatDateTime( date: Date ): string {
+	return dateFormat( "dt", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" } ).format( date );
 }
 
 /**

@@ -18,7 +18,7 @@
 import { Component, ComponentContent, ComponentEvent, ComponentEvents, ComponentProps, EvChange, EvClick, EvContextMenu, EvDblClick, EvSelectionChange, componentFromDOM } from '../../core/component';
 import { GridColumn } from '../gridview/gridview'
 
-import { class_ns, IFormElement, isFunction, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
+import { class_ns, formatDate, formatMoney, formatNumber, IFormElement, isFunction, isNumber, isString, UnsafeHtml } from '../../core/core_tools';
 import { CoreEvent, EventCallback, EventMap } from '../../core/core_events';
 import { kbNav } from '../../core/core_tools';
 
@@ -310,9 +310,6 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 	private _end: number;
 
 	private _selection: Set<number>;
-	private _num_fmt = new Intl.NumberFormat('fr-FR');
-	private _mny_fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-	private _dte_fmt = new Intl.DateTimeFormat('fr-FR', {});
 
 	private _has_fixed: boolean;
 	private _has_footer: boolean;
@@ -990,7 +987,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					return "NaN";
 				}
 
-				data = this._num_fmt.format(data as number);
+				data = formatNumber(data as number);
 				break;
 			}
 
@@ -999,7 +996,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 					return "NaN";
 				}
 
-				data = this._mny_fmt.format(data as number);
+				data = formatMoney(data as number);
 				break;
 			}
 
@@ -1015,7 +1012,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			}
 
 			case "date": {
-				data = this._dte_fmt.format(data as Date);
+				data = formatDate(data as Date);
 				break;
 			}
 

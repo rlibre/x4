@@ -255,6 +255,41 @@ export function getCurrentLanguage( ): string {
 	return current.name;
 }
 
+// :: LOCALE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+// the formats of numbers, amounts and dates: the locale of the language (_tr.global.locale),
+// unless one is forced (Application.setLocale); the currency of the amounts
+let forced_locale: string = null;
+let currency = "EUR";
+
+/**
+ * @internal the locale forced (null: the one of the language), the currency when given
+ */
+
+export function _setLocale( locale: string, cur?: string ) {
+	forced_locale = locale || null;
+	if( cur ) {
+		currency = cur;
+	}
+}
+
+/**
+ * the locale of the formats: the one forced by Application.setLocale, else the one of the
+ * language ("fr-FR" for fr)
+ */
+
+export function getCurrentLocale( ): string {
+	return forced_locale ?? _tr.global.locale ?? "fr-FR";
+}
+
+/**
+ * the currency of the amounts: "EUR" unless Application.setLocale gave another
+ */
+
+export function getCurrentCurrency( ): string {
+	return currency;
+}
+
 /**
  * 
  */
@@ -308,6 +343,7 @@ let fr = {
 		date_input_formats: 'd/m/y|d.m.y|d m y|d-m-y|dmy',
 		date_format: 'D/M/Y',
         date_time_format: 'D/M/Y H:I:S',
+		locale: 'fr-FR',		// the formats of numbers, amounts, dates (Intl)
 
 		day_short: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
 		day_long: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
@@ -385,6 +421,7 @@ let en = {
 		date_input_formats: 'm/d/y|m.d.y|m d y|m-d-y|mdy',
 		date_format: 'M/D/Y',
         date_time_format: 'M/D/Y H:I:S',
+		locale: 'en-US',		// the formats of numbers, amounts, dates (Intl)
 
 		day_short: [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ],
 		day_long: [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
@@ -462,6 +499,7 @@ let es = {
 		date_input_formats: 'd/m/y|d.m.y|d m y|d-m-y|dmy',
 		date_format: 'D/M/Y',
         date_time_format: 'D/M/Y H:I:S',
+		locale: 'es-ES',		// the formats of numbers, amounts, dates (Intl)
 
 		day_short: [ 'dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb' ],
 		day_long: [ 'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado' ],
@@ -539,6 +577,7 @@ let de = {
 		date_input_formats: 'd.m.y|d/m/y|d m y|d-m-y|dmy',
 		date_format: 'D.M.Y',
         date_time_format: 'D.M.Y H:I:S',
+		locale: 'de-DE',		// the formats of numbers, amounts, dates (Intl)
 
 		day_short: [ 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa' ],
 		day_long: [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag' ],

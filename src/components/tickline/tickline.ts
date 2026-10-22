@@ -3,7 +3,7 @@ import { Color } from '../../core/core_colors';
 import { Component, ComponentProps } from '../../core/component';
 
 import "./tickline.module.scss"
-import { class_ns } from '../../core/core_tools';
+import { class_ns, formatNumber } from '../../core/core_tools';
 
 export interface TickLineProps extends ComponentProps {
 	values: number[];
@@ -102,7 +102,7 @@ export class TickLine extends Component<TickLineProps> {
                     .antiAlias( false );
 
                 if( props.display?.tooltips ) {
-                    r.setAttr( 'tooltip', vals[x].toFixed(1) )
+                    r.setAttr( 'tooltip', formatNumber( vals[x], 1 ) )
                 }
 			}
 		}

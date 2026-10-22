@@ -94,7 +94,7 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 ## Dates
 
-- `date_format( date, options )` does not read `options`: it gives `formatIntlDate( date )`, while its doc passes `Intl` options (`{ day: 'numeric', month: 'long' }`). The `Intl.DateTimeFormat( cur_locale, options )` line is in a comment; `cur_locale` is "fr-FR", changed by `_date_set_locale` only, not by `selectLanguage`.
+- The fields of date and the Calendar follow the patterns of the language (`date_format`, `date_input_formats`), not the locale (2.3.26, `Application.setLocale`): with a French language and an en-US locale, a field shows 22/10/2026 and a grid 10/22/2026. To make them follow the locale, the input of a date too (decided on 2026-10-22: later).
 - `date_diff( date1, date2, options )`: `options` is read nowhere and no doc says what it is for (to think about: days, a precision, "in 5 minutes" / "5 minutes ago"...).
 
 ## i18n
@@ -131,7 +131,6 @@ Reported by the agent that built demo/gallery (2026-10-21): read, not checked.
 - **ColorPicker**: no prop `change`.
 - **PropertyGrid**: it ignores the width and the height it is given (x4test puts it in a VBox of a fixed height).
 - **`selectionChange`**: a `Treeview` gives items, a `Gridview` may give `null`.
-- **Gridview, Spreadsheet**: they always format in fr-FR and EUR.
 - **Canvas**: no `position: relative`.
 - **Tabs**: its padding has no effect.
 - **BtnGroup**: `reverse` is not used; its icons are white when `packed`.
