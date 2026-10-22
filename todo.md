@@ -76,12 +76,6 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 - `cellClassifier` is not applied to a fixed column, nor called for an empty cell; `rowClassifier` is not applied to the cells of the fixed part (read).
 - `_scrollToIndex` calls `scrollIntoView` on the cell of column 0, which is in the fixed part when that column is fixed (plausible: the root of the grid may scroll).
 
-## Sizers
-
-- `CSizer` has no minimum: dragged to the left of the column, it gives a negative size, kept as the width of the column by the `Gridview` and the `Spreadsheet`; the body then gets a width smaller than its columns (read).
-- `HSizer` and `VSizer` (types `-next`) leave `_onMouseMove` before they fire `resize`; and `isFlex` tests `flexGrow !== undefined`, which is always true (`""` when it is not set) (read).
-- `pointercancel` is not handled: the sizer keeps its reference and goes on resizing while the pointer moves over it (plausible).
-
 ## DockingView
 
 - What a panel shows loses its scroll position when the layout changes: its box is moved. Checked on 2026-10-22: any element moved to another parent goes back to `scrollTop` 0 (a `<div>` too), so DockingView would keep the scroll of its panels before the move and set it back after.

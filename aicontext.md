@@ -1296,9 +1296,11 @@ class VSplitBox extends VBox               // panels stacked, resizable height: 
 // new HSplitBox( { content: [ new Treeview( { width: 250 } ), new Panel( { flex: 1 } ) ] } )
 
 // Low level: only place sizers by hand when a SplitBox does not fit (popup edges, header cells...).
-class CSizer extends Component             // base splitter
+class CSizer extends Component             // base splitter; events start, resize { size, width, height }, stop
 class HSizer extends CSizer                // horizontal splitter
 class VSizer extends CSizer                // vertical splitter
+// A pointercancel (a touch taken by the browser) ends the resize as a pointerup does: stop is fired.
+// The columns of a Gridview or a Spreadsheet are 16px wide at least (the min-width of a cell).
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }

@@ -19,6 +19,12 @@ createLanguage( "fr-ch", "fr" );
 addTranslation( "fr-ch", { global: { locale: "fr-CH" } } );
 ```
 
+### Sizers
+
+- `HSizer` and `VSizer` that size the panel after them (in a `HSplitBox`, the panel after a flex one) fire `resize` too.
+- A `pointercancel` (a touch taken by the browser...) ends the resize: `stop` is fired, the moves after do not resize.
+- The column of a `Gridview` or a `Spreadsheet` dragged by its sizer is 16px wide at least, the min-width of a cell.
+
 ### Box
 
 - A `Box` (so `HBox`, `VBox`, `Form`, `Panel`, `Popup`...) is a `<div>`. Disabled, its content is inert (no click, no focus, no input), as before, and all of it is faded by `--box-disabled-opacity` (0.5): the labels and the components too, not only the native fields. A disabled Box in a disabled Box is faded once.

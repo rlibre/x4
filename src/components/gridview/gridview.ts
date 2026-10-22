@@ -741,12 +741,13 @@ export class Gridview<P extends GridviewProps = GridviewProps, E extends Gridvie
 			})
 
 			sizer.on("resize", (ev) => {
-				cdata.width = ev.size;
+				const size = Math.max( ev.size, 16 );		// 16px at least: the min-width of a .cell
+				cdata.width = size;
 				cdata.flex  = 0;
-				
+
 				const cols = this.queryAll(`[data-col="${col}"]`)
 				cols.forEach(c => {
-					c.setStyleValue("width", ev.size + "px");
+					c.setStyleValue("width", size + "px");
 				});
 
 				const rh = header.getBoundingRect();

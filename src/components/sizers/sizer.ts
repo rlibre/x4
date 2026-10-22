@@ -98,6 +98,15 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			this._ref = null;
 		});
 
+		// cancelled by the browser (a touch taken by a scroll, a gesture...): no pointerup will
+		// come, the moves after are not a resize. The browser releases the capture itself
+		this.addDOMEvent( "pointercancel", ( ) => {
+			if( this._ref ) {
+				this.fire( "stop", { })
+				this._ref = null;
+			}
+		});
+
 		this.addDOMEvent( "pointermove", ( e: PointerEvent ) => {
 			this._onMouseMove( e );
 		});
@@ -153,35 +162,16 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 			size = nr.width = (pt.x-rc.left);
 		}
 
-		const isFlex = ( c : Component ) => {
-			if( !c ) {
-				return false;
-			}
-
-			if( c.hasClass( "x4flex" ) ) {
-				return true;
-			}
-
-			return c.getStyleValue( "flexGrow" )!==undefined;
-		}
-
-		if( this._type.includes("-prev") ) {
-			if(  isFlex(this.prevElement() ) ) {
-				this._ref.setStyleValue( "flex", `0 0 ${size}px` );	
+		// between two boxes: the neighbour sized by the basis of its flex; without a neighbour
+		// (the sizer first or last in its box), the box itself by its size
+		if( this._type.includes("-prev") || this._type.includes("-next") ) {
+			const neighbour = this._type.includes("-prev") ? this.prevElement( ) : this.nextElement( );
+			if( neighbour ) {
+				this._ref.setStyleValue( "flex", `0 0 ${size}px` );
 			}
 			else {
 				this._ref.setStyle( nr );
 			}
-		}
-		else if( this._type.includes("-next") ) {
-			if(  isFlex(this.nextElement() ) ) {
-				this._ref.setStyleValue( "flex", `0 0 ${size}px` );	
-			}
-			else {
-				this._ref.setStyle( nr );
-			}
-
-			return;
 		}
 		else {
 			this._ref.setStyle( nr );
