@@ -1,4 +1,3 @@
-import { class_ns } from '../../core/core_tools';
 import { Component, ComponentProps } from '../../core/component';
 
 import Monaco from './bin/monaco'; 
@@ -17,8 +16,8 @@ interface MonacoEditorProps extends ComponentProps {
 	options?: Monaco.editor.IEditorOptions & Monaco.editor.IGlobalEditorOptions;
 }
 
-@class_ns( "x4" )
 export class MonacoEditor extends Component<MonacoEditorProps> {
+	static classPrefix = "x4";
 
 	private static _initCount = 0;
 	private static _basePath: string = "monaco/";
