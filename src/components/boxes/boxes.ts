@@ -29,6 +29,14 @@ export interface BoxProps extends ComponentProps {
 /**
 * A generic container component for grouping and laying out child components.
  *
+ * A <div>. Disabled (disable( ), the prop disabled), its content is inert (no click, no
+ * focus, no input) and faded by --box-disabled-opacity.
+ *
+ * @cssvar
+ * ```
+ * --box-disabled-opacity
+ * ```
+ *
  * The `refs` object is a typed directory of the children you need to reach
  * again later. Assign a child to `refs` as you build the content: the
  * assignment expression evaluates to the component itself, so it can be
@@ -64,7 +72,7 @@ export interface BoxProps extends ComponentProps {
 export class Box<P extends BoxProps=BoxProps,E extends ComponentEvents=ComponentEvents> extends Component<P,E> {
 	protected refs: Record<string,Component> = {};
 	constructor( props: P ) {
-		super( { tag: "fieldset", ...props } );
+		super( { tag: "div", ...props } );
 	}
 }
 

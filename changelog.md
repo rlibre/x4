@@ -5,6 +5,24 @@ A version gets its date when it is published.
 
 ## 2.3.26
 
+### Box
+
+- A `Box` (so `HBox`, `VBox`, `Form`, `Panel`, `Popup`...) is a `<div>`. Disabled, its content is inert (no click, no focus, no input), as before, and all of it is faded by `--box-disabled-opacity` (0.5): the labels and the components too, not only the native fields. A disabled Box in a disabled Box is faded once.
+- In Chrome, a Box that scrolls keeps its scroll when a Box in it changes.
+- Migration: a css rule of the application on `fieldset`, or on `:disabled` for the fields in a disabled Box, does not apply any more: use `.x4box[disabled]`. A Box that must be a `<fieldset>`: `tag: "fieldset"`.
+
+```css
+:root { --box-disabled-opacity: 0.4; }
+```
+
+### ProgressionBox
+
+- Its lines are in a fixed font, a `<div>` each (class `line`). An error is red, on a light red line with a red bar on its left; a warning the same in orange; no icon on the line (the title of a section and the count beside OK keep theirs). Their colours: `--msgbox-log-error-background`, `--msgbox-log-warning-background`.
+
+### Theme
+
+- `--alert-background-light` and `--warning-background-light`: the red and the orange at 15%.
+
 ### Gridview
 
 - The sort arrow of a column takes the colour of the header (`--gridview-header-sort-color`): light in the dark theme.

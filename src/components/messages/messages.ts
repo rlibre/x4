@@ -41,7 +41,9 @@ export interface MessageBoxProps extends DialogProps {
  * --msgbox-log-border
  * --msgbox-log-border-focus
  * --msgbox-log-error-color
+ * --msgbox-log-error-background
  * --msgbox-log-warning-color
+ * --msgbox-log-warning-background
  * --msgbox-log-scrollbar
  * ```
  * --msgbox-caption-* and --msgbox-icon-color are the ones of an error; a question, an InputBox
@@ -284,9 +286,9 @@ export class PromptBox extends Dialog<DialogProps>
 
 /**
  * a modal box that follows a long task: a title, a bar, and the lines of what is done
- * in a <pre>: a string is text, an UnsafeHtml is html. An error, a warning have their
- * icon and their colour. addSection puts the lines that follow in a section that folds.
- * Ctrl+A selects the lines.
+ * in a <pre>, in a fixed font, a <div> each: a string is text, an UnsafeHtml is html. An
+ * error, a warning are coloured on all their width, a bar on their left. addSection puts
+ * the lines that follow in a section that folds. Ctrl+A selects the lines.
  * done( ) shows its button OK: after an error or a warning it waits for it, their counts
  * on the left of the bar; else it closes the box after 5s, the seconds left in the button.
  */
@@ -399,33 +401,20 @@ export class ProgressionBox  extends Dialog {
 		this.query( "#sub-text" ).clearContent( );
 	}
 
-	// the line after the others (in the last section), the last one shown; an error, a
-	// warning in a span of their class, their icon first
+	// the line after the others (in the last section), the last one shown: a <div>, of the
+	// class of its kind for an error, a warning
 	private _addLine( text: string | UnsafeHtml, kind?: "error" | "warning" ) {
 		const log = this.query( "#sub-text" );
 		const target = this._section ?? log;
 
-		// after the summary of a section, its first line starts below it
-		if( target.dom.lastChild && target.dom.lastChild.nodeName!="SUMMARY" ) {
-			target.appendContent( "\n" );
-		}
+		target.appendContent( new Component( { cls: kind ? "line " + kind : "line", content: text } ) );
 
-		if( kind ) {
-			const icon = kind=="error" ? icons.danger : icons.warning;
-			const line = new Component( { tag: "span", cls: kind, content: unsafeHtml( icon ) } );
-			line.appendContent( text );
-			target.appendContent( line );
-
-			// the title of the section: the icon of the worst, in its colour
-			const alert = this._section?.query( ".alert" );
-			if( alert && !alert.hasClass( "error" ) ) {
-				alert.setClass( "warning", kind=="warning" );
-				alert.setClass( "error", kind=="error" );
-				alert.setContent( unsafeHtml( icon ) );
-			}
-		}
-		else {
-			target.appendContent( text );
+		// the title of the section: the icon of the worst, in its colour
+		const alert = this._section?.query( ".alert" );
+		if( kind && alert && !alert.hasClass( "error" ) ) {
+			alert.setClass( "warning", kind=="warning" );
+			alert.setClass( "error", kind=="error" );
+			alert.setContent( unsafeHtml( kind=="error" ? icons.danger : icons.warning ) );
 		}
 
 		log.dom.scrollTop = log.dom.scrollHeight;

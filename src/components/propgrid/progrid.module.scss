@@ -117,9 +117,8 @@
 	}
 
 	// A row has no box of its own: its two cells go straight on the columns
-	// of the grid, which is how all the titles get the same width. (A row is
-	// a fieldset: it cannot be a subgrid.) What a row looked like, background
-	// and bottom line, is carried by its cells.
+	// of the grid, which is how all the titles get the same width. What a row
+	// looked like, background and bottom line, is carried by its cells.
 	.row {
 		display: contents;
 

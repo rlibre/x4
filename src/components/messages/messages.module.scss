@@ -25,8 +25,10 @@
 	--msgbox-log-background: var( --background-ternary );		// the lines of a ProgressionBox
 	--msgbox-log-border: var( --border );
 	--msgbox-log-border-focus: var( --border-focus );
-	--msgbox-log-error-color: var( --alert-background );
+	--msgbox-log-error-color: var( --alert-background );			// the text and the bar of an error
+	--msgbox-log-error-background: var( --alert-background-light );
 	--msgbox-log-warning-color: var( --warning-background );
+	--msgbox-log-warning-background: var( --warning-background-light );
 	--msgbox-log-scrollbar: var( --border-hover );		// the thumb; the track is the background of the lines
 }
 
@@ -158,9 +160,10 @@
 			margin: 0 6px 0 16px;
 		}
 
-		// the lines: a <pre>, 10 lines high at least; its text gives it no size (contain): it
-		// scrolls, the box does not grow; a line is not wrapped. An error, a warning: their
-		// icon, their colour
+		// the lines: a <pre> in a fixed font, 10 lines high at least; its text gives it no size
+		// (contain): it scrolls, the box does not grow; a line is not wrapped. Each line is a
+		// <div>, all of them as wide as the longest one (the column of the grid): an error, a
+		// warning, coloured on all their width, a bar on their left
 		#sub-text {
 			flex-grow: 1;
 			min-height: calc( 10lh + 10px );	// its padding and its border too
@@ -168,14 +171,34 @@
 			overflow: auto;
 			white-space: pre;
 			contain: size;
+			display: grid;
+			grid-template-columns: minmax( max-content, 1fr );
+			align-content: start;
 			font: inherit;
+			font-family: monospace, monospace;
 			line-height: 1.3em;
 			scrollbar-color: var( --msgbox-log-scrollbar ) transparent;
 			outline: none;
 			border: 1px solid var( --msgbox-log-border );
 			background-color: var( --msgbox-log-background );
-			padding: 4px 8px;
+			padding: 4px 0;
 			margin: 0 6px 0 16px;
+
+			.line {
+				min-height: 1lh;		// an empty line too
+				padding: 0 8px;
+				border-left: 3px solid transparent;
+
+				&.error {
+					background-color: var( --msgbox-log-error-background );
+					border-left-color: var( --msgbox-log-error-color );
+				}
+
+				&.warning {
+					background-color: var( --msgbox-log-warning-background );
+					border-left-color: var( --msgbox-log-warning-color );
+				}
+			}
 
 			&, * {
 				user-select: text;
@@ -207,6 +230,7 @@
 
 			summary {
 				margin-left: -1em;
+				padding-left: 11px;		// as the text of a line: its padding and its bar
 				cursor: pointer;
 				font-weight: bold;
 			}

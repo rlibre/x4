@@ -313,6 +313,9 @@ class VBox<P, E> extends Box<P, E>
 interface BoxProps extends ComponentProps { tag?: string }
 ```
 
+A Box is a `<div>` (another element with `tag`). Disabled (`disable()`, the prop `disabled`), its content is inert
+(no click, no focus, no input) and faded by `--box-disabled-opacity` (0.5); a disabled Box in it is not faded twice.
+
 ### `Box.refs` — typed directory of the children to reach again later
 
 Only a `Box` has `refs`: a class derived from `Component` (not from `Box`) has none, and `this.refs.x = ...` there
@@ -1150,8 +1153,9 @@ class PromptBox extends Dialog {
 class ProgressionBox extends Dialog {
   constructor(title: string)
   addText(text: string|UnsafeHtml, perc: number): void
-  addError(text: string|UnsafeHtml, perc: number): void     // its icon, in red; the title bar in red until clear()
-  addWarning(text: string|UnsafeHtml, perc: number): void   // its icon, in orange
+  addError(text: string|UnsafeHtml, perc: number): void     // red, on a light red line, a red bar on its left;
+                                                            // the title bar in red until clear()
+  addWarning(text: string|UnsafeHtml, perc: number): void   // the same in orange
   addSection(title: string|UnsafeHtml, perc: number): void  // a section (<details>, open): the lines that follow go
                                            // in it; a click on its title folds it; its title has the icon
                                            // of the worst of its lines. Without any, the lines go in the log
@@ -1162,10 +1166,11 @@ class ProgressionBox extends Dialog {
                                            // from _tr.global.progression), the icon of the worst;
                                            // else it counts "OK (5s)" and closes the box at 0
 }
-// ProgressionBox: its lines in a <pre>, 10 lines high, scrolled both ways (the box keeps its size);
+// ProgressionBox: its lines in a <pre> in a fixed font, a <div> each (class "line", plus "error" or "warning"),
+//   10 lines high, scrolled both ways (the box keeps its size), every line as wide as the longest one;
 //   a string is text, an UnsafeHtml html. Ctrl+A in the lines selects them only (a folded section too).
-//   Colours: --msgbox-log-background, -border, -border-focus, -error-color, -warning-color,
-//   -scrollbar (the thumb of its scroll bars; their track is its background).
+//   Colours: --msgbox-log-background, -border, -border-focus, -error-color, -error-background,
+//   -warning-color, -warning-background, -scrollbar (the thumb of its scroll bars; their track is its background).
 ```
 
 ### `Notification`

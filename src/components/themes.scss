@@ -92,9 +92,11 @@ $color--interval: 8.4%;
 	// the red, orange and green do not follow the scale: their text stays white
 	--alert-background: var(--color-danger-a50);
 	--alert-background-active: var(--color-danger-a60);
+	--alert-background-light: color-mix(in srgb, var(--alert-background) 15%, transparent);		// the red at 15%
 	--alert-color: #ffffff;
 
 	--warning-background: var(--color-warning-a50);
+	--warning-background-light: color-mix(in srgb, var(--warning-background) 15%, transparent);	// the orange at 15%
 	--warning-color: #ffffff;
 
 	--success-background: var(--color-success-a50);

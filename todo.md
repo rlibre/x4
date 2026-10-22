@@ -38,13 +38,11 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 
 - A style of `TextEdit` with the label above the field, not on its left (asked on 2026-10-21); the same for the other fields that have a label: `AutoComplete` (a TextEdit), `Combobox` (both have `label` and `labelWidth`), `TextArea` (`label`). Decided: a class (2026-10-21), its name to choose.
 
-## Box is a `<fieldset>`
+## Box is a `<div>` (2.3.26)
 
-A `Box` is a `<fieldset>`, so that `disabled` reaches every field inside it. There may be a better way (asked on 2026-10-21): a `<div>` with `inert` (no click, no focus in the subtree) and `aria-disabled`, and a class for the look; or `disabled` given by the code to the fields of the box. What the `<fieldset>` costs:
+Done on 2026-10-22: a Box is a `<div>`, disabled by `inert` and faded. Checked in the browser: a Box of a `min-height` now centers its content (a `<fieldset>` did not). The scroll lost by DockingView is not the fieldset: see DockingView.
 
-- Chrome (seen, 2026-10-21): in a fieldset, a fieldset that scrolls loses its scroll (back to 0) when the content of a fieldset beside it changes. All three must be fieldsets: an HBox holding a VBox that scrolls and a VBox whose page is replaced. Found in demo/gallery (its navigation), worked around there with a `<div>` for the page.
-- `min-height` on a Box does not reach the flex box inside it: its children are not stretched nor centered (read in the gallery).
-- the style of a disabled button tests `[disabled]`, which a button in a disabled fieldset does not have (it is `:disabled`), button.module.scss (read in the gallery).
+- demo/gallery builds its page with `tag: "div"` (page.ts): useless once it uses x4js 2.3.26.
 
 ## MasonryBox
 
@@ -86,7 +84,7 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 ## DockingView
 
-- What a panel shows loses its scroll position when the layout changes: its box is moved.
+- What a panel shows loses its scroll position when the layout changes: its box is moved. Checked on 2026-10-22: any element moved to another parent goes back to `scrollTop` 0 (a `<div>` too), so DockingView would keep the scroll of its panels before the move and set it back after.
 - Closing a tool that is beside others does not make its band narrower.
 - A tool cannot be collapsed: kept where it is, reduced to its title, and opened again with a click (asked on 2026-10-12; nothing is designed).
 

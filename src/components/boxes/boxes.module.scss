@@ -16,16 +16,30 @@
 
 @use "../shared.scss";
 
+:root {
+	--box-disabled-opacity: 0.5;		// a disabled Box: its content faded
+}
+
 .x4box {
-	// reset fieldset
+	// reset a box built with tag: "fieldset"
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 	border: none;
 
 	min-width: 0;
 	min-height: 0;
 	flex-shrink: 0;
 	align-self: stretch;
+
+	// disabled: its content inert (enable) and faded
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+
+		// a disabled Box in a disabled Box: opacity 1 for it, so faded once, not twice
+		.x4box[disabled] {
+			opacity: 1;
+		}
+	}
 }
 
 .x4hbox {
