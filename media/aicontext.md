@@ -36,7 +36,7 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
-  │     ├── Progress, TickLine, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── Progress, TickLine, Timeline, Canvas, Image, Spreadsheet, MonacoEditor
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
@@ -169,6 +169,15 @@ toggleClass(cls: string): void
 setClass(cls: string, set?: boolean): this
 ```
 
+A component gets one class for each class of its chain: its name in lower case, after the prefix that class
+declares itself with `static classPrefix` (not the one of its parent), then `x4`. Every component of x4 declares
+`static classPrefix = "x4"` (a Button: `x4button x4`); a class of the application declares its own, or none.
+
+```ts
+class Avatar extends Image { static classPrefix = "my"; }     // classes: myavatar x4image x4
+class Badge extends Label { }                                  // classes: badge x4label x4
+```
+
 ### HTML attributes & ARIA
 
 ```ts
@@ -218,12 +227,16 @@ queryAll(selector: string): Component[]
 firstChild<T>(): T;  lastChild<T>(): T
 nextElement<T>(): T; prevElement<T>(): T
 parentElement<T>(cls?: Constructor<T>): T
+closest<T>(selector: string): T             // this one or an ancestor whose element matches the css selector; null if none
+contains(other: Component | Node): boolean  // other (a node, or the element of a component) is the element of this one or inside it
 childCount(): number
 enumChildComponents(recursive: boolean): Component[]
 enumChildNodes(recursive: boolean): Node[]
 visitChildren(cb: (el: Component) => boolean): void
 static parentElement<T>(dom: Node, cls?: Constructor<T>): T   // starts at the parent of dom, not at dom:
                                                                // test componentFromDOM(dom) first for the component of dom itself
+static closest<T>(dom: Element, selector: string): T           // starts at dom itself: in a click handler,
+                                                               // Component.closest(ev.target as Element, '.item')
 ```
 
 ### Visibility / state / focus / geometry
@@ -291,6 +304,11 @@ static fireGlobal(msg: string, params?: any): void
 static setTheme(name: string): void         // the class x4theme-<name> on <html>: "" the light theme (default, no class),
                                             // "dark" the dark theme of x4, another name a theme of the application
 static getTheme(): string                   // "" for the light theme, "dark", or the name given to setTheme
+static setLocale(locale: string, currency?: string): void   // forces the locale of the formats (formatNumber, formatMoney,
+                                            // formatDate, formatDateTime) over the one of the language; null: the language's
+                                            // again. currency: "EUR" by default, kept when not given
+static getLocale(): string                  // the forced one, else _tr.global.locale ("fr-FR" for fr, "en-US" for en)
+static getCurrency(): string
 focusNext(next: boolean): boolean
 addShortcut(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void   // see Shortcuts
 setupSocketMessaging(path?: string, looseCallback?: () => void): void
@@ -312,6 +330,9 @@ class HBox<P, E> extends Box<P, E>
 class VBox<P, E> extends Box<P, E>
 interface BoxProps extends ComponentProps { tag?: string }
 ```
+
+A Box is a `<div>` (another element with `tag`). Disabled (`disable()`, the prop `disabled`), its content is inert
+(no click, no focus, no input) and faded by `--box-disabled-opacity` (0.5); a disabled Box in it is not faded twice.
 
 ### `Box.refs` — typed directory of the children to reach again later
 
@@ -595,6 +616,41 @@ class Rating extends HBox {
   getValue(): number; setValue(v: number): void
   setSteps(n: number): void; setShape(icon: string): void
 }
+```
+
+### `Timeline` — events on a line, each with its icon in a round mark
+
+```ts
+interface TimelineItem {
+  icon?: string                            // in the round mark
+  title: string | UnsafeHtml               // in bold
+  text?: string | UnsafeHtml               // the sentence under it, in grey
+  date?: Date                              // written relative to now, in the locale: "il y a 2 heures", "yesterday"; none: no time shown
+  done?: boolean                           // the mark in the accent; else a grey mark
+}
+interface TimelineProps extends ComponentProps {
+  items?: TimelineItem[]
+  vertical?: boolean                       // true by default; false: the events side by side
+  renderer?: (item: TimelineItem) => Component   // what is beside the mark (the mark and the line stay)
+  click?: EventCallback<EvClick>           // a click anywhere in an event: ev.context is its TimelineItem
+}
+interface TimelineEvents extends ComponentEvents { click: EvClick }
+class Timeline extends Component<TimelineProps, TimelineEvents> {
+  setItems(items: TimelineItem[]): void    // the relative times are written here, not updated after
+}
+// the line to the next mark: in the accent when the next event is done, dashed after an event not done
+// CSS vars: --timeline-done-color --timeline-done-icon-color --timeline-todo-color --timeline-todo-icon-color
+//           --timeline-title-color --timeline-text-color --timeline-time-color
+```
+
+```ts
+new Timeline({
+  items: [
+    { icon: branch, title: 'New branch', text: 'fix-notifications, from master', date: created, done: true },
+    { icon: review, title: 'Code review', text: 'Waiting for a reviewer' },
+  ],
+  click: ev => this.openStep(ev.context as TimelineItem),
+})
 ```
 
 ---
@@ -1150,8 +1206,9 @@ class PromptBox extends Dialog {
 class ProgressionBox extends Dialog {
   constructor(title: string)
   addText(text: string|UnsafeHtml, perc: number): void
-  addError(text: string|UnsafeHtml, perc: number): void     // its icon, in red; the title bar in red until clear()
-  addWarning(text: string|UnsafeHtml, perc: number): void   // its icon, in orange
+  addError(text: string|UnsafeHtml, perc: number): void     // red, on a light red line, a red bar on its left;
+                                                            // the title bar in red until clear()
+  addWarning(text: string|UnsafeHtml, perc: number): void   // the same in orange
   addSection(title: string|UnsafeHtml, perc: number): void  // a section (<details>, open): the lines that follow go
                                            // in it; a click on its title folds it; its title has the icon
                                            // of the worst of its lines. Without any, the lines go in the log
@@ -1162,10 +1219,11 @@ class ProgressionBox extends Dialog {
                                            // from _tr.global.progression), the icon of the worst;
                                            // else it counts "OK (5s)" and closes the box at 0
 }
-// ProgressionBox: its lines in a <pre>, 10 lines high, scrolled both ways (the box keeps its size);
+// ProgressionBox: its lines in a <pre> in a fixed font, a <div> each (class "line", plus "error" or "warning"),
+//   10 lines high, scrolled both ways (the box keeps its size), every line as wide as the longest one;
 //   a string is text, an UnsafeHtml html. Ctrl+A in the lines selects them only (a folded section too).
-//   Colours: --msgbox-log-background, -border, -border-focus, -error-color, -warning-color,
-//   -scrollbar (the thumb of its scroll bars; their track is its background).
+//   Colours: --msgbox-log-background, -border, -border-focus, -error-color, -error-background,
+//   -warning-color, -warning-background, -scrollbar (the thumb of its scroll bars; their track is its background).
 ```
 
 ### `Notification`
@@ -1188,7 +1246,8 @@ class Notification extends Popup { display(time_in_s?: number): void }   // 0: u
 ```ts
 type FormValues = Record<string, any>
 interface FormProps extends BoxProps { autoComplete?: boolean }
-class Form extends Box {
+class Form<P extends FormProps = FormProps, E extends ComponentEvents = ComponentEvents> extends Box<P, E> {
+  // a class derived from Form declares its events: class EntryForm extends Form<EntryProps, EntryEvents>
   setValues(values: FormValues): void
   getValues<T extends FormValues>(): T
   setAutoComplete(on?: boolean): void      // attribute on the <form>: fields without their own follow it, added later too
@@ -1285,9 +1344,11 @@ class VSplitBox extends VBox               // panels stacked, resizable height: 
 // new HSplitBox( { content: [ new Treeview( { width: 250 } ), new Panel( { flex: 1 } ) ] } )
 
 // Low level: only place sizers by hand when a SplitBox does not fit (popup edges, header cells...).
-class CSizer extends Component             // base splitter
+class CSizer extends Component             // base splitter; events start, resize { size, width, height }, stop
 class HSizer extends CSizer                // horizontal splitter
 class VSizer extends CSizer                // vertical splitter
+// A pointercancel (a touch taken by the browser) ends the resize as a pointerup does: stop is fired.
+// The columns of a Gridview or a Spreadsheet are 16px wide at least (the min-width of a cell).
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
@@ -1431,6 +1492,7 @@ component.addShortcut(keys, callback, options?)         // a view: while the foc
 Application.instance().addShortcut(keys, callback, options?)   // the whole application, wherever the focus is
 
 shortcutText(keys: string): string                     // for a tooltip or a menu: "Ctrl+Z", "⌘Z" on a Mac
+isMac: boolean                                          // true on a Mac, an iPhone or an iPad: Mod is Cmd there
 
 class Shortcuts {                                       // the list itself; rarely used directly
   add(keys: string | string[], callback: (ev: KeyboardEvent) => void, options?: ShortcutOptions): void
@@ -1552,9 +1614,17 @@ isLanguage(name: string): boolean
 //   search search_tip required_field invalid_format invalid_email invalid_number invalid_date
 //   empty_list err_403 property value copy cut paste filedrop
 //   diff_date_seconds/minutes/hours, date_input_formats, date_format, date_time_format,
+//   locale ("fr-FR", "en-US", "es-ES", "de-DE": the formats of numbers, amounts, dates),
 //   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
-//   settings.{search,nomatch}
+//   settings.{search,nomatch}, progression.{error,errors,warning,warnings}
+getCurrentLocale(): string; getCurrentCurrency(): string   // as Application.getLocale / getCurrency
 ```
+
+The language gives the texts and the locale of the formats: `selectLanguage("en")` changes both. A regional
+variant is a language based on another: `createLanguage("fr-ch", "fr")`, `addTranslation("fr-ch", { global: { locale: "fr-CH" } })`.
+`Application.setLocale(locale, currency)` forces the locale over the language's. The fields of date and the
+Calendar follow the patterns of the language (`date_format`...), not the locale. A field of type number is shown
+by the browser, in its own locale, whatever this one.
 
 ---
 
@@ -1629,7 +1699,14 @@ pascalCase(s): string; camelCase(s): string; clamp<T>(v, min, max): T
 measureText(str, size, bold?): number      // width in Helvetica, from core_pdf (see PDF)
 
 // Dates
-date_format(date, options?): string       // options not read yet: formatIntlDate(date)
+date_format(date, options?): string       // options: Intl.DateTimeFormat in the locale; without: formatIntlDate(date)
+
+// Formats in the current locale (Application.setLocale, else the one of the language), Intl made once by locale
+formatNumber(value, decimals?, grouping = true): string   // "1 234,5" in fr-FR; decimals: the most shown
+formatMoney(value): string                 // "1 234,50 €": the currency of Application.getCurrency()
+formatDate(date): string                   // "22/10/2026"
+formatDateTime(date): string               // "22/10/2026 14:05"
+// Gridview and Spreadsheet format their columns number, money, date, date-time with them (a formatter comes first)
 date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 heures 5 minutes" (either order); options not read
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
 date_hash(date): number; date_clone(date): Date
@@ -1648,9 +1725,6 @@ getSystemMetrics(part: "scrollbar"|"zoom"): number
 setWaitCursor(wait: boolean): void; beep(): void
 isUnitLess(name): boolean; isFeatureAvailable(name: "eyedropper"): boolean
 
-// Class decorator
-class_ns(ns: string): ClassDecorator
-const x4_class_ns_sym: symbol
 const unitless                              // set of unitless CSS props
 
 // System interfaces
