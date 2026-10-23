@@ -63,7 +63,7 @@ export interface AutoCompleteProps extends Omit<TextInputProps,"type"|"change">,
 	/** delay between the last key and the search, in ms (default 250) */
 	delay?: number;
 
-	/** number of chars needed to start a search (default 1) */
+	/** number of chars typed needed to start a search (default 1); ↓ searches whatever the length */
 	minChars?: number;
 
 	/** custom renderer for the suggestions */
@@ -83,6 +83,10 @@ const render_id_item = ( item: ListItem ) => {
 
 /**
  * Text field with suggestions asked on demand (search event).
+ *
+ * Keys: ↓ (or ↑), the list closed, opens it: the suggestions found last, or else a search of
+ * the text as it is, whatever its length (minChars is for typing). The list open: ↑ ↓ choose,
+ * Enter picks, Escape closes.
  *
  * @example
  * new AutoComplete( {

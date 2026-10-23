@@ -55,6 +55,15 @@ grid.enable( false );
 - The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
 - The button of a collapsible group keeps its icon visible when it has the focus.
 
+### HSplitBox, VSplitBox, HSizer, VSizer
+
+- A sizer between two boxes keeps its panel in the box: dragged to an edge, the panel stops at the space left (its flex neighbour at its padding), and at 0 on the other side. Its basis is `flex: 0 1 <size>px`.
+- `HSizer` and `VSizer` say the child they resize in words: `"before"` or `"after"` (the default). A boolean still works: `true` after, `false` before.
+
+```ts
+new HBox( { content: [ list, new HSizer( "before" ), new VBox( { flex: 1 } ) ] } );
+```
+
 ### Combobox
 
 - Its label is on the right of its `labelWidth`, its colon against the field, as the label of a TextEdit: in a form, they line up.

@@ -167,7 +167,9 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 		if( this._type.includes("-prev") || this._type.includes("-next") ) {
 			const neighbour = this._type.includes("-prev") ? this.prevElement( ) : this.nextElement( );
 			if( neighbour ) {
-				this._ref.setStyleValue( "flex", `0 0 ${size}px` );
+				// shrink 1: no larger than the space the box has left (the flex neighbour at its
+				// padding); 0 at least, a negative basis is not a value
+				this._ref.setStyleValue( "flex", `0 1 ${Math.max( 0, size )}px` );
 			}
 			else {
 				this._ref.setStyle( nr );
@@ -185,18 +187,28 @@ export class CSizer extends Component<ComponentProps,CSizerEvent> {
 	}
 }
 
+/**
+ * a sizer between two children of a HBox: it resizes the one before it or the one after it
+ * (a boolean, as in older code: true after, false before)
+ */
+
 export class HSizer extends CSizer {
 	static classPrefix = "x4";
 
-	constructor( next = true ) {
-		super( next ? "hsize-next" : "hsize-prev" );
+	constructor( side: "before" | "after" | boolean = "after" ) {
+		super( side === "before" || side === false ? "hsize-prev" : "hsize-next" );
 	}
 }
+
+/**
+ * a sizer between two children of a VBox: it resizes the one before it (above) or the one
+ * after it (under); a boolean as for HSizer
+ */
 
 export class VSizer extends CSizer {
 	static classPrefix = "x4";
 
-	constructor( next = true ) {
-		super( next ? "vsize-next" : "vsize-prev" );
+	constructor( side: "before" | "after" | boolean = "after" ) {
+		super( side === "before" || side === false ? "vsize-prev" : "vsize-next" );
 	}
 }

@@ -71,7 +71,12 @@ const page: DemoComponent = {
 	category: "Input components",
 	description: "One choice among several: the radios with the same name are a group, a single one of them is checked.",
 	usage: {
-		create: ( props ) => new Radio( props ),
+		// the radio of the props, and two more of its group (its name): a choice among three
+		create: ( props ) => new HBox( { content: [
+			new Radio( props ),
+			new Radio( { label: "Medium", name: props.name, value: "m" } ),
+			new Radio( { label: "Large", name: props.name, value: "l" } ),
+		] } ),
 		props: { label: "Small", name: "size", value: "s", checked: true, disabled: false },
 		controls: [
 			{ name: "label", type: "string" },

@@ -83,7 +83,7 @@ export function server( ) {
 const page: DemoComponent = {
 	name: "AutoComplete",
 	category: "Input components",
-	description: "A text field that asks for suggestions while the user types (the search event), from a list or a server.",
+	description: "A text field that asks for suggestions while the user types (the search event), from a list or a server. ↓ opens the list: the last suggestions, or a search of the text as it is, even empty.",
 	usage: {
 		create: ( props ) => new AutoComplete( { ...props, search: searchCities } ),
 		extra: "search: searchCities",

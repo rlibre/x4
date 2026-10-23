@@ -1,10 +1,13 @@
 /* @demo sideBySide */
 .panes {
 	border: 1px solid var( --border );
+	overflow: hidden;		// nothing of a panel drawn out of the box
 
+	// a panel made narrower than its text: the text is cut at its edge, not drawn over its neighbour
 	> .x4vbox, .x4vsplitbox > .x4vbox {
 		padding: 8px;
 		background: var( --background-ternary );
+		overflow: hidden;
 	}
 
 	.x4csizer {

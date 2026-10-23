@@ -845,6 +845,8 @@ class AutoComplete extends TextEdit {
   getSelection(): ListboxID                 // id of the picked item, undefined for a free text
   setSelection(item: ListItem): void;  showDropDown(): void
 }
+// Keys: ↓ (or ↑), the list closed, opens it: the suggestions found last, or else a search of the text as it is
+// (even empty: minChars is for typing). The list open: ↑ ↓ choose, Enter picks, Escape closes.
 // Use Combobox for a fixed, known list; AutoComplete when suggestions come from a search (server).
 // In a Form the value is the field content (text or id, per itemValue).
 ```
@@ -1345,8 +1347,13 @@ class VSplitBox extends VBox               // panels stacked, resizable height: 
 
 // Low level: only place sizers by hand when a SplitBox does not fit (popup edges, header cells...).
 class CSizer extends Component             // base splitter; events start, resize { size, width, height }, stop
-class HSizer extends CSizer                // horizontal splitter
-class VSizer extends CSizer                // vertical splitter
+class HSizer extends CSizer {              // horizontal splitter, between two children of a HBox
+  constructor(side: "before" | "after" | boolean = "after")   // the child it resizes; a boolean (older code): true after, false before
+}
+class VSizer extends CSizer {              // vertical splitter, between two children of a VBox; same constructor
+  constructor(side: "before" | "after" | boolean = "after")
+}
+// new HBox( { content: [ list, new HSizer( "before" ), new VBox( { flex: 1 } ) ] } )   // the list is resized
 // A pointercancel (a touch taken by the browser) ends the resize as a pointerup does: stop is fired.
 // The columns of a Gridview or a Spreadsheet are 16px wide at least (the min-width of a cell).
 class ScrollView extends Component { getViewport(): Component }

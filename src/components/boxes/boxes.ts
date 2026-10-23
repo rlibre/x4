@@ -123,8 +123,8 @@ function split_content( panels: Component[], horz: boolean ) {
 	els.forEach( ( p, i ) => {
 		if( i>0 ) {
 			const prev = els[i-1];
-			const next = prev.hasClass( "x4flex" ) && !p.hasClass( "x4flex" );
-			res.push( horz ? new HSizer( next ) : new VSizer( next ) );
+			const side = prev.hasClass( "x4flex" ) && !p.hasClass( "x4flex" ) ? "after" : "before";
+			res.push( horz ? new HSizer( side ) : new VSizer( side ) );
 		}
 
 		res.push( p );

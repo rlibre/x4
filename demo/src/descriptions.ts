@@ -9,7 +9,7 @@ import { pages } from './demos/sources.gen';
 
 const fr: Record<string, string> = {
 	"AssistBox": "Une StackBox qui passe d'une page à l'autre dans leur ordre : pour un assistant ou un carrousel.",
-	"AutoComplete": "Un champ texte qui demande des suggestions pendant la saisie (l'événement search), depuis une liste ou un serveur.",
+	"AutoComplete": "Un champ texte qui demande des suggestions pendant la saisie (l'événement search), depuis une liste ou un serveur. ↓ ouvre la liste : les dernières suggestions, ou une recherche du texte tel qu'il est, même vide.",
 	"Breadcrumbs": "Le chemin de la page affichée, un élément par niveau ; un clic sur l'un donne son nom, pour y revenir.",
 	"BtnGroup": "Une ligne (ou une colonne) de boutons : des boutons prédéfinis dont le texte suit la langue, des boutons à vous, des espaces. btnclick donne le nom de celui qui est cliqué.",
 	"Button": "Un bouton avec un texte, une icône, ou les deux. Un clic déclenche son événement click, ou ouvre son menu ; il peut se répéter tant qu'il est maintenu.",
@@ -78,7 +78,7 @@ const fr: Record<string, string> = {
 
 const es: Record<string, string> = {
 	"AssistBox": "Una StackBox que pasa de una página a otra en su orden: para un asistente o un carrusel.",
-	"AutoComplete": "Un campo de texto que pide sugerencias mientras el usuario escribe (el evento search), desde una lista o un servidor.",
+	"AutoComplete": "Un campo de texto que pide sugerencias mientras el usuario escribe (el evento search), desde una lista o un servidor. ↓ abre la lista: las últimas sugerencias, o una búsqueda del texto tal como está, incluso vacío.",
 	"Breadcrumbs": "La ruta de la página mostrada, un elemento por nivel; un clic en uno da su nombre, para volver a él.",
 	"BtnGroup": "Una fila (o una columna) de botones: predefinidos, cuyo texto sigue el idioma, botones propios, espaciadores. btnclick da el nombre del pulsado.",
 	"Button": "Un botón con un texto, un icono, o ambos. Un clic lanza su evento click, o abre su menú; puede repetirse mientras se mantiene pulsado.",
@@ -147,7 +147,7 @@ const es: Record<string, string> = {
 
 const de: Record<string, string> = {
 	"AssistBox": "Eine StackBox, die der Reihe nach von Seite zu Seite geht: für einen Assistenten oder ein Karussell.",
-	"AutoComplete": "Ein Textfeld, das während der Eingabe Vorschläge anfordert (das Ereignis search), aus einer Liste oder von einem Server.",
+	"AutoComplete": "Ein Textfeld, das während der Eingabe Vorschläge anfordert (das Ereignis search), aus einer Liste oder von einem Server. ↓ öffnet die Liste: die letzten Vorschläge oder eine Suche nach dem Text, wie er ist, auch leer.",
 	"Breadcrumbs": "Der Pfad zur angezeigten Seite, ein Element pro Ebene; ein Klick auf eines liefert seinen Namen, um dorthin zurückzukehren.",
 	"BtnGroup": "Eine Zeile (oder Spalte) von Schaltflächen: vordefinierte, deren Text der Sprache folgt, eigene Schaltflächen, Abstände. btnclick liefert den Namen der angeklickten.",
 	"Button": "Eine Schaltfläche mit Text, Symbol oder beidem. Ein Klick löst ihr click-Ereignis aus oder öffnet ihr Menü; gedrückt gehalten kann sie sich wiederholen.",
