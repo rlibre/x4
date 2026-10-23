@@ -55,6 +55,14 @@ body {
 			height: 1.6em;
 			margin-right: 0.3em;
 		}
+
+		// the version of x4, small after the title
+		.version {
+			margin-left: 0.6em;
+			font-size: 0.55em;
+			font-weight: 400;
+			color: var( --text-secondary );
+		}
 	}
 
 	// a TextEdit: the border all around it, not the line under its field; a Box stretches,
@@ -132,15 +140,24 @@ body {
 	overflow-y: auto;
 	gap: 8px;
 
+	// the content centered in the page, 1000px at most
 	> * {
 		flex-shrink: 0;
+		width: 100%;
 		max-width: 1000px;
+		margin-inline: auto;
 	}
 
+	// the name of the component: a band of the accent, kept at the top while the page scrolls
 	> .name {
+		position: sticky;
+		top: -28px;			// the padding of the page: stuck against its top edge, nothing scrolls above it
+		z-index: 10;
+		padding: 2px 12px;
 		font-size: 2rem;
 		font-weight: 700;
-		--label-color: var( --text-primary );
+		background-color: var( --accent-background-focus );		// #2a71ac in the light theme
+		--label-color: var( --accent-color );
 	}
 
 	> .description {
@@ -273,7 +290,7 @@ html.x4theme-dark pre {
 	margin-top: 12px;
 	padding: 16px 20px;
 	border: 1px solid var( --border );
-	scroll-margin-top: 16px;
+	scroll-margin-top: 56px;		// brought to the top (its address), under the band of the name
 
 	> .title {
 		align-self: flex-start;

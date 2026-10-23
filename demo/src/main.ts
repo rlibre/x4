@@ -5,7 +5,8 @@
  * Address: #/button shows a component, #/button/icons brings one of its variations to the top.
  */
 
-import { Application, BoxProps, Button, Component, Flex, HBox, HSplitBox, Label, MenuElement, Router, TextEdit, VBox, getCurrentLanguage, initTooltips, selectLanguage, shortcutText } from 'x4js';
+import { Application, BoxProps, Button, Component, Flex, HBox, HSplitBox, Label, MenuElement, Router, TextEdit, VBox, getCurrentLanguage, initTooltips, selectLanguage, shortcutText, unsafeHtml } from 'x4js';
+import x4package from 'x4js-package';
 
 import { pages } from './demos/sources.gen';
 import { ComponentPage } from './page';
@@ -49,7 +50,8 @@ class Gallery extends VBox {
 
 		this.setContent( [
 			new HBox( { cls: "header", content: [
-				this.refs.brand = new Label( { cls: "brand", icon: logo, text: "Gallery" } ),
+				// the version of the x4 bundled; "+": built on its sources (more than that version)
+				this.refs.brand = new Label( { cls: "brand", icon: logo, text: unsafeHtml( `Gallery<span class="version">x4 ${x4package.version}${X4_SOURCES ? "+" : ""}</span>` ) } ),
 				// no label: the field alone; its gadget clears it, shown when there is a text
 				this.refs.search = new TextEdit( { cls: "search", label: "", placeholder: this.searchHint( ), change: ( ) => this.filterNav( ), inputGadgets: [
 					this.refs.clear = new Button( { icon: icon_close, hidden: true, click: ( ) => this.clearSearch( ) } ),

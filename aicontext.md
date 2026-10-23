@@ -744,8 +744,8 @@ interface CheckboxProps extends ComponentProps {
   checked?: boolean; value?: boolean|number|string; name?: string
   change?: EventCallback<EvChange>
 }
-// cls: "left" (label on the left), "button" ("button outline" rounded), "square" (filled when checked); without the
-// box, the input is still reached by Tab (--checkbox-button-*, -square-*)
+// cls: "left" (label on the left), "button" ("button outline" rounded), "danger" (checked in red, its box or its
+// button: "button danger"); without the box, the input is still reached by Tab (--checkbox-button-*, -danger-*)
 // A toggle button is a Checkbox with cls "button": getCheck() tells whether it is pressed, change when it changes
 //   new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold", change: ( ev ) => this.setBold( ev.value ) } )
 // in a Form: without value (or a boolean one), a boolean; with one, the value when checked, null when not
@@ -771,8 +771,8 @@ class Radio extends Component {
   setLabel(text: string): void
   checkValue(vname: string): void          // check the radio whose value === vname, in the group of its form (else of the page)
 }
-// cls: "button" (a button; "button outline" rounded), "square" (filled when checked). Without the round, the input
-// is still reached by Tab.
+// cls: "button" (a button; "button outline" rounded), "danger" (checked in red, its round or its button: "button
+// danger"). Without the round, the input is still reached by Tab.
 ```
 
 ### `Switch`

@@ -32,8 +32,8 @@ interface CheckboxProps extends ComponentProps {
 /**
  * Checkbox component that can be checked or unchecked.
  * Its look, by its class (cls): "left" (its label on the left), "button" (a button, "button
- * outline" rounded), "square" (a box filled when checked). Without the box, its input is still
- * reached by Tab.
+ * outline" rounded), "danger" (checked in red, its box or its button). Without the box, its
+ * input is still reached by Tab.
  *
  * A toggle button is a Checkbox with the class "button":
  * new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold", change: ( ev ) => setBold( ev.value ) } )
@@ -54,11 +54,8 @@ interface CheckboxProps extends ComponentProps {
  * --checkbox-button-color-checked
  * --checkbox-button-background-checked
  * --checkbox-button-border-checked
- * --checkbox-square-color
- * --checkbox-square-border
- * --checkbox-square-border-checked
- * --checkbox-square-background-checked
- * --checkbox-square-color-checked
+ * --checkbox-danger-color
+ * --checkbox-danger-background
  * ```
  */
 

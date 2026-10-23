@@ -46,7 +46,9 @@
 
 	& .x4form {
 		min-width: 400px;
-		.x4icon {
+
+		// the icon of the box only, not those of its message
+		> .x4hbox > .x4icon {
 			color: var( --msgbox-icon-color );
 			height: 96px;
 		}
@@ -57,7 +59,7 @@
 		}
 	}
 
-	&.question .x4form .x4icon {
+	&.question .x4form > .x4hbox > .x4icon {
 		color: var( --msgbox-question-icon-color );
 	}
 }
@@ -68,7 +70,9 @@
 
 	& .x4form {
 		min-width: 400px;
-		.x4icon {
+
+		// the icon of the box only, not those of its editor (the stars of a Rating...)
+		> .x4hbox > .x4icon {
 			color: var( --msgbox-question-icon-color );
 			height: 64px;
 		}
@@ -141,7 +145,8 @@
 			}
 		}
 
-		.x4icon {
+		// the spinner of the box only, not the icons of the lines of its log
+		> .x4hbox > .x4icon {
 			    height: 64px;
 				animation: rotating 3s linear infinite;
 				fill: var(--accent-background);

@@ -47,20 +47,23 @@ interface RadioProps extends ComponentProps {
 }
 
 /**
- * A radio: the ones with the same name are a group. Its look, by its class (cls):
- * "button" (a button, "button outline" rounded), "square" (filled when checked). Without the
- * round, its input is still reached by Tab.
+ * A radio: the ones with the same name are a group. Its look, by its class (cls): "button"
+ * (a button, "button outline" rounded), "danger" (checked in red, its round or its button).
+ * Without the round, its input is still reached by Tab.
  *
  * @cssvar
  * ```
  * --radio-background
+ * --radio-check-background
  * --radio-check-color
- * --radio-square-border
- * --radio-square-border-checked
- * --radio-square-background-checked
- * --radio-square-color-checked
  * --radio-focus
  * --radio-button-border
+ * --radio-button-color
+ * --radio-button-color-checked
+ * --radio-button-background-checked
+ * --radio-button-border-checked
+ * --radio-danger-color
+ * --radio-danger-background
  * ```
  */
 

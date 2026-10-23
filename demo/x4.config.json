@@ -3,5 +3,11 @@
 	"outdir": "./bin",
 	"copy": [
 		{ "from": "./src/index.html", "to": "index.html" }
-	]
+	],
+	"define": {
+		"X4_SOURCES": "false"
+	},
+	"esbuild": {
+		"alias": { "x4js-package": "./node_modules/x4js/package.json" }
+	}
 }

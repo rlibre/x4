@@ -64,7 +64,7 @@ export function transforms( ) {
 	return new SvgComponent( { width: 200, height: 200, viewbox: "0 0 100 100", svg } );
 }
 
-/** @demo setSvg — setSvg replaces the whole drawing: new bars at each click. */
+/** @demo setSvg — setSvg replaces the whole drawing: new bars at each click, in the accent of the theme (a variable, by setStyle). */
 export function setSvg( ) {
 	const view = new SvgComponent( { width: 320, height: 100 } );
 
@@ -72,7 +72,8 @@ export function setSvg( ) {
 		const svg = new SvgBuilder( );
 		for( let i = 0; i < 10; i++ ) {
 			const h = 10 + Math.random( ) * 85;
-			svg.rect( i * 32, 100 - h, 26, h ).fill( "#569cd6" );
+			// the accent of the theme: a variable, in the style of the shape
+			svg.rect( i * 32, 100 - h, 26, h ).setStyle( "fill", "var( --accent-background )" );
 		}
 		view.setSvg( svg );
 	};

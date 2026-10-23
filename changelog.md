@@ -55,11 +55,16 @@ grid.enable( false );
 - The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
 - The button of a collapsible group keeps its icon visible when it has the focus.
 
+### MessageBox, InputBox, PromptBox, ProgressionBox
+
+- The style of their big icon is for it only: an icon of their message, of their editor or of a line of their log keeps its own. The stars of a Rating in a PromptBox show the rating again (they were all coloured as checked, 64px high).
+
 ### Checkbox
 
 - `icon`: an icon before its label; `label` is optional (an icon alone, with a tooltip).
-- Its looks by its class, as those of Radio: `button` (`button outline` rounded), `square`. The box is hidden, its input still reached by Tab and the space bar. Their colours: `--checkbox-button-*`, `--checkbox-square-*`.
+- `cls: "button"`, as for Radio: a toggle button (`button outline` rounded). The box is hidden, its input still reached by Tab and the space bar. Its colours: `--checkbox-button-*`.
 - `left` puts its label before its box again.
+- `cls: "danger"`: checked in the red of the alerts, its box, or its button with `button danger` (`--checkbox-danger-color`, `--checkbox-danger-background`).
 
 ```ts
 new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold" } );
@@ -67,9 +72,9 @@ new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold" } );
 
 ### Radio
 
-- `square`: the one checked has its text and its icon in the colour of the accent text (they kept the colour of a label, grey on the accent), the others a border of the theme. Its colours: `--radio-square-*`.
-- `button`: a border of the theme around each radio (`--radio-button-border`); the icon of the one checked is in the accent, an icon drawn in currentColor too.
-- `button`, `square`: the hidden round keeps its input in the page, so that Tab and the arrows reach the radios; the focus of the keyboard is shown around them (`--radio-focus`).
+- `button`: a border of the theme around each radio (`--radio-button-border`); the icon of the one checked is in the accent, an icon drawn in currentColor too; its text is no longer bold, so that its width does not change with its state.
+- `cls: "danger"`: checked in the red of the alerts, its round, or its button with `button danger` (`--radio-danger-color`, `--radio-danger-background`). The colours of `button` go through `--radio-button-*`, the round checked through `--radio-check-background`.
+- `button`: the hidden round keeps its input in the page, so that Tab and the arrows reach the radios; the focus of the keyboard is shown around them (`--radio-focus`).
 
 ```ts
 new Radio( { cls: "button", icon: icon_folder, label: "Folders", name: "view", value: "folders" } );

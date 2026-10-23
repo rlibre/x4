@@ -4,7 +4,7 @@
 
 import { Button, Checkbox, Form, HBox, Label, VBox } from 'x4js';
 import { DemoComponent } from '../types';
-import { icon_heart, icon_mail, icon_star } from '../icons';
+import { icon_heart, icon_mail, icon_star, icon_trash } from '../icons';
 
 import "./checkbox.scss";
 
@@ -65,13 +65,14 @@ export function inForm( ) {
 	] } );
 }
 
-/** @demo Toggle buttons — A toggle button is a Checkbox with cls: "button". icon puts an icon before the label; without a label, the icon alone (with a tooltip), as in a toolbar. */
+/** @demo Toggle buttons — A toggle button is a Checkbox with cls: "button". icon puts an icon before the label; without a label, the icon alone (with a tooltip), as in a toolbar; with danger, checked in red. */
 export function icons( ) {
 	return new VBox( { cls: "checkbox-icons", content: [
 		new HBox( { content: [
 			new Checkbox( { cls: "button", icon: icon_star, tooltip: "Favourite", checked: true } ),
 			new Checkbox( { cls: "button", icon: icon_heart, tooltip: "Like" } ),
 			new Checkbox( { cls: "button", icon: icon_mail, tooltip: "Notify me" } ),
+			new Checkbox( { cls: "button danger", icon: icon_trash, tooltip: "Mark for deletion", checked: true } ),
 		] } ),
 		new HBox( { content: [
 			new Checkbox( { cls: "button", icon: icon_star, label: "Favourite", checked: true } ),
@@ -96,7 +97,8 @@ const page: DemoComponent = {
 				{ id: "left", text: "left" },
 				{ id: "button", text: "button" },
 				{ id: "button outline", text: "button outline" },
-				{ id: "square", text: "square" },
+				{ id: "danger", text: "danger" },
+				{ id: "button danger", text: "button danger" },
 			] },
 			{ name: "disabled", type: "boolean" },
 		],

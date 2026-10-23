@@ -16,16 +16,21 @@
 
 :root {
 	--radio-background: var( --background-primary );
+	--radio-check-background: var( --accent-background );
 	--radio-check-color: var( --accent-color );
-	--radio-square-border: var( --border );
-	--radio-square-border-checked: var( --accent-background-active );
-	--radio-square-background-checked: var( --accent-background-active );
-	--radio-square-color-checked: var( --accent-color );
 	--radio-focus: var( --accent-background );
+
 	--radio-button-border: var( --border );
+	--radio-button-color: var( --text-ternary );
+	--radio-button-color-checked: var( --accent-background-active );
+	--radio-button-background-checked: var( --background-secondary );
+	--radio-button-border-checked: var( --accent-background );
+
+	--radio-danger-color: var( --alert-background );
+	--radio-danger-background: var( --alert-background-light );
 }
 
-// button, square: the round hidden, its input still in the page (not display: none),
+// button: the round hidden, its input still in the page (not display: none),
 // so that Tab and the arrows reach it; the focus of the keyboard shown around the radio
 %radio-no-round {
 	gap: 0;		// no space kept for the round
@@ -92,7 +97,7 @@
 			height: 100%;
 
 			.fa-primary {
-				fill: var( --accent-background)
+				fill: var( --radio-check-background );
 			}
 
 			.fa-secondary {
@@ -121,7 +126,9 @@
 	}	
 }
 
-.x4radio.button {
+// square: its former name, kept for the code that has it (not documented)
+.x4radio.button,
+.x4radio.square {
 	--size: 24px;
 
 	&.outline {
@@ -142,61 +149,44 @@
 		#text {
 			flex-grow: 1;
 			text-align: center;
-			color: var( --text-ternary );
+			color: var( --radio-button-color );
 		}
-	
+
 		// fill and color: an icon is drawn in its fill, or in currentColor
 		#icon {
-			fill: var( --text-ternary );
-			color: var( --text-ternary );
+			fill: var( --radio-button-color );
+			color: var( --radio-button-color );
 			width: var( --size );
 			height: var( --size );
 		}
 	}
 
 	&:has(input:checked) {
-		background-color: var( --background-secondary );
-		border-color:  var( --accent-background );
+		background-color: var( --radio-button-background-checked );
+		border-color: var( --radio-button-border-checked );
 
 		.x4label {
+			// no bold: the width of the button would change with its state
 			#text {
-				color: var( --accent-background-active );
-				font-weight: bold;
+				color: var( --radio-button-color-checked );
 			}
 
 			#icon {
-				fill: var( --accent-background-active );
-				color: var( --accent-background-active );
+				fill: var( --radio-button-color-checked );
+				color: var( --radio-button-color-checked );
 			}
 
 			.fa-primary {
-				fill: var( --accent-background-active );
+				fill: var( --radio-button-color-checked );
 			}
 		}
 	}
 }
 
-// square: a box; the one checked filled with the accent, its text and its icon in the colour
-// of the accent text
-.x4radio.square {
-	padding: 5px;
-	border: 1px solid var( --radio-square-border );
-	margin: 0;
-
-	@extend %radio-no-round;
-
-	&:has(input:checked) {
-		background-color: var( --radio-square-background-checked );
-		border-color: var( --radio-square-border-checked );
-		font-weight: 700;
-
-		.x4label {
-			--label-color: var( --radio-square-color-checked );
-
-			#icon {
-				color: var( --radio-square-color-checked );
-				fill: var( --radio-square-color-checked );
-			}
-		}
-	}
+// danger: checked in the red of the alerts, its round or its button
+.x4radio.danger {
+	--radio-check-background: var( --radio-danger-color );
+	--radio-button-color-checked: var( --radio-danger-color );
+	--radio-button-background-checked: var( --radio-danger-background );
+	--radio-button-border-checked: var( --radio-danger-color );
 }
