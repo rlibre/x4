@@ -1,6 +1,7 @@
 {
   "name": "x4js",
   "version": "2.3.27",
+  "license": "MIT",
   "type": "module",
   "main": "src/x4.ts",
   "module": "src/x4.ts",

@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"gen": "node gen-sources.mjs",
-		"build": "node gen-sources.mjs && x4js build"
+		"build": "node gen-sources.mjs && x4js build",
+		"build:local": "node gen-sources.mjs && node ../cli/main.mjs build --config x4.local.json"
 	},
 	"dependencies": {
 		"x4js": "^2.3.25"

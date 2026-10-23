@@ -71,6 +71,7 @@
 		margin: 0;
 		height: 100%;
 		flex-grow: 1;
+		min-width: 0;		// narrower than its default size in a narrow box: it does not overflow
 	}
 
 	// the eye dropper: as high as the field, and wide enough to be aimed at

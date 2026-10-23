@@ -6,6 +6,7 @@
 	--tab-color-hover: var( --text-primary );
 	--tab-color: var( --text-primary );
 	--tab-color-selected: var( --text-primary );
+	--tab-icon-color: var( --icon-color );
 }
 
 .x4tabs {
@@ -24,6 +25,7 @@
 			border: none;
 			border-bottom: 2px solid transparent;
 			color: var( --tab-color );
+			--ol-button-icon-color: var( --tab-icon-color );
 			margin: 0;
 			outline: none;
 			transition: border-color 0.2s ease;

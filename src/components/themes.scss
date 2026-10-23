@@ -52,6 +52,7 @@ $color--interval: 8.4%;
 	--background-primary: var(--color-primary-a0);
 	--background-secondary: var(--color-primary-a10);
 	--background-ternary: color-mix(in srgb, var(--color-primary-a100) 4.3%, var(--color-primary-a0));		// #f4f4f4
+	--background-odd: color-mix(in srgb, var(--color-primary-a100) 2.4%, var(--color-primary-a0));		// #f9f9f9, a row out of two
 	--background-hover: color-mix(in srgb, var(--color-primary-a100) 6.7%, var(--color-primary-a0));		// #eee
 	--background-active: color-mix(in srgb, var(--color-primary-a100) 20%, var(--color-primary-a0));		// #ccc
 	--background-input: color-mix(in srgb, var(--color-primary-a0) 60%, transparent);					// white at 60%

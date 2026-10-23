@@ -165,11 +165,12 @@
 		color: var( --ol-button-color-active );
 		fill: var( --ol-button-color-active );
 
+		// in the colour of the text: the background stays light, not the accent of a filled button
 		#icon {
-			color: var( --button-icon-color );
-			fill: var( --button-icon-color );
+			color: var( --ol-button-color-active );
+			fill: var( --ol-button-color-active );
 		}
-	}	
+	}
 }
 
 .x4button.danger:not([disabled]) {

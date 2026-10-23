@@ -1,0 +1,10 @@
+{
+	"entryPoints": ["src/main.ts"],
+	"outdir": "./bin",
+	"copy": [
+		{ "from": "./src/index.html", "to": "index.html" }
+	],
+	"esbuild": {
+		"alias": { "x4js": "../src/x4.ts" }
+	}
+}

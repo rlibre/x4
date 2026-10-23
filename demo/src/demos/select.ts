@@ -74,7 +74,8 @@ export function linked( ) {
 /** @demo In a Form — With a name, Form.getValues reads the id selected (an array with multiple). */
 export function inForm( ) {
 	const values = new Label( { text: "" } );
-	const form = new Form( { content: [
+	// flex: none: a Form grows (flex) and would get no height in a box that has none
+	const form = new Form( { style: { flex: "none" }, content: [
 		new Select( { name: "size", width: 200, value: "m", items: [
 			{ id: "s", text: "Small" },
 			{ id: "m", text: "Medium" },

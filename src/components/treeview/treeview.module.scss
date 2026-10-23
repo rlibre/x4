@@ -20,6 +20,7 @@
 	--treeview-background: var( --background-primary );
 
 	--treeitem-color: var( --text-primary );
+	--treeitem-icon-color: var( --icon-color );
 
 	--treeitem-backgound-hover: var( --background-secondary );
 	--treeitem-color-hover: var( --text-primary );
@@ -79,7 +80,7 @@
 									
 				&>.label {
 					--label-color: var( --treeitem-color );
-					--label-icon-color: var( --treeitem-color );
+					--label-icon-color: var( --treeitem-icon-color );
 
 					gap: 4px;
 
@@ -209,6 +210,10 @@
 		cursor: not-allowed;
 		border-color: var( --border );
 		color: var( --treeview-item-color-disabled );
+
+		// the texts and the icons of the items
+		--treeitem-color: var( --treeview-item-color-disabled );
+		--treeitem-icon-color: var( --treeview-item-color-disabled );
 
 		&>.body {
 			.x4viewport {

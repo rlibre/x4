@@ -73,6 +73,11 @@
 
 	background-color: var( --gridview-background );
 	border: 1px solid var( --gridview-border );
+
+	// disabled: faded as a Box (a Gridview is not one)
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+	}
 	color: var( --gridview-cell-color );
 		
 	.cell {
@@ -159,6 +164,7 @@
 			}
 
 			.percent {
+				align-self: center;		// a Box stretches (top of the cell): centered in the row
 				width: 100%;
 				border: 1px solid var( --border );
 				height: 8px;

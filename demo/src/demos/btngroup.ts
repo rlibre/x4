@@ -79,7 +79,7 @@ const page: DemoComponent = {
 	usage: {
 		create: ( props ) => new BtnGroup( { ...props, items: [ "save", "ok", "cancel" ] } ),
 		extra: "items: [ \"save\", \"ok\", \"cancel\" ]",
-		props: { align: "", vertical: false, width: 420 },
+		props: { align: "", vertical: false, cls: "", width: 420 },
 		controls: [
 			{ name: "align", type: "options", options: [
 				{ id: "", text: "default" },
@@ -88,6 +88,10 @@ const page: DemoComponent = {
 				{ id: "right", text: "right" },
 			] },
 			{ name: "vertical", type: "boolean" },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "packed", text: "packed" },
+			] },
 			{ name: "width", type: "number", min: 100, max: 560, step: 20, live: true },
 		],
 	},

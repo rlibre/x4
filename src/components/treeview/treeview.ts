@@ -73,6 +73,7 @@ export interface TreeviewEvents extends ComponentEvents {
  * ```
  * --treeview-background
  * --treeitem-color
+ * --treeitem-icon-color
  * --treeitem-backgound-hover
  * --treeitem-color-hover
  * --treeitem-background-sel

@@ -3,6 +3,63 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.28
+
+### Package
+
+- The package has its `LICENSE` file (MIT), and `"license": "MIT"` in its package.json.
+
+### Themes
+
+- `--background-odd`: the background of a row out of two (#f9f9f9 in the light theme); the odd rows of PropertyGrid take it.
+
+### TextArea
+
+- `required: true` puts a `*` before its label, as on a TextEdit. Its colour: `--textarea-required`.
+
+```ts
+new TextArea( { label: "Comment", name: "comment", required: true } );
+```
+
+### Gridview, Spreadsheet
+
+- Disabled, they are faded as a Box (`--box-disabled-opacity`).
+- The bars of a `percent` column are centered in the height of the row.
+
+```ts
+grid.enable( false );
+```
+
+### Treeview
+
+- The icons of the items are grey: `--treeitem-icon-color`. Disabled, the texts and the icons take the disabled colour.
+
+### Button
+
+- An outline button held down keeps its icon visible, in the colour of its text.
+
+### Tabs
+
+- The icons of the tabs are grey: `--tab-icon-color`.
+
+### ColorInput
+
+- In a narrow box, its field gets narrower: it no longer overflows (a horizontal scroll in a PropertyGrid).
+
+### PropertyGrid
+
+- The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
+- The button of a collapsible group keeps its icon visible when it has the focus.
+
+### SvgBuilder
+
+- `SvgText.verticalAlign` sets `dominant-baseline`, read by all browsers (`alignment-baseline` is ignored by Firefox before 149). `"bottom"` puts the bottom of the text on y, `"baseline"` its baseline: code that used them sees its texts move.
+- `SvgText.fontWeight( "light" )` gives the weight 300 (`light` is no value of font-weight).
+
+```ts
+svg.text( 10, 40, "Total" ).verticalAlign( "center" );
+```
+
 ## 2.3.27 (2026-10-22)
 
 ### MonacoEditor

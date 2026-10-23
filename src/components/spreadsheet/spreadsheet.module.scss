@@ -72,6 +72,11 @@
 	background-color: var( --spreadsheet-background );
 	border: 1px solid var( --spreadsheet-border );
 	color: var( --spreadsheet-cell-color );
+
+	// disabled: faded as a Box (a Spreadsheet is not one)
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+	}
 		
 	.cell {
 		padding: 4px;
@@ -179,6 +184,7 @@
 			}
 
 			.percent {
+				align-self: center;		// a Box stretches (top of the cell): centered in the row
 				width: 100%;
 				border: 1px solid var( --border );
 				height: 8px;

@@ -557,7 +557,8 @@ export class SvgText extends SvgItem {
 	 * @returns The current `SvgText` instance for chaining.
 	 */
 	fontWeight( weight: 'light' | 'normal' | 'bold' ): this {
-		return this.setAttr( 'font-weight', weight );
+		// "light" is no value of font-weight: its number
+		return this.setAttr( 'font-weight', weight=='light' ? '300' : weight );
 	}
 
 	/**
@@ -583,23 +584,25 @@ export class SvgText extends SvgItem {
 	}
 
 	/**
-	 * change the vertical alignment
+	 * change the vertical alignment: y is the top, the middle, the bottom or the baseline
+	 * of the text. dominant-baseline, read by all the browsers (alignment-baseline is not
+	 * by Firefox before 149)
 	 */
 	verticalAlign( align: 'top' | 'center' | 'bottom' | 'baseline' ): this {
 
 		let al;
 		switch( align ) {
 			case 'top': al = 'hanging'; break;
-			case 'center': al = 'middle'; break;
-			case 'bottom': al = 'baseline'; break;
-			case 'baseline': al = 'mathematical'; break;
+			case 'center': al = 'central'; break;
+			case 'bottom': al = 'ideographic'; break;
+			case 'baseline': al = 'alphabetic'; break;
 			default:
 				// If an invalid alignment is provided, do nothing and return this for chaining.
 				console.warn(`Invalid verticalAlign value: ${align}. Must be 'top', 'center', 'bottom', or 'baseline'.`);
 				return this;
 		}
 
-		return this.setAttr( 'alignment-baseline', al );
+		return this.setAttr( 'dominant-baseline', al );
 	}
 }
 

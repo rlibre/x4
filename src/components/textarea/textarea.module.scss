@@ -23,6 +23,7 @@
 	--textarea-selection-color: var( --accent-color );
 	--textarea-background: var( --background-input );
 	--textarea-color: var( --text-primary );
+	--textarea-required: var( --alert-background );
 }
 
 .x4simpletextarea {
@@ -75,6 +76,14 @@
 
 	.x4label#text:has(.empty) {
 		display: none;
+	}
+
+	// required: a "*" before the label, as the one of a TextEdit
+	&:has( > .x4simpletextarea[required] ) > .x4label::before {
+		content: "*";
+		font-weight: bold;
+		color: var( --textarea-required );
+		margin-right: 2px;
 	}
 
 	.x4simpletextarea {

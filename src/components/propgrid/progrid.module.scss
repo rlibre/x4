@@ -9,7 +9,7 @@
     --propertygrid-gadget-background: var( --background-primary );
     --propertygrid-gadget-color: var( --text-primary );
 
-	--propertygrid-odd-background: var(--color-primary-a5);
+	--propertygrid-odd-background: var( --background-odd );
 	--propertygrid-even-background: transparent;
 	--propertygrid-disabled-background: rgb(170 170 170 / 14%);
 	--propertygrid-hover-background: var(--color-primary-a10);
@@ -54,8 +54,6 @@
 		padding: 6px 4px 4px 4px;
 		min-height: 2em;
 		background-color: var( --propertygrid-group-background );
-		margin-bottom: 8px;
-        box-shadow: 4px 3px 8px rgba(0, 0, 0, 0.4);
         color: var( --propertygrid-group-color );
         display: flex;
 		align-items: center;
@@ -81,9 +79,14 @@
                 font-weight: bold;
             }
             
+            // the button that folds the group: as high as the title, its icon in the colour
+            // of the group when it has the focus (its background stays transparent)
             &>.x4button {
+                --button-color-focus: var( --propertygrid-group-color );
                 background-color: transparent;
                 color: var( --propertygrid-group-color );
+                margin: 0;
+                padding: 0;
             }
 
             &>.x4label {
@@ -99,14 +102,19 @@
             }
         }
 
-        &>.desc {
+        // under the title, in the box of the header
+        .desc {
             font-style: italic;
             font-weight: normal;
-            font-size: 90%;
+            font-size: 80%;
+            padding-top: 4px;
+            padding-left: 1em;
             color: var( --text-ternary );
         }
 
+		// the space is between the last row of a group and the next group, none under the title
 		&:not(:first-child ) {
+			margin-top: 8px;
 			//border-top: 1px solid var(--color-primary-a50);
 		}
 

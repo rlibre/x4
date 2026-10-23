@@ -84,7 +84,7 @@ const page: DemoComponent = {
 	usage: {
 		create: ( props ) => new Tabs( { ...props, items: makeTabs( ) } ),
 		extra: "items",
-		props: { default: "home", vertical: false, width: 420, height: 200 },
+		props: { default: "home", vertical: false, cls: "", width: 420, height: 200 },
 		controls: [
 			{ name: "default", type: "options", options: [
 				{ id: "home", text: "home" },
@@ -92,6 +92,10 @@ const page: DemoComponent = {
 				{ id: "settings", text: "settings" },
 			] },
 			{ name: "vertical", type: "boolean" },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "inline", text: "inline" },
+			] },
 			{ name: "width", type: "number", min: 200, max: 560, step: 20, live: true },
 			{ name: "height", type: "number", min: 100, max: 400, step: 20, live: true },
 		],

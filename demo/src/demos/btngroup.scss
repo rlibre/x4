@@ -1,3 +1,9 @@
+// the gallery only, before the first marker: no demo shows it in its code;
+// a light border shows where the groups of the page are (:where keeps the one of packed)
+:where( [id^="btngroup-"] > .demo, .usage > .preview ) .x4btngroup {
+	border: 1px solid var( --border-light );
+}
+
 /* @demo toolbar */
 .x4btngroup.packed {
 	align-self: flex-start;

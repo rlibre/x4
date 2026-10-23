@@ -68,7 +68,7 @@ const page: DemoComponent = {
 	description: "A label and an input on a line: the field of a form. It takes the props of an Input (text, email, password, number, date, time) and its label.",
 	usage: {
 		create: ( props ) => new TextEdit( props ),
-		props: { label: "Name", type: "text", placeholder: "Your name", labelWidth: 100, width: 360, required: false, readonly: false },
+		props: { label: "Name", type: "text", placeholder: "Your name", labelWidth: 100, width: 360, required: false, readonly: false, disabled: false },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "type", type: "options", options: [
@@ -84,6 +84,7 @@ const page: DemoComponent = {
 			{ name: "width", type: "number", min: 200, max: 560, step: 20, live: true },
 			{ name: "required", type: "boolean" },
 			{ name: "readonly", type: "boolean" },
+			{ name: "disabled", type: "boolean" },
 		],
 	},
 	demos: [ form, gadgets, values, inForm ],
