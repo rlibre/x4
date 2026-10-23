@@ -5,11 +5,12 @@
  * Address: #/button shows a component, #/button/icons brings one of its variations to the top.
  */
 
-import { Application, BoxProps, Button, Component, Flex, HBox, HSplitBox, Input, Label, MenuElement, Router, VBox, getCurrentLanguage, initTooltips, selectLanguage } from 'x4js';
+import { Application, BoxProps, Button, Component, Flex, HBox, HSplitBox, Label, MenuElement, Router, TextEdit, VBox, getCurrentLanguage, initTooltips, selectLanguage, shortcutText } from 'x4js';
 
 import { pages } from './demos/sources.gen';
 import { ComponentPage } from './page';
-import { icon_menu, icon_moon, icon_sun } from './icons';
+import { icon_close, icon_menu, icon_moon, icon_sun } from './icons';
+import logo from '../../logox4-v3.svg';
 import { categoryText, texts } from './texts';
 
 import "./main.scss";
@@ -35,7 +36,7 @@ const components = pages.slice( ).sort( ( a, b ) => categories.indexOf( a.catego
  */
 
 class Gallery extends VBox {
-	declare protected refs: { search: Input; nav: VBox; content: Component };
+	declare protected refs: { search: TextEdit; clear: Button; nav: VBox; content: Component };
 
 	private router = new Router( );
 	private page: ComponentPage = null;
@@ -47,8 +48,11 @@ class Gallery extends VBox {
 
 		this.setContent( [
 			new HBox( { cls: "header", content: [
-				new Label( { cls: "brand", text: "x4 gallery" } ),
-				this.refs.search = new Input( { type: "text", cls: "search", placeholder: texts( ).search, change: ( ) => this.filterNav( ) } ),
+				new Label( { cls: "brand", icon: logo, text: "Gallery" } ),
+				// no label: the field alone; its gadget clears it, shown when there is a text
+				this.refs.search = new TextEdit( { cls: "search", label: "", placeholder: this.searchHint( ), change: ( ) => this.filterNav( ), inputGadgets: [
+					this.refs.clear = new Button( { icon: icon_close, hidden: true, click: ( ) => this.clearSearch( ) } ),
+				] } ),
 				new Flex( ),
 				// built at each click: the theme it switches to, the language selected
 				new Button( { cls: "menu outline", icon: icon_menu, menu: ( ) => this.makeMenu( ) } ),
@@ -97,6 +101,7 @@ class Gallery extends VBox {
 
 	private filterNav( ) {
 		const text = this.refs.search.getValue( ).trim( ).toLowerCase( );
+		this.refs.clear.show( text != "" );
 
 		for( const category of this.refs.nav.enumChildComponents( false ) ) {
 			let some = false;
@@ -107,6 +112,34 @@ class Gallery extends VBox {
 			}
 			category.show( some );
 		}
+	}
+
+	/**
+	 * the text of the empty search, with its shortcut: "Search components (Ctrl+F)"
+	 */
+
+	private searchHint( ) {
+		return `${texts( ).search} (${shortcutText( "Mod+F" )})`;
+	}
+
+	/**
+	 * the gadget of the search: all the navigation again, the focus back in the field
+	 */
+
+	private clearSearch( ) {
+		this.refs.search.setValue( "" );
+		this.filterNav( );
+		this.focusSearch( );
+	}
+
+	/**
+	 * Ctrl+F (Cmd+F on a Mac): the focus in the search, its text selected
+	 */
+
+	focusSearch( ) {
+		const input = this.refs.search.getInput( ).dom as HTMLInputElement;
+		input.focus( );
+		input.select( );
 	}
 
 	/**
@@ -173,7 +206,7 @@ class Gallery extends VBox {
 	private setLanguage( lang: string ) {
 		selectLanguage( lang );
 
-		this.refs.search.setAttribute( "placeholder", texts( ).search );
+		this.refs.search.getInput( ).setAttribute( "placeholder", this.searchHint( ) );
 		this.refs.nav.setContent( this.makeNav( ) );
 		this.filterNav( );
 
@@ -186,7 +219,12 @@ class App extends Application {
 	constructor( ) {
 		super( );
 		initTooltips( );
-		this.setMainView( new Gallery( { cls: "gallery" } ) );
+
+		const gallery = new Gallery( { cls: "gallery" } );
+		this.setMainView( gallery );
+
+		// from anywhere, a field too: the search of the navigation, not the one of the browser
+		this.addShortcut( "Mod+F", ( ) => gallery.focusSearch( ), { editable: true } );
 	}
 }
 

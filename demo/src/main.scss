@@ -48,14 +48,29 @@ body {
 		font-size: 1.25rem;
 		font-weight: 700;
 		--label-color: var( --text-primary );
+
+		// the logo of x4, in its colours
+		#icon {
+			width: 1.6em;
+			height: 1.6em;
+			margin-right: 0.3em;
+		}
 	}
 
+	// a TextEdit: the border all around it, not the line under its field; a Box stretches,
+	// it is centered in the height of the header
 	> .search {
+		align-self: center;
 		width: 260px;
-		padding: 6px 10px;
+		padding: 3px 4px 3px 6px;
 		border: 1px solid var( --border );
+		background-color: var( --input-background );	// the one of its field, around it
 
-		&:focus {
+		> #edit {
+			border-bottom: none;
+		}
+
+		&:focus-within {
 			border-color: var( --accent-background );
 		}
 	}
