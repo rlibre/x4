@@ -8,9 +8,8 @@ Things noted for later, about the library and its command line. Nothing here is 
 
 ## Theme
 
-Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21 (Timex). Done (2.3.23): the base variables of `themes.scss`; the variables of the components point to globals of the theme, with no `color-mix` in the components; the colours of the rules go through variables; the variables read are all defined; MessageBox, InputBox and PromptBox by kind. Agreed, one block at a time, the light theme unchanged to the pixel:
+Left from the colours that did not follow the scale `--color-primary-*` (reported on 2026-10-21, Timex):
 
-- the dark theme of x4 is done (2.3.24, `Application.setTheme( "dark" )`), and the gallery (demo) calls it (its block `html.x4dark` removed, its test reads `x4theme-dark`). Left: x4js 2.3.24 or later installed in demo, which has 2.3.23 (2.3.25 for its example of a checkable Listbox).
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
 - Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
 
@@ -23,19 +22,13 @@ Colours that do not follow the scale `--color-primary-*`, reported on 2026-10-21
 
 - A Drawer: a panel that slides in from an edge of the page (left, right, top, bottom) over the content, and goes away by a click outside or Escape (asked on 2026-10-21). x4 has nothing of the kind today. Nothing is designed: a Popup or a Component of its own, a mask behind it or not, pushing the content or over it.
 
-## Button toggle
-
-- A toggle button: a Button that stays pressed after a click and is released by the next one, with its state readable and settable, and an event when it changes (asked on 2026-10-21). Button has nothing of the kind today (no pressed or checked state). Nothing is designed: a prop of Button or a class of its own, its look (the accent while pressed?), its value in a Form.
-
 ## Fields with their label above
 
 - A style of `TextEdit` with the label above the field, not on its left (asked on 2026-10-21); the same for the other fields that have a label: `AutoComplete` (a TextEdit), `Combobox` (both have `label` and `labelWidth`), `TextArea` (`label`). Decided: a class (2026-10-21), its name to choose.
 
 ## Box is a `<div>` (2.3.26)
 
-Done on 2026-10-22: a Box is a `<div>`, disabled by `inert` and faded. Checked in the browser: a Box of a `min-height` now centers its content (a `<fieldset>` did not). The scroll lost by DockingView is not the fieldset: see DockingView.
-
-- The gallery (demo) builds its page with `tag: "div"` (page.ts): useless once it uses x4js 2.3.26.
+- The gallery (demo) still builds its page with `tag: "div"` (page.ts): useless, it uses x4js 2.3.28.
 
 ## MasonryBox
 
@@ -95,12 +88,11 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 ## Visual inconsistencies
 
-- The labels of `TextEdit` are aligned on the right and followed by ":"; those of `Combobox` are aligned on the left. In the same form, the two columns of labels do not line up (2026-10-21).
 - No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size`, read by Gridview and Spreadsheet, is defined nowhere (see Theme).
 
 ## Seen while writing Timex: to decide
 
-Noted on 2026-10-21. What was only missing from the docs is now in aicontext and aiguide (`initTooltips`, the Form flex by default and its padding, `sub_cols`, the click of a Listbox, `parentElement`, `refs` on a Box only, the typed `_tr`, the global messages). Left: what asks for a change of the code.
+Noted on 2026-10-21.
 
 - **`this.refs` exists only on `Box`**: `Component` has none, and `this.refs.x = ...` throws a `TypeError` at run time (now said in aicontext). In an async event handler the error goes unnoticed: in Timex, the button OK of the input dialog seemed to do nothing. To decide: initialize `refs` in `Component`.
 
@@ -108,8 +100,8 @@ Noted on 2026-10-21. What was only missing from the docs is now in aicontext and
 
 Reported by the agent that built the gallery, in demo (2026-10-21): read, not checked.
 
-- **Form**: without `flex` it is crushed; its fields are stretched horizontally.
-- **Button**: the style of a disabled button with the class `outline` (in a disabled Box: see "Box is a `<fieldset>`").
+- **Form**: its fields are stretched horizontally.
+- **Button**: the style of a disabled button with the class `outline` (in a disabled Box).
 - **Box**: `.x4box` has `align-self: stretch`.
 - **Keyboard**: its `focusin` listeners are never removed; its id is fixed (`v-keyboard`).
 - **Calendar**: under 314px wide, Sunday is cut.
@@ -122,7 +114,7 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 - **Breadcrumbs**: the hover is on `#text`; a `margin-bottom` of 2em; `BreadcrumbElement` is not exported.
 - **TextEdit**: the icons of its gadgets cannot be seen.
 - **Types not exported**: `ComboboxProps`, `VideoProps`, `HeaderProps`.
-- **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Gridview.getFirstSel`, `Dialog.show`.
+- **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Dialog.show`.
 
 
 
