@@ -17,7 +17,33 @@
 :root {
 	--radio-background: var( --background-primary );
 	--radio-check-color: var( --accent-color );
-	--radio-square-border-checked: var( --accent-color );
+	--radio-square-border: var( --border );
+	--radio-square-border-checked: var( --accent-background-active );
+	--radio-square-background-checked: var( --accent-background-active );
+	--radio-square-color-checked: var( --accent-color );
+	--radio-focus: var( --accent-background );
+
+	--radio-plain-color: var( --text-ternary );
+	--radio-plain-color-hover: var( --text-primary );
+	--radio-plain-color-checked: var( --accent-background );
+}
+
+// button, square, plain: the round hidden, its input still in the page (not display: none),
+// so that Tab and the arrows reach it; the focus of the keyboard shown around the radio
+%radio-no-round {
+	gap: 0;		// no space kept for the round
+
+	.inner {
+		width: 0;
+		height: 0;
+		overflow: hidden;
+		opacity: 0;
+	}
+
+	&:has(input:focus-visible) {
+		outline: 1px dotted var( --radio-focus );
+		outline-offset: 2px;
+	}
 }
 
 .x4radio {
@@ -108,10 +134,8 @@
 	border: 1px solid transparent;
 	padding: 8px;
 	margin: 0;
-	
-	.inner {
-		display: none;
-	}
+
+	@extend %radio-no-round;
 
 	label {
 		display: flex;
@@ -152,18 +176,53 @@
 	}
 }
 
+// square: a box; the one checked filled with the accent, its text and its icon in the colour
+// of the accent text
 .x4radio.square {
 	padding: 5px;
-	border: 1px solid rgba(255,255,255,0.3);
+	border: 1px solid var( --radio-square-border );
 	margin: 0;
-		
-	.inner {
-		display: none;
+
+	@extend %radio-no-round;
+
+	&:has(input:checked) {
+		background-color: var( --radio-square-background-checked );
+		border-color: var( --radio-square-border-checked );
+		font-weight: 700;
+
+		.x4label {
+			--label-color: var( --radio-square-color-checked );
+
+			#icon {
+				color: var( --radio-square-color-checked );
+				fill: var( --radio-square-color-checked );
+			}
+		}
+	}
+}
+
+// plain: its icon and its text only, no round, no border; the one checked in the accent
+.x4radio.plain {
+	@extend %radio-no-round;
+
+	// the colour of its icon and its text
+	--radio-ink: var( --radio-plain-color );
+
+	&:hover {
+		--radio-ink: var( --radio-plain-color-hover );
 	}
 
 	&:has(input:checked) {
-		background-color: var( --accent-background-active );
-		border-color: var( --radio-square-border-checked );
-		font-weight: 700;
+		--radio-ink: var( --radio-plain-color-checked );
+		font-weight: bold;
+	}
+
+	.x4label {
+		--label-color: var( --radio-ink );
+
+		#icon {
+			color: var( --radio-ink );
+			fill: var( --radio-ink );
+		}
 	}
 }

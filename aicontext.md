@@ -766,6 +766,8 @@ class Radio extends Component {
   setLabel(text: string): void
   checkValue(vname: string): void          // check the radio whose value === vname, in the group of its form (else of the page)
 }
+// cls: "button" (a button; "button outline" rounded), "square", "plain" (its icon and its text only, the one
+// checked in the accent: --radio-plain-color, -hover, -checked). Without the round, the input is still reached by Tab.
 ```
 
 ### `Switch`

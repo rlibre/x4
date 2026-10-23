@@ -55,6 +55,16 @@ grid.enable( false );
 - The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
 - The button of a collapsible group keeps its icon visible when it has the focus.
 
+### Radio
+
+- `cls: "plain"`: the radio is its icon and its text, no round; the one checked is in the accent colour (`--radio-plain-color`, `-hover`, `-checked`).
+- `square`: the one checked has its text and its icon in the colour of the accent text (they kept the colour of a label, grey on the accent), the others a border of the theme. Its colours: `--radio-square-*`.
+- `button`, `square`, `plain`: the hidden round keeps its input in the page, so that Tab and the arrows reach the radios; the focus of the keyboard is shown around them (`--radio-focus`).
+
+```ts
+new Radio( { cls: "plain", icon: icon_folder, label: "Folders", name: "view", value: "folders" } );
+```
+
 ### HSplitBox, VSplitBox, HSizer, VSizer
 
 - A sizer between two boxes keeps its panel in the box: dragged to an edge, the panel stops at the space left (its flex neighbour at its padding), and at 0 on the other side. Its basis is `flex: 0 1 <size>px`.

@@ -43,7 +43,6 @@ class Gallery extends VBox {
 	private router = new Router( );
 	private page: ComponentPage = null;
 	private route = "";				// the component shown: "button"
-	private dark = false;
 
 	constructor( props: BoxProps ) {
 		super( props );
@@ -74,6 +73,11 @@ class Gallery extends VBox {
 
 		// once in the document: a variation can be scrolled to
 		this.addDOMEvent( "created", ( ) => this.router.init( ) );
+
+		// the theme is changed by the menu, or by the page Theme: the "4" of the logo is light
+		// in the dark theme
+		new MutationObserver( ( ) => this.refs.brand.setIcon( Application.getTheme( ) == "dark" ? logo_dark : logo ) )
+			.observe( document.documentElement, { attributes: true, attributeFilter: [ "class" ] } );
 	}
 
 	/**
@@ -180,9 +184,10 @@ class Gallery extends VBox {
 
 	private makeMenu( ): MenuElement[] {
 		const lang = getCurrentLanguage( );
+		const dark = Application.getTheme( ) == "dark";
 
 		return [
-			{ text: this.dark ? texts( ).light : texts( ).dark, icon: this.dark ? icon_sun : icon_moon, click: ( ) => this.toggleTheme( ) },
+			{ text: dark ? texts( ).light : texts( ).dark, icon: dark ? icon_sun : icon_moon, click: ( ) => this.toggleTheme( ) },
 			"-",
 			{ text: "English", checked: lang == "en", click: ( ) => this.setLanguage( "en" ) },
 			{ text: "Français", checked: lang == "fr", click: ( ) => this.setLanguage( "fr" ) },
@@ -192,15 +197,12 @@ class Gallery extends VBox {
 	}
 
 	/**
-	 * the dark theme of x4: the class "x4theme-dark" on <html>
+	 * the dark theme of x4: the class "x4theme-dark" on <html>; another theme (one of the page
+	 * Theme) goes to the dark one too
 	 */
 
 	private toggleTheme( ) {
-		this.dark = !this.dark;
-		Application.setTheme( this.dark ? "dark" : "" );
-
-		// its "4" is light in the dark theme
-		this.refs.brand.setIcon( this.dark ? logo_dark : logo );
+		Application.setTheme( Application.getTheme( ) == "dark" ? "" : "dark" );
 	}
 
 	/**

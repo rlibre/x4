@@ -6,6 +6,8 @@ import { Button, Form, HBox, Label, Radio, VBox } from 'x4js';
 import { icon_file, icon_folder, icon_image } from '../icons';
 import { DemoComponent } from '../types';
 
+import "./radio.scss";
+
 /** @demo A group — The radios that have the same name are one group: checking one unchecks the others. change gives its value. */
 export function group( ) {
 	const result = new Label( { text: "" } );
@@ -57,12 +59,19 @@ export function inForm( ) {
 	] } );
 }
 
-/** @demo Icons — A radio may show an icon before its label. */
+/** @demo Icons — A radio may show an icon before its label; with cls: "plain" it is its icon and its text only, the one checked in the accent (Tab and the arrows still go from one to the other). */
 export function icons( ) {
-	return new HBox( { content: [
-		new Radio( { label: "Files", icon: icon_file, name: "view", value: "files", checked: true } ),
-		new Radio( { label: "Folders", icon: icon_folder, name: "view", value: "folders" } ),
-		new Radio( { label: "Images", icon: icon_image, name: "view", value: "images" } ),
+	return new VBox( { cls: "radio-icons", content: [
+		new HBox( { content: [
+			new Radio( { label: "Files", icon: icon_file, name: "view", value: "files", checked: true } ),
+			new Radio( { label: "Folders", icon: icon_folder, name: "view", value: "folders" } ),
+			new Radio( { label: "Images", icon: icon_image, name: "view", value: "images" } ),
+		] } ),
+		new HBox( { content: [
+			new Radio( { cls: "plain", label: "Files", icon: icon_file, name: "view2", value: "files", checked: true } ),
+			new Radio( { cls: "plain", label: "Folders", icon: icon_folder, name: "view2", value: "folders" } ),
+			new Radio( { cls: "plain", label: "Images", icon: icon_image, name: "view2", value: "images" } ),
+		] } ),
 	] } );
 }
 
@@ -71,18 +80,25 @@ const page: DemoComponent = {
 	category: "Input components",
 	description: "One choice among several: the radios with the same name are a group, a single one of them is checked.",
 	usage: {
-		// the radio of the props, and two more of its group (its name): a choice among three
+		// the radio of the props, and two more of its group (its name, its class): a choice among three
 		create: ( props ) => new HBox( { content: [
 			new Radio( props ),
-			new Radio( { label: "Medium", name: props.name, value: "m" } ),
-			new Radio( { label: "Large", name: props.name, value: "l" } ),
+			new Radio( { cls: props.cls, label: "Medium", name: props.name, value: "m" } ),
+			new Radio( { cls: props.cls, label: "Large", name: props.name, value: "l" } ),
 		] } ),
-		props: { label: "Small", name: "size", value: "s", checked: true, disabled: false },
+		props: { label: "Small", name: "size", value: "s", checked: true, cls: "", disabled: false },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "name", type: "string" },
 			{ name: "value", type: "string" },
 			{ name: "checked", type: "boolean" },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "plain", text: "plain" },
+				{ id: "button", text: "button" },
+				{ id: "button outline", text: "button outline" },
+				{ id: "square", text: "square" },
+			] },
 			{ name: "disabled", type: "boolean" },
 		],
 	},

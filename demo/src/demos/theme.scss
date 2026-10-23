@@ -1,0 +1,20 @@
+/* @demo lightDark */
+.theme-sample {
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid var( --border );
+	background-color: var( --background-primary );
+}
+
+/* @demo ownTheme */
+// a theme of the application: the variables of x4 it changes, under html.x4theme-<name>
+html.x4theme-sand {
+	--color-primary-a0: #fbf6ec;		// the background
+	--color-primary-a10: #f1e4cc;		// a light surface (hover, selection)
+	--color-primary-a100: #3b2f1e;		// the text
+
+	--accent-background: #b5651d;
+	--accent-background-hover: #c87a2f;
+	--accent-background-focus: #9a5418;
+	--accent-background-active: #7d4413;
+}
