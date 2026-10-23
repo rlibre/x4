@@ -72,7 +72,10 @@
 	&> #label {
 
 		&> .x4label {
-			padding: 0 6px 0 0;
+			// its text on the right of its width (labelWidth), its colon against the gap of the box:
+			// in a form, under the one of a TextEdit
+			justify-content: end;
+			padding: 0;
 			border-bottom: 1px solid transparent;
 	
 			height: 100%;

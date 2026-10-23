@@ -23,7 +23,8 @@ interface VideoProps extends ComponentProps {
 	autoplay?: boolean;
 	muted?: boolean;
 	playsInline?: boolean;
-	stream: MediaStream;
+	src?: string;			// a file to play (url); a stream, when there is one, is shown instead
+	stream?: MediaStream;	// a camera, a screen, a canvas (captureStream)
 }
 
 /**
@@ -55,6 +56,10 @@ export class Video extends Box {
 			this.playsInline = props.playsInline;
 		}
 
+		if( props.src ) {
+			this.src = props.src;
+		}
+
 		this.stream = props.stream;
 	}
 
@@ -84,6 +89,14 @@ export class Video extends Box {
 
 	set playsInline( set: boolean ) {
 		this.player.playsInline = set;
+	}
+
+	get src( ) {
+		return this.player.src;
+	}
+
+	set src( url: string ) {
+		this.player.src = url;
 	}
 
 	set stream( stream: MediaStream ) {

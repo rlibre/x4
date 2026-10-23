@@ -13,25 +13,19 @@
  * Use of this source code is governed by an MIT-style license 
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  *
- * to use you must:
- * 
- * 1. add this to your tsconfig.json
+ * JSX in .tsx files:
+ *
+ * 1. in tsconfig.json (esbuild reads it too):
  * 		"compilerOptions": {
- * 			...
- * 			"jsx": "preserve",
- * 			...
- * 		}
- * 	
- * 2. be sure that esbuild has this:
- * 		jsxFactory: "x4create_element",
- * 		loader: { ".ts": "tsx" }
- * 		
- * 
- * after that, all things like that will be ok
- * 
- * 	import { x4_create_element }  from "x4react"
- * 	const xx = <h1>This is a title</h1>
- * 
+ * 			"jsx": "react",
+ * 			"jsxFactory": "x4_react.create_element"
+ * 		},
+ * 		"files": [ "node_modules/x4js/src/x4tsx.d.ts" ]	// the JSX types of x4 (ref)
+ *
+ * 2. in each .tsx file, the factory imported:
+ * 		import { Label, VBox, x4_react } from "x4js";
+ * 		const box = <VBox><Label text="Hello" /></VBox>;
+ *
  */
 
 import { Component } from './component';

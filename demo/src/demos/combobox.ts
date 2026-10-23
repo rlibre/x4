@@ -55,9 +55,9 @@ export function renderer( ) {
 	] } ) } );
 }
 
-/** @demo From the code — selectItem chooses an item (null: none), setItems gives new items, getSelection reads the id. */
+/** @demo From the code — Each button calls what it shows: selectItem chooses an item by its id (null: none), getSelection reads the id chosen, setItems gives the list new items. */
 export function fromCode( ) {
-	const label = new Label( { text: "" } );
+	const result = new Label( { text: "" } );
 	const combo = new Combobox( { label: "Size", labelWidth: 70, width: 280, items: [
 		{ id: "s", text: "Small" },
 		{ id: "m", text: "Medium" },
@@ -67,15 +67,24 @@ export function fromCode( ) {
 	return new VBox( { content: [
 		combo,
 		new HBox( { content: [
-			new Button( { label: "Medium", cls: "outline", click: ( ) => combo.selectItem( "m" ) } ),
-			new Button( { label: "None", cls: "outline", click: ( ) => combo.selectItem( null ) } ),
-			new Button( { label: "Shoe sizes", cls: "outline", click: ( ) => combo.setItems( [
-				{ id: 40, text: "40" },
-				{ id: 42, text: "42" },
-				{ id: 44, text: "44" },
-			] ) } ),
-			new Button( { label: "getSelection", click: ( ) => label.setText( `getSelection: ${combo.getSelection( )}` ) } ),
-			label,
+			new Button( { label: "selectItem( \"m\" )", cls: "outline", click: ( ) => combo.selectItem( "m" ) } ),
+			new Button( { label: "selectItem( null )", cls: "outline", click: ( ) => combo.selectItem( null ) } ),
+			new Button( { label: "getSelection( )", cls: "outline", click: ( ) => result.setText( `getSelection( ) gives ${combo.getSelection( )}` ) } ),
+		] } ),
+		new HBox( { content: [
+			// two sizes more, and the new one chosen: open the list to see the five
+			new Button( { label: "setItems( XS to XL )", cls: "outline", click: ( ) => {
+				combo.setItems( [
+					{ id: "xs", text: "Extra small" },
+					{ id: "s", text: "Small" },
+					{ id: "m", text: "Medium" },
+					{ id: "l", text: "Large" },
+					{ id: "xl", text: "Extra large" },
+				] );
+				combo.selectItem( "xl" );
+				result.setText( "five sizes now: open the list" );
+			} } ),
+			result,
 		] } ),
 	] } );
 }

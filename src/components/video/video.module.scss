@@ -20,11 +20,14 @@
 	background-color: black;
 	position: relative;
 	
+	// the size of the box, whatever the size of the stream (a <video> keeps its own size
+	// with only left / right): the image fitted in it, black bands around
 	.vplayer {
 		position: absolute;
 		left: 0;
 		top: 0;
-		right: 0;
-		bottom: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
 	}
 }

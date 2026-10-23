@@ -1,7 +1,7 @@
 /**
  * Writes src/demos/sources.gen.ts, the code the gallery shows.
  *
- * In src/demos/<component>.ts, each variation is a function at column 0 preceded by
+ * In src/demos/<component>.ts (or .tsx), each variation is a function at column 0 preceded by
  * a doc comment on one line:
  *     /** @demo Icons — The icon alone, the icon and the text. *\/
  * Its code is the text of the function, from the line after the comment to the
@@ -30,11 +30,11 @@ function readStyles( text ) {
 }
 
 for( const file of readdirSync( dir ) ) {
-	if( !file.endsWith( ".ts" ) || file.endsWith( ".gen.ts" ) ) {
+	if( !/\.tsx?$/.test( file ) || file.endsWith( ".gen.ts" ) ) {
 		continue;
 	}
 
-	const comp = file.slice( 0, -3 );
+	const comp = file.replace( /\.tsx?$/, "" );
 	const text = readFileSync( new URL( file, dir ), "utf8" ).replace( /\r\n/g, "\n" );
 	const lines = text.split( "\n" );
 

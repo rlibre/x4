@@ -1,0 +1,50 @@
+/* @demo kanban */
+.dd-board {
+	gap: 12px;
+	align-items: start;
+}
+
+.dd-column {
+	width: 200px;
+	min-height: 140px;
+	padding: 8px;
+	gap: 6px;
+	border: 1px solid var( --border );
+	background-color: var( --background-ternary );
+
+	> .title {
+		font-weight: 600;
+	}
+
+	// drop-over: the pointer is over it, with something it takes
+	&.drop-over {
+		border-color: var( --accent-background );
+	}
+}
+
+.dd-card {
+	padding: 6px 8px;
+	border: 1px solid var( --border );
+	background-color: var( --background-primary );
+	cursor: grab;
+
+	// dragging: the card while it is dragged (a copy of it follows the pointer)
+	&.dragging {
+		opacity: 0.4;
+	}
+}
+
+// where the dragged card will go
+.dd-marker {
+	flex-shrink: 0;
+	height: 3px;
+	background-color: var( --accent-background );
+}
+
+/* @demo files */
+.dd-files {
+	width: 420px;
+	min-height: 80px;
+	justify-content: center;
+	border-style: dashed;
+}

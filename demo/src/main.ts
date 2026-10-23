@@ -11,21 +11,23 @@ import { pages } from './demos/sources.gen';
 import { ComponentPage } from './page';
 import { icon_close, icon_menu, icon_moon, icon_sun } from './icons';
 import logo from '../../logox4-v3.svg';
+import logo_dark from '../../logox4-v3-dark.svg';
 import { categoryText, texts } from './texts';
 
 import "./main.scss";
 
-// the sections of the navigation: the sections of aicontext.md
+// the sections of the navigation: the sections of aicontext.md, the inputs first, then Extra
+// (SVG, state, JSX...)
 const categories = [
+	"Input components",
 	"Display components",
 	"Layout containers",
-	"Input components",
 	"Lists / grids / trees",
 	"Menus / button groups / tabs",
 	"Popup / Dialog",
 	"Forms",
 	"Sizers / viewport / misc",
-	"SVG",
+	"Extra",
 ];
 
 // the components that have a page, in the order of the navigation
@@ -36,7 +38,7 @@ const components = pages.slice( ).sort( ( a, b ) => categories.indexOf( a.catego
  */
 
 class Gallery extends VBox {
-	declare protected refs: { search: TextEdit; clear: Button; nav: VBox; content: Component };
+	declare protected refs: { brand: Label; search: TextEdit; clear: Button; nav: VBox; content: Component };
 
 	private router = new Router( );
 	private page: ComponentPage = null;
@@ -48,7 +50,7 @@ class Gallery extends VBox {
 
 		this.setContent( [
 			new HBox( { cls: "header", content: [
-				new Label( { cls: "brand", icon: logo, text: "Gallery" } ),
+				this.refs.brand = new Label( { cls: "brand", icon: logo, text: "Gallery" } ),
 				// no label: the field alone; its gadget clears it, shown when there is a text
 				this.refs.search = new TextEdit( { cls: "search", label: "", placeholder: this.searchHint( ), change: ( ) => this.filterNav( ), inputGadgets: [
 					this.refs.clear = new Button( { icon: icon_close, hidden: true, click: ( ) => this.clearSearch( ) } ),
@@ -196,6 +198,9 @@ class Gallery extends VBox {
 	private toggleTheme( ) {
 		this.dark = !this.dark;
 		Application.setTheme( this.dark ? "dark" : "" );
+
+		// its "4" is light in the dark theme
+		this.refs.brand.setIcon( this.dark ? logo_dark : logo );
 	}
 
 	/**

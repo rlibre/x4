@@ -1,4 +1,7 @@
-<img src="https://raw.githubusercontent.com/rlibre/x4/main/logox4-v3.svg" alt="x4 logo" width="96">
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rlibre/x4/main/logox4-v3-dark.svg">
+	<img src="https://raw.githubusercontent.com/rlibre/x4/main/logox4-v3.svg" alt="x4 logo" width="96">
+</picture>
 
 # x4js
 **A TypeScript framework for people who build applications, not markup.**

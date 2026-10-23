@@ -1543,6 +1543,23 @@ export class X4PDFBuilder {
 
 		return result
 	}
+
+	/**
+	 * the document as a file, of type application/pdf (build, its streams not compressed)
+	 */
+
+	buildBlob(): Blob {
+		return new Blob([this.build() as BlobPart], { type: 'application/pdf' })
+	}
+
+	/**
+	 * an object url of the document: the src of an iframe, the href of a link, window.open.
+	 * URL.revokeObjectURL( url ) frees it when it is no longer shown
+	 */
+
+	buildURL(): string {
+		return URL.createObjectURL(this.buildBlob())
+	}
 }
 
 /*

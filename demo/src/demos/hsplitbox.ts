@@ -35,12 +35,14 @@ export function nested( ) {
 	] } );
 }
 
-/** @demo HSizer by hand — Where a SplitBox does not fit, a sizer placed by hand: HSizer( false ) resizes the element before it. */
+/** @demo HSizer by hand — In any HBox, a sizer you put between two children: HSizer( false ) resizes the one before it, HSizer( ) the one after it; the flex one takes the rest. A SplitBox puts them for you. */
 export function bySizer( ) {
 	return new HBox( { cls: "panes", height: 120, content: [
-		new VBox( { width: 220, content: new SimpleText( { text: "Resized by the sizer after me." } ) } ),
+		new VBox( { width: 180, content: new SimpleText( { text: "HSizer( false ), on my right, resizes me." } ) } ),
 		new HSizer( false ),
-		new VBox( { flex: 1, content: new SimpleText( { text: "flex" } ) } ),
+		new VBox( { flex: 1, content: new SimpleText( { text: "flex: the rest." } ) } ),
+		new HSizer( ),
+		new VBox( { width: 180, content: new SimpleText( { text: "HSizer( ), on my left, resizes me." } ) } ),
 	] } );
 }
 

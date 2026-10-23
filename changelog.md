@@ -42,6 +42,10 @@ grid.enable( false );
 
 - The icons of the tabs are grey: `--tab-icon-color`.
 
+### Input, TextArea
+
+- The placeholder is readable in the dark theme: `--input-placeholder` is `--disabled-color-dark` (it had the colour of the background of the field).
+
 ### ColorInput
 
 - In a narrow box, its field gets narrower: it no longer overflows (a horizontal scroll in a PropertyGrid).
@@ -50,6 +54,27 @@ grid.enable( false );
 
 - The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
 - The button of a collapsible group keeps its icon visible when it has the focus.
+
+### Combobox
+
+- Its label is on the right of its `labelWidth`, its colon against the field, as the label of a TextEdit: in a form, they line up.
+
+### Video
+
+- The image fills the box of the Video, fitted (`object-fit: contain`): a camera or a file no longer makes it overflow its box.
+- `src`: a file to play, as a prop or a property; `stream` is optional (a stream wins over src).
+
+```ts
+new Video( { src: "movie.mp4", width: 320, height: 180, muted: true, autoplay: true } );
+```
+
+### PDF
+
+- `X4PDFBuilder.buildBlob()`: the document as a Blob of type application/pdf; `buildURL()`: an object url of it.
+
+```ts
+iframe.setAttribute( "src", pdf.buildURL( ) );
+```
 
 ### SvgBuilder
 

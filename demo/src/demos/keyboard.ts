@@ -63,8 +63,10 @@ const page: DemoComponent = {
 	category: "Sizers / viewport / misc",
 	description: "A virtual keyboard for a touch screen: it shows itself at the bottom of its box while a field of the page has the focus.",
 	usage: {
-		create: ( props ) => new VBox( { cls: "kb-box", height: 380, width: 600, content: [
+		// a text, and a number: the pad, with no key back to the letters when numpadOnly
+		create: ( props ) => new VBox( { cls: "kb-box", height: 410, width: 600, content: [
 			new TextEdit( { label: "Text", labelWidth: 80, width: 340, placeholder: "click here" } ),
+			new TextEdit( { label: "Amount", labelWidth: 80, width: 240, type: "number", placeholder: "the pad" } ),
 			new Keyboard( props ),
 		] } ),
 		props: { locale: "fr-FR", numpadOnly: false },

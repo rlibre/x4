@@ -2,3 +2,23 @@
 svg.svgcomponent {
 	border: 1px solid var( --border );
 }
+
+/* @demo interactive */
+// a shape of svg takes a style as an element of html: here its hover
+.bar {
+	cursor: pointer;
+
+	&:hover {
+		fill: #e8590c;
+	}
+}
+
+/* @demo dots */
+svg.dots {
+	border: 1px dashed var( --border );
+	cursor: crosshair;
+
+	.dot {
+		cursor: pointer;
+	}
+}

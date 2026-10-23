@@ -1,0 +1,13 @@
+/* @demo keys */
+.paste-zone {
+	width: 420px;
+	padding: 8px;
+	gap: 8px;
+	border: 1px dashed var( --border );
+	outline: none;
+
+	// it has the focus: the keys go to it
+	&:focus {
+		border-color: var( --accent-background );
+	}
+}

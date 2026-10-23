@@ -2,7 +2,7 @@
  * SvgComponent: the page of the gallery (with SvgBuilder)
  */
 
-import { Button, HBox, SvgBuilder, SvgComponent, VBox } from 'x4js';
+import { Button, HBox, Label, SvgBuilder, SvgComponent, VBox } from 'x4js';
 import { DemoComponent } from '../types';
 
 import "./svgcomponent.scss";
@@ -84,9 +84,46 @@ export function setSvg( ) {
 	] } );
 }
 
+/** @demo Interactive — A shape takes DOM events (addDOMEvent) and a tooltip: its attribute tooltip, shown as html by initTooltips. The hover is in the style. */
+export function interactive( ) {
+	const months: [ string, number ][] = [ [ "Jan", 42 ], [ "Feb", 58 ], [ "Mar", 35 ], [ "Apr", 71 ], [ "May", 64 ], [ "Jun", 80 ] ];
+	const info = new Label( { text: "Click a bar" } );
+	const svg = new SvgBuilder( );
+
+	months.forEach( ( [ month, value ], i ) => {
+		svg.rect( 10 + i * 50, 100 - value, 36, value )
+			.fill( "#569cd6" )
+			.addClass( "bar" )
+			.setAttr( "tooltip", `<b>${month}</b>: ${value} orders` )
+			.addDOMEvent( "click", ( ) => info.setText( `${month}: ${value} orders` ) );
+
+		svg.text( 28 + i * 50, 116, month ).fontSize( 11 ).textAlign( "center" ).fill( "#888" );
+	} );
+
+	return new VBox( { content: [ new SvgComponent( { width: 320, height: 120, svg } ), info ] } );
+}
+
+/** @demo Drawing with the mouse — A click on the drawing adds a point where the pointer is (no viewbox: a point of the drawing is a pixel); a click on a point removes it. */
+export function dots( ) {
+	const svg = new SvgBuilder( );
+	const view = new SvgComponent( { cls: "dots", width: 320, height: 160, svg } );
+
+	view.addDOMEvent( "click", ( ev ) => {
+		// on a point, its own click removes it
+		if( ev.target !== view.dom ) {
+			return;
+		}
+
+		const dot = svg.circle( ev.offsetX, ev.offsetY, 8 ).fill( "#e8590c" ).addClass( "dot" );
+		dot.addDOMEvent( "click", ( ) => dot.getDom( ).remove( ) );
+	} );
+
+	return view;
+}
+
 const page: DemoComponent = {
 	name: "SvgComponent",
-	category: "SVG",
+	category: "Extra",
 	description: "An <svg> element whose drawing is made with an SvgBuilder: shapes, paths, texts, gradients, groups, all in code.",
 	imports: [ "SvgComponent", "SvgBuilder" ],
 	usage: {
@@ -103,7 +140,7 @@ const page: DemoComponent = {
 			] },
 		],
 	},
-	demos: [ shapes, gradient, arcs, transforms, setSvg ],
+	demos: [ shapes, interactive, dots, gradient, arcs, transforms, setSvg ],
 };
 
 export default page;

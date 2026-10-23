@@ -84,7 +84,7 @@ body {
 .nav {
 	flex-shrink: 0;
 	width: 280px;
-	padding: 8px 0;
+	padding: 8px 0 48px;		// scrolled to its end, the last section is not against the bottom
 	overflow-y: auto;
 	border-right: 1px solid var( --border );
 

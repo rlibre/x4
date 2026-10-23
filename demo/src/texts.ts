@@ -29,7 +29,7 @@ const en = {
 			"Popup / Dialog": "Popup / Dialog",
 			"Forms": "Forms",
 			"Sizers / viewport / misc": "Sizers / viewport / misc",
-			"SVG": "SVG",
+			"Extra": "Extra",
 		},
 	},
 };
@@ -57,7 +57,7 @@ const fr: typeof en = {
 			"Popup / Dialog": "Popups / dialogues",
 			"Forms": "Formulaires",
 			"Sizers / viewport / misc": "Séparateurs / vues / divers",
-			"SVG": "SVG",
+			"Extra": "Extra",
 		},
 	},
 };
@@ -85,7 +85,7 @@ const es: typeof en = {
 			"Popup / Dialog": "Popups / diálogos",
 			"Forms": "Formularios",
 			"Sizers / viewport / misc": "Separadores / vistas / varios",
-			"SVG": "SVG",
+			"Extra": "Extra",
 		},
 	},
 };
@@ -113,7 +113,7 @@ const de: typeof en = {
 			"Popup / Dialog": "Popups / Dialoge",
 			"Forms": "Formulare",
 			"Sizers / viewport / misc": "Trenner / Ansichten / Sonstiges",
-			"SVG": "SVG",
+			"Extra": "Extra",
 		},
 	},
 };

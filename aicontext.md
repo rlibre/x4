@@ -1352,13 +1352,15 @@ class VSizer extends CSizer                // vertical splitter
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
-class Video extends Box {                   // class x4video
+class Video extends Box {                   // class x4video; props: src? (a file, url), stream? (wins over src), autoplay?, muted?, playsInline?
   play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
   pause(); mute(set: boolean)
   get player(): HTMLVideoElement; get duration(): number; get paused(): boolean
   get volume(): number; get videoWidth(): number; get videoHeight(): number
+  get src(): string; set src(url: string)
   set stream(stream: MediaStream)
 }
+// The image fills the box of the Video, fitted (object-fit: contain): the box keeps its size, whatever the size of the stream.
 class Calendar extends VBox {               // props: date?, minDate?, maxDate? (days out of them cannot be chosen), change ("change": the day clicked)
   getDate(): Date; setDate(date: Date): void   // copies: the calendar keeps its own date
 }
@@ -1781,6 +1783,8 @@ class X4PDFBuilder {
   page(width: number, height: number, callback: (ctx: PageContext) => void): void   // points; without size 612 x 792
   build(): Uint8Array
   buildAsync(): Promise<Uint8Array>          // streams compressed (FlateDecode)
+  buildBlob(): Blob                          // the file, application/pdf (build)
+  buildURL(): string                         // an object url of it: iframe src, link, window.open; URL.revokeObjectURL frees it
 }
 export interface PageContext {                // origin bottom left, y goes up
   text(str, x, y, size, opts?: { align?: 'left'|'center'|'right'; width?; color?; bold? }): void
@@ -1838,6 +1842,13 @@ class CMover {
 createPainter(c2d: CanvasRenderingContext2D, w: number, h: number): CanvasEx   // Canvas painter
 initTooltips(): void                                   // initialize the global tooltip system
 ```
+
+JSX, in `.tsx` files: in tsconfig.json `"jsx": "react"` and `"jsxFactory": "x4_react.create_element"` (esbuild reads
+them), and `"files": [ "node_modules/x4js/src/x4tsx.d.ts" ]` for the JSX types (`ref`); each `.tsx` file imports `x4_react`.
+`<X a={1}>{kids}</X>` is `new X( { a: 1, content: kids } )`; a tag in lower case is an html element (its attributes set,
+an attribute `on...` an event); arrays in braces are flattened, `null`, `undefined` and `false` give nothing (`setContent`
+does not flatten nested arrays: build such a content in JSX); `ref={[owner, "name"]}` keeps the element in
+`owner.refs.name`, the owner a Box.
 
 No tooltip is shown until the application calls `initTooltips()` once (the prop `tooltip` only sets an attribute).
 `initTooltips()` shows the text of the attribute `tooltip` (the prop `tooltip`), or the one `getTip()`
@@ -2079,6 +2090,6 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - `Gridview` is backed by a `DataStore`; `Spreadsheet` is backed by a `Store` (different, cell-based).
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
 - `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
-- `x4_react.create_element` is the JSX pragma; 
+- `x4_react.create_element` is the JSX pragma (the setup: JSX factory & helpers).
 - A DOM handler of an ancestor is called for the events of its descendants, as in the browser. Not for the events that do not bubble: `focus`, `blur`, `mouseenter`, `mouseleave` (use `focusin` / `focusout`, `mouseover` / `mouseout`), nor for those of x4: `created`, `removed`, `resized`.
 - Several handlers of one event on one node are called in the order they were added. One that returns `true` stops those that follow it.

@@ -8,8 +8,12 @@
 		"skipLibCheck": true,
 		"types": [],
 		"moduleResolution": "bundler",
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"jsx": "react",
+		"jsxFactory": "x4_react.create_element"
 	},
 	"include": [ "src/**/*" ],
+	// the JSX types of x4 (in files: exclude does not drop them)
+	"files": [ "node_modules/x4js/src/x4tsx.d.ts" ],
 	"exclude": [ "node_modules", "bin" ]
 }
