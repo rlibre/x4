@@ -55,14 +55,24 @@ grid.enable( false );
 - The description of a group is under its title, smaller, in italics and indented; a collapsible group is as high as the others.
 - The button of a collapsible group keeps its icon visible when it has the focus.
 
-### Radio
+### Checkbox
 
-- `cls: "plain"`: the radio is its icon and its text, no round; the one checked is in the accent colour (`--radio-plain-color`, `-hover`, `-checked`).
-- `square`: the one checked has its text and its icon in the colour of the accent text (they kept the colour of a label, grey on the accent), the others a border of the theme. Its colours: `--radio-square-*`.
-- `button`, `square`, `plain`: the hidden round keeps its input in the page, so that Tab and the arrows reach the radios; the focus of the keyboard is shown around them (`--radio-focus`).
+- `icon`: an icon before its label; `label` is optional (an icon alone, with a tooltip).
+- Its looks by its class, as those of Radio: `button` (`button outline` rounded), `square`. The box is hidden, its input still reached by Tab and the space bar. Their colours: `--checkbox-button-*`, `--checkbox-square-*`.
+- `left` puts its label before its box again.
 
 ```ts
-new Radio( { cls: "plain", icon: icon_folder, label: "Folders", name: "view", value: "folders" } );
+new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold" } );
+```
+
+### Radio
+
+- `square`: the one checked has its text and its icon in the colour of the accent text (they kept the colour of a label, grey on the accent), the others a border of the theme. Its colours: `--radio-square-*`.
+- `button`: a border of the theme around each radio (`--radio-button-border`); the icon of the one checked is in the accent, an icon drawn in currentColor too.
+- `button`, `square`: the hidden round keeps its input in the page, so that Tab and the arrows reach the radios; the focus of the keyboard is shown around them (`--radio-focus`).
+
+```ts
+new Radio( { cls: "button", icon: icon_folder, label: "Folders", name: "view", value: "folders" } );
 ```
 
 ### HSplitBox, VSplitBox, HSizer, VSizer

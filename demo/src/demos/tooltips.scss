@@ -1,3 +1,43 @@
+/* @demo html */
+// the HTML of a tooltip takes the style of the page: a width to wrap its sentences
+.demo-tip {
+	max-width: 260px;
+	white-space: normal;
+	line-height: 1.4;
+
+	p, ul {
+		margin: 4px 0;
+	}
+
+	ul {
+		padding-left: 18px;
+	}
+
+	// a key of the keyboard
+	.key {
+		display: inline-block;
+		padding: 0 6px;
+		border: 1px solid var( --border );
+		border-bottom-width: 2px;
+		border-radius: 4px;
+		background-color: var( --background-primary );
+		font-size: 85%;
+	}
+
+	.badge {
+		padding: 0 6px;
+		border-radius: 8px;
+		background-color: var( --success-background );
+		color: var( --success-color );
+		font-size: 80%;
+	}
+
+	.muted {
+		color: var( --text-secondary );
+		font-size: 85%;
+	}
+}
+
 /* @demo handler */
 .clock {
 	padding: 8px;

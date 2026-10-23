@@ -22,13 +22,10 @@
 	--radio-square-background-checked: var( --accent-background-active );
 	--radio-square-color-checked: var( --accent-color );
 	--radio-focus: var( --accent-background );
-
-	--radio-plain-color: var( --text-ternary );
-	--radio-plain-color-hover: var( --text-primary );
-	--radio-plain-color-checked: var( --accent-background );
+	--radio-button-border: var( --border );
 }
 
-// button, square, plain: the round hidden, its input still in the page (not display: none),
+// button, square: the round hidden, its input still in the page (not display: none),
 // so that Tab and the arrows reach it; the focus of the keyboard shown around the radio
 %radio-no-round {
 	gap: 0;		// no space kept for the round
@@ -131,7 +128,7 @@
 		border-radius: 22px;;
 	}
 
-	border: 1px solid transparent;
+	border: 1px solid var( --radio-button-border );
 	padding: 8px;
 	margin: 0;
 
@@ -148,8 +145,10 @@
 			color: var( --text-ternary );
 		}
 	
+		// fill and color: an icon is drawn in its fill, or in currentColor
 		#icon {
 			fill: var( --text-ternary );
+			color: var( --text-ternary );
 			width: var( --size );
 			height: var( --size );
 		}
@@ -167,6 +166,7 @@
 
 			#icon {
 				fill: var( --accent-background-active );
+				color: var( --accent-background-active );
 			}
 
 			.fa-primary {
@@ -197,32 +197,6 @@
 				color: var( --radio-square-color-checked );
 				fill: var( --radio-square-color-checked );
 			}
-		}
-	}
-}
-
-// plain: its icon and its text only, no round, no border; the one checked in the accent
-.x4radio.plain {
-	@extend %radio-no-round;
-
-	// the colour of its icon and its text
-	--radio-ink: var( --radio-plain-color );
-
-	&:hover {
-		--radio-ink: var( --radio-plain-color-hover );
-	}
-
-	&:has(input:checked) {
-		--radio-ink: var( --radio-plain-color-checked );
-		font-weight: bold;
-	}
-
-	.x4label {
-		--label-color: var( --radio-ink );
-
-		#icon {
-			color: var( --radio-ink );
-			fill: var( --radio-ink );
 		}
 	}
 }

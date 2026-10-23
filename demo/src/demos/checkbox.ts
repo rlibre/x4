@@ -4,6 +4,9 @@
 
 import { Button, Checkbox, Form, HBox, Label, VBox } from 'x4js';
 import { DemoComponent } from '../types';
+import { icon_heart, icon_mail, icon_star } from '../icons';
+
+import "./checkbox.scss";
 
 /** @demo Change — change gives the new state in ev.value. */
 export function change( ) {
@@ -62,20 +65,43 @@ export function inForm( ) {
 	] } );
 }
 
+/** @demo Toggle buttons — A toggle button is a Checkbox with cls: "button". icon puts an icon before the label; without a label, the icon alone (with a tooltip), as in a toolbar. */
+export function icons( ) {
+	return new VBox( { cls: "checkbox-icons", content: [
+		new HBox( { content: [
+			new Checkbox( { cls: "button", icon: icon_star, tooltip: "Favourite", checked: true } ),
+			new Checkbox( { cls: "button", icon: icon_heart, tooltip: "Like" } ),
+			new Checkbox( { cls: "button", icon: icon_mail, tooltip: "Notify me" } ),
+		] } ),
+		new HBox( { content: [
+			new Checkbox( { cls: "button", icon: icon_star, label: "Favourite", checked: true } ),
+			new Checkbox( { cls: "button", icon: icon_heart, label: "Like" } ),
+			new Checkbox( { cls: "button", icon: icon_mail, label: "Notify me" } ),
+		] } ),
+	] } );
+}
+
 const page: DemoComponent = {
 	name: "Checkbox",
 	category: "Input components",
 	description: "A box to check, with its label: a click on either changes it.",
 	usage: {
 		create: ( props ) => new Checkbox( props ),
-		props: { label: "Remember me", checked: false, disabled: false },
+		props: { label: "Remember me", checked: false, cls: "", disabled: false },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "checked", type: "boolean" },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "left", text: "left" },
+				{ id: "button", text: "button" },
+				{ id: "button outline", text: "button outline" },
+				{ id: "square", text: "square" },
+			] },
 			{ name: "disabled", type: "boolean" },
 		],
 	},
-	demos: [ change, fromCode, inForm ],
+	demos: [ change, fromCode, inForm, icons ],
 };
 
 export default page;

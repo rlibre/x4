@@ -6,8 +6,8 @@
 		gap: 20px;
 	}
 
-	// the round and its label (a plain radio has no round)
-	.x4radio:not(.plain) {
+	// the round and its label (a button has no round)
+	.x4radio:not(.button) {
 		gap: 6px;
 	}
 }

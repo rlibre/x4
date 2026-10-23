@@ -25,6 +25,52 @@
 	--checkbox-check-border: var( --border );
 	--checkbox-check-border-hover: var( --border-hover );
 	--checkbox-check-color: var( --accent-color );
+	--checkbox-focus: var( --accent-background );
+
+	--checkbox-button-border: var( --border );
+	--checkbox-button-color: var( --text-ternary );
+	--checkbox-button-color-checked: var( --accent-background-active );
+	--checkbox-button-background-checked: var( --background-secondary );
+	--checkbox-button-border-checked: var( --accent-background );
+
+	--checkbox-square-color: var( --text-ternary );
+	--checkbox-square-border: var( --border );
+	--checkbox-square-border-checked: var( --accent-background-active );
+	--checkbox-square-background-checked: var( --accent-background-active );
+	--checkbox-square-color-checked: var( --accent-color );
+}
+
+// button, square: the box hidden, its input still in the page (not display: none),
+// so that Tab and the space bar reach it; the focus of the keyboard shown around the checkbox.
+// --checkbox-ink: the colour of its icon and its text
+%checkbox-no-box {
+	gap: 0;
+	margin: 0;
+
+	.inner {
+		width: 0;
+		height: 0;
+		overflow: hidden;
+		opacity: 0;
+	}
+
+	&:has(input:focus-visible) {
+		outline: 1px dotted var( --checkbox-focus );
+		outline-offset: 2px;
+	}
+
+	label {
+		--label-color: var( --checkbox-ink );
+
+		#icon {
+			color: var( --checkbox-ink );
+			fill: var( --checkbox-ink );
+		}
+	}
+
+	&:has(input:checked) {
+		font-weight: bold;
+	}
 }
 
 .x4checkbox {
@@ -136,8 +182,48 @@
 		order: 2;
 	}
 
-	&.left #label {
+	// its label has no id: the element, before the box
+	&.left label {
 		order: 0;
 		text-align: left;
+	}
+}
+
+// button: a button, its background and its border marked when checked
+.x4checkbox.button {
+	@extend %checkbox-no-box;
+	--checkbox-ink: var( --checkbox-button-color );
+
+	padding: 8px;
+	border: 1px solid var( --checkbox-button-border );
+
+	&.outline {
+		border-radius: 22px;
+	}
+
+	label #icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	&:has(input:checked) {
+		--checkbox-ink: var( --checkbox-button-color-checked );
+		background-color: var( --checkbox-button-background-checked );
+		border-color: var( --checkbox-button-border-checked );
+	}
+}
+
+// square: a box, filled with the accent when checked
+.x4checkbox.square {
+	@extend %checkbox-no-box;
+	--checkbox-ink: var( --checkbox-square-color );
+
+	padding: 5px;
+	border: 1px solid var( --checkbox-square-border );
+
+	&:has(input:checked) {
+		--checkbox-ink: var( --checkbox-square-color-checked );
+		background-color: var( --checkbox-square-background-checked );
+		border-color: var( --checkbox-square-border-checked );
 	}
 }

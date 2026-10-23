@@ -53,7 +53,7 @@ export function loading( ) {
 
 const page: DemoComponent = {
 	name: "Notification",
-	category: "Popup / Dialog",
+	category: "Extra",
 	description: "A message in the bottom right corner of the window, for a few seconds or until it is closed; several pile up.",
 	usage: {
 		// the preview: a button that shows the notification for 3 s

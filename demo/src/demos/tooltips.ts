@@ -18,11 +18,27 @@ export function prop( ) {
 	] } );
 }
 
-/** @demo HTML — The text of a tooltip is HTML: bold, a line break, a shortcut written by shortcutText. */
+/** @demo HTML — The text of a tooltip is HTML, styled by the page: a title, a sentence, a shortcut written by shortcutText, a list, a badge. A text that comes from a user is escaped with sanitizeHtml. */
 export function html( ) {
 	return new HBox( { content: [
-		new Button( { label: "Save", tooltip: `<b>Save</b><br>${shortcutText( "Mod+S" )}` } ),
-		new Button( { label: "Undo", cls: "outline", tooltip: `<b>Undo</b><br>${shortcutText( "Mod+Z" )}` } ),
+		new Button( { label: "Save", tooltip: `<div class="demo-tip">
+			<b>Save the document</b>
+			<p>Your changes go to the disk; the previous version is kept for 30 days.</p>
+			<span class="key">${shortcutText( "Mod+S" )}</span>
+		</div>` } ),
+		new Button( { label: "Export", cls: "outline", tooltip: `<div class="demo-tip">
+			<b>Export the table</b>
+			<ul>
+				<li><b>PDF</b>, to print it</li>
+				<li><b>CSV</b>, for a spreadsheet</li>
+				<li><b>JSON</b>, for the code</li>
+			</ul>
+		</div>` } ),
+		new Button( { label: "Publish", cls: "outline", tooltip: `<div class="demo-tip">
+			<b>Publish</b> <span class="badge">new</span>
+			<p>Your page online in one click, at <u>x4js.org</u>.</p>
+			<span class="muted">Last published 2 hours ago</span>
+		</div>` } ),
 	] } );
 }
 
@@ -57,7 +73,7 @@ export function handler( ) {
 
 const page: DemoComponent = {
 	name: "Tooltips",
-	category: "Popup / Dialog",
+	category: "Extra",
 	description: "A text that shows under the pointer, on any component that has a tooltip. initTooltips( ) once at the start of the application turns them on.",
 	imports: [ "initTooltips" ],
 	demos: [ prop, html, change, handler ],

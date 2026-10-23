@@ -21,7 +21,8 @@ interface CheckBoxEvents extends ComponentEvents {
  */
 
 interface CheckboxProps extends ComponentProps {
-	label: string; 			// The text label for the checkbox.
+	label?: string; 		// The text label for the checkbox; none: its icon alone (with a tooltip)
+	icon?: string;			// an icon before its label
 	checked?: boolean;		// Optional boolean indicating if the checkbox is checked by default.
 	value?: boolean | number | string;			// Optional value associated with the checkbox.
 	name?: string;
@@ -30,7 +31,13 @@ interface CheckboxProps extends ComponentProps {
 
 /**
  * Checkbox component that can be checked or unchecked.
- * 
+ * Its look, by its class (cls): "left" (its label on the left), "button" (a button, "button
+ * outline" rounded), "square" (a box filled when checked). Without the box, its input is still
+ * reached by Tab.
+ *
+ * A toggle button is a Checkbox with the class "button":
+ * new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold", change: ( ev ) => setBold( ev.value ) } )
+ *
  * @cssvar
  * ```
  * --checkbox-background-check
@@ -41,6 +48,17 @@ interface CheckboxProps extends ComponentProps {
  * --checkbox-check-border
  * --checkbox-check-border-hover
  * --checkbox-check-color
+ * --checkbox-focus
+ * --checkbox-button-border
+ * --checkbox-button-color
+ * --checkbox-button-color-checked
+ * --checkbox-button-background-checked
+ * --checkbox-button-border-checked
+ * --checkbox-square-color
+ * --checkbox-square-border
+ * --checkbox-square-border-checked
+ * --checkbox-square-background-checked
+ * --checkbox-square-color-checked
  * ```
  */
 
@@ -80,11 +98,12 @@ export class Checkbox extends Component<CheckboxProps,CheckBoxEvents> {
 					})
 				] 
 			}),
-			new Label( { 
+			new Label( {
 				tag: 'label',
-				text: props.label, 
-				labelFor: inputId, 
-				id: undefined 
+				text: props.label,
+				icon: props.icon,
+				labelFor: inputId,
+				id: undefined
 			} ),
 		])
 

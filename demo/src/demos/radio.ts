@@ -59,7 +59,7 @@ export function inForm( ) {
 	] } );
 }
 
-/** @demo Icons — A radio may show an icon before its label; with cls: "plain" it is its icon and its text only, the one checked in the accent (Tab and the arrows still go from one to the other). */
+/** @demo Icons — A radio may show an icon before its label; with cls: "button" it is a button, the one checked marked (Tab and the arrows still go from one to the other). */
 export function icons( ) {
 	return new VBox( { cls: "radio-icons", content: [
 		new HBox( { content: [
@@ -68,9 +68,9 @@ export function icons( ) {
 			new Radio( { label: "Images", icon: icon_image, name: "view", value: "images" } ),
 		] } ),
 		new HBox( { content: [
-			new Radio( { cls: "plain", label: "Files", icon: icon_file, name: "view2", value: "files", checked: true } ),
-			new Radio( { cls: "plain", label: "Folders", icon: icon_folder, name: "view2", value: "folders" } ),
-			new Radio( { cls: "plain", label: "Images", icon: icon_image, name: "view2", value: "images" } ),
+			new Radio( { cls: "button", label: "Files", icon: icon_file, name: "view2", value: "files", checked: true } ),
+			new Radio( { cls: "button", label: "Folders", icon: icon_folder, name: "view2", value: "folders" } ),
+			new Radio( { cls: "button", label: "Images", icon: icon_image, name: "view2", value: "images" } ),
 		] } ),
 	] } );
 }
@@ -94,7 +94,6 @@ const page: DemoComponent = {
 			{ name: "checked", type: "boolean" },
 			{ name: "cls", type: "options", options: [
 				{ id: "", text: "default" },
-				{ id: "plain", text: "plain" },
 				{ id: "button", text: "button" },
 				{ id: "button outline", text: "button outline" },
 				{ id: "square", text: "square" },
