@@ -35,11 +35,12 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     │        → Menu, DropdownList, Notification
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
-  │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
+  │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Knob, Gauge
   │     ├── Progress, TickLine, Timeline, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── Canvas → Bargraph
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
-  │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
+  │     ├── FileDialog, ScrollView, Viewport, DockingView, MapView, Carousel, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea, SettingsView, SettingItem
   └── Application<E>           singleton, no DOM of its own
@@ -382,7 +383,7 @@ class StackBox extends Box {
 }
 ```
 
-### `AssistBox` — sequential navigation (wizard/carousel)
+### `AssistBox` — sequential navigation (wizard)
 
 ```ts
 class AssistBox extends StackBox {
@@ -390,6 +391,52 @@ class AssistBox extends StackBox {
   isFirstPage(): boolean
   isLastPage(): boolean
 }
+// one page shown, no animation nor commands: for slides that move (arrows, dots, swipe, autoplay), Carousel
+```
+
+### `Carousel` — slides that move: arrows, dots, swipe, autoplay
+
+```ts
+interface CarouselImage {                  // a slide that is an image: loaded when it comes near the view
+  src: string; alt?: string
+  caption?: string | UnsafeHtml            // over the bottom of the image
+  fit?: "cover" | "contain"                // cover by default
+}
+type CarouselItem = Component | CarouselImage
+
+interface CarouselProps extends Omit<ComponentProps, "content"> {
+  items?: CarouselItem[]
+  perView?: number                         // slides seen side by side, 1 by default; a move goes one slide further
+  index?: number                           // the first slide seen at the start, 0 by default
+  loop?: boolean                           // after the last, the first (and before the first, the last)
+  autoplay?: number                        // ms between two slides; it loops; paused under the pointer, with the focus in it,
+                                           // during a swipe, or while the page is hidden
+  arrows?: boolean; dots?: boolean         // true by default; none of them when all the slides are seen
+  change?: EventCallback<EvChange>         // value: the index; the user (arrows, dots, swipe, keys) or the autoplay, not the code
+}
+class Carousel extends Component {
+  setItems(items: CarouselItem[], index?: number): void
+  select(index: number): void              // no change event; beyond the ends: the end
+  next(): void; prev(): void               // no change event; they loop when loop (or autoplay)
+  getIndex(): number; getCount(): number
+}
+// Its height is given (height, flex): the slides fill it. Without loop, an arrow is hidden at its end.
+// Swipe: the finger or the mouse; a fifth of a slide goes to the next, a long swipe further; across, the page scrolls;
+//   a swipe is not a click on what is in the slide. Keys: ← → Home End.
+// The slides out of the view are inert (Tab does not go in them). Disabled: faded as a Box, its images grey.
+// The texts for screen readers: _tr.global.carousel. The autoplay timer stops when it leaves the page.
+// CSS vars: --carousel-gap --carousel-duration --carousel-arrow-background --carousel-arrow-color --carousel-dot
+//           --carousel-dot-active --carousel-radius --carousel-caption-color --carousel-caption-background
+//           --carousel-disabled-filter
+```
+
+```ts
+new Carousel({
+  height: 300, autoplay: 5000,
+  items: photos.map(p => ({ src: p.url, alt: p.title, caption: p.title })),
+  change: ev => this.showInfo(photos[ev.value]),
+})
+new Carousel({ height: 180, perView: 3, items: products.map(p => new ProductCard({ product: p })) })
 ```
 
 ### `GridBox`
@@ -605,6 +652,41 @@ class Gauge extends Component {
 }
 ```
 
+### `Bargraph` — a level meter of segments, drawn in a canvas
+
+```ts
+interface BargraphProps extends ComponentProps {
+  value?: number                           // min by default
+  min?: number; max?: number               // 0 and 100 by default
+  vertical?: boolean                       // the segments go up from the bottom; else from the left
+  segments?: number                        // 20 by default
+  colors?: string[]                        // from min to max, as Gauge (linearColorStops: green to red); one: a plain bar;
+                                           // none: the accent, pale to full (--bargraph-color-start, -end)
+  overshoot?: number                       // the segments from this value have the alert color; the colors go under it
+  animated?: boolean                       // up quickly, down slowly, in a few frames; false: at once (true by default)
+  peak?: boolean                           // the highest segment reached stays lit a second, then falls
+}
+class Bargraph extends Canvas {
+  setValue(v: number): void                // drawn at the next frame: call it as often as needed (60 times a second)
+  getValue(): number
+  setMin(min: number): void; setMax(max: number): void
+  setColorStops(colors: string[]): void; setOvershoot(overshoot: number): void   // undefined: no overshoot
+  refresh(): void                          // read the css variables again and draw
+}
+// For performance: one canvas, one requestAnimationFrame loop for all the bargraphs (stopped while none moves),
+//   a drawing only when a segment changes. 200 x 12 by default (12 x 200 vertical): width / height.
+// The colors are read from the css when it draws first, and again when the theme changed (compared at each
+//   drawing), on enable / disable, setColorStops, setOvershoot; a bargraph that does not move keeps its colors
+//   until then: refresh() after a change of the theme or of the variables.
+// An unlit segment: its color at --bargraph-off-mix (15%) in --bargraph-off. Disabled: the lit ones in the disabled color.
+// CSS vars: --bargraph-color-start --bargraph-color-end --bargraph-overshoot --bargraph-off --bargraph-off-mix --bargraph-gap
+```
+
+```ts
+const meters = channels.map( ( ) => new Bargraph( { vertical: true, overshoot: 85, peak: true } ) )
+audio.onLevels( levels => levels.forEach( ( v, i ) => meters[i].setValue( v ) ) )
+```
+
 ### `Rating`
 
 ```ts
@@ -650,6 +732,55 @@ new Timeline({
     { icon: review, title: 'Code review', text: 'Waiting for a reviewer' },
   ],
   click: ev => this.openStep(ev.context as TimelineItem),
+})
+```
+
+### `MapView` — a map of tiles (openstreetmap), with markers and zones
+
+```ts
+interface LatLng { lat: number; lng: number }
+interface MapMarker extends LatLng { title?: string; icon?: string /* a pin by default */; data?: any }
+type MapShape =                            // zones, under the markers
+    { type: "polygon"; points: LatLng[] }
+  | { type: "circle"; center: LatLng; radius: number /* meters */ }
+  | { type: "line"; points: LatLng[] }
+  // all: title?: string; color?: string (else --chart-color-1..8 in turn); width?: number (px: 4 a line, 2 a border); data?: any
+
+interface MapViewProps extends Omit<ComponentProps, "content"> {
+  center?: LatLng; zoom?: number           // 0,0 and 2 by default; zoom: whole levels only
+  minZoom?: number; maxZoom?: number       // 1 and 19 by default
+  tiles?: string                           // url of a tile, {z} {x} {y}: openstreetmap by default
+  attribution?: string | UnsafeHtml        // the credit of the tiles, always shown: the one of openstreetmap by default
+  markers?: MapMarker[]; shapes?: MapShape[]
+  move?: EventCallback<EvMapMove>          // { center, zoom }: the user moved or zoomed it (not setCenter, setZoom, fitBounds)
+  click?: EventCallback<EvMapClick>        // { latlng }: a click on the map, not on a marker nor a zone
+  markerClick?: EventCallback<EvMarkerClick>   // { marker }
+  shapeClick?: EventCallback<EvShapeClick>     // { shape }
+}
+class MapView extends Component {
+  getCenter(): LatLng; setCenter(center: LatLng, zoom?: number): void
+  getZoom(): number; setZoom(zoom: number): void
+  fitBounds(points: LatLng[], margin = 32): void   // the highest zoom where all are seen; before the map has a size: when it gets one
+  setMarkers(m: MapMarker[]); addMarker(m); removeMarker(m); getMarkers(): MapMarker[]
+  setShapes(s: MapShape[]); addShape(s); removeShape(s); getShapes(): MapShape[]
+}
+// The pointer moves it; the wheel, a double click, the buttons + and −, and the keys + and − zoom it (the point under
+//   the pointer stays in place, animated); the arrows move it; two fingers pinch it. East and west, the world goes round.
+// A marker or a zone takes the click from the map; a marker is over a zone. title: a tooltip shown as html (initTooltips;
+//   escape a text from a user).
+// openstreetmap is for a light use: an application with many users gives the tiles of a provider (tiles, attribution).
+// No Leaflet: no projection other than web mercator, no fractional zoom, no clusters, no GeoJSON.
+// The dark theme turns the tiles dark (--mapview-tile-filter in themes.scss).
+// CSS vars: --mapview-background --mapview-marker --mapview-tile-filter --mapview-credit-background
+//           --mapview-shape-opacity --mapview-shape-opacity-hover
+```
+
+```ts
+new MapView({
+  height: 400, center: { lat: 48.8566, lng: 2.3522 }, zoom: 13,
+  markers: [ { lat: 48.8584, lng: 2.2945, title: 'Tour Eiffel' } ],
+  shapes: [ { type: 'circle', center: { lat: 48.8584, lng: 2.2945 }, radius: 500 } ],
+  markerClick: ev => this.showPlace(ev.marker),
 })
 ```
 
@@ -796,6 +927,39 @@ class Slider extends Component {
   getValue(): number
   setMin(min: number): void; setMax(max: number): void; setValue(v: number): void   // the value is kept between min and max, on the step
 }
+```
+
+### `Knob` — a rotary button, on a range or infinite
+
+```ts
+interface KnobProps extends ComponentProps {
+  value?: number                           // min by default (0 when infinite)
+  min?: number; max?: number               // 0 and 100 by default; on an arc of 270°, min at -135°, max at +135° (0 at the top)
+  step?: number                            // 1 by default
+  infinite?: boolean                       // it turns without end: no min nor max, no arc (ticks all around)
+  turn?: number                            // infinite: the value of a whole turn, 360 by default (the value is an angle)
+  size?: number                            // the diameter of the dial in px, 48 by default (width/height size the whole, label included)
+  label?: string | UnsafeHtml; icon?: string   // under the dial, an x4 Label; none: no room taken
+  name?: string                            // for a Form, which reads a number
+  change?: EventCallback<EvChange>         // when the user turns it (pointer, wheel, keys), not by the code
+}
+class Knob extends Component {
+  getValue(): number; setValue(v: number): void   // on the step; on a range, kept between min and max
+  setMin(min: number): void; setMax(max: number): void
+  setLabel(text: string | UnsafeHtml): void; setIcon(icon: string): void
+}
+// The pointer turns the dial around its center: the knob follows the turn, not the position (no jump when
+//   taken; on a range it stops at min and max and comes back at once).
+// The wheel turns it only while it has the focus: the wheel over the page scrolls it.
+// Keys: arrows a step (Ctrl: 10), PageUp / PageDown 10 steps, Home / End min and max (range).
+// infinite: a double click sets it back to its first value (props.value), with a change.
+// CSS vars: --knob-track --knob-value --knob-cap-background --knob-cap-border --knob-pointer --knob-border-focus
+//           --knob-track-disabled --knob-value-disabled --knob-cap-background-disabled
+```
+
+```ts
+new Knob( { label: "Volume", value: 25, change: ( ev ) => player.setVolume( ev.value ) } )
+new Knob( { infinite: true, turn: 20, change: ( ev ) => list.scrollTo( ev.value ) } )   // an encoder
 ```
 
 ### `Select` — simple native select
@@ -1043,13 +1207,13 @@ class Store extends CoreElement {
 }
 ```
 
-### `Chart` — minimal svg chart (line, area, bar, pie, donut)
+### `Chart` — minimal svg chart (line, area, bar, pie, donut, radar)
 
 ```ts
 interface ChartProps extends SvgProps {
-  type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
+  type?: "line" | "area" | "bar" | "pie" | "donut" | "radar"   // default "line"
   series: ChartSerie[]                      // required; pie & donut use the first serie
-  labels?: string[]                         // default: 1, 2, 3...
+  labels?: string[]                         // default: 1, 2, 3...; radar: the name of each axis
   xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default; on x: max = number of points, step = points between labels (>= 1), min not used
   legend?: boolean                          // default: shown when 2+ named series
   stacked?: boolean
@@ -1062,6 +1226,10 @@ class Chart extends SvgComponent {
   setTicks(sens: "x" | "y", ticks: ChartTick[]): void
 }
 // Colors: CSS variables --chart-color-1..8 (or serie.color). Size it with width/height/flex like any component.
+// radar: an axis for each point (3 at least), the first at the top, clockwise; the center is yaxis.min (0 by
+//   default), the outer ring yaxis.max; a ring for each tick of the y scale (yaxis.step, yaxis.ticks), their
+//   values along the first axis. Each serie is a closed line, tinted inside (serie.fill: its color, "none": the
+//   line only); a value missing is at the center. xaxis.name, yaxis.name and stacked are not used.
 // Minimal by design: no dual axis, mixed types, time axis, zoom or animation — use a dedicated library for those.
 ```
 
@@ -1367,7 +1535,10 @@ class VSizer extends CSizer {              // vertical splitter, between two chi
 // The columns of a Gridview or a Spreadsheet are 16px wide at least (the min-width of a cell).
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
-class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
+class Canvas<P extends CanvasProps = CanvasProps, E extends CanvasEventMap = CanvasEventMap> extends Component<P, E> {
+  getContext(): CanvasRenderingContext2D; redraw(wait?: number): void
+  protected paint(ctx: CanvasEx): void     // a derived class draws here, in px of the page (the ratio of the screen is set)
+}
 class Video extends Box {                   // class x4video; props: src? (a file, url), stream? (wins over src), autoplay?, muted?, playsInline?
   play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
   pause(); mute(set: boolean)
@@ -1634,7 +1805,8 @@ isLanguage(name: string): boolean
 //   diff_date_seconds/minutes/hours, date_input_formats, date_format, date_time_format,
 //   locale ("fr-FR", "en-US", "es-ES", "de-DE": the formats of numbers, amounts, dates),
 //   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
-//   settings.{search,nomatch}, progression.{error,errors,warning,warnings}
+//   settings.{search,nomatch}, progression.{error,errors,warning,warnings},
+//   carousel.{carousel,slide,prev,next,position}
 getCurrentLocale(): string; getCurrentCurrency(): string   // as Application.getLocale / getCurrency
 ```
 

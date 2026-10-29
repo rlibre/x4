@@ -87,7 +87,7 @@ const page: DemoComponent = {
 	usage: {
 		create: ( props ) => new AutoComplete( { ...props, search: searchCities } ),
 		extra: "search: searchCities",
-		props: { label: "City", labelWidth: 60, placeholder: "type a few letters", strict: false, itemValue: "text", minChars: 1, delay: 250, width: 320 },
+		props: { label: "City", labelWidth: 60, placeholder: "type a few letters", strict: false, itemValue: "text", minChars: 1, delay: 250, width: 320, cls: "" },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "labelWidth", type: "number", min: 0, max: 200, step: 10, live: true },
@@ -100,6 +100,10 @@ const page: DemoComponent = {
 			{ name: "minChars", type: "number", min: 0, max: 5, step: 1, live: true },
 			{ name: "delay", type: "number", min: 0, max: 1000, step: 50, live: true },
 			{ name: "width", type: "number", min: 200, max: 480, step: 20, live: true },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "label-top", text: "label-top" },
+			] },
 		],
 	},
 	demos: [ freeText, strict, byId, server ],

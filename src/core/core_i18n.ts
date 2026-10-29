@@ -379,6 +379,14 @@ let fr = {
 			warning: '{0} avertissement',
 			warnings: '{0} avertissements',
 		},
+
+		carousel: {
+			carousel: 'carrousel',
+			slide: 'diapositive',
+			prev: 'Précédent',
+			next: 'Suivant',
+			position: '{0} sur {1}',
+		},
 	}
 };
 
@@ -456,6 +464,14 @@ let en = {
 			errors: '{0} errors',
 			warning: '{0} warning',
 			warnings: '{0} warnings',
+		},
+
+		carousel: {
+			carousel: 'carousel',
+			slide: 'slide',
+			prev: 'Previous',
+			next: 'Next',
+			position: '{0} of {1}',
 		},
 	}
 };
@@ -535,6 +551,14 @@ let es = {
 			warning: '{0} advertencia',
 			warnings: '{0} advertencias',
 		},
+
+		carousel: {
+			carousel: 'carrusel',
+			slide: 'diapositiva',
+			prev: 'Anterior',
+			next: 'Siguiente',
+			position: '{0} de {1}',
+		},
 	}
 };
 
@@ -612,6 +636,14 @@ let de = {
 			errors: '{0} Fehler',
 			warning: '{0} Warnung',
 			warnings: '{0} Warnungen',
+		},
+
+		carousel: {
+			carousel: 'Karussell',
+			slide: 'Folie',
+			prev: 'Zurück',
+			next: 'Weiter',
+			position: '{0} von {1}',
 		},
 	}
 };

@@ -21,7 +21,7 @@
 	--textedit-border-focus: var( --border-focus );
 	--textedit-required: var( --alert-background );
 
-	--textedit-btn-background: inherit;
+	--textedit-btn-background: var( --background-input );		// the one of its field: inherit was the page (dark theme)
 	--textedit-btn-color: var( --text-secondary );
 	--textedit-btn-color-hover: var( --text-primary );
 
@@ -64,6 +64,7 @@
 		.x4button {
 			margin: 0;
 			padding: 0;
+			align-self: stretch;		// the height of the field: no strip of the page above and under it
 			background-color: var( --textedit-btn-background );
 			color: var( --textedit-btn-color );
 
@@ -108,7 +109,9 @@
 			color: var( --textedit-color-disabled );
 		}
 
-		#edit input {
+		// the field and its gadgets lose their background together
+		#edit input,
+		#edit .x4button {
 			color: var( --textedit-color-disabled );
 			background-color: unset;
 		}

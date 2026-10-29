@@ -96,7 +96,7 @@ const page: DemoComponent = {
 	usage: {
 		create: ( props ) => new Combobox( { ...props, items: fruits } ),
 		extra: "items: fruits",
-		props: { label: "Fruit", labelWidth: 60, value: 1, readonly: true, required: false, disabled: false, width: 260 },
+		props: { label: "Fruit", labelWidth: 60, value: 1, readonly: true, required: false, disabled: false, width: 260, cls: "" },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "labelWidth", type: "number", min: 0, max: 200, step: 10, live: true },
@@ -109,6 +109,10 @@ const page: DemoComponent = {
 			{ name: "required", type: "boolean" },
 			{ name: "disabled", type: "boolean" },
 			{ name: "width", type: "number", min: 160, max: 480, step: 20, live: true },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "label-top", text: "label-top" },
+			] },
 		],
 	},
 	demos: [ pick, typed, renderer, fromCode ],

@@ -52,7 +52,7 @@ const page: DemoComponent = {
 	imports: [ "TextArea", "SimpleTextArea" ],
 	usage: {
 		create: ( props ) => new TextArea( props ),
-		props: { label: "Comment", placeholder: "A few words...", resize: "", width: 360, required: false, readonly: false, disabled: false },
+		props: { label: "Comment", placeholder: "A few words...", resize: "", width: 360, cls: "", required: false, readonly: false, disabled: false },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "placeholder", type: "string" },
@@ -63,6 +63,10 @@ const page: DemoComponent = {
 				{ id: "both", text: "both" },
 			] },
 			{ name: "width", type: "number", min: 200, max: 560, step: 20, live: true },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "label-top", text: "label-top" },
+			] },
 			{ name: "required", type: "boolean" },
 			{ name: "readonly", type: "boolean" },
 			{ name: "disabled", type: "boolean" },

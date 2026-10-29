@@ -3,6 +3,77 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.29
+
+### Combobox, TextEdit
+
+- The button of a Combobox (its arrow) and the gadgets of a TextEdit have the background of their field (`--background-input`) and its height: they were a small box on the background of the page, darker than the field in the dark theme.
+
+### Canvas
+
+- `Canvas<P, E>`: a class derived from it gives its props and its events (`CanvasEventMap`, now exported), as `Component<P, E>`.
+
+```ts
+class Meter extends Canvas<MeterProps, MeterEvents> { }
+```
+
+### Carousel
+
+- New: slides that move, side by side (`perView`): arrows, dots, a swipe with the finger or the mouse, the arrow keys, and an `autoplay` that pauses under the pointer. A slide is a component, or an image (`src`, `alt`, `caption`, `fit`) loaded when it comes near the view. `loop`, `change` (the user or the autoplay), `select`, `next`, `prev`. The slides out of the view are inert; disabled, it is faded and grey.
+- i18n: `_tr.global.carousel` (`carousel`, `slide`, `prev`, `next`, `position`), the texts for screen readers, in the four languages.
+
+```ts
+new Carousel( {
+	height: 300, autoplay: 5000,
+	items: photos.map( p => ( { src: p.url, alt: p.title, caption: p.title } ) ),
+} );
+```
+
+### Bargraph
+
+- New: a level meter of segments, drawn in a canvas, horizontal or `vertical`. The colors go from min to max: the accent by default, pale to full, or `colors` as Gauge; `overshoot`: the segments from that value in the alert color. `animated`: up quickly, down slowly; `peak`: the highest segment stays lit a second. `setValue` can be called at each frame: one loop for all the bargraphs, a drawing only when a segment changes.
+
+```ts
+const meter = new Bargraph( { vertical: true, overshoot: 85, peak: true } );
+meter.setValue( level );
+```
+
+### MapView
+
+- New: a map of tiles, openstreetmap by default (`tiles`, `attribution` for another provider), without any library. The pointer moves it; the wheel, a double click, its buttons and the keys zoom it, animated; two fingers pinch it. `markers` (a pin, its tooltip), and `shapes`: zones under the markers, a polygon, a circle of a radius in meters, a line (`color`, `width`). Events `move`, `click` (where), `markerClick`, `shapeClick`; `setCenter`, `setZoom`, `fitBounds`. The dark theme turns its tiles dark (`--mapview-tile-filter`).
+
+```ts
+new MapView( {
+	height: 400, center: { lat: 48.8566, lng: 2.3522 }, zoom: 13,
+	markers: [ { lat: 48.8584, lng: 2.2945, title: "Tour Eiffel" } ],
+	shapes: [ { type: "circle", center: { lat: 48.8584, lng: 2.2945 }, radius: 500 } ],
+} );
+```
+
+### Knob
+
+- New: a rotary button, on a range (`min` to `max`, on an arc of 270°) or `infinite` (`turn`: the value of a whole turn, 360 by default). The pointer turns it around its center, the wheel while it has the focus, the arrows by `step` (Ctrl, PageUp, PageDown: 10 steps), Home and End go to min and max. `label` and `icon` under the dial, `size` its diameter. With a `name`, a Form reads its value. Infinite, a double click sets it back to its first value.
+
+```ts
+new Knob( { label: "Volume", value: 25, change: ( ev ) => player.setVolume( ev.value ) } );
+new Knob( { infinite: true, turn: 20 } );
+```
+
+### Chart
+
+- `type: "radar"`: an axis for each point, from the center (`yaxis.min`, 0 by default) to the outer ring (`yaxis.max`), the first one at the top; each serie a closed line, tinted inside, with its points and their tooltips, as a line. A ring for each tick of the y scale (`yaxis.step`, `yaxis.ticks`). `serie.fill: "none"` draws the line only.
+
+```ts
+new Chart( {
+	type: "radar",
+	labels: [ "Speed", "Power", "Range", "Comfort", "Price" ],
+	series: [
+		{ name: "Model A", values: [ 8, 6, 7, 4, 5 ] },
+		{ name: "Model B", values: [ 5, 8, 4, 7, 6 ] },
+	],
+} );
+```
+
 ## 2.3.28 (2026-10-23)
 
 ### Package

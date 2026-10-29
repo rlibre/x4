@@ -24,7 +24,7 @@ export interface EvPaint extends ComponentEvent {
 	ctx: CanvasEx;
 }
 
-interface CanvasEventMap extends ComponentEvents {
+export interface CanvasEventMap extends ComponentEvents {
 	paint: EvPaint;
 }
 
@@ -41,10 +41,11 @@ export interface CanvasProps extends ComponentProps {
 // ============================================================================
 
 /**
- * Standard Canvas
+ * Standard Canvas; a class derived from it gives its props and its events:
+ * class Scope extends Canvas<ScopeProps, ScopeEvents>
  */
 
-export class Canvas extends Component<CanvasProps, CanvasEventMap> {
+export class Canvas<P extends CanvasProps = CanvasProps, E extends CanvasEventMap = CanvasEventMap> extends Component<P, E> {
 	static classPrefix = "x4";
 
 	private m_iwidth: number = -1;
@@ -52,7 +53,7 @@ export class Canvas extends Component<CanvasProps, CanvasEventMap> {
 	private m_scale = 1.0;
 	private m_canvas: Component;
 
-	constructor(props: CanvasProps) {
+	constructor(props: P) {
 		super(props);
 
 		this.mapPropEvents( props, 'paint' );

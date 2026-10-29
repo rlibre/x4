@@ -21,7 +21,7 @@ import { clamp, formatNumber, IRect, isNumber, sanitizeHtml } from '../../core/c
 
 import "./chart.module.scss"
 
-export type ChartType = "line" | "area" | "bar" | "pie" | "donut";
+export type ChartType = "line" | "area" | "bar" | "pie" | "donut" | "radar";
 
 export interface ChartTick {
 	value: number;		// on x axis: index of the point
@@ -38,9 +38,9 @@ export interface ChartAxis {
 
 export interface ChartSerie {
 	name?: string;
-	values: number[];	// undefined: no value (hole in the line)
+	values: number[];	// undefined: no value (hole in the line; at the center of a radar)
 	color?: string;		// default: palette --chart-color-1..8
-	fill?: string;		// area fill color
+	fill?: string;		// area fill color ("none" on a radar: the line only)
 	dots?: boolean;		// always show the points
 }
 
@@ -57,7 +57,7 @@ interface ChartEvents extends ComponentEvents {
 export interface ChartProps extends Omit<SvgProps,"svg"|"viewbox"|"content"> {
 	type?: ChartType;		// default "line"
 	series: ChartSerie[];	// pie & donut use the first serie
-	labels?: string[];		// default: 1, 2, 3...
+	labels?: string[];		// default: 1, 2, 3...; radar: the name of each axis
 	xaxis?: ChartAxis;
 	yaxis?: ChartAxis;
 	legend?: boolean;		// default: shown when there is more than one named serie
@@ -211,7 +211,10 @@ function drawBar( grp: SvgGroup, x: number, w: number, y0: number, y1: number, r
 
 
 /**
- * Minimal chart (line, area, bar, pie, donut) drawn in svg.
+ * Minimal chart (line, area, bar, pie, donut, radar) drawn in svg.
+ *
+ * radar: an axis for each point, from the center (yaxis.min, 0 by default) to the outer ring
+ * (yaxis.max); each serie is a closed line, tinted inside. At least 3 points.
  *
  * @example
  * new Chart( {
@@ -335,6 +338,11 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 	 * make an element clickable with a tooltip
 	 */
 
+	private _tip( serie: number, index: number, value: number ) {
+		const name = this._series[serie].name ? ` · ${this._series[serie].name}` : '';
+		return `${this._label(index)}${name}: ${this._format(value)}`;
+	}
+
 	private _mark<T extends SvgShape | SvgPath>( item: T, serie: number, index: number, tip: string ): T {
 		item.setAttr( "data-serie", serie+"" )
 			.setAttr( "data-index", index+"" )
@@ -380,6 +388,9 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 			if( area.height>0 ) {
 				if( pie ) {
 					this._drawPie( bld, area );
+				}
+				else if( this._type=="radar" ) {
+					this._drawRadar( bld, area );
 				}
 				else {
 					this._drawXY( bld, area );
@@ -648,11 +659,6 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 			grp.clip( id );
 		}
 
-		const tip = ( s: number, i: number, v: number ) => {
-			const name = series[s].name ? ` · ${series[s].name}` : '';
-			return `${this._label(i)}${name}: ${this._format(v)}`;
-		}
-
 		if( band ) {
 			const n = stacked ? 1 : Math.max( 1, series.length );
 			const w = Math.min( xstep*0.8/n, MAX_BAR );
@@ -684,7 +690,7 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 					}
 
 					this._paint( bar.addClass( "bar" ), s, serie.color );
-					this._mark( bar, s, i, tip( s, i, v ) );
+					this._mark( bar, s, i, this._tip( s, i, v ) );
 				}
 			});
 		}
@@ -757,11 +763,163 @@ export class Chart extends SvgComponent<ChartProps,ChartEvents> {
 						for( const p of pts ) {
 							const dot = dots.circle( p.x, p.y, 4 ).addClass( visible ? "dot" : "dot ghost" );
 							this._paint( dot, s, serie.color );
-							this._mark( dot, s, p.i, tip( s, p.i, value( s, p.i ) ?? 0 ) );
+							this._mark( dot, s, p.i, this._tip( s, p.i, value( s, p.i ) ?? 0 ) );
 						}
 					}
 				}
 			});
 		}
+	}
+
+	/**
+	 * radar: an axis for each point, a ring for each tick of the y scale
+	 */
+
+	private _drawRadar( bld: SvgBuilder, area: IRect ) {
+
+		const series = this._series;
+		const xaxis = this._xaxis;
+		const yaxis = this._yaxis;
+
+		// number of axes
+		let count = xaxis.max ?? 0;
+		if( xaxis.max===undefined ) {
+			series.forEach( s => { count = Math.max( count, s.values?.length ?? 0 ); } );
+		}
+
+		// less than 3 axes make no surface
+		if( count<3 ) {
+			return;
+		}
+
+		const value = ( s: number, i: number ) => {
+			const v = series[s].values?.[i];
+			return isNumber(v) ? v : undefined;
+		}
+
+		// room for the labels around
+		let maxw = 0;
+		for( let i=0; i<count; i++ ) {
+			maxw = Math.max( maxw, textWidth( this._label(i) ) );
+		}
+
+		const cx = area.left + area.width/2;
+		const cy = area.top + area.height/2;
+		const radius = Math.min( area.width/2 - maxw - 8, area.height/2 - 16 );
+
+		if( radius<=10 ) {
+			return;
+		}
+
+		// scale: the center at 0, lower for negative values
+		let dmin = 0;
+		let dmax = -Infinity;
+
+		series.forEach( ( _, s ) => {
+			for( let i=0; i<count; i++ ) {
+				const v = value( s, i );
+				if( v!==undefined ) {
+					dmin = Math.min( dmin, v );
+					dmax = Math.max( dmax, v );
+				}
+			}
+		});
+
+		if( dmax==-Infinity ) {
+			dmax = 1;
+		}
+
+		const nice = niceScale( yaxis.min ?? dmin, yaxis.max ?? dmax, clamp( Math.floor( radius/30 ), 2, 6 ) );
+		const min = yaxis.min ?? nice.min;
+		let max = yaxis.max ?? nice.max;
+		if( max<=min ) {
+			max = min+1;
+		}
+
+		const step = yaxis.step>0 ? yaxis.step : nice.step;
+		const rings = ( yaxis.ticks ?? makeTicks( min, max, step, v => this._format(v) ) ).filter( t => t.value>min && t.value<=max );
+
+		// the axis i: 0 at the top, clockwise; a value out of the bounds stays on them
+		const angle = ( i: number ) => ( i/count*360 - 90 ) * Math.PI/180;
+		const point = ( i: number, v: number ) => {
+			const r = ( clamp( v, min, max ) - min ) / ( max-min ) * radius;
+			return { x: cx + r*Math.cos( angle(i) ), y: cy + r*Math.sin( angle(i) ) };
+		}
+
+		const polygon = ( grp: SvgGroup, v: ( i: number ) => number ) => {
+			const pth = grp.path( );
+			for( let i=0; i<count; i++ ) {
+				const p = point( i, v(i) );
+				if( i==0 ) {
+					pth.moveTo( p.x, p.y );
+				}
+				else {
+					pth.lineTo( p.x, p.y );
+				}
+			}
+
+			return pth.closePath( );
+		}
+
+		// grid & axes
+		const grid = bld.group( ).addClass( "axis radar" );
+
+		for( const t of rings ) {
+			polygon( grid, ( ) => t.value ).addClass( "grid" );
+		}
+
+		for( let i=0; i<count; i++ ) {
+			const p = point( i, max );
+			grid.path( ).moveTo( cx, cy ).lineTo( p.x, p.y ).addClass( "base" );
+
+			// the label beyond the end of its axis, on the side of the axis
+			const cos = Math.cos( angle(i) );
+			const sin = Math.sin( angle(i) );
+			const halign = Math.abs( cos )<0.3 ? 'center' : ( cos>0 ? 'left' : 'right' );
+			const valign = Math.abs( sin )<0.3 ? 'center' : ( sin>0 ? 'top' : 'bottom' );
+			drawText( grid, cx + ( radius+8 )*cos, cy + ( radius+8 )*sin, this._label(i), halign, valign );
+		}
+
+		// the values of the rings, along the first axis
+		for( const t of rings ) {
+			drawText( grid, cx+4, point( 0, t.value ).y, t.text, 'left', 'center' );
+		}
+
+		// series
+		const grp = bld.group( ).addClass( "plot" );
+		const areas = grp.group( );
+		const lines = grp.group( );
+		const dots  = grp.group( );
+
+		const ghosts = series.length*count<=MAX_GHOSTS;
+
+		series.forEach( ( serie, s ) => {
+			// a value missing is at the center
+			const at = ( i: number ) => value( s, i ) ?? min;
+
+			const pth = polygon( areas, at ).addClass( "area" );
+			this._paint( pth, s, serie.color );
+
+			if( serie.fill ) {
+				pth.setStyle( "fill", serie.fill ).setStyle( "fillOpacity", "1" );
+			}
+
+			this._paint( polygon( lines, at ).addClass( "line" ), s, serie.color );
+
+			// points: always visible, or only on hover (ghost)
+			if( serie.dots || ghosts ) {
+				for( let i=0; i<count; i++ ) {
+					const v = value( s, i );
+					if( v===undefined ) {
+						continue;
+					}
+
+					const p = point( i, v );
+					const dot = dots.circle( p.x, p.y, 4 ).addClass( serie.dots ? "dot" : "dot ghost" );
+					this._paint( dot, s, serie.color );
+					this._mark( dot, s, i, this._tip( s, i, v ) );
+				}
+			}
+		});
 	}
 }

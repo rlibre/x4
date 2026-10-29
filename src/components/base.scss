@@ -109,3 +109,73 @@ option:checked {
  	background-color: var( --accent-background );
   	color: var( --accent-color );
 }
+
+
+// :: label-top ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// The label above its field, smaller and discreet, darker while the field has the focus: the
+// class label-top on a TextEdit (an AutoComplete), a Combobox, a TextArea, or on any box that
+// holds them (a Form, the main view: all the application). labelWidth is not used.
+
+:root {
+	--label-top-color: var( --text-secondary );
+	--label-top-color-focus: var( --text-primary );	// the field has the focus: darker, lighter in a dark theme
+	--label-top-size: 0.85em;
+	--label-top-gap: 2px;			// between the label and the field
+	--label-top-gap-textarea: 4px;	// the same, above a TextArea
+	--label-top-suffix: ":";		// after the label, as when it is on the left
+}
+
+// TextEdit (and AutoComplete), Combobox: the line becomes a column
+:is( .label-top .x4textedit, .x4textedit.label-top, .label-top .x4combobox, .x4combobox.label-top ) {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var( --label-top-gap );
+
+	// labelWidth is not used: the label has all the width
+	& > #label {
+		width: auto !important;
+		justify-content: start;
+		font-size: var( --label-top-size );
+
+		& > .x4label {
+			width: auto !important;
+			height: auto;
+			justify-content: start;
+			font-weight: normal;
+			--label-color: var( --label-top-color );
+		}
+	}
+
+	& > #edit {
+		flex: none;
+	}
+
+	&:focus-within > #label > .x4label {
+		--label-color: var( --label-top-color-focus );
+	}
+}
+
+// the colon of a TextEdit is after its #label, the one of a Combobox after its text
+:is( .label-top .x4textedit, .x4textedit.label-top ) > #label::after {
+	content: var( --label-top-suffix );
+}
+
+:is( .label-top .x4combobox, .x4combobox.label-top ) > #label > .x4label #text:not(.empty)::after {
+	content: var( --label-top-suffix );
+}
+
+// TextArea: its label is above already; the same look
+:is( .label-top .x4textarea, .x4textarea.label-top ) > .x4label {
+	font-size: var( --label-top-size );
+	font-weight: normal;
+	padding: 0 0 var( --label-top-gap-textarea );
+	--label-color: var( --label-top-color );
+
+	&::after {
+		content: var( --label-top-suffix );
+	}
+}
+
+:is( .label-top .x4textarea, .x4textarea.label-top ):focus-within > .x4label {
+	--label-color: var( --label-top-color-focus );
+}
