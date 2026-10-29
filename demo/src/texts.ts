@@ -38,7 +38,7 @@ const en = {
 		// the presentation page
 		home: {
 			nav: "Overview",
-			tagline: "A TypeScript framework for people who build applications, not markup.",
+			tagline: "A full TypeScript framework for web and desktop applications.",
 			intro: "This gallery has a page for each component of x4js: what it does, its props to try, its variations and their code.",
 			start: "Getting started",
 			start_text: "Create a project, then serve it: the page reloads when a source changes.",
@@ -84,7 +84,7 @@ const fr: typeof en = {
 
 		home: {
 			nav: "Présentation",
-			tagline: "Un framework TypeScript pour ceux qui font des applications, pas du balisage.",
+			tagline: "Un framework TypeScript complet pour les applications web et desktop.",
 			intro: "Cette galerie a une page par composant de x4js : ce qu'il fait, ses propriétés à essayer, ses variantes et leur code.",
 			start: "Démarrer",
 			start_text: "Créer un projet, puis le lancer : la page se recharge quand un source change.",
@@ -130,7 +130,7 @@ const es: typeof en = {
 
 		home: {
 			nav: "Presentación",
-			tagline: "Un framework TypeScript para quienes hacen aplicaciones, no marcado.",
+			tagline: "Un framework TypeScript completo para aplicaciones web y de escritorio.",
 			intro: "Esta galería tiene una página por componente de x4js: lo que hace, sus propiedades para probar, sus variantes y su código.",
 			start: "Empezar",
 			start_text: "Crear un proyecto y luego lanzarlo: la página se recarga cuando cambia un archivo fuente.",
@@ -176,7 +176,7 @@ const de: typeof en = {
 
 		home: {
 			nav: "Übersicht",
-			tagline: "Ein TypeScript-Framework für alle, die Anwendungen bauen, nicht Markup.",
+			tagline: "Ein vollständiges TypeScript-Framework für Web- und Desktop-Anwendungen.",
 			intro: "Diese Galerie hat eine Seite pro Komponente von x4js: was sie tut, ihre Eigenschaften zum Ausprobieren, ihre Varianten und deren Code.",
 			start: "Erste Schritte",
 			start_text: "Ein Projekt anlegen, dann starten: die Seite lädt neu, wenn sich eine Quelldatei ändert.",

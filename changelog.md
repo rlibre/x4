@@ -3,6 +3,12 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.30
+
+### Package
+
+- The package has its description (`description` in its package.json): the search of npm shows it.
+
 ## 2.3.29 (2026-10-29)
 
 ### Components with an entry of their own

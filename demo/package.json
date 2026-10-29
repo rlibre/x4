@@ -9,6 +9,6 @@
 		"dev:local": "node gen-sources.mjs && node ../cli/main.mjs dev --config x4.local.json"
 	},
 	"dependencies": {
-		"x4js": "^2.3.28"
+		"x4js": "^2.3.29"
 	}
 }

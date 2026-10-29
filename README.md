@@ -4,7 +4,7 @@
 </picture>
 
 # x4js
-**A TypeScript framework for people who build applications, not markup.**
+**A full TypeScript framework for web and desktop applications.**
 
 ## Home page
 see [X4 home page](https://x4js.org)
