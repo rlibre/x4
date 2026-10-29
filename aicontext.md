@@ -1722,6 +1722,8 @@ date_format(date, options?): string       // options: Intl.DateTimeFormat in the
 // Formats in the current locale (Application.setLocale, else the one of the language), Intl made once by locale
 formatNumber(value, decimals?, grouping = true): string   // "1 234,5" in fr-FR; decimals: the most shown
 formatMoney(value): string                 // "1 234,50 €": the currency of Application.getCurrency()
+formatPercent(value, decimals = 0): string // 89 → "89 %" in fr-FR, "89%" in en-US: a value from 0 to 100
+formatUnit(value, unit, decimals?): string // short: "12 j", "3 h" in fr-FR, "12 days", "3 hr" in en-US; unit of Intl: "day", "hour"...
 formatDate(date): string                   // "22/10/2026"
 formatDateTime(date): string               // "22/10/2026 14:05"
 // Gridview and Spreadsheet format their columns number, money, date, date-time with them (a formatter comes first)
@@ -1729,6 +1731,7 @@ date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 he
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
 date_hash(date): number; date_clone(date): Date
 date_calc_weeknum(date): number            // ISO 8601: weeks from monday, week 1 holds the first thursday (29/12/2025 → 1)
+date_week_start(date): Date                // the monday of its week (itself on a monday), at the same time: a new date
 parseIntlDate(value, fmts?): Date; formatIntlDate(date, fmt?, utc?): string
 calcAge(birth, ref?): number
 

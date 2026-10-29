@@ -610,6 +610,31 @@ export function formatMoney( value: number ): string {
 }
 
 /**
+ * a percent as text in the current locale: 89 gives "89 %" in fr-FR, "89%" in en-US
+ * @param value - from 0 to 100, as a column percent of Gridview
+ * @param decimals - the most decimals shown
+ */
+
+export function formatPercent( value: number, decimals = 0 ): string {
+	return numberFormat( "p" + decimals, { style: "percent", maximumFractionDigits: decimals } ).format( value / 100 );
+}
+
+/**
+ * a value and its unit, short, in the current locale: "12 j", "3 h" in fr-FR, "12 days", "3 hr" in en-US
+ * @param unit - a unit of Intl: "day", "hour", "minute", "kilometer"...
+ * @param decimals - the most decimals shown (Intl: 3 when not given)
+ */
+
+export function formatUnit( value: number, unit: string, decimals?: number ): string {
+	const options: Intl.NumberFormatOptions = { style: "unit", unit, unitDisplay: "short" };
+	if( decimals!==undefined ) {
+		options.maximumFractionDigits = decimals;
+	}
+
+	return numberFormat( "u" + unit + decimals, options ).format( value );
+}
+
+/**
  * a date as text in the current locale: "22/10/2026" in fr-FR, "10/22/2026" in en-US
  */
 
@@ -712,6 +737,16 @@ export function date_calc_weeknum(date: Date): number {
 
 	const jan1 = Date.UTC( d.getUTCFullYear( ), 0, 1 );
 	return Math.ceil( ( ( d.getTime( ) - jan1 ) / 86400000 + 1 ) / 7 );
+}
+
+/**
+ * the monday of the week of a date (the date itself on a monday), at the same time: a new date
+ */
+
+export function date_week_start( date: Date ): Date {
+	const monday = date_clone( date );
+	monday.setDate( monday.getDate( ) - ( monday.getDay( ) + 6 ) % 7 );
+	return monday;
 }
 
 

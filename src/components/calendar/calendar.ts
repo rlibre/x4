@@ -15,7 +15,7 @@
  **/
 
 import { Component, ComponentEvents, ComponentProps, EvChange, Flex } from '../../core/component'
-import { date_clone, date_hash, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
+import { date_clone, date_hash, date_week_start, formatIntlDate, Point, unsafeHtml } from "../../core/core_tools"
 import { _tr } from '../../core/core_i18n';
 import { EventCallback } from '../../core/core_events';
 
@@ -89,16 +89,11 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 
 	private _update( ) {
 
+		// the first line: the week of the 1st, from its monday
 		let month_start = date_clone(this.m_date);
 		month_start.setDate(1);
 
-		let day = month_start.getDay();
-		if (day == 0) {
-			day = 7;
-		}
-
-		month_start.setDate(-day + 1 + 1);
-		let dte = date_clone(month_start);
+		let dte = date_week_start(month_start);
 
 		let selection = date_hash( this.m_date );
 		let today = date_hash( new Date() );

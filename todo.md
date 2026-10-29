@@ -90,6 +90,10 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 - No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size`, read by Gridview and Spreadsheet, is defined nowhere (see Theme).
 
+## x4 extra
+
+- To think about (2026-10-29): put Monaco (`src/components/monaco`) in a folder of its own, "x4 extra", and the components that will join it. Nothing is designed.
+
 ## Seen while writing Timex: to decide
 
 Noted on 2026-10-21.

@@ -3,6 +3,24 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.29
+
+### Radio
+
+- A radio has the room of a checkbox around it (`margin: 5px`, `padding: 4px`): a row of radios is 34px high, as a row of checkboxes. `button` keeps its own.
+
+### Formats, dates
+
+- `formatPercent( value, decimals? )`: a percent in the current locale, of a value from 0 to 100 ("89 %" in fr-FR, "89%" in en-US).
+- `formatUnit( value, unit, decimals? )`: a value and its unit of Intl, short, in the current locale ("12 j", "3 h" in fr-FR, "12 days", "3 hr" in en-US).
+- `date_week_start( date )`: the monday of the week of a date, at the same time.
+
+```ts
+formatPercent( 89 );							// "89 %"
+formatUnit( 12, "day" );						// "12 j"
+date_week_start( new Date( 2026, 9, 29 ) );		// monday 26/10/2026
+```
+
 ## 2.3.28 (2026-10-23)
 
 ### Package
