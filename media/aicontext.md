@@ -35,11 +35,13 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     │     │        → Menu, DropdownList, Notification
   │     │     ├── BtnGroup, Tabs, Video, Saturation
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
-  │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Gauge
+  │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Knob, Gauge
   │     ├── Progress, TickLine, Timeline, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── Gantt, Planner, MapView (each one from its entry: x4js/gantt, x4js/planner, x4js/mapview)
+  │     ├── Canvas → Bargraph
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
-  │     ├── FileDialog, ScrollView, Viewport, DockingView, Flex, Space
+  │     ├── FileDialog, ScrollView, Viewport, DockingView, Carousel, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea, SettingsView, SettingItem
   └── Application<E>           singleton, no DOM of its own
@@ -382,7 +384,7 @@ class StackBox extends Box {
 }
 ```
 
-### `AssistBox` — sequential navigation (wizard/carousel)
+### `AssistBox` — sequential navigation (wizard)
 
 ```ts
 class AssistBox extends StackBox {
@@ -390,6 +392,52 @@ class AssistBox extends StackBox {
   isFirstPage(): boolean
   isLastPage(): boolean
 }
+// one page shown, no animation nor commands: for slides that move (arrows, dots, swipe, autoplay), Carousel
+```
+
+### `Carousel` — slides that move: arrows, dots, swipe, autoplay
+
+```ts
+interface CarouselImage {                  // a slide that is an image: loaded when it comes near the view
+  src: string; alt?: string
+  caption?: string | UnsafeHtml            // over the bottom of the image
+  fit?: "cover" | "contain"                // cover by default
+}
+type CarouselItem = Component | CarouselImage
+
+interface CarouselProps extends Omit<ComponentProps, "content"> {
+  items?: CarouselItem[]
+  perView?: number                         // slides seen side by side, 1 by default; a move goes one slide further
+  index?: number                           // the first slide seen at the start, 0 by default
+  loop?: boolean                           // after the last, the first (and before the first, the last)
+  autoplay?: number                        // ms between two slides; it loops; paused under the pointer, with the focus in it,
+                                           // during a swipe, or while the page is hidden
+  arrows?: boolean; dots?: boolean         // true by default; none of them when all the slides are seen
+  change?: EventCallback<EvChange>         // value: the index; the user (arrows, dots, swipe, keys) or the autoplay, not the code
+}
+class Carousel extends Component {
+  setItems(items: CarouselItem[], index?: number): void
+  select(index: number): void              // no change event; beyond the ends: the end
+  next(): void; prev(): void               // no change event; they loop when loop (or autoplay)
+  getIndex(): number; getCount(): number
+}
+// Its height is given (height, flex): the slides fill it. Without loop, an arrow is hidden at its end.
+// Swipe: the finger or the mouse; a fifth of a slide goes to the next, a long swipe further; across, the page scrolls;
+//   a swipe is not a click on what is in the slide. Keys: ← → Home End.
+// The slides out of the view are inert (Tab does not go in them). Disabled: faded as a Box, its images grey.
+// The texts for screen readers: _tr.global.carousel. The autoplay timer stops when it leaves the page.
+// CSS vars: --carousel-gap --carousel-duration --carousel-arrow-background --carousel-arrow-color --carousel-dot
+//           --carousel-dot-active --carousel-radius --carousel-caption-color --carousel-caption-background
+//           --carousel-disabled-filter
+```
+
+```ts
+new Carousel({
+  height: 300, autoplay: 5000,
+  items: photos.map(p => ({ src: p.url, alt: p.title, caption: p.title })),
+  change: ev => this.showInfo(photos[ev.value]),
+})
+new Carousel({ height: 180, perView: 3, items: products.map(p => new ProductCard({ product: p })) })
 ```
 
 ### `GridBox`
@@ -578,7 +626,8 @@ interface TagProps extends ComponentProps {
 }
 class Tag extends HBox {}                  // no method: its text and its icon are those of its props
 // cls "alert": the colors of an alert
-// CSS vars: --tag-background --tag-color --tag-icon-color --tag-border
+// CSS vars: --tag-background --tag-color (the text on the accent) --tag-border; --tag-icon-color is not set:
+//   the icon has the color of the text, a class that changes --tag-color changes both
 ```
 
 ```ts
@@ -603,6 +652,41 @@ class Gauge extends Component {
   setPos(pos: number): void
   setColorStops(colors: string[]): void
 }
+```
+
+### `Bargraph` — a level meter of segments, drawn in a canvas
+
+```ts
+interface BargraphProps extends ComponentProps {
+  value?: number                           // min by default
+  min?: number; max?: number               // 0 and 100 by default
+  vertical?: boolean                       // the segments go up from the bottom; else from the left
+  segments?: number                        // 20 by default
+  colors?: string[]                        // from min to max, as Gauge (linearColorStops: green to red); one: a plain bar;
+                                           // none: the accent, pale to full (--bargraph-color-start, -end)
+  overshoot?: number                       // the segments from this value have the alert color; the colors go under it
+  animated?: boolean                       // up quickly, down slowly, in a few frames; false: at once (true by default)
+  peak?: boolean                           // the highest segment reached stays lit a second, then falls
+}
+class Bargraph extends Canvas {
+  setValue(v: number): void                // drawn at the next frame: call it as often as needed (60 times a second)
+  getValue(): number
+  setMin(min: number): void; setMax(max: number): void
+  setColorStops(colors: string[]): void; setOvershoot(overshoot: number): void   // undefined: no overshoot
+  refresh(): void                          // read the css variables again and draw
+}
+// For performance: one canvas, one requestAnimationFrame loop for all the bargraphs (stopped while none moves),
+//   a drawing only when a segment changes. 200 x 12 by default (12 x 200 vertical): width / height.
+// The colors are read from the css when it draws first, and again when the theme changed (compared at each
+//   drawing), on enable / disable, setColorStops, setOvershoot; a bargraph that does not move keeps its colors
+//   until then: refresh() after a change of the theme or of the variables.
+// An unlit segment: its color at --bargraph-off-mix (15%) in --bargraph-off. Disabled: the lit ones in the disabled color.
+// CSS vars: --bargraph-color-start --bargraph-color-end --bargraph-overshoot --bargraph-off --bargraph-off-mix --bargraph-gap
+```
+
+```ts
+const meters = channels.map( ( ) => new Bargraph( { vertical: true, overshoot: 85, peak: true } ) )
+audio.onLevels( levels => levels.forEach( ( v, i ) => meters[i].setValue( v ) ) )
 ```
 
 ### `Rating`
@@ -650,6 +734,56 @@ new Timeline({
     { icon: review, title: 'Code review', text: 'Waiting for a reviewer' },
   ],
   click: ev => this.openStep(ev.context as TimelineItem),
+})
+```
+
+### `MapView` — a map of tiles (openstreetmap), with markers and zones (`x4js/mapview`)
+
+```ts
+import { MapView, LatLng, MapMarker } from "x4js/mapview"   // not in x4js
+interface LatLng { lat: number; lng: number }
+interface MapMarker extends LatLng { title?: string; icon?: string /* a pin by default */; data?: any }
+type MapShape =                            // zones, under the markers
+    { type: "polygon"; points: LatLng[] }
+  | { type: "circle"; center: LatLng; radius: number /* meters */ }
+  | { type: "line"; points: LatLng[] }
+  // all: title?: string; color?: string (else --chart-color-1..8 in turn); width?: number (px: 4 a line, 2 a border); data?: any
+
+interface MapViewProps extends Omit<ComponentProps, "content"> {
+  center?: LatLng; zoom?: number           // 0,0 and 2 by default; zoom: whole levels only
+  minZoom?: number; maxZoom?: number       // 1 and 19 by default
+  tiles?: string                           // url of a tile, {z} {x} {y}: openstreetmap by default
+  attribution?: string | UnsafeHtml        // the credit of the tiles, always shown: the one of openstreetmap by default
+  markers?: MapMarker[]; shapes?: MapShape[]
+  move?: EventCallback<EvMapMove>          // { center, zoom }: the user moved or zoomed it (not setCenter, setZoom, fitBounds)
+  click?: EventCallback<EvMapClick>        // { latlng }: a click on the map, not on a marker nor a zone
+  markerClick?: EventCallback<EvMarkerClick>   // { marker }
+  shapeClick?: EventCallback<EvShapeClick>     // { shape }
+}
+class MapView extends Component {
+  getCenter(): LatLng; setCenter(center: LatLng, zoom?: number): void
+  getZoom(): number; setZoom(zoom: number): void
+  fitBounds(points: LatLng[], margin = 32): void   // the highest zoom where all are seen; before the map has a size: when it gets one
+  setMarkers(m: MapMarker[]); addMarker(m); removeMarker(m); getMarkers(): MapMarker[]
+  setShapes(s: MapShape[]); addShape(s); removeShape(s); getShapes(): MapShape[]
+}
+// The pointer moves it; the wheel, a double click, the buttons + and −, and the keys + and − zoom it (the point under
+//   the pointer stays in place, animated); the arrows move it; two fingers pinch it. East and west, the world goes round.
+// A marker or a zone takes the click from the map; a marker is over a zone. title: a tooltip shown as html (initTooltips;
+//   escape a text from a user).
+// openstreetmap is for a light use: an application with many users gives the tiles of a provider (tiles, attribution).
+// No Leaflet: no projection other than web mercator, no fractional zoom, no clusters, no GeoJSON.
+// The dark theme turns the tiles dark (--mapview-tile-filter in themes.scss).
+// CSS vars: --mapview-background --mapview-marker --mapview-tile-filter --mapview-credit-background
+//           --mapview-shape-opacity --mapview-shape-opacity-hover
+```
+
+```ts
+new MapView({
+  height: 400, center: { lat: 48.8566, lng: 2.3522 }, zoom: 13,
+  markers: [ { lat: 48.8584, lng: 2.2945, title: 'Tour Eiffel' } ],
+  shapes: [ { type: 'circle', center: { lat: 48.8584, lng: 2.2945 }, radius: 500 } ],
+  markerClick: ev => this.showPlace(ev.marker),
 })
 ```
 
@@ -702,6 +836,10 @@ type TextEditProps = (TextInputProps | NumberProps | DateProps | TimeProps) & {
 class TextEdit extends HBox {
   getValue(): string; setValue(value: string): void; getInput(): Input
 }
+// the class label-top (base.scss): the label above its field, smaller, darker while the field has the focus; on a
+//   TextEdit / AutoComplete / Combobox / TextArea, or on a box that holds them (a Form, the main view: all the
+//   application). labelWidth is not used then.
+//   Vars: --label-top-color / -color-focus / -size / -gap / -gap-textarea, --label-top-suffix (":" after the label)
 ```
 
 ### `TextArea`, `SimpleTextArea` — native `<textarea>`, with or without a label
@@ -781,6 +919,9 @@ class Radio extends Component {
 interface SwitchProps extends ComponentProps { label: string; checked?: boolean; value?: string; name?: string }
 // with a name, a Form reads and writes it: a boolean, or with a value, the value when checked and null when not
 class Switch extends HBox {}
+// cls "square": the track and the thumb with corners barely rounded; "danger": the colour of an alert when on
+// its input has role="switch"; its sizes follow the size of <html> (rem), rounded to whole pixels
+// CSS vars: --switch-border --switch-background --switch-background-disabled --switch-checked --switch-danger --switch-thumb
 ```
 
 ### `Slider`
@@ -796,6 +937,39 @@ class Slider extends Component {
   getValue(): number
   setMin(min: number): void; setMax(max: number): void; setValue(v: number): void   // the value is kept between min and max, on the step
 }
+```
+
+### `Knob` — a rotary button, on a range or infinite
+
+```ts
+interface KnobProps extends ComponentProps {
+  value?: number                           // min by default (0 when infinite)
+  min?: number; max?: number               // 0 and 100 by default; on an arc of 270°, min at -135°, max at +135° (0 at the top)
+  step?: number                            // 1 by default
+  infinite?: boolean                       // it turns without end: no min nor max, no arc (ticks all around)
+  turn?: number                            // infinite: the value of a whole turn, 360 by default (the value is an angle)
+  size?: number                            // the diameter of the dial in px, 48 by default (width/height size the whole, label included)
+  label?: string | UnsafeHtml; icon?: string   // under the dial, an x4 Label; none: no room taken
+  name?: string                            // for a Form, which reads a number
+  change?: EventCallback<EvChange>         // when the user turns it (pointer, wheel, keys), not by the code
+}
+class Knob extends Component {
+  getValue(): number; setValue(v: number): void   // on the step; on a range, kept between min and max
+  setMin(min: number): void; setMax(max: number): void
+  setLabel(text: string | UnsafeHtml): void; setIcon(icon: string): void
+}
+// The pointer turns the dial around its center: the knob follows the turn, not the position (no jump when
+//   taken; on a range it stops at min and max and comes back at once).
+// The wheel turns it only while it has the focus: the wheel over the page scrolls it.
+// Keys: arrows a step (Ctrl: 10), PageUp / PageDown 10 steps, Home / End min and max (range).
+// infinite: a double click sets it back to its first value (props.value), with a change.
+// CSS vars: --knob-track --knob-value --knob-cap-background --knob-cap-border --knob-pointer --knob-border-focus
+//           --knob-track-disabled --knob-value-disabled --knob-cap-background-disabled
+```
+
+```ts
+new Knob( { label: "Volume", value: 25, change: ( ev ) => player.setVolume( ev.value ) } )
+new Knob( { infinite: true, turn: 20, change: ( ev ) => list.scrollTo( ev.value ) } )   // an encoder
 ```
 
 ### `Select` — simple native select
@@ -1043,13 +1217,13 @@ class Store extends CoreElement {
 }
 ```
 
-### `Chart` — minimal svg chart (line, area, bar, pie, donut)
+### `Chart` — minimal svg chart (line, area, bar, pie, donut, radar)
 
 ```ts
 interface ChartProps extends SvgProps {
-  type?: "line" | "area" | "bar" | "pie" | "donut"   // default "line"
+  type?: "line" | "area" | "bar" | "pie" | "donut" | "radar"   // default "line"
   series: ChartSerie[]                      // required; pie & donut use the first serie
-  labels?: string[]                         // default: 1, 2, 3...
+  labels?: string[]                         // default: 1, 2, 3...; radar: the name of each axis
   xaxis?: ChartAxis;  yaxis?: ChartAxis     // { name?, ticks?, min?, max?, step? }, all computed by default; on x: max = number of points, step = points between labels (>= 1), min not used
   legend?: boolean                          // default: shown when 2+ named series
   stacked?: boolean
@@ -1062,6 +1236,10 @@ class Chart extends SvgComponent {
   setTicks(sens: "x" | "y", ticks: ChartTick[]): void
 }
 // Colors: CSS variables --chart-color-1..8 (or serie.color). Size it with width/height/flex like any component.
+// radar: an axis for each point (3 at least), the first at the top, clockwise; the center is yaxis.min (0 by
+//   default), the outer ring yaxis.max; a ring for each tick of the y scale (yaxis.step, yaxis.ticks), their
+//   values along the first axis. Each serie is a closed line, tinted inside (serie.fill: its color, "none": the
+//   line only); a value missing is at the center. xaxis.name, yaxis.name and stacked are not used.
 // Minimal by design: no dual axis, mixed types, time axis, zoom or animation — use a dedicated library for those.
 ```
 
@@ -1367,7 +1545,10 @@ class VSizer extends CSizer {              // vertical splitter, between two chi
 // The columns of a Gridview or a Spreadsheet are 16px wide at least (the min-width of a cell).
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
-class Canvas extends Component { getContext(): CanvasRenderingContext2D; paint(): void }
+class Canvas<P extends CanvasProps = CanvasProps, E extends CanvasEventMap = CanvasEventMap> extends Component<P, E> {
+  getContext(): CanvasRenderingContext2D; redraw(wait?: number): void
+  protected paint(ctx: CanvasEx): void     // a derived class draws here, in px of the page (the ratio of the screen is set)
+}
 class Video extends Box {                   // class x4video; props: src? (a file, url), stream? (wins over src), autoplay?, muted?, playsInline?
   play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
   pause(); mute(set: boolean)
@@ -1634,7 +1815,8 @@ isLanguage(name: string): boolean
 //   diff_date_seconds/minutes/hours, date_input_formats, date_format, date_time_format,
 //   locale ("fr-FR", "en-US", "es-ES", "de-DE": the formats of numbers, amounts, dates),
 //   day_short[] day_long[] month_short[] month_long[], keyboard.{next,numeric,alpha},
-//   settings.{search,nomatch}, progression.{error,errors,warning,warnings}
+//   settings.{search,nomatch}, progression.{error,errors,warning,warnings},
+//   carousel.{carousel,slide,prev,next,position}
 getCurrentLocale(): string; getCurrentCurrency(): string   // as Application.getLocale / getCurrency
 ```
 
@@ -1659,8 +1841,12 @@ by the browser, in its own locale, whatever this one.
 // Each component reads its own variables (the @cssvar of its class), which point to these globals:
 //   a theme redefines the globals, or one variable of a component.
 // Themes: Application.setTheme(name) puts the class x4theme-<name> on <html>. "" is the light theme (by default),
-//   "dark" the dark theme of x4 (the colours of VS Code Dark Modern). An application adds its own theme in its css,
+//   "dark" the dark theme of x4 (the greys of VS Code Dark Modern, its blues from #5796ca). An application adds its own theme in its css,
 //   html.x4theme-pink { --color-primary-a0: ...; ... }, then Application.setTheme("pink").
+// The font: --font-name and --font-size (14px), on :root (normalize.scss); body takes them. To change the size
+//   of the text, set --font-size ( :root { --font-size: 13px } ), not the font-size of <html>: the components
+//   follow --font-size; the font-size of <html> is only the rem of a few inner sizes (the box of a Checkbox, the
+//   round of a Radio, a Switch, a Slider), not the text.
 
 ---
 
@@ -1722,6 +1908,8 @@ date_format(date, options?): string       // options: Intl.DateTimeFormat in the
 // Formats in the current locale (Application.setLocale, else the one of the language), Intl made once by locale
 formatNumber(value, decimals?, grouping = true): string   // "1 234,5" in fr-FR; decimals: the most shown
 formatMoney(value): string                 // "1 234,50 €": the currency of Application.getCurrency()
+formatPercent(value, decimals = 0): string // 89 → "89 %" in fr-FR, "89%" in en-US: a value from 0 to 100
+formatUnit(value, unit, decimals?): string // short: "12 j", "3 h" in fr-FR, "12 days", "3 hr" in en-US; unit of Intl: "day", "hour"...
 formatDate(date): string                   // "22/10/2026"
 formatDateTime(date): string               // "22/10/2026 14:05"
 // Gridview and Spreadsheet format their columns number, money, date, date-time with them (a formatter comes first)
@@ -1729,6 +1917,8 @@ date_diff(date1, date2, options?): string   // "30 secondes", "5 minutes", "2 he
 date_to_sql(date, withHours): string; date_sql_utc(date): Date
 date_hash(date): number; date_clone(date): Date
 date_calc_weeknum(date): number            // ISO 8601: weeks from monday, week 1 holds the first thursday (29/12/2025 → 1)
+date_week_start(date): Date                // the monday of its week (itself on a monday), at the same time: a new date
+date_add_days(date, days): Date            // days after (before when < 0), at the same time: a new date; a day of summer time counts as one
 parseIntlDate(value, fmts?): Date; formatIntlDate(date, fmt?, utc?): string
 calcAge(birth, ref?): number
 
@@ -1824,24 +2014,195 @@ measureText(str: string, size: number, bold?: boolean): number   // Helvetica
 
 ---
 
+## Components with an entry of their own
+
+Some components are not in `x4js`: they are big, or seldom used, and an application that does not
+use them should not carry their code nor their CSS. Each one has an entry of its own in the package:
+import it from it, not from `x4js` (`import { Gantt } from "x4js"` fails: "has no exported member").
+
+| Component | Import | More |
+|---|---|---|
+| `MonacoEditor` | `import { MonacoEditor } from "x4js/monaco"` | copy its files to the folder `monaco` of the output (below) |
+| `Gantt` | `import { Gantt } from "x4js/gantt"` | |
+| `Planner` | `import { Planner } from "x4js/planner"` | |
+| `MapView` | `import { MapView } from "x4js/mapview"` | `LatLng`, `MapMarker`, `MapShape` from it too |
+
+---
+
 ## Code editor (`MonacoEditor`)
 
 Monaco-based code editor component. Monaco is part of the framework surface, so exclude it from `tsc` compilation (see Default project notes).
 
+```jsonc
+// x4.config.json: its files (14 MB) in the folder monaco of the output, where the editor loads them
+"copy": [ { "from": "./node_modules/x4js/src/components/monaco/bin", "to": "monaco" } ]
+```
+
 ```ts
+import { MonacoEditor } from "x4js/monaco"           // not in x4js
 interface MonacoEditorProps extends ComponentProps {
-  language: "typescript" | "javascript" | "json" | "css" | "html"
-  theme?: string
-  content?: string
+  language: "typescript" | "javascript" | "json" | "css" | "html" | string
+  theme?: string                                      // a theme of Monaco: "vs", "vs-dark", "hc-black", "hc-light"
+  content?: string                                    // the text at the start
   options?: Monaco.editor.IEditorOptions & Monaco.editor.IGlobalEditorOptions
 }
 class MonacoEditor extends Component<MonacoEditorProps> {
-  constructor(props: MonacoEditorProps)
-  static start(): Promise<void>                       // load/initialize Monaco
-  static addTypelib(name: string, code: string): void // register a .d.ts for IntelliSense
-  static basePath: string
-  static monaco: typeof Monaco
+  constructor(props: MonacoEditorProps)               // the first one loads Monaco: monaco/monaco.js beside the bundle, its workers, its css
+  static addTypelib(name: string, code: string): void // a .d.ts for the completion of typescript; before the first editor too
+  static monaco(): Promise<typeof Monaco>             // the module of Monaco, loaded
+  getText(): string; setText(text: string): void
+  setTheme(name: string): void
 }
+```
+
+---
+
+## `Gantt` — tasks on a calendar (`x4js/gantt`)
+
+```ts
+import { Gantt } from "x4js/gantt"                // not in x4js
+type GanttID = string | number
+type GanttScale = "hour" | "day" | "week" | "month"
+interface GanttTask {
+  id: GanttID; title: string
+  start?: Date; end?: Date                 // a date without hours is a whole day: end is its last day, included; none: the day of start
+  progress?: number                        // 0 to 100
+  milestone?: boolean                      // a diamond in the middle of its day
+  children?: GanttTask[]                   // a group: from the first start of its tasks to their last end, its progress weighted by their length
+  open?: boolean                           // a group: its tasks shown; true by default
+  deps?: GanttID[]                         // the tasks it waits for: an arrow from the end of each one
+  color?: string                           // its bar; a group gives it to its tasks that have none; none: the theme
+  tooltip?: string; cls?: string; data?: any
+}
+interface GanttColumn {
+  id: string                               // "title" (the tree), "start", "end", "duration", "progress", or a field of the task
+  title?: string                           // none: for the ids above, their title in the language (_tr.global.gantt)
+  width?: number; align?: "left" | "center" | "right"; formatter?: (task: GanttTask) => string | UnsafeHtml
+}
+interface EvGanttChange extends ComponentEvent { readonly task: GanttTask; readonly start: Date; readonly end: Date; readonly progress: number }
+interface EvGanttScale extends ComponentEvent { readonly scale: GanttScale }
+interface GanttProps extends Omit<ComponentProps, "content"> {
+  tasks?: GanttTask[]
+  columns?: GanttColumn[]                  // the list on the left; the titles alone by default
+  scale?: GanttScale                       // "day" by default; ctrl+wheel changes it
+  start?: Date; end?: Date                 // the days shown; else those of the tasks
+  rowHeight?: number                       // 32 by default
+  readonly?: boolean
+  click?, dblClick?, contextMenu?          // ev.context: the task
+  selectionChange?: EventCallback<EvSelectionChange>
+  change?: EventCallback<EvGanttChange>    // told before it is written in the task: ev.preventDefault() puts the bar back
+  scaleChange?: EventCallback<EvGanttScale> // the zoom took another scale
+}
+class Gantt extends Component<GanttProps, GanttEvents> {
+  setTasks(tasks: GanttTask[]): void
+  setScale(scale: GanttScale): void        // its width of a day; the date at the left stays
+  getScale(): GanttScale
+  setReadOnly(ro: boolean): void
+  selectTask(id: GanttID): void            // without selectionChange; null: none
+  getSelection(): GanttID
+  scrollToDate(date: Date): void           // in the middle of the chart
+}
+// the pointer: moves a bar, stretches it by its ends, its progress by the mark under it (by the hour in "hour", else by the day)
+// ctrl+wheel on the chart: zoom, the day under the pointer stays; the scale follows the width of a day
+// keys: up, down, home, end select; right opens a group, left closes it or goes to its group
+// readonly: no bar moved; disabled (enable(false)): faded as a Box
+// CSS vars: --gantt-background --gantt-border --gantt-border-focus --gantt-header-background --gantt-header-color
+//           --gantt-line-color --gantt-major-line-color --gantt-weekend-background --gantt-today-color
+//           --gantt-row-background-sel --gantt-row-color-sel --gantt-lane-background-sel --gantt-icon-color
+//           --gantt-bar-background --gantt-bar-border --gantt-bar-progress --gantt-bar-label --gantt-handle-color
+//           --gantt-group-background --gantt-milestone-background --gantt-link-color --gantt-link-color-sel
+```
+
+```ts
+new Gantt({
+  tasks: [
+    { id: "dev", title: "Development", color: "#fb8c00", children: [
+      { id: "core", title: "Core", start: new Date(2026, 10, 2), end: new Date(2026, 10, 12), progress: 30 },
+      { id: "ui", title: "User interface", start: new Date(2026, 10, 6), end: new Date(2026, 10, 18), deps: ["core"] },
+    ] },
+  ],
+  columns: [{ id: "title", width: 200 }, { id: "start" }, { id: "end" }],
+  change: (ev) => save(ev.task, ev.start, ev.end, ev.progress),
+})
+```
+
+---
+
+## `Planner` — events by day, week or month (`x4js/planner`)
+
+```ts
+import { Planner } from "x4js/planner"            // not in x4js
+type PlannerID = string | number
+type PlannerView = "day" | "week" | "month"
+interface PlannerEvent {
+  id: PlannerID; title: string
+  start: Date
+  end?: Date                               // a date without hours is a whole day: end is its last day, included; else the time it ends.
+                                           // none: the day of start, or an hour after it
+  text?: string                            // under the title
+  color?: string                           // its border, its icon and a tint of its background; none: the accent of the theme
+  icon?: string                            // on the right of its title, in its colour (as Icon: an svg)
+  tooltip?: string; cls?: string; data?: any
+}
+interface EvPlannerChange extends ComponentEvent { readonly event: PlannerEvent; readonly start: Date; readonly end: Date }
+interface EvPlannerSelect extends ComponentEvent { readonly start: Date; readonly end: Date }   // whole days: without hours, end the last one
+interface EvPlannerView extends ComponentEvent { readonly view: PlannerView; readonly date: Date }
+interface PlannerProps extends Omit<ComponentProps, "content"> {
+  events?: PlannerEvent[]
+  view?: PlannerView                       // "week" by default
+  date?: Date                              // a day shown; today by default
+  workDays?: number[]                      // as Date.getDay(): monday to friday by default
+  workHours?: [number, number]             // minutes from midnight: 8:00 to 18:00 by default
+  showOffDays?: boolean                    // the other days, narrower; true by default
+  showOffHours?: boolean                   // the other hours, reached by the scroll; true by default
+  band?: boolean                           // the whole days in a band under the days; true by default; false: in the working hours
+  showSubGrid?: boolean                    // the lines of the steps between the hours; false by default
+  step?: number                            // the precision of the pointer, in minutes: 15 by default
+  readonly?: boolean
+  click?, dblClick?, contextMenu?          // ev.context: the event
+  selectionChange?: EventCallback<EvSelectionChange>
+  change?: EventCallback<EvPlannerChange>  // moved or stretched; told before it is written in the event: ev.preventDefault() puts it back
+  copy?: EventCallback<EvPlannerChange>    // ctrl+drag (option on a Mac): nothing is written, the application adds the copy
+  select?: EventCallback<EvPlannerSelect>  // a range of time or of days: the application creates the event
+  viewChange?: EventCallback<EvPlannerView> // a day of the month opened: its week
+}
+class Planner extends Component<PlannerProps, PlannerEvents> {
+  setEvents(events: PlannerEvent[]): void  // the selection goes when its event is not in them
+  setView(view: PlannerView): void; getView(): PlannerView
+  setDate(date: Date): void; getDate(): Date
+  next(): void; prev(): void               // the day, the week, the month after or before
+  getRange(): { start: Date, end: Date }   // the first and the last day shown; in the month, its days
+  setBand(band: boolean): void; setShowOffDays(show: boolean): void; setShowOffHours(show: boolean): void
+  setShowSubGrid(show: boolean): void; setStep(step: number): void; setReadOnly(ro: boolean): void
+  selectEvent(id: PlannerID): void         // without selectionChange; null: none
+  getSelection(): PlannerID
+}
+// the pointer: a drag on an empty place selects a range (shift, or the strip on the right of a day: over the events too);
+// a drag moves an event (a ghost, the event faded at its place), its top or its bottom stretches it, by step;
+// an event of one day stays in its day; near the top or the bottom of the view, the view scrolls
+// the events out of the view: a mark at the top or the bottom of their day, a click on it scrolls to them
+// a key on the event selected: addShortcut("Delete", ...) and getSelection()
+// readonly: nothing created, moved, stretched nor copied; disabled (enable(false)): faded as a Box
+// CSS vars: --planner-background --planner-border --planner-border-focus --planner-header-color --planner-day-color
+//           --planner-off-color --planner-today-background --planner-today-color --planner-today-column
+//           --planner-off-background --planner-line-color --planner-step-color --planner-hour-line-color
+//           --planner-hour-color --planner-hour-color-work --planner-edge-background --planner-edge-color
+//           --planner-edge-shadow --planner-edge-opacity --planner-now-color --planner-now-tag --planner-now-text
+//           --planner-event-background --planner-event-color --planner-event-tint --planner-event-radius
+//           --planner-event-title --planner-event-text --planner-event-selected --planner-range-background
+//           --planner-range-border --planner-out-color --planner-more-color
+```
+
+```ts
+const planner = new Planner({
+  events: [
+    { id: 1, title: "Design review", start: new Date(2026, 9, 26, 10), end: new Date(2026, 9, 26, 12), color: "#2e9e48" },
+    { id: 2, title: "Day off", start: new Date(2026, 9, 30) },
+  ],
+  select: (ev) => create(ev.start, ev.end),
+  change: (ev) => save(ev.event, ev.start, ev.end),
+})
+planner.addShortcut("Delete", () => remove(planner.getSelection()))
 ```
 
 ---
@@ -2105,7 +2466,7 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - The default language is `fr`. Call `selectLanguage('en')` to switch to English.
 - `Gridview` is backed by a `DataStore`; `Spreadsheet` is backed by a `Store` (different, cell-based).
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
-- `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
+- `MonacoEditor` loads Monaco by itself (the first editor), from the folder `monaco` of the output where its files are copied; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma (the setup: JSX factory & helpers).
 - A DOM handler of an ancestor is called for the events of its descendants, as in the browser. Not for the events that do not bubble: `focus`, `blur`, `mouseenter`, `mouseleave` (use `focusin` / `focusout`, `mouseover` / `mouseout`), nor for those of x4: `created`, `removed`, `resized`.
 - Several handlers of one event on one node are called in the order they were added. One that returns `true` stops those that follow it.
