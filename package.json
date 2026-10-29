@@ -1,6 +1,6 @@
 {
   "name": "x4js",
-  "version": "2.3.29",
+  "version": "2.3.30",
   "description": "A full TypeScript framework for web and desktop applications: components written as classes (layouts, inputs, lists, grids, dialogs, forms, charts...) and a command line to create, serve and build them.",
   "license": "MIT",
   "type": "module",
