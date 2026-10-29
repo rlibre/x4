@@ -2,7 +2,8 @@
  * MapView: the page of the gallery
  */
 
-import { Button, HBox, Label, LatLng, MapMarker, MapView, VBox } from 'x4js';
+import { Button, HBox, Label, VBox } from 'x4js';
+import { LatLng, MapMarker, MapView } from 'x4js/mapview';
 import { DemoComponent } from '../types';
 
 // the center of the configurator
@@ -99,9 +100,10 @@ export function tiles( ) {
 
 const page: DemoComponent = {
 	name: "MapView",
-	category: "Display components",
+	category: "Add-ons",
 	description: "A map of tiles, openstreetmap by default, with markers and zones (polygons, circles, lines). It is moved with the pointer and zoomed with the wheel, its buttons, a double click or two fingers.",
 	imports: [ "MapView", "MapMarker", "LatLng" ],
+	module: "x4js/mapview",
 	usage: {
 		create: ( props ) => new MapView( { ...props, center: paris } ),
 		extra: "center: paris",

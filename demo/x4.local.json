@@ -10,6 +10,9 @@
 	"esbuild": {
 		"alias": {
 			"x4js": "../src/x4.ts",
+			"x4js/mapview": "../src/components/mapview/mapview.ts",
+			"x4js/gantt": "../src/components/gantt/gantt.ts",
+			"x4js/planner": "../src/components/planner/planner.ts",
 			"x4js-package": "../package.json"
 		}
 	}

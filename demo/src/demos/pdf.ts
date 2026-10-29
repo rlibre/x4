@@ -89,7 +89,7 @@ export function graphics( ) {
 
 const page: DemoComponent = {
 	name: "PDF",
-	category: "Extra",
+	category: "Extras",
 	description: "X4PDFBuilder writes a PDF file in the browser, with no library: pages drawn in points, texts, lines, paths, svg icons, links and barcodes. build( ) gives its bytes, to show, download or send.",
 	imports: [ "X4PDFBuilder" ],
 	demos: [ invoice, barcodes, graphics ],

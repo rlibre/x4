@@ -73,7 +73,7 @@ export function handler( ) {
 
 const page: DemoComponent = {
 	name: "Tooltips",
-	category: "Extra",
+	category: "Extras",
 	description: "A text that shows under the pointer, on any component that has a tooltip. initTooltips( ) once at the start of the application turns them on.",
 	imports: [ "initTooltips" ],
 	demos: [ prop, html, change, handler ],

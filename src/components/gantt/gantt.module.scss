@@ -1,0 +1,461 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file gantt.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--gantt-background: var( --background-primary );
+	--gantt-border: var( --border );
+	--gantt-border-focus: var( --border-focus );
+
+	--gantt-header-background: var( --background-primary );
+	--gantt-header-color: var( --text-primary );
+
+	--gantt-line-color: var( --border-light );			// between the columns, the rows
+	--gantt-major-line-color: var( --border );			// at the start of a unit of the first line of the header
+	--gantt-weekend-background: var( --background-ternary );
+	--gantt-today-color: var( --alert-background );
+
+	--gantt-row-background-sel: var( --accent-background );
+	--gantt-row-color-sel: var( --accent-color );
+	--gantt-lane-background-sel: var( --accent-background-light );
+	--gantt-icon-color: var( --icon-color );
+
+	--gantt-bar-background: var( --accent-background-light );
+	--gantt-bar-border: var( --accent-background );
+	--gantt-bar-progress: var( --accent-background );
+	--gantt-bar-label: var( --text-primary );
+	--gantt-handle-color: var( --text-ternary );
+	--gantt-group-background: var( --text-ternary );
+	--gantt-milestone-background: var( --accent-background );
+
+	--gantt-link-color: var( --text-secondary );
+	--gantt-link-color-sel: var( --accent-background );
+}
+
+.x4gantt {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	outline: none;
+	border: 1px solid var( --gantt-border );
+	background-color: var( --gantt-background );
+
+	&:focus {
+		border-color: var( --gantt-border-focus );
+	}
+
+	// disabled (inert: nothing reaches it): faded as a Box
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+	}
+
+	// one scroll for all: the header stays at the top, the list on the left
+	> .body {
+		flex: 1;
+		min-height: 0;
+		overflow: auto;
+		display: grid;
+		grid-template-rows: auto 1fr;
+	}
+
+	.corner,
+	.head {
+		position: sticky;
+		top: 0;
+		color: var( --gantt-header-color );
+		background-color: var( --gantt-header-background );
+		border-bottom: 1px solid var( --gantt-major-line-color );
+	}
+
+	// the titles of the columns of the list
+	.corner {
+		grid-area: 1 / 1;
+		left: 0;
+		z-index: 4;
+		display: flex;
+		align-items: flex-end;
+		overflow: hidden;
+		border-right: 1px solid var( --gantt-major-line-color );
+
+		.cell {
+			position: relative;
+			flex-shrink: 0;
+			box-sizing: border-box;
+			padding: 0 6px;
+			line-height: 24px;
+			font-weight: bold;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			&.center {
+				text-align: center;
+			}
+
+			&.right {
+				text-align: right;
+			}
+		}
+	}
+
+	// the dates: two lines of cells, each one on its days
+	.head {
+		grid-area: 1 / 2;
+		z-index: 3;
+
+		.line {
+			position: relative;
+			height: 24px;
+
+			&.top {
+				border-bottom: 1px solid var( --gantt-line-color );
+			}
+		}
+
+		.cell {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			box-sizing: border-box;
+			border-left: 1px solid var( --gantt-line-color );
+			line-height: 24px;
+			font-size: 0.85em;
+			white-space: nowrap;
+			overflow: clip;			// not hidden: the sticky text of the first line follows the scroll of the body
+		}
+
+		.top .cell {
+			padding: 0 6px;
+			border-left-color: var( --gantt-major-line-color );
+
+			// the name of the month stays in view while some of its days are
+			span {
+				display: inline-block;
+				position: sticky;
+				left: calc( var( --gantt-list-width ) + 6px );
+			}
+		}
+
+		.bottom .cell {
+			text-align: center;
+
+			&.weekend {
+				background-color: var( --gantt-weekend-background );
+			}
+		}
+	}
+
+	// the tasks, one by line: a cell by column
+	.list {
+		grid-area: 2 / 1;
+		position: sticky;
+		left: 0;
+		z-index: 2;
+		overflow: hidden;
+		background-color: var( --gantt-background );
+		border-right: 1px solid var( --gantt-major-line-color );
+
+		.row {
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+			height: var( --gantt-row-height );
+			border-bottom: 1px solid var( --gantt-line-color );
+
+			&.group {
+				font-weight: bold;
+			}
+
+			&.selected {
+				color: var( --gantt-row-color-sel );
+				background-color: var( --gantt-row-background-sel );
+
+				.arrow {
+					color: var( --gantt-row-color-sel );
+				}
+			}
+		}
+
+		.cell {
+			flex-shrink: 0;
+			box-sizing: border-box;
+			padding: 0 6px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			&.center {
+				text-align: center;
+			}
+
+			&.right {
+				text-align: right;
+			}
+
+			// the tree: the arrow of a group, then the title
+			&.title {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+
+				.text {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+
+		.arrow {
+			width: 16px;
+			height: 16px;
+			color: var( --gantt-icon-color );
+			transform: rotate( -90deg );
+			transition: transform 0.2s;
+			cursor: pointer;
+		}
+
+		.row.open .arrow {
+			transform: none;
+		}
+	}
+
+	// a stack of its own: its bars and arrows go under the list and the header
+	.chart {
+		grid-area: 2 / 2;
+		position: relative;
+		z-index: 0;
+	}
+
+	// behind the tasks: the week-ends, a line by column, now. Its paths are in a height of 1
+	// stretched to the one of the chart: their lines keep their width (non-scaling-stroke)
+	.grid {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+
+		path {
+			fill: none;
+			stroke-width: 1;
+			vector-effect: non-scaling-stroke;
+			shape-rendering: crispEdges;
+		}
+
+		.weekend {
+			fill: var( --gantt-weekend-background );
+		}
+
+		.col {
+			stroke: var( --gantt-line-color );
+		}
+
+		.major {
+			stroke: var( --gantt-major-line-color );
+		}
+
+		.today {
+			stroke: var( --gantt-today-color );
+			stroke-width: 2;
+		}
+	}
+
+	.lanes {
+		position: relative;
+		z-index: 1;
+	}
+
+	.lane {
+		position: relative;
+		box-sizing: border-box;
+		height: var( --gantt-row-height );
+		border-bottom: 1px solid var( --gantt-line-color );
+
+		&.selected {
+			background-color: var( --gantt-lane-background-sel );
+		}
+	}
+
+	// the arrows, above the bars, not in the way of the pointer
+	.links {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+		overflow: visible;
+		pointer-events: none;
+
+		.link {
+			fill: none;
+			stroke: var( --gantt-link-color );
+			stroke-width: 1.5;
+
+			&.selected {
+				stroke: var( --gantt-link-color-sel );
+			}
+		}
+	}
+
+	.bar {
+		position: absolute;
+		top: 22%;
+		bottom: 22%;
+		box-sizing: border-box;
+		border: 1px solid var( --gantt-bar-border );
+		border-radius: 3px;
+		background-color: var( --gantt-bar-background );
+		touch-action: none;
+
+		.fill {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			background-color: var( --gantt-bar-progress );
+		}
+
+		// the title, after the bar and after the arrow that leaves it
+		.label {
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY( -50% );
+			margin-left: 12px;
+			font-size: 0.9em;
+			white-space: nowrap;
+			color: var( --gantt-bar-label );
+			pointer-events: none;
+		}
+
+		// shown on the bar under the pointer
+		.handle {
+			position: absolute;
+			display: none;
+			cursor: ew-resize;
+
+			&[data-mode=start],
+			&[data-mode=end] {
+				top: -1px;
+				bottom: -1px;
+				width: 6px;
+			}
+
+			&[data-mode=start] {
+				left: -1px;
+			}
+
+			&[data-mode=end] {
+				right: -1px;
+			}
+
+			// under the bar, at the end of its progress: a triangle up
+			&[data-mode=progress] {
+				top: calc( 100% - 3px );
+				right: -5px;
+				border: 5px solid transparent;
+				border-bottom-color: var( --gantt-handle-color );
+			}
+		}
+
+		&:hover .handle {
+			display: block;
+		}
+
+		// the colour of the task (--gantt-task-color, set by the code): its border and its progress,
+		// nothing behind; the line of a group, the diamond of a milestone
+		&.colored {
+			--gantt-bar-background: transparent;
+			--gantt-bar-border: var( --gantt-task-color );
+			--gantt-bar-progress: var( --gantt-task-color );
+			--gantt-group-background: var( --gantt-task-color );
+			--gantt-milestone-background: var( --gantt-task-color );
+		}
+
+		// a line on the days of its tasks, its ends pointing down
+		&.group {
+			top: calc( 50% - 6px );
+			bottom: auto;
+			height: 8px;
+			border: none;
+			border-radius: 0;
+			background-color: var( --gantt-group-background );
+
+			.fill {
+				display: none;
+			}
+
+			&::before,
+			&::after {
+				content: "";
+				position: absolute;
+				top: 100%;
+				border-top: 5px solid var( --gantt-group-background );
+			}
+
+			&::before {
+				left: 0;
+				border-right: 5px solid transparent;
+			}
+
+			&::after {
+				right: 0;
+				border-left: 5px solid transparent;
+			}
+		}
+
+		// a diamond on the middle of its days: the bar has no width
+		&.milestone {
+			border: none;
+			background: none;
+
+			.fill {
+				display: none;
+			}
+
+			&::before {
+				content: "";
+				position: absolute;
+				left: -6px;
+				top: calc( 50% - 6px );
+				width: 12px;
+				height: 12px;
+				transform: rotate( 45deg );
+				background-color: var( --gantt-milestone-background );
+			}
+
+			.label {
+				margin-left: 20px;
+			}
+		}
+	}
+
+	&:not( .readonly ) .bar:not( .group ) {
+		cursor: move;
+	}
+
+	// while a bar is moved or stretched, the cursor wherever the pointer is
+	&.moving .chart,
+	&.moving .chart * {
+		cursor: move;
+	}
+
+	&.sizing .chart,
+	&.sizing .chart * {
+		cursor: ew-resize;
+	}
+}

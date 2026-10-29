@@ -124,7 +124,7 @@ export function dots( ) {
 
 const page: DemoComponent = {
 	name: "SvgComponent",
-	category: "Extra",
+	category: "Extras",
 	description: "An <svg> element whose drawing is made with an SvgBuilder: shapes, paths, texts, gradients, groups, all in code.",
 	imports: [ "SvgComponent", "SvgBuilder" ],
 	usage: {

@@ -142,6 +142,8 @@ function unproject( x: number, y: number, z: number ): LatLng {
 
 
 /**
+ * Not in `x4js`: import it from `"x4js/mapview"`.
+ *
  * a map of tiles (openstreetmap by default): the pointer moves it, the wheel, a double click
  * and the buttons zoom it, markers are put on places.
  *

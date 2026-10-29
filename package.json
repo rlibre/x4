@@ -8,7 +8,10 @@
   "types": "src/x4.ts",
   "exports": {
     ".": "./src/x4.ts",
-    "./monaco": "./src/components/monaco/monaco.ts"
+    "./monaco": "./src/components/monaco/monaco.ts",
+    "./gantt": "./src/components/gantt/gantt.ts",
+    "./planner": "./src/components/planner/planner.ts",
+    "./mapview": "./src/components/mapview/mapview.ts"
   },
   "bin": {
     "x4js": "./bin/x4js.mjs"

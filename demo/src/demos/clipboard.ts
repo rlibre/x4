@@ -73,7 +73,7 @@ export function image( ) {
 
 const page: DemoComponent = {
 	name: "Clipboard",
-	category: "Extra",
+	category: "Extras",
 	description: "The clipboard of the system: a text, an image, files. setClipboard and getClipboard from a button or a menu; in the copy, cut and paste events (Ctrl+C, Ctrl+V), setEventClipboard and getEventClipboard.",
 	imports: [ "setClipboard", "getClipboard", "setEventClipboard", "getEventClipboard" ],
 	demos: [ buttons, keys, image ],

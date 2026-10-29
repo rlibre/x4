@@ -744,9 +744,18 @@ export function date_calc_weeknum(date: Date): number {
  */
 
 export function date_week_start( date: Date ): Date {
-	const monday = date_clone( date );
-	monday.setDate( monday.getDate( ) - ( monday.getDay( ) + 6 ) % 7 );
-	return monday;
+	return date_add_days( date, -( ( date.getDay( ) + 6 ) % 7 ) );		// monday 0 .. sunday 6
+}
+
+/**
+ * a date some days after (before when days < 0), at the same time: a new date. A day of 23 or
+ * 25 hours (summer time) counts as one
+ */
+
+export function date_add_days( date: Date, days: number ): Date {
+	const result = date_clone( date );
+	result.setDate( result.getDate( ) + days );
+	return result;
 }
 
 

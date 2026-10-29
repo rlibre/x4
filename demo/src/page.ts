@@ -3,8 +3,9 @@
  * per variation.
  */
 
-import { BoxProps, Button, Component, HBox, Label, Link, PropertyGrid, SimpleText, VBox, unsafeHtml } from 'x4js';
+import { BoxProps, Button, Component, Flex, HBox, Label, Link, PropertyGrid, SimpleText, VBox, unsafeHtml } from 'x4js';
 import { CodeView, highlight, makeCode, setProps } from './code';
+import { icon_collapse, icon_expand } from './icons';
 import { sources } from './demos/sources.gen';
 import { DemoComponent } from './types';
 import { texts } from './texts';
@@ -17,10 +18,11 @@ import { descriptionText } from './descriptions';
 interface DemoCardProps extends BoxProps {
 	route: string;				// the component: "button"
 	demo: ( ) => Component;
+	expand?: boolean;			// a button on the right of its title: the card covers the window
 }
 
 class DemoCard extends VBox<DemoCardProps> {
-	declare protected refs: { toggle: Button; code: CodeView };
+	declare protected refs: { toggle: Button; code: CodeView; expand: Button };
 
 	constructor( props: DemoCardProps ) {
 		super( { ...props, cls: "card", id: `${props.route}-${props.demo.name}` } );
@@ -30,12 +32,31 @@ class DemoCard extends VBox<DemoCardProps> {
 		const source = sources[key];
 
 		this.setContent( [
-			new Link( { cls: "title", href: `#/${key}`, content: source.title } ),
+			new HBox( { cls: "head", content: [
+				new Link( { cls: "title", href: `#/${key}`, content: source.title } ),
+				new Flex( ),
+				props.expand ? this.refs.expand = new Button( { cls: "expand outline", icon: icon_expand, tooltip: texts( ).expand, click: ( ) => this.expand( !this.hasClass( "expanded" ) ) } ) : null,
+			] } ),
 			new SimpleText( { cls: "text", text: source.text } ),
 			new VBox( { cls: "demo", content: props.demo( ) } ),
 			this.refs.toggle = new Button( { cls: "toggle outline", label: texts( ).show_code, click: ( ) => this.toggleCode( ) } ),
 			this.refs.code = new CodeView( { ts: source.ts, scss: source.scss, hidden: true } ),
 		] );
+
+		// a key already used by the demo (Escape stops a drag of the Planner) does not come here
+		if( props.expand ) {
+			this.addShortcut( "Escape", ( ) => this.expand( false ) );
+		}
+	}
+
+	/**
+	 * the card over the window, its demo filling it (main.scss); or back in the page
+	 */
+
+	private expand( big: boolean ) {
+		this.setClass( "expanded", big );
+		this.refs.expand.setIcon( big ? icon_collapse : icon_expand );
+		this.refs.expand.setAttribute( "tooltip", big ? texts( ).collapse : texts( ).expand );
 	}
 
 	private toggleCode( ) {
@@ -68,10 +89,10 @@ export class ComponentPage extends VBox<ComponentPageProps> {
 		this.setContent( [
 			new Label( { cls: "name", text: doc.name } ),
 			new SimpleText( { cls: "description", text: descriptionText( doc.name ) } ),
-			new Component( { tag: "pre", cls: "import", content: unsafeHtml( highlight( `import { ${imports.join( ", " )} } from "x4js"` ) ) } ),
+			new Component( { tag: "pre", cls: "import", content: unsafeHtml( highlight( `import { ${imports.join( ", " )} } from "${doc.module ?? "x4js"}"` ) ) } ),
 			...this.makeUsage( doc ),
 			new Label( { cls: "section", text: texts( ).examples } ),
-			...doc.demos.map( demo => new DemoCard( { route, demo } ) ),
+			...doc.demos.map( demo => new DemoCard( { route, demo, expand: doc.expand } ) ),
 		] );
 	}
 

@@ -90,7 +90,7 @@ export function files( ) {
 
 const page: DemoComponent = {
 	name: "DragDrop",
-	category: "Extra",
+	category: "Extras",
 	description: "dragManager makes a component something the user drags, and another one a place where it is dropped: components of the application, or files from the desktop.",
 	imports: [ "dragManager" ],
 	demos: [ kanban, filter, files ],

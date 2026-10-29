@@ -1,0 +1,660 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file planner.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--planner-background: var( --background-primary );
+	--planner-border: var( --border );
+	--planner-border-focus: var( --border-focus );
+
+	--planner-header-color: var( --text-ternary );
+	--planner-day-color: var( --text-primary );				// the number of a day, in the header
+	--planner-off-color: var( --text-secondary );			// the days off, in the header
+	--planner-today-background: var( --accent-background );	// the title of today: in the header, its number in the month
+	--planner-today-color: var( --accent-color );
+	--planner-today-column: var( --accent-background-light );	// behind today, at half of it
+
+	--planner-off-background: var( --background-ternary );	// the days off, the hours out of the working ones
+	--planner-line-color: var( --border-light );			// between the days, the hours off
+	--planner-step-color: var( --border-light );			// the steps between the working hours, at half of it
+	--planner-hour-line-color: var( --border );				// the working hours
+	--planner-hour-color: var( --text-secondary );
+	--planner-hour-color-work: var( --text-ternary );
+
+	--planner-edge-background: var( --accent-background );	// the marks of the events out of the view
+	--planner-edge-color: var( --accent-color );
+	--planner-edge-shadow: 0 1px 2px rgba( 0, 0, 0, 0.25 );
+
+	--planner-now-color: var( --accent-background );		// the line of now
+	--planner-now-tag: var( --accent-background );			// its time, in the hours
+	--planner-now-text: var( --accent-color );
+
+	--planner-event-background: var( --planner-background );	// under its tint: the grid does not show through
+	--planner-event-color: var( --accent-background );			// its border, its texts, its tint: its colour, or this one
+	--planner-event-tint: 0.12;									// the opacity of its colour on its background
+	--planner-event-radius: 2px;
+	--planner-event-title: var( --text-primary );				// its texts: the ones of the theme, readable on any colour
+	--planner-event-text: var( --text-ternary );				// its times, its text
+	--planner-event-selected: var( --accent-background );
+
+	--planner-range-background: var( --accent-background-light );
+	--planner-range-border: var( --accent-background );
+
+	--planner-out-color: var( --text-secondary );			// the days of the month before and after it
+	--planner-more-color: var( --text-ternary );
+}
+
+.x4planner {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	outline: none;
+	user-select: none;
+	border: 1px solid var( --planner-border );
+	background-color: var( --planner-background );
+
+	&:focus {
+		border-color: var( --planner-border-focus );
+	}
+
+	// disabled (inert: nothing reaches it): faded as a Box
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+	}
+
+	// the days, over their columns: the name of the day, its number under it; today, its number in a round of the accent
+	> .head {
+		position: relative;
+		flex-shrink: 0;
+		height: 64px;
+		border-bottom: 1px solid var( --planner-hour-line-color );
+
+		.day {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			box-sizing: border-box;
+			overflow: hidden;
+			white-space: nowrap;
+			border-left: 1px solid var( --planner-line-color );
+
+			.name {
+				font-size: 0.7rem;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				color: var( --planner-header-color );
+			}
+
+			.num {
+				width: 34px;
+				height: 34px;
+				line-height: 34px;
+				border-radius: 50%;
+				text-align: center;
+				font-size: 1.3rem;
+				color: var( --planner-day-color );
+			}
+
+			&.off {
+				.name,
+				.num {
+					color: var( --planner-off-color );
+				}
+			}
+
+			// the tint of its column behind it (its own layer: its opacity is not the one of the texts)
+			&.today {
+				isolation: isolate;
+
+				&::before {
+					content: "";
+					position: absolute;
+					inset: 0;
+					z-index: -1;
+					background-color: var( --planner-today-column );
+					opacity: 0.5;
+				}
+
+				.name {
+					color: var( --planner-today-background );
+				}
+
+				.num {
+					color: var( --planner-today-color );
+					background-color: var( --planner-today-background );
+				}
+			}
+		}
+	}
+
+	// the events of whole days, under the days
+	> .band {
+		position: relative;
+		flex-shrink: 0;
+		border-bottom: 1px solid var( --planner-hour-line-color );
+
+		> .day {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			box-sizing: border-box;
+			border-left: 1px solid var( --planner-line-color );
+
+			&.off {
+				background-color: var( --planner-off-background );
+			}
+
+			// alone in it: its opacity is the one of its background
+			&.today {
+				background-color: var( --planner-today-column );
+				opacity: 0.5;
+			}
+		}
+
+		> .range {
+			top: 1px;
+			bottom: 1px;
+		}
+	}
+
+	> .body {
+		flex: 1;
+		min-height: 0;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	.canvas {
+		position: relative;
+
+		> .layer,
+		> .marks,
+		> .hours {
+			position: absolute;
+			inset: 0;
+		}
+
+		> .marks,
+		> .hours {
+			pointer-events: none;
+		}
+	}
+
+	// behind the events: a path for the days off and the hours out of the working ones, one for
+	// the lines of the steps and between the days, one for the lines of the working hours
+	.grid {
+		position: absolute;
+		left: 0;
+		top: 0;
+		pointer-events: none;
+
+		path {
+			fill: none;
+			stroke-width: 1;
+			shape-rendering: crispEdges;
+		}
+
+		.off {
+			fill: var( --planner-off-background );
+		}
+
+		.today {
+			fill: var( --planner-today-column );
+			fill-opacity: 0.5;
+		}
+
+		.step {
+			stroke: var( --planner-step-color );
+			stroke-opacity: 0.5;
+		}
+
+		.line {
+			stroke: var( --planner-line-color );
+		}
+
+		.hour {
+			stroke: var( --planner-hour-line-color );
+		}
+	}
+
+	.hours .hour {
+		position: absolute;
+		left: 0;
+		width: 44px;
+		text-align: right;
+		transform: translateY( -50% );
+		font-size: 0.72rem;
+		font-variant-numeric: tabular-nums;
+		color: var( --planner-hour-color );
+
+		&.work {
+			color: var( --planner-hour-color-work );
+		}
+
+		// under the time of now
+		&.covered {
+			visibility: hidden;
+		}
+	}
+
+	// now: a line across the days, over the events; paler across today
+	.now {
+		position: absolute;
+		height: 1px;
+		z-index: 3;
+		pointer-events: none;
+		background-color: var( --planner-now-color );
+
+		&.today {
+			opacity: 0.2;
+		}
+	}
+
+	// the events out of the view: a mark at the top or the bottom of the view, in the middle of their day
+	.edge {
+		position: absolute;
+		z-index: 4;
+		width: 40px;
+		height: 18px;
+		line-height: 18px;
+		margin-left: -20px;
+		border-radius: 9px;
+		text-align: center;
+		font-size: 0.72rem;
+		font-weight: 600;
+		cursor: pointer;
+		color: var( --planner-edge-color );
+		background-color: var( --planner-edge-background );
+		box-shadow: var( --planner-edge-shadow );
+
+		&.up {
+			margin-top: 4px;
+		}
+
+		&.down {
+			margin-top: -22px;
+		}
+	}
+
+	// its time, in the hours on the left: a tag, its point on the line
+	.now-time {
+		position: absolute;
+		left: 4px;
+		width: 48px;
+		box-sizing: border-box;
+		transform: translateY( -50% );
+		padding: 1px 9px 1px 4px;
+		clip-path: polygon( 0 0, calc( 100% - 7px ) 0, 100% 50%, calc( 100% - 7px ) 100%, 0 100% );
+		text-align: right;
+		font-size: 0.7rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		z-index: 3;
+		pointer-events: none;
+		color: var( --planner-now-text );
+		background-color: var( --planner-now-tag );
+	}
+
+	// the range selected: on a day, on days of the band
+	.marks > .range,
+	.band > .range {
+		position: absolute;
+		box-sizing: border-box;
+		border-radius: 4px;
+		pointer-events: none;
+		border: 1px solid var( --planner-range-border );
+		background-color: var( --planner-range-background );
+	}
+
+	.range-label {
+		position: absolute;
+		font-size: 0.8rem;
+		pointer-events: none;
+	}
+
+	// an event in its colour (the accent of the theme by default): its top border, its icon, and a tint
+	// of it on its background, drawn on a layer of its own (its opacity is not the one of the texts)
+	.event {
+		box-sizing: border-box;
+		overflow: hidden;
+		isolation: isolate;
+		font-size: 0.8rem;
+		line-height: 1.3;
+		color: var( --planner-event-title );
+		background-color: var( --planner-event-background );
+		border-top: 2px solid var( --planner-event-color );
+		border-radius: var( --planner-event-radius );
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			border-radius: inherit;
+			background-color: var( --planner-event-color );
+			opacity: var( --planner-event-tint );
+		}
+
+		&.colored {
+			--planner-event-color: var( --planner-color );
+		}
+
+		// its title, its icon on its right
+		.head {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			min-width: 0;
+		}
+
+		// a little transparent: softer on the tint
+		.title {
+			flex: 1;
+			min-width: 0;
+			font-weight: 600;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			opacity: 0.85;
+		}
+
+		.icon {
+			width: 14px;
+			height: 14px;
+			min-width: 14px;
+			color: var( --planner-event-color );
+			fill: currentColor;
+		}
+
+		.time,
+		.text {
+			color: var( --planner-event-text );
+		}
+
+		.time {
+			white-space: nowrap;
+		}
+
+		// inside it: its outer edge is the one of the event, its radius too
+		&.selected {
+			outline: 2px solid var( --planner-event-selected );
+			outline-offset: -2px;
+		}
+
+		// moved, not copied: where it was
+		&.faded {
+			opacity: 0.35;
+		}
+
+		// where it goes, over the others
+		&.dragging {
+			z-index: 2;
+			opacity: 0.8;
+			pointer-events: none;
+		}
+	}
+
+	&:not( .readonly ) .event {
+		cursor: grab;
+	}
+
+	// in a day: its title, its times, its text on as many lines as it has room for
+	.layer > .event {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		padding: 2px 6px;
+
+		.text {
+			margin-top: 4px;
+			min-height: 0;
+			overflow: hidden;
+			white-space: pre-line;
+			font-style: italic;
+		}
+
+		// on a small one: on one line, the times cut before the title
+		&.small {
+			flex-direction: row;
+			align-items: center;
+			gap: 6px;
+			padding: 0 6px;
+
+			.head {
+				flex-shrink: 0;
+				max-width: 100%;
+			}
+
+			.time {
+				min-width: 0;
+				overflow: hidden;
+			}
+
+			.text {
+				display: none;
+			}
+		}
+
+		// its top and its bottom, small enough on a small event to leave room to move it
+		.grip {
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: min( 6px, 25% );
+			cursor: ns-resize;
+
+			&.start {
+				top: 0;
+			}
+
+			&.end {
+				bottom: 0;
+			}
+		}
+	}
+
+	// in the band: its title on one line, its left and right ends
+	.band > .event {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		padding: 0 6px;
+
+		.head {
+			flex: 1;
+		}
+
+		.grip {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 6px;
+			cursor: ew-resize;
+
+			&.start {
+				left: 0;
+			}
+
+			&.end {
+				right: 0;
+			}
+		}
+	}
+
+	// while an event is moved or stretched, a range selected: the cursor wherever the pointer is
+	&.moving,
+	&.moving * {
+		cursor: grabbing !important;
+	}
+
+	&.sizing .layer,
+	&.sizing .layer * {
+		cursor: ns-resize !important;
+	}
+
+	&.sizing .band,
+	&.sizing .band * {
+		cursor: ew-resize !important;
+	}
+
+	// the month: its weeks, the days off narrower
+	> .month {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+
+		> .names {
+			flex-shrink: 0;
+			display: grid;
+			grid-template-columns: var( --planner-cols );
+			height: 30px;
+			border-bottom: 1px solid var( --planner-hour-line-color );
+
+			.name {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: var( --planner-header-color );
+
+				&.off {
+					color: var( --planner-off-color );
+				}
+			}
+		}
+
+		> .cells {
+			position: relative;
+			flex: 1;
+			min-height: 0;
+			display: grid;
+			grid-template-columns: var( --planner-cols );
+			grid-template-rows: repeat( var( --planner-rows ), minmax( 0, 1fr ) );
+		}
+
+		.day {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			min-height: 0;
+			overflow: hidden;
+			padding: 2px 4px 4px;
+			border-right: 1px solid var( --planner-line-color );
+			border-bottom: 1px solid var( --planner-line-color );
+
+			&.off {
+				background-color: var( --planner-off-background );
+			}
+
+			&.out .num {
+				color: var( --planner-out-color );
+			}
+
+			// its number in a round of the accent
+			&.today .num {
+				align-self: flex-end;
+				width: 20px;
+				border-radius: 50%;
+				text-align: center;
+				color: var( --planner-today-color );
+				background-color: var( --planner-today-background );
+			}
+
+			&.range {
+				background-color: var( --planner-range-background );
+			}
+
+			// where the event moved goes
+			&.drop {
+				outline: 2px solid var( --planner-range-border );
+				outline-offset: -2px;
+			}
+
+			// as high as the round of today: the lists of the days start at the same height
+			.num {
+				flex-shrink: 0;
+				height: 20px;
+				line-height: 20px;
+				text-align: right;
+				font-size: 0.8rem;
+				color: var( --planner-header-color );
+			}
+
+			.list {
+				flex: 1;
+				min-height: 0;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+			}
+
+			.more {
+				flex-shrink: 0;
+				height: 18px;
+				font-size: 0.75rem;
+				cursor: pointer;
+				color: var( --planner-more-color );
+			}
+		}
+
+		// a line of 18px, its gap of 2px: MONTH_LINE in planner.ts; positioned, for its tint
+		.event {
+			position: relative;
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			height: 18px;
+			padding: 0 4px;
+			font-size: 0.75rem;
+
+			.time {
+				flex-shrink: 0;
+			}
+
+			.head {
+				flex: 1;
+			}
+
+			// the ghost, under the pointer
+			&.dragging {
+				position: absolute;
+			}
+		}
+	}
+
+	&.month {
+		> .head,
+		> .band,
+		> .body {
+			display: none;
+		}
+	}
+
+	// no sub grid: the lines of the hours alone
+	&.nosubgrid .grid .step {
+		display: none;
+	}
+
+	&:not( .month ) > .month {
+		display: none;
+	}
+}

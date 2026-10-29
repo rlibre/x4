@@ -94,7 +94,7 @@ export function mixed( ) {
 
 const page: DemoComponent = {
 	name: "JSX",
-	category: "Extra",
+	category: "Extras",
 	description: "The components written as a tree, in a .tsx file: JSX only calls their constructors, there is no virtual DOM. In tsconfig.json: \"jsx\": \"react\" and \"jsxFactory\": \"x4_react.create_element\".",
 	imports: [ "x4_react" ],
 	demos: [ view, todo, mixed ],

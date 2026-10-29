@@ -5,6 +5,30 @@ A version gets its date when it is published.
 
 ## 2.3.29
 
+### Components with an entry of their own
+
+- A big component, or one seldom used, is not in `x4js`: it has an entry of its own, and an application that does not import it does not carry its code nor its CSS. `x4js/monaco` was one already; `x4js/gantt`, `x4js/planner` and `x4js/mapview` are the new ones.
+
+### Gantt (`x4js/gantt`)
+
+- New: tasks on a calendar. On the left their list, a tree with columns (start, end, duration, progress, or a field). On the right a bar for each task, an arrow from each task it waits for (`deps`), groups and milestones. The pointer moves a bar, stretches it by its ends, sets its progress (`change`, `preventDefault` puts it back). Scales hour, day, week, month; ctrl+wheel zooms around the pointer (`scaleChange`). A colour by task or by group, a tooltip, `readonly`, disabled.
+- The titles of its columns, when not given: `_tr.global.gantt`, in the four languages.
+
+```ts
+import { Gantt } from "x4js/gantt";
+new Gantt( { tasks, columns: [ { id: "title", width: 200 }, { id: "start" }, { id: "end" } ], change: ( ev ) => save( ev.task, ev.start, ev.end ) } );
+```
+
+### Planner (`x4js/planner`)
+
+- New: events by day, by week or by month. The days in columns, the working hours filling the view, the others reached by the scroll; the whole days in a band or in the working hours (`band`); the days off narrower, or not shown. A drag on an empty place selects a range (`select`), a drag moves an event or stretches it (`change`), ctrl+drag copies it (`copy`). A colour and an icon by event, the line of now, marks for the events out of the view. `readonly`, disabled.
+
+```ts
+import { Planner } from "x4js/planner";
+const planner = new Planner( { events, select: ( ev ) => create( ev.start, ev.end ), change: ( ev ) => save( ev.event, ev.start, ev.end ) } );
+planner.addShortcut( "Delete", ( ) => remove( planner.getSelection( ) ) );
+```
+
 ### Radio
 
 - A radio has the room of a checkbox around it (`margin: 5px`, `padding: 4px`): a row of radios is 34px high, as a row of checkboxes. `button` keeps its own.
@@ -14,16 +38,34 @@ A version gets its date when it is published.
 - `formatPercent( value, decimals? )`: a percent in the current locale, of a value from 0 to 100 ("89 %" in fr-FR, "89%" in en-US).
 - `formatUnit( value, unit, decimals? )`: a value and its unit of Intl, short, in the current locale ("12 j", "3 h" in fr-FR, "12 days", "3 hr" in en-US).
 - `date_week_start( date )`: the monday of the week of a date, at the same time.
+- `date_add_days( date, days )`: a date some days after (or before), at the same time; a day of summer time counts as one.
 
 ```ts
 formatPercent( 89 );							// "89 %"
 formatUnit( 12, "day" );						// "12 j"
 date_week_start( new Date( 2026, 9, 29 ) );		// monday 26/10/2026
+date_add_days( new Date( 2026, 9, 29 ), 7 );	// 05/11/2026
 ```
 
 ### Combobox, TextEdit
 
 - The button of a Combobox (its arrow) and the gadgets of a TextEdit have the background of their field (`--background-input`) and its height: they were a small box on the background of the page, darker than the field in the dark theme.
+
+### TextEdit, AutoComplete, Combobox, TextArea: the label above
+
+- The class `label-top` puts the label above its field, smaller, darker while the field has the focus: on a field, or on a box that holds fields (a Form, the main view: all the application). `labelWidth` is not used then. Its variables: `--label-top-color`, `--label-top-color-focus`, `--label-top-size`, `--label-top-gap`, `--label-top-gap-textarea`, `--label-top-suffix` (`":"` after the label).
+
+```ts
+new Form( { cls: "label-top", content: [
+	new TextEdit( { label: "Name" } ),
+	new Combobox( { label: "Country", items } ),
+	new TextArea( { label: "Comment" } ),
+] } );
+```
+
+### Tag
+
+- The text of a tag is in `--accent-color`, the color of a text on the accent (its background). Its icon has the color of its text, also when a class sets `--tag-color`; `--tag-icon-color` gives it another one.
 
 ### Canvas
 
@@ -54,11 +96,12 @@ const meter = new Bargraph( { vertical: true, overshoot: 85, peak: true } );
 meter.setValue( level );
 ```
 
-### MapView
+### MapView (`x4js/mapview`)
 
 - New: a map of tiles, openstreetmap by default (`tiles`, `attribution` for another provider), without any library. The pointer moves it; the wheel, a double click, its buttons and the keys zoom it, animated; two fingers pinch it. `markers` (a pin, its tooltip), and `shapes`: zones under the markers, a polygon, a circle of a radius in meters, a line (`color`, `width`). Events `move`, `click` (where), `markerClick`, `shapeClick`; `setCenter`, `setZoom`, `fitBounds`. The dark theme turns its tiles dark (`--mapview-tile-filter`).
 
 ```ts
+import { MapView } from "x4js/mapview";
 new MapView( {
 	height: 400, center: { lat: 48.8566, lng: 2.3522 }, zoom: 13,
 	markers: [ { lat: 48.8584, lng: 2.2945, title: "Tour Eiffel" } ],

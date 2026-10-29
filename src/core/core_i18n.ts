@@ -387,6 +387,15 @@ let fr = {
 			next: 'Suivant',
 			position: '{0} sur {1}',
 		},
+
+		// the titles of the columns of a Gantt, by their id
+		gantt: {
+			title: 'Tâche',
+			start: 'Début',
+			end: 'Fin',
+			duration: 'Durée',
+			progress: 'Avancement',
+		},
 	}
 };
 
@@ -472,6 +481,14 @@ let en = {
 			prev: 'Previous',
 			next: 'Next',
 			position: '{0} of {1}',
+		},
+
+		gantt: {
+			title: 'Task',
+			start: 'Start',
+			end: 'End',
+			duration: 'Duration',
+			progress: 'Progress',
 		},
 	}
 };
@@ -559,6 +576,14 @@ let es = {
 			next: 'Siguiente',
 			position: '{0} de {1}',
 		},
+
+		gantt: {
+			title: 'Tarea',
+			start: 'Inicio',
+			end: 'Fin',
+			duration: 'Duración',
+			progress: 'Progreso',
+		},
 	}
 };
 
@@ -644,6 +669,14 @@ let de = {
 			prev: 'Zurück',
 			next: 'Weiter',
 			position: '{0} von {1}',
+		},
+
+		gantt: {
+			title: 'Aufgabe',
+			start: 'Beginn',
+			end: 'Ende',
+			duration: 'Dauer',
+			progress: 'Fortschritt',
 		},
 	}
 };

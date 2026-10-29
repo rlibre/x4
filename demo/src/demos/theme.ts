@@ -77,7 +77,7 @@ export function liveAccent( ) {
 
 const page: DemoComponent = {
 	name: "Theme",
-	category: "Extra",
+	category: "Extras",
 	description: "The colours of x4 are CSS variables: a theme only changes them. Application.setTheme gives the dark theme of x4, or one of the application (html.x4theme-<name>); a variable can also be written by the code.",
 	imports: [ "Application" ],
 	demos: [ lightDark, ownTheme, liveAccent ],

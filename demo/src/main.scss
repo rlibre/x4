@@ -47,6 +47,7 @@ body {
 		width: 248px;			// the navigation at its start: 280px less the padding of the header
 		font-size: 1.25rem;
 		font-weight: 700;
+		cursor: pointer;		// a click: the presentation page
 		--label-color: var( --text-primary );
 
 		// the logo of x4, in its colours
@@ -134,30 +135,27 @@ body {
 
 // :: a component ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-.componentpage {
+// the presentation page too
+.componentpage, .homepage {
 	min-height: 0;
 	padding: 28px 40px 80px;
 	overflow-y: auto;
 	gap: 8px;
 
-	// the content centered in the page, 1000px at most
+	// the content on the left of the page, 1000px at most
 	> * {
 		flex-shrink: 0;
 		width: 100%;
 		max-width: 1000px;
-		margin-inline: auto;
 	}
 
-	// the name of the component: a band of the accent, kept at the top while the page scrolls
+	// the name of the component: a line of the accent under it; it scrolls with the page
 	> .name {
-		position: sticky;
-		top: -28px;			// the padding of the page: stuck against its top edge, nothing scrolls above it
-		z-index: 10;
-		padding: 2px 12px;
+		padding-bottom: 4px;
+		border-bottom: 2px solid var( --accent-background );
 		font-size: 2rem;
 		font-weight: 700;
-		background-color: var( --accent-background-focus );		// #2a71ac in the light theme
-		--label-color: var( --accent-color );
+		--label-color: var( --text-primary );
 	}
 
 	> .description {
@@ -172,6 +170,77 @@ body {
 		font-weight: 600;
 		--label-color: var( --text-primary );
 	}
+}
+
+// :: the presentation page :::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.homepage {
+	> .hero {
+		gap: 20px;
+		align-items: center;
+
+		> .logo {
+			width: 88px;
+			height: 88px;
+		}
+
+		.title {
+			font-size: 2.5rem;
+			font-weight: 700;
+			--label-color: var( --text-primary );
+		}
+
+		.tagline {
+			font-size: 1.2rem;
+			color: var( --text-secondary );
+		}
+	}
+
+	> .text {
+		color: var( --text-ternary );
+		line-height: 1.5;
+	}
+
+	// a link alone on its line: as wide as its text
+	> .out {
+		align-self: flex-start;
+		width: auto;
+	}
+
+	// a card per category, as many on a line as the width holds
+	> .categories {
+		display: grid;
+		grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
+		gap: 12px;
+
+		> .category {
+			gap: 8px;
+			padding: 14px 18px;
+			border: 1px solid var( --border );
+
+			> .title {
+				font-weight: 600;
+				--label-color: var( --accent-background );
+			}
+
+			> .names {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px 14px;
+			}
+		}
+	}
+
+	> .links {
+		flex-wrap: wrap;
+		gap: 8px 28px;
+	}
+}
+
+// the "4" of the logo is light in the dark theme
+html:not( .x4theme-dark ) .homepage .logo.dark,
+html.x4theme-dark .homepage .logo.light {
+	display: none;
 }
 
 pre {
@@ -290,17 +359,55 @@ html.x4theme-dark pre {
 	margin-top: 12px;
 	padding: 16px 20px;
 	border: 1px solid var( --border );
-	scroll-margin-top: 56px;		// brought to the top (its address), under the band of the name
+	scroll-margin-top: 28px;		// brought to the top (its address): as far from it as the start of the page
 
-	> .title {
-		align-self: flex-start;
-		color: var( --text-primary );
-		font-size: 1.1rem;
-		font-weight: 600;
-		text-decoration: none;
+	// its title, the button that enlarges it on the right
+	> .head {
+		align-items: center;
 
-		&:hover {
-			text-decoration: underline;
+		> .title {
+			color: var( --text-primary );
+			font-size: 1.1rem;
+			font-weight: 600;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		> .expand {
+			margin: 0;
+			padding: 4px;
+		}
+	}
+
+	// enlarged: the card over the window, a margin around it, the page darkened as under a
+	// dialog; its title at the top, its demo filling the rest; its sentence and its code hidden
+	&.expanded {
+		position: fixed;
+		inset: 32px;
+		z-index: 100;			// over the page; the popups of x4 (1000) over it
+		width: auto;
+		max-width: none;
+		margin: 0;
+		background-color: var( --background-primary );
+		box-shadow: 0 0 0 100vmax var( --modal-mask-background );
+
+		> .text, > .toggle, > .codeview {
+			display: none;
+		}
+
+		> .demo {
+			flex: 1;
+			min-height: 0;
+
+			// the demo and its Gantt or Planner: the height their code gives them is the one of the page
+			> *, :is( .x4gantt, .x4planner ) {
+				flex: 1;
+				min-height: 0;
+				height: auto !important;
+			}
 		}
 	}
 

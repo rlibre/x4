@@ -26,8 +26,19 @@ export interface DemoComponent {
 	category: string;						// a section of the navigation
 	description: string;
 	imports?: string[];						// the import line of the page; [name] when missing
+	module?: string;						// the entry of the import line: "x4js/mapview"; "x4js" when missing
 	usage?: DemoUsage;						// the configurator; none when the props do not fit it
+	expand?: boolean;						// a button on the right of the title of each variation: the card covers the window
 	demos: ( ( ) => Component )[];			// the variations: functions with a "@demo" doc comment
+}
+
+/**
+ * the components of a category of the navigation
+ */
+
+export interface ComponentGroup {
+	category: string;
+	docs: DemoComponent[];
 }
 
 /**

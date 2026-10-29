@@ -22,10 +22,6 @@ Left from the colours that did not follow the scale `--color-primary-*` (reporte
 
 - A Drawer: a panel that slides in from an edge of the page (left, right, top, bottom) over the content, and goes away by a click outside or Escape (asked on 2026-10-21). x4 has nothing of the kind today. Nothing is designed: a Popup or a Component of its own, a mask behind it or not, pushing the content or over it.
 
-## Fields with their label above
-
-- A style of `TextEdit` with the label above the field, not on its left (asked on 2026-10-21); the same for the other fields that have a label: `AutoComplete` (a TextEdit), `Combobox` (both have `label` and `labelWidth`), `TextArea` (`label`). Decided: a class (2026-10-21), its name to choose.
-
 ## Box is a `<div>` (2.3.26)
 
 - The gallery (demo) still builds its page with `tag: "div"` (page.ts): useless, it uses x4js 2.3.28.
@@ -90,9 +86,36 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 - No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size`, read by Gridview and Spreadsheet, is defined nowhere (see Theme).
 
-## x4 extra
+## Components with an entry of their own
 
-- To think about (2026-10-29): put Monaco (`src/components/monaco`) in a folder of its own, "x4 extra", and the components that will join it. Nothing is designed.
+- Decided on 2026-10-29: a big component, or one seldom used, is not in the entry `x4js`: it has an entry of its own in the `exports` of package.json, `x4js/<name>` (`"./gantt": "./src/components/gantt/gantt.ts"`, one by one, no pattern). It stays in `src/components/<name>`. An application that does not import it does not carry its code nor its CSS. Done for the Gantt, the Planner and MapView (`x4js/gantt`, `x4js/planner`, `x4js/mapview`); the rule and its list are in aicontext. Monaco: nothing changes, `x4js/monaco`. The gallery, built from src (x4.local.json), needs an alias for each one (`"x4js/mapview": "../src/components/mapview/mapview.ts"`): the alias `x4js` alone turns `x4js/mapview` into `../src/x4.ts/mapview`.
+
+## Gantt
+
+- All the lines are in the DOM (no virtualization).
+- A dependency cannot be made with the pointer.
+- No scroll when a bar is dragged near the edge of the chart.
+- The cells of the list are updated when the bar is let go, not while it is dragged.
+- Each wheel event of the zoom redraws everything: with many tasks, the redraws could be grouped by frame (`requestAnimationFrame`).
+- `dateText` (a date, with its time when it has one) is exported by `x4js/gantt` for its demo and the one of the Planner: a helper for core_tools?
+- To decide: `color: null` on a task of a coloured group: today the colour of the group, as a task without colour; or the colours of the theme? (asked on 2026-10-29)
+
+## Planner
+
+- Its model: the planner and the month of Timex (C:\dev\rlibre\timex, src/planner.ts and src/month.ts). Timex could take it in place of its own, and its own date helpers (`addDays`, `startOfWeek`...) the ones of core_tools.
+- A range of hours is selected on one day only; Timex selects the same hours on several days.
+- An event cannot go from the band to the hours, or back.
+- The month shows an event of several days on each of its days, not as one bar across them.
+
+## Formulas
+
+- A small parser and evaluator of expressions, as in Excel (asked on 2026-10-29; nothing is designed).
+
+## Gallery
+
+- The presentation page (demo/src/home.ts): maybe, later, two or three components shown live (Planner, Gantt, Chart).
+- The page "getting started" of x4js.org (https://x4js.org/doc/en/getting-started/, the link of the presentation page): to check that what it says is still true. The sources of the site: C:\dev\rlibre\x4-site.
+- The templates of `x4js create` (the folder templates of the repository, and C:\dev\rlibre\x4-templates): to check, that they still build and follow the x4 of today.
 
 ## Seen while writing Timex: to decide
 

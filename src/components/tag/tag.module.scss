@@ -19,8 +19,7 @@
 	--tag-border: var( --border );
 	--tag-border-focus: var( --border-focus );
 	--tag-background: var( --accent-background );
-	--tag-color: var( --text-primary );
-	--tag-icon-color: var( --tag-color );
+	--tag-color: var( --accent-color );
 }
 
 .x4tag {
@@ -37,9 +36,10 @@
 		display: none;
 	}
 
+	// --tag-icon-color is not set by x4: the icon has the color of the text of its tag
 	.x4icon {
 		height: 1em;
-		color: var( --tag-icon-color );
+		color: var( --tag-icon-color, var( --tag-color ) );
 	}
 
 	&> .x4simpletext {
@@ -50,6 +50,6 @@
 
 	&.alert {
 		--tag-color: var( --alert-color );
-		background-color: var( --alert-background );
+		--tag-background: var( --alert-background );
 	}
 }

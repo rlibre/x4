@@ -55,7 +55,7 @@ export function changes( ) {
 
 const page: DemoComponent = {
 	name: "State",
-	category: "Extra",
+	category: "Extras",
 	description: "makeState makes an object observable: its properties are read and written as usual, and on or watch is called at each change, with its path.",
 	imports: [ "makeState" ],
 	demos: [ counter, shared, changes ],

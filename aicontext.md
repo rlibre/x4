@@ -37,10 +37,11 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     ├── Button, Input, Icon, Label, SimpleText, Checkbox, Radio, Link, SimpleTextArea
   │     ├── Listbox, Gridview, Treeview, Select, Combobox, Slider, Knob, Gauge
   │     ├── Progress, TickLine, Timeline, Canvas, Image, Spreadsheet, MonacoEditor
+  │     ├── Gantt, Planner, MapView (each one from its entry: x4js/gantt, x4js/planner, x4js/mapview)
   │     ├── Canvas → Bargraph
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
-  │     ├── FileDialog, ScrollView, Viewport, DockingView, MapView, Carousel, Flex, Space
+  │     ├── FileDialog, ScrollView, Viewport, DockingView, Carousel, Flex, Space
   │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea, SettingsView, SettingItem
   └── Application<E>           singleton, no DOM of its own
@@ -625,7 +626,8 @@ interface TagProps extends ComponentProps {
 }
 class Tag extends HBox {}                  // no method: its text and its icon are those of its props
 // cls "alert": the colors of an alert
-// CSS vars: --tag-background --tag-color --tag-icon-color --tag-border
+// CSS vars: --tag-background --tag-color (the text on the accent) --tag-border; --tag-icon-color is not set:
+//   the icon has the color of the text, a class that changes --tag-color changes both
 ```
 
 ```ts
@@ -735,9 +737,10 @@ new Timeline({
 })
 ```
 
-### `MapView` — a map of tiles (openstreetmap), with markers and zones
+### `MapView` — a map of tiles (openstreetmap), with markers and zones (`x4js/mapview`)
 
 ```ts
+import { MapView, LatLng, MapMarker } from "x4js/mapview"   // not in x4js
 interface LatLng { lat: number; lng: number }
 interface MapMarker extends LatLng { title?: string; icon?: string /* a pin by default */; data?: any }
 type MapShape =                            // zones, under the markers
@@ -833,6 +836,10 @@ type TextEditProps = (TextInputProps | NumberProps | DateProps | TimeProps) & {
 class TextEdit extends HBox {
   getValue(): string; setValue(value: string): void; getInput(): Input
 }
+// the class label-top (base.scss): the label above its field, smaller, darker while the field has the focus; on a
+//   TextEdit / AutoComplete / Combobox / TextArea, or on a box that holds them (a Form, the main view: all the
+//   application). labelWidth is not used then.
+//   Vars: --label-top-color / -color-focus / -size / -gap / -gap-textarea, --label-top-suffix (":" after the label)
 ```
 
 ### `TextArea`, `SimpleTextArea` — native `<textarea>`, with or without a label
@@ -1904,6 +1911,7 @@ date_to_sql(date, withHours): string; date_sql_utc(date): Date
 date_hash(date): number; date_clone(date): Date
 date_calc_weeknum(date): number            // ISO 8601: weeks from monday, week 1 holds the first thursday (29/12/2025 → 1)
 date_week_start(date): Date                // the monday of its week (itself on a monday), at the same time: a new date
+date_add_days(date, days): Date            // days after (before when < 0), at the same time: a new date; a day of summer time counts as one
 parseIntlDate(value, fmts?): Date; formatIntlDate(date, fmt?, utc?): string
 calcAge(birth, ref?): number
 
@@ -1999,6 +2007,21 @@ measureText(str: string, size: number, bold?: boolean): number   // Helvetica
 
 ---
 
+## Components with an entry of their own
+
+Some components are not in `x4js`: they are big, or seldom used, and an application that does not
+use them should not carry their code nor their CSS. Each one has an entry of its own in the package:
+import it from it, not from `x4js` (`import { Gantt } from "x4js"` fails: "has no exported member").
+
+| Component | Import | More |
+|---|---|---|
+| `MonacoEditor` | `import { MonacoEditor } from "x4js/monaco"` | copy its files to the output, then `MonacoEditor.start()` (below) |
+| `Gantt` | `import { Gantt } from "x4js/gantt"` | |
+| `Planner` | `import { Planner } from "x4js/planner"` | |
+| `MapView` | `import { MapView } from "x4js/mapview"` | `LatLng`, `MapMarker`, `MapShape` from it too |
+
+---
+
 ## Code editor (`MonacoEditor`)
 
 Monaco-based code editor component. Monaco is part of the framework surface, so exclude it from `tsc` compilation (see Default project notes).
@@ -2017,6 +2040,156 @@ class MonacoEditor extends Component<MonacoEditorProps> {
   static basePath: string
   static monaco: typeof Monaco
 }
+```
+
+---
+
+## `Gantt` — tasks on a calendar (`x4js/gantt`)
+
+```ts
+import { Gantt } from "x4js/gantt"                // not in x4js
+type GanttID = string | number
+type GanttScale = "hour" | "day" | "week" | "month"
+interface GanttTask {
+  id: GanttID; title: string
+  start?: Date; end?: Date                 // a date without hours is a whole day: end is its last day, included; none: the day of start
+  progress?: number                        // 0 to 100
+  milestone?: boolean                      // a diamond in the middle of its day
+  children?: GanttTask[]                   // a group: from the first start of its tasks to their last end, its progress weighted by their length
+  open?: boolean                           // a group: its tasks shown; true by default
+  deps?: GanttID[]                         // the tasks it waits for: an arrow from the end of each one
+  color?: string                           // its bar; a group gives it to its tasks that have none; none: the theme
+  tooltip?: string; cls?: string; data?: any
+}
+interface GanttColumn {
+  id: string                               // "title" (the tree), "start", "end", "duration", "progress", or a field of the task
+  title?: string                           // none: for the ids above, their title in the language (_tr.global.gantt)
+  width?: number; align?: "left" | "center" | "right"; formatter?: (task: GanttTask) => string | UnsafeHtml
+}
+interface EvGanttChange extends ComponentEvent { readonly task: GanttTask; readonly start: Date; readonly end: Date; readonly progress: number }
+interface EvGanttScale extends ComponentEvent { readonly scale: GanttScale }
+interface GanttProps extends Omit<ComponentProps, "content"> {
+  tasks?: GanttTask[]
+  columns?: GanttColumn[]                  // the list on the left; the titles alone by default
+  scale?: GanttScale                       // "day" by default; ctrl+wheel changes it
+  start?: Date; end?: Date                 // the days shown; else those of the tasks
+  rowHeight?: number                       // 32 by default
+  readonly?: boolean
+  click?, dblClick?, contextMenu?          // ev.context: the task
+  selectionChange?: EventCallback<EvSelectionChange>
+  change?: EventCallback<EvGanttChange>    // told before it is written in the task: ev.preventDefault() puts the bar back
+  scaleChange?: EventCallback<EvGanttScale> // the zoom took another scale
+}
+class Gantt extends Component<GanttProps, GanttEvents> {
+  setTasks(tasks: GanttTask[]): void
+  setScale(scale: GanttScale): void        // its width of a day; the date at the left stays
+  getScale(): GanttScale
+  setReadOnly(ro: boolean): void
+  selectTask(id: GanttID): void            // without selectionChange; null: none
+  getSelection(): GanttID
+  scrollToDate(date: Date): void           // in the middle of the chart
+}
+// the pointer: moves a bar, stretches it by its ends, its progress by the mark under it (by the hour in "hour", else by the day)
+// ctrl+wheel on the chart: zoom, the day under the pointer stays; the scale follows the width of a day
+// keys: up, down, home, end select; right opens a group, left closes it or goes to its group
+// readonly: no bar moved; disabled (enable(false)): faded as a Box
+// CSS vars: --gantt-background --gantt-border --gantt-border-focus --gantt-header-background --gantt-header-color
+//           --gantt-line-color --gantt-major-line-color --gantt-weekend-background --gantt-today-color
+//           --gantt-row-background-sel --gantt-row-color-sel --gantt-lane-background-sel --gantt-icon-color
+//           --gantt-bar-background --gantt-bar-border --gantt-bar-progress --gantt-bar-label --gantt-handle-color
+//           --gantt-group-background --gantt-milestone-background --gantt-link-color --gantt-link-color-sel
+```
+
+```ts
+new Gantt({
+  tasks: [
+    { id: "dev", title: "Development", color: "#fb8c00", children: [
+      { id: "core", title: "Core", start: new Date(2026, 10, 2), end: new Date(2026, 10, 12), progress: 30 },
+      { id: "ui", title: "User interface", start: new Date(2026, 10, 6), end: new Date(2026, 10, 18), deps: ["core"] },
+    ] },
+  ],
+  columns: [{ id: "title", width: 200 }, { id: "start" }, { id: "end" }],
+  change: (ev) => save(ev.task, ev.start, ev.end, ev.progress),
+})
+```
+
+---
+
+## `Planner` — events by day, week or month (`x4js/planner`)
+
+```ts
+import { Planner } from "x4js/planner"            // not in x4js
+type PlannerID = string | number
+type PlannerView = "day" | "week" | "month"
+interface PlannerEvent {
+  id: PlannerID; title: string
+  start: Date
+  end?: Date                               // a date without hours is a whole day: end is its last day, included; else the time it ends.
+                                           // none: the day of start, or an hour after it
+  text?: string                            // under the title
+  color?: string                           // its border, its icon and a tint of its background; none: the accent of the theme
+  icon?: string                            // on the right of its title, in its colour (as Icon: an svg)
+  tooltip?: string; cls?: string; data?: any
+}
+interface EvPlannerChange extends ComponentEvent { readonly event: PlannerEvent; readonly start: Date; readonly end: Date }
+interface EvPlannerSelect extends ComponentEvent { readonly start: Date; readonly end: Date }   // whole days: without hours, end the last one
+interface EvPlannerView extends ComponentEvent { readonly view: PlannerView; readonly date: Date }
+interface PlannerProps extends Omit<ComponentProps, "content"> {
+  events?: PlannerEvent[]
+  view?: PlannerView                       // "week" by default
+  date?: Date                              // a day shown; today by default
+  workDays?: number[]                      // as Date.getDay(): monday to friday by default
+  workHours?: [number, number]             // minutes from midnight: 8:00 to 18:00 by default
+  showOffDays?: boolean                    // the other days, narrower; true by default
+  showOffHours?: boolean                   // the other hours, reached by the scroll; true by default
+  band?: boolean                           // the whole days in a band under the days; true by default; false: in the working hours
+  showSubGrid?: boolean                    // the lines of the steps between the hours; false by default
+  step?: number                            // the precision of the pointer, in minutes: 15 by default
+  readonly?: boolean
+  click?, dblClick?, contextMenu?          // ev.context: the event
+  selectionChange?: EventCallback<EvSelectionChange>
+  change?: EventCallback<EvPlannerChange>  // moved or stretched; told before it is written in the event: ev.preventDefault() puts it back
+  copy?: EventCallback<EvPlannerChange>    // ctrl+drag (option on a Mac): nothing is written, the application adds the copy
+  select?: EventCallback<EvPlannerSelect>  // a range of time or of days: the application creates the event
+  viewChange?: EventCallback<EvPlannerView> // a day of the month opened: its week
+}
+class Planner extends Component<PlannerProps, PlannerEvents> {
+  setEvents(events: PlannerEvent[]): void  // the selection goes when its event is not in them
+  setView(view: PlannerView): void; getView(): PlannerView
+  setDate(date: Date): void; getDate(): Date
+  next(): void; prev(): void               // the day, the week, the month after or before
+  getRange(): { start: Date, end: Date }   // the first and the last day shown; in the month, its days
+  setBand(band: boolean): void; setShowOffDays(show: boolean): void; setShowOffHours(show: boolean): void
+  setShowSubGrid(show: boolean): void; setStep(step: number): void; setReadOnly(ro: boolean): void
+  selectEvent(id: PlannerID): void         // without selectionChange; null: none
+  getSelection(): PlannerID
+}
+// the pointer: a drag on an empty place selects a range (shift, or the strip on the right of a day: over the events too);
+// a drag moves an event (a ghost, the event faded at its place), its top or its bottom stretches it, by step;
+// an event of one day stays in its day; near the top or the bottom of the view, the view scrolls
+// the events out of the view: a mark at the top or the bottom of their day, a click on it scrolls to them
+// a key on the event selected: addShortcut("Delete", ...) and getSelection()
+// readonly: nothing created, moved, stretched nor copied; disabled (enable(false)): faded as a Box
+// CSS vars: --planner-background --planner-border --planner-border-focus --planner-header-color --planner-day-color
+//           --planner-off-color --planner-today-background --planner-today-color --planner-today-column
+//           --planner-off-background --planner-line-color --planner-step-color --planner-hour-line-color
+//           --planner-hour-color --planner-hour-color-work --planner-edge-background --planner-edge-color
+//           --planner-edge-shadow --planner-now-color --planner-now-tag --planner-now-text
+//           --planner-event-background --planner-event-color --planner-event-tint --planner-event-radius
+//           --planner-event-title --planner-event-text --planner-event-selected --planner-range-background
+//           --planner-range-border --planner-out-color --planner-more-color
+```
+
+```ts
+const planner = new Planner({
+  events: [
+    { id: 1, title: "Design review", start: new Date(2026, 9, 26, 10), end: new Date(2026, 9, 26, 12), color: "#2e9e48" },
+    { id: 2, title: "Day off", start: new Date(2026, 9, 30) },
+  ],
+  select: (ev) => create(ev.start, ev.end),
+  change: (ev) => save(ev.event, ev.start, ev.end),
+})
+planner.addShortcut("Delete", () => remove(planner.getSelection()))
 ```
 
 ---
