@@ -1335,7 +1335,8 @@ class Tabs extends Box {
 
 ```ts
 interface PopupProps extends ComponentProps {
-  autoClose?: boolean | string             // true, or a group name
+  autoClose?: boolean | string             // true, or a group name: closed by a press outside; while it is shown,
+                                           //   a wheel outside every popup is ignored (the page does not scroll)
   sizable?: boolean; movable?: boolean
 }
 class Popup extends Box {
@@ -1835,13 +1836,13 @@ by the browser, in its own locale, whatever this one.
 /* the globals the components use: --background-primary / -secondary / -ternary / -hover / -active / -input,
    --text-primary / -secondary / -ternary, --border / -light / -hover / -focus, --accent-background / -hover /
    -focus / -active / -light, --accent-color (the text on the accent), --disabled-*, --icon-color / -active,
-   --alert-*, --warning-*, --success-* */
+   --alert-*, --warning-*, --success-*, --shadow-color (the shadow of what floats: dialog, list, notification, tooltip) */
 ```
 // The greys are mixes of a0 and a100: a theme that reverses the scale gets them light on dark.
 // Each component reads its own variables (the @cssvar of its class), which point to these globals:
 //   a theme redefines the globals, or one variable of a component.
 // Themes: Application.setTheme(name) puts the class x4theme-<name> on <html>. "" is the light theme (by default),
-//   "dark" the dark theme of x4 (the greys of VS Code Dark Modern, its blues from #5796ca). An application adds its own theme in its css,
+//   "dark" the dark theme of x4 (the greys of VS Code Dark Modern, its blues from #2d6fa5: the accent #245883). An application adds its own theme in its css,
 //   html.x4theme-pink { --color-primary-a0: ...; ... }, then Application.setTheme("pink").
 // The font: --font-name and --font-size (14px), on :root (normalize.scss); body takes them. To change the size
 //   of the text, set --font-size ( :root { --font-size: 13px } ), not the font-size of <html>: the components
@@ -2218,6 +2219,8 @@ class CMover {
 }
 createPainter(c2d: CanvasRenderingContext2D, w: number, h: number): CanvasEx   // Canvas painter
 initTooltips(): void                                   // initialize the global tooltip system
+// a tooltip: 30vw wide at most (--tooltip-max-width; none: the width of its text); it goes at a click, and when its
+//   element is removed or hidden (checked every second while it is shown)
 ```
 
 JSX, in `.tsx` files: in tsconfig.json `"jsx": "react"` and `"jsxFactory": "x4_react.create_element"` (esbuild reads
