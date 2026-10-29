@@ -42,7 +42,7 @@ export function wizard( ) {
 	] } );
 }
 
-/** @demo A carousel — At the last page, Next goes back to the first one with select. */
+/** @demo A carousel — At the last page, Next goes back to the first one with select. For slides that move, with arrows, dots, a swipe and an autoplay: Carousel. */
 export function carousel( ) {
 	const slides = new AssistBox( {
 		cls: "slides",
@@ -74,7 +74,7 @@ export function carousel( ) {
 const page: DemoComponent = {
 	name: "AssistBox",
 	category: "Layout containers",
-	description: "A StackBox that goes from page to page in their order: for a wizard or a carousel.",
+	description: "A StackBox that goes from page to page in their order, without animation: for a wizard. For slides that move: Carousel.",
 	usage: {
 		create: ( props ) => new AssistBox( { ...props, cls: "slides", items: [
 			{ name: "home", content: new Label( { cls: "slide", icon: icon_home, text: "Home" } ) },

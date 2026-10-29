@@ -2,7 +2,7 @@
  * TextEdit: the page of the gallery
  */
 
-import { Button, Form, HBox, Label, TextEdit, VBox } from 'x4js';
+import { Button, Combobox, Form, HBox, Label, TextArea, TextEdit, VBox } from 'x4js';
 import { icon_close, icon_search } from '../icons';
 import { DemoComponent } from '../types';
 
@@ -16,6 +16,22 @@ export function form( ) {
 		new TextEdit( { label: "Age", labelWidth: 110, type: "number", value: 30, min: 0, max: 120 } ),
 		new TextEdit( { label: "Birth date", labelWidth: 110, type: "date" } ),
 		new TextEdit( { label: "Password", labelWidth: 110, type: "password", required: true } ),
+	] } );
+}
+
+/** @demo Label above — The class label-top puts the label above its field, smaller, darker while the field has the focus: on a field, or on a box that holds fields (a Form, the main view: all the application). It works for TextEdit, AutoComplete, Combobox and TextArea; labelWidth is not used. */
+export function labelTop( ) {
+	return new HBox( { content: [
+		new Form( { cls: "label-top", flex: false, width: 280, content: [
+			new TextEdit( { label: "Name", placeholder: "Your name", required: true } ),
+			new TextEdit( { label: "Email", type: "email", placeholder: "you@example.com" } ),
+			new Combobox( { label: "Country", items: [ { id: 1, text: "France" }, { id: 2, text: "Suisse" }, { id: 3, text: "Belgique" } ] } ),
+			new TextArea( { label: "Comment", placeholder: "A few words..." } ),
+		] } ),
+		new VBox( { width: 280, content: [
+			new TextEdit( { label: "On the left", placeholder: "default" } ),
+			new TextEdit( { cls: "label-top", label: "Above, on this field only", placeholder: "label-top" } ),
+		] } ),
 	] } );
 }
 
@@ -68,7 +84,7 @@ const page: DemoComponent = {
 	description: "A label and an input on a line: the field of a form. It takes the props of an Input (text, email, password, number, date, time) and its label.",
 	usage: {
 		create: ( props ) => new TextEdit( props ),
-		props: { label: "Name", type: "text", placeholder: "Your name", labelWidth: 100, width: 360, required: false, readonly: false, disabled: false },
+		props: { label: "Name", type: "text", placeholder: "Your name", labelWidth: 100, width: 360, cls: "", required: false, readonly: false, disabled: false },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "type", type: "options", options: [
@@ -82,12 +98,16 @@ const page: DemoComponent = {
 			{ name: "placeholder", type: "string" },
 			{ name: "labelWidth", type: "number", min: 40, max: 200, step: 10, live: true },
 			{ name: "width", type: "number", min: 200, max: 560, step: 20, live: true },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "label-top", text: "label-top" },
+			] },
 			{ name: "required", type: "boolean" },
 			{ name: "readonly", type: "boolean" },
 			{ name: "disabled", type: "boolean" },
 		],
 	},
-	demos: [ form, gadgets, values, inForm ],
+	demos: [ form, labelTop, gadgets, values, inForm ],
 };
 
 export default page;

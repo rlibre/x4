@@ -1,0 +1,113 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file knob.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--knob-track: var( --border );
+	--knob-value: var( --accent-background );
+	--knob-cap-background: var( --background-secondary );
+	--knob-cap-border: var( --border );
+	--knob-pointer: var( --accent-background );
+	--knob-border-focus: var( --border-focus );
+	--knob-track-disabled: color-mix( in srgb, var( --disabled-color-light ) 50%, var( --background-primary ) );
+	--knob-value-disabled: var( --disabled-color-light );
+	--knob-cap-background-disabled: var( --background-primary );
+}
+
+.x4knob {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	flex-shrink: 0;
+	outline: none;
+
+	// the round: its diameter in --knob-size (the prop size)
+	.dial {
+		position: relative;
+		flex-shrink: 0;
+		width: var( --knob-size, 48px );
+		height: var( --knob-size, 48px );
+		border-radius: 50%;
+		touch-action: none;
+		cursor: grab;
+	}
+
+	&.dragging .dial {
+		cursor: grabbing;
+	}
+
+	// range: the arc of 270° from -135°, the value in --knob-perc (set by the code)
+	.ring {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+
+		background: conic-gradient( from -135deg,
+			var( --knob-value ) 0 var( --knob-perc, 0deg ),
+			var( --knob-track ) var( --knob-perc, 0deg ) 270deg,
+			transparent 270deg );
+
+		// a ring of 4px
+		mask: radial-gradient( farthest-side, transparent calc( 100% - 4px ), #000 calc( 100% - 3.5px ) );
+	}
+
+	.cap {
+		position: absolute;
+		inset: 8px;
+		border-radius: 50%;
+		background-color: var( --knob-cap-background );
+		border: 1px solid var( --knob-cap-border );
+		transform: rotate( var( --knob-angle, 0deg ) );
+	}
+
+	.pointer {
+		position: absolute;
+		left: 50%;
+		top: 3px;
+		width: 3px;
+		height: 30%;
+		border-radius: 2px;
+		background-color: var( --knob-pointer );
+		transform: translateX( -50% );
+	}
+
+	// infinite: no start nor end, ticks all around
+	&.infinite .ring {
+		background: repeating-conic-gradient( from -1.5deg,
+			var( --knob-track ) 0 3deg,
+			transparent 3deg 30deg );
+	}
+
+	// the colors of the knob take the disabled ones
+	&[disabled] {
+		--knob-track: var( --knob-track-disabled );
+		--knob-value: var( --knob-value-disabled );
+		--knob-pointer: var( --knob-value-disabled );
+		--knob-cap-background: var( --knob-cap-background-disabled );
+		--knob-cap-border: var( --knob-track-disabled );
+
+		&, .dial {
+			cursor: not-allowed;
+		}
+	}
+
+	&:focus .cap {
+		outline-offset: 2px;
+		outline-color: var( --knob-border-focus );
+		outline-style: solid;
+		outline-width: 1px;
+	}
+}

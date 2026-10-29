@@ -120,6 +120,19 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 - **Types not exported**: `ComboboxProps`, `VideoProps`, `HeaderProps`.
 - **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Dialog.show`.
 
+## Image
+
+- To revisit: old code, to check that it is still right (asked on 2026-10-26). Seen while using it in Carousel (read, not checked):
+  - `lazy` is written as `loading="true"` / `"false"`: the browser knows `"lazy"` and `"eager"` only, so `lazy: true` does nothing.
+  - `src` is required, and `setImage( "" )` (or `clear( )`) puts a transparent gif of 1 pixel, not an empty image: no way to tell "no image" from an image.
+  - `new Image( { ... } )` infers its props from the literal object (its class is generic on `P`): it cannot be put in an array of `Component` without `new Image<ImageProps>( ... )`.
+  - `candrop`: the item of its context menu that clears the image is named `_tr.global.cut` ("Couper"), and the menu is there even with nothing to clear.
+
+## Timeline as the steps of a wizard
+
+- The steps of an `AssistBox` (1 ✓ — 2 ● — 3 ○) are a horizontal `Timeline` (`vertical: false`): `done` fills the mark, the line to the next step is in the accent when it is done and dashed after a step not done, `click` gives the item (back to a step: `assist.select`). Decided on 2026-10-26: no component of its own. The link to the `AssistBox` is code of the application (`pageChange` → `setItems`, `click` → `select`).
+- Missing in `Timeline` for that: the step in progress, `current?: boolean` on `TimelineItem` (the mark outlined in the accent; today an item is done or not), and maybe the number of the step in the mark when it has no `icon` (today the mark is empty). To try first in the sandbox: an `AssistBox` with a horizontal `Timeline`, nothing changed, to see what is really missing.
+
 
 
 

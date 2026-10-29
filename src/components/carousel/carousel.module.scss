@@ -1,0 +1,165 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file carousel.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--carousel-gap: 16px;
+	--carousel-duration: 0.4s;
+	--carousel-arrow-background: color-mix( in srgb, var( --background-primary ) 80%, transparent );
+	--carousel-arrow-color: var( --text-primary );
+	--carousel-dot: var( --border-hover );
+	--carousel-dot-active: var( --accent-background );
+	--carousel-radius: 8px;
+	--carousel-caption-color: #ffffff;
+	--carousel-caption-background: rgba( 0, 0, 0, 0.6 );
+	--carousel-disabled-filter: grayscale( 1 );
+}
+
+// the code sets --carousel-index (the first slide seen), --carousel-per-view, --carousel-drag (the swipe, px)
+.x4carousel {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	outline: none;
+
+	// the width of a slide: the view less the gaps between the slides seen, shared
+	--carousel-slide: calc( ( 100% - ( var( --carousel-per-view, 1 ) - 1 ) * var( --carousel-gap ) ) / var( --carousel-per-view, 1 ) );
+
+	// disabled: inert (enable), faded as a Box, its images grey
+	&[disabled] {
+		opacity: var( --box-disabled-opacity );
+		filter: var( --carousel-disabled-filter );
+
+		// a disabled Box in it: faded once, not twice
+		.x4box[disabled] {
+			opacity: 1;
+		}
+	}
+
+	&:focus-visible .viewport {
+		outline: 1px solid var( --border-focus );
+		outline-offset: 2px;
+	}
+
+	.viewport {
+		position: relative;
+		overflow: hidden;
+		flex: 1;
+		min-height: 0;
+		touch-action: pan-y;		// across: the page scrolls; along: the swipe
+	}
+
+	// percents of a translate are the width of the track: the one of the view
+	.track {
+		display: flex;
+		gap: var( --carousel-gap );
+		height: 100%;
+		transform: translateX( calc( var( --carousel-index, 0 ) * -1 * ( var( --carousel-slide ) + var( --carousel-gap ) ) + var( --carousel-drag, 0px ) ) );
+		transition: transform var( --carousel-duration ) ease;
+	}
+
+	// the slide follows the finger
+	&.dragging {
+		cursor: grabbing;
+
+		.track {
+			transition: none;
+		}
+	}
+
+	.slide {
+		flex: 0 0 var( --carousel-slide );
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	// an image: all the slide, its caption over its bottom
+	.slide.image {
+		position: relative;
+		border-radius: var( --carousel-radius );
+
+		.x4image {
+			width: 100%;
+			height: 100%;
+			background-color: var( --background-ternary );		// while it loads
+		}
+
+		.caption {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 24px 16px 12px;
+			color: var( --carousel-caption-color );
+			background: linear-gradient( transparent, var( --carousel-caption-background ) );
+		}
+	}
+
+	.arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY( -50% );
+		z-index: 1;
+		width: 36px;
+		min-width: 36px;
+		height: 36px;
+		padding: 0;
+		border-radius: 50%;
+		justify-content: center;
+
+		--button-background: var( --carousel-arrow-background );
+		--button-background-hover: var( --carousel-arrow-background );
+		--button-background-active: var( --carousel-arrow-background );
+		--button-background-focus: var( --carousel-arrow-background );
+		--button-icon-color: var( --carousel-arrow-color );
+		--button-background-disabled: transparent;
+
+		box-shadow: 0 1px 4px rgba( 0, 0, 0, 0.25 );
+
+		&.prev {
+			left: 8px;
+		}
+
+		&.next {
+			right: 8px;
+		}
+
+		// at an end: not shown, its place kept
+		&[disabled] {
+			opacity: 0;
+		}
+	}
+
+	.dots {
+		justify-content: center;
+		gap: 8px;
+	}
+
+	.dot {
+		width: 8px;
+		height: 8px;
+		padding: 0;
+		border: none;
+		border-radius: 4px;
+		background-color: var( --carousel-dot );
+		cursor: pointer;
+		transition: width var( --carousel-duration ), background-color var( --carousel-duration );
+
+		&.selected {
+			width: 20px;
+			background-color: var( --carousel-dot-active );
+		}
+	}
+}

@@ -1,0 +1,177 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file mapview.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+:root {
+	--mapview-background: var( --background-ternary );
+	--mapview-marker: var( --accent-background );
+	--mapview-tile-filter: none;		// the dark theme darkens the tiles (themes.scss)
+	--mapview-credit-background: color-mix( in srgb, var( --background-primary ) 75%, transparent );
+	--mapview-shape-opacity: 0.2;
+	--mapview-shape-opacity-hover: 0.35;
+}
+
+.x4mapview {
+	position: relative;
+	overflow: hidden;
+	width: 400px;
+	height: 300px;
+	background-color: var( --mapview-background );
+	outline: none;
+	touch-action: none;
+	cursor: grab;
+
+	&.dragging {
+		cursor: grabbing;
+	}
+
+	&:focus-visible {
+		outline: 1px solid var( --border-focus );
+		outline-offset: -1px;
+	}
+
+	.tiles,
+	.markers {
+		position: absolute;
+		inset: 0;
+	}
+
+	// the front layer over the back one (the zoom before, while it grows or shrinks)
+	.tiles.front {
+		z-index: 1;
+	}
+
+	.tiles.back {
+		transition: transform 0.25s ease-out;
+		pointer-events: none;
+	}
+
+	// the zones: only their shapes take the pointer, the map is moved through the rest
+	.shapes {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+		pointer-events: none;
+		overflow: hidden;
+
+		// the palette of Chart, or the color of the zone
+		@for $i from 1 through 8 {
+			.c#{$i} {
+				--shape-c: var( --chart-color-#{$i} );
+			}
+		}
+
+		.shape {
+			fill: var( --shape-c );
+			fill-opacity: var( --mapview-shape-opacity );
+			stroke: var( --shape-c );
+			stroke-width: 2px;
+			stroke-linejoin: round;
+			pointer-events: visiblePainted;
+			cursor: pointer;
+			transition: fill-opacity 0.15s;
+
+			&:hover {
+				fill-opacity: var( --mapview-shape-opacity-hover );
+			}
+		}
+
+		.line {
+			fill: none;
+			stroke-width: 4px;
+			stroke-linecap: round;
+		}
+	}
+
+	.markers {
+		z-index: 3;
+		pointer-events: none;
+	}
+
+	// two fingers: the markers and the zones would not follow the tiles
+	&.pinching {
+		.markers,
+		.shapes {
+			visibility: hidden;
+		}
+	}
+
+	.tile {
+		position: absolute;
+		width: 256px;
+		height: 256px;
+		max-width: none;
+		opacity: 0;
+		transition: opacity 0.2s;
+		filter: var( --mapview-tile-filter );
+
+		&.loaded {
+			opacity: 1;
+		}
+	}
+
+	// the point of the pin on the place
+	.marker {
+		position: absolute;
+		width: 24px;
+		height: 32px;
+		transform: translate( -50%, -100% );
+		color: var( --mapview-marker );
+		filter: drop-shadow( 0 1px 2px rgba( 0, 0, 0, 0.4 ) );
+		pointer-events: auto;
+		cursor: pointer;
+
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	.zoom {
+		position: absolute;
+		z-index: 4;
+		top: 8px;
+		left: 8px;
+		gap: 2px;
+		cursor: default;
+
+		.x4button {
+			min-width: 28px;
+			width: 28px;
+			height: 28px;
+			padding: 0;
+			justify-content: center;
+			font-size: 16px;
+		}
+	}
+
+	.credit {
+		position: absolute;
+		z-index: 4;
+		right: 0;
+		bottom: 0;
+		padding: 1px 6px;
+		font-size: 11px;
+		background-color: var( --mapview-credit-background );
+		cursor: default;
+		user-select: text;
+
+		a {
+			color: inherit;
+		}
+	}
+}

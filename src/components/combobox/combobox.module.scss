@@ -23,7 +23,7 @@
 	--combobox-border: var( --border );
 	--combobox-border-focus: var( --border-focus );
 
-	--combobox-btn-background: inherit;
+	--combobox-btn-background: var( --background-input );		// the one of its field: inherit was the page (dark theme)
 	--combobox-btn-color: var( --text-secondary );
 	--combobox-btn-color-hover: var( --text-primary );
 
@@ -110,6 +110,7 @@
 			margin: 0;
 			padding: 0;
 			outline: none;
+			align-self: stretch;		// the height of the field: no strip of the page above and under it
 			background-color: var( --combobox-btn-background );
 			color: var( --combobox-btn-color );
 

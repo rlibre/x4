@@ -156,5 +156,8 @@ html.x4theme-dark {
 	--color-dialog-caption-text: #cccccc;		// titleBar.activeForeground
 	--color-dialog-background: #202020;			// editorWidget.background
 
+	// the tiles of a MapView are light: turned dark, their colours kept
+	--mapview-tile-filter: invert( 1 ) hue-rotate( 180deg ) brightness( 0.95 ) contrast( 0.9 );
+
 	color-scheme: dark;		// the native parts: select, scroll bars, number spinners
 }

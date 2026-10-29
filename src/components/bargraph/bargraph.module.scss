@@ -1,0 +1,44 @@
+/**
+ *  ___  ___ __
+ *  \  \/  /  / _
+ *   \    /  /_| |_
+ *   /    \____   _|
+ *  /__/\__\   |_|
+ *
+ * @file bargraph.module.scss
+ * @author Etienne Cochard
+ *
+ * @copyright (c) 2026 R-libre ingenierie
+ *
+ * Use of this source code is governed by an MIT-style license
+ * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
+ **/
+
+// read by the code when it draws: a change is seen at the next change of theme, of colors, or of disabled
+:root {
+	// no colors given: from start (min) to end (max)
+	--bargraph-color-start: color-mix( in srgb, var( --accent-background ) 35%, var( --background-primary ) );
+	--bargraph-color-end: var( --accent-background );
+
+	// the segments from the overshoot value
+	--bargraph-overshoot: var( --alert-background );
+
+	// an unlit segment: its color at --bargraph-off-mix in --bargraph-off
+	--bargraph-off: var( --border );
+	--bargraph-off-mix: 15%;
+	--bargraph-gap: 2px;
+}
+
+// the canvas fills it (Canvas sets its size)
+.x4bargraph {
+	position: relative;
+	flex-shrink: 0;
+	width: 200px;
+	height: 12px;
+
+	// from the bottom
+	&.vertical {
+		width: 12px;
+		height: 200px;
+	}
+}

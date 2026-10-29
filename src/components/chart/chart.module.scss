@@ -60,6 +60,14 @@
 		stroke: var( --chart-axis );
 	}
 
+	// radar: the rings and the axes are oblique, crispEdges would make them jagged
+	.radar {
+		.grid,
+		.base {
+			shape-rendering: auto;
+		}
+	}
+
 	// --chart-c is the color of the element (palette slot, or serie.color)
 	@for $i from 1 through 8 {
 		.c#{$i} {

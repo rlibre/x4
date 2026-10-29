@@ -12,6 +12,25 @@ const sales: ChartSerie[] = [
 ];
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun" ];
 
+/** @demo Radar — An axis for each label, from 0 at the center; each serie is a closed line, tinted inside. fill: "none" draws the line only, yaxis.max fixes the outer ring. */
+export function radar( ) {
+	const labels = [ "Speed", "Power", "Range", "Comfort", "Safety", "Price" ];
+
+	return new HBox( { content: [
+		new Chart( { width: 320, height: 260, type: "radar", labels,
+			series: [
+				{ name: "Model A", values: [ 8, 6, 7, 4, 9, 5 ] },
+				{ name: "Model B", values: [ 5, 8, 4, 7, 6, 6 ], dots: true },
+			],
+		} ),
+		new Chart( { width: 280, height: 260, type: "radar", labels: [ "Mon", "Tue", "Wed", "Thu", "Fri" ],
+			series: [ { name: "Load", values: [ 80, 45, 95, 60, 70 ], fill: "none", dots: true } ],
+			yaxis: { max: 100, step: 25 },
+			formatter: ( value ) => value + "%",
+		} ),
+	] } );
+}
+
 /** @demo Lines — Each serie is a line; with two named series a legend is shown; dots shows every point, undefined leaves a hole. */
 export function lines( ) {
 	return new Chart( { height: 240,
@@ -80,7 +99,7 @@ export function click( ) {
 const page: DemoComponent = {
 	name: "Chart",
 	category: "Lists / grids / trees",
-	description: "A minimal svg chart: lines, areas, bars, pie and donut, with axes, a legend and a click on the points. Its colors are CSS variables.",
+	description: "A minimal svg chart: lines, areas, bars, pie, donut and radar, with axes, a legend and a click on the points. Its colors are CSS variables.",
 	usage: {
 		create: ( props ) => new Chart( { ...props, series: sales, labels: months } ),
 		extra: "series: sales, labels: months",
@@ -92,13 +111,14 @@ const page: DemoComponent = {
 				{ id: "bar", text: "bar" },
 				{ id: "pie", text: "pie" },
 				{ id: "donut", text: "donut" },
+				{ id: "radar", text: "radar" },
 			] },
 			{ name: "stacked", type: "boolean" },
 			{ name: "width", type: "number", min: 200, max: 600, step: 20, live: true },
 			{ name: "height", type: "number", min: 120, max: 400, step: 20, live: true },
 		],
 	},
-	demos: [ lines, area, bars, donut, click ],
+	demos: [ radar, lines, area, bars, donut, click ],
 };
 
 export default page;
