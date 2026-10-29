@@ -95,8 +95,10 @@ class CMenuItem extends Component {
 		}
 
 		this.setContent( [
-			new Icon({ id:"icon", iconId }), 
-			new Component( { id: "text", content: itm.text } )
+			new Icon({ id:"icon", iconId }),
+			new Component( { id: "text", content: itm.text } ),
+			// a sub menu: a triangle at the right, in the colour of the text
+			itm.menu ? new Icon( { id: "sub", iconId: icons.caret } ) : null,
 		]);
 
 		if( itm.menu ) {

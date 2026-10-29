@@ -20,6 +20,7 @@
 	--color-dialog-caption: var( --accent-background-active );
 	--color-dialog-caption-text: var( --accent-color );
 	--color-dialog-background: var( --background-primary );
+	--color-dialog-border: transparent;		// its shadow is enough on a light background
 }
 
 .x4dialog {
@@ -28,6 +29,7 @@
 
 	position: absolute !important;
 	background-color: var( --color-dialog-background );
+	border: 1px solid var( --color-dialog-border );
 	max-width: 99vw;
 	outline: none;
 	

@@ -63,6 +63,32 @@ function dismissLast( e: UIEvent ) {
 }
 
 /**
+ * a wheel outside every popup is ignored: the page under them does not scroll, it would leave
+ * them where they were. In a popup (a long menu), it scrolls as usual
+ */
+
+function ignoreWheel( e: WheelEvent ) {
+	if( !autoclose_list.some( x => x.contains( e.target as Node ) ) ) {
+		e.preventDefault( );
+	}
+}
+
+/**
+ * the listeners of the document while a popup that closes by itself is shown
+ */
+
+function watchOutside( on: boolean ) {
+	if( on ) {
+		document.addEventListener( "pointerdown", dismissLast, true );
+		document.addEventListener( "wheel", ignoreWheel, { capture: true, passive: false } );
+	}
+	else {
+		document.removeEventListener( "pointerdown", dismissLast, true );
+		document.removeEventListener( "wheel", ignoreWheel, true );
+	}
+}
+
+/**
  * @cssvar
  * ```
  * --modal-mask-background
@@ -256,7 +282,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 			if( idx>=0 ) {
 				autoclose_list.splice( idx, 1 );
 				if( autoclose_list.length==0 ) {
-					document.removeEventListener( "pointerdown", dismissLast, true );
+					watchOutside( false );
 				}
 			}
 		}
@@ -295,7 +321,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 				
 		if( this.props.autoClose ) {
 			if( autoclose_list.length==0 ) {
-				document.addEventListener( "pointerdown", dismissLast, true );
+				watchOutside( true );
 			}
 
 			autoclose_list.push( this );
@@ -384,7 +410,7 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		const list = inc_group.reverse( );
 		autoclose_list = excl_group;
 		if( autoclose_list.length==0 ) {
-			document.removeEventListener( "pointerdown", dismissLast, true );
+			watchOutside( false );
 		}
 		
 		list.forEach( x => x.close() );

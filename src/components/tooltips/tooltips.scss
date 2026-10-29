@@ -27,6 +27,8 @@
 	--tooltip-color: var( --color-primary-a90 );
 	--tooltip-border: var( --color-primary-a20 );
 	--tooltip-image-background: var( --background-primary );
+
+	--tooltip-max-width: 30vw;		// a long text goes on the next line; none: the width of the text
 }
 
 .x4tooltip {
@@ -41,6 +43,12 @@
 	border: 1px solid var( --tooltip-border ); 
 	background-color: var( --tooltip-background );
     width: max-content;
+	max-width: var( --tooltip-max-width );
+
+	// its content (a Box: it does not shrink) as wide as the tooltip at most: the text goes on the next line
+	> .x4hbox {
+		flex-shrink: 1;
+	}
 
 	.x4icon {
 		padding: 2px 4px;

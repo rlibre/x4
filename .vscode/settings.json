@@ -1,4 +1,10 @@
 {
 	"deno.enable": false,
-	"files.eol": "\n"
+	"files.eol": "\n",
+	"window.title": "${rootName}${separator}${activeEditorShort}",
+	"workbench.colorCustomizations": {
+		"commandCenter.background": "#d4a800",
+		"commandCenter.foreground": "#1f1f1f",
+		"commandCenter.border": "#d4a800"
+	}
 }

@@ -267,6 +267,11 @@ class App extends Application {
 		super( );
 		initTooltips( );
 
+		// the theme of the system at the start, and when it changes; the menu can change it then
+		const system = matchMedia( "(prefers-color-scheme: dark)" );
+		Application.setTheme( system.matches ? "dark" : "" );
+		system.addEventListener( "change", ( ) => Application.setTheme( system.matches ? "dark" : "" ) );
+
 		const gallery = new Gallery( { cls: "gallery" } );
 		this.setMainView( gallery );
 

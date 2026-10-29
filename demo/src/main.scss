@@ -8,6 +8,14 @@
 	// the sections of a SettingsView on the background of the page (x4js 2.3.26 does it: this
 	// line can go then)
 	--settingsview-section-background: var( --background-primary );
+
+	// the titles of the sections (navigation, categories, settings): the accent
+	--gallery-title-color: var( --accent-background );
+}
+
+// dark: the accent is dark, a title in it is lightened to be read on the background
+html.x4theme-dark {
+	--gallery-title-color: hsl( from var( --accent-background ) h s calc( l + 30 ) );
 }
 
 // a SettingsView: its sections without frame, their title in the accent colour without band
@@ -17,7 +25,7 @@
 
 	> .title {
 		background: transparent;
-		--label-color: var( --accent-background );
+		--label-color: var( --gallery-title-color );
 	}
 }
 
@@ -109,7 +117,7 @@ body {
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		--label-color: var( --accent-background );
+		--label-color: var( --gallery-title-color );
 	}
 
 	a {
@@ -226,7 +234,7 @@ body {
 
 			> .title {
 				font-weight: 600;
-				--label-color: var( --accent-background );
+				--label-color: var( --gallery-title-color );
 			}
 
 			> .names {

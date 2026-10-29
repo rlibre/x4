@@ -72,6 +72,14 @@ export function initTooltips( ) {
 
 	}, true );
 
+	// a click: no tooltip, it would stay over what the click opens
+	document.addEventListener( "mousedown", ( ) => {
+		if( last_hit ) {
+			last_hit = null;
+			closeTT( );
+		}
+	}, true );
+
 	document.addEventListener( "mousemove", ( ev: MouseEvent ) => {
 		if( last_hit ) {
 			mouse_pos = { x:ev.pageX, y:ev.pageY }
@@ -85,6 +93,11 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 	}
 
 	timer.setTimeout( "update", 300, ( ) => {
+		// its element gone in the meantime
+		if( !last_hit || isGone( last_hit ) ) {
+			return;
+		}
+
 		tooltip.setText( unsafeHtml(text) );
 
 		let y = mouse_pos.y;
@@ -94,12 +107,29 @@ function showTT( text: string, rc: Rect, pt: Point ) {
 
 		//tooltip.displayNear( rc, "top left", "bottom left", {x:0,y:4} );
 		tooltip.displayAt( mouse_pos.x+17, y+5 );
+
+		// an element removed or hidden under the mouse has no mouseleave: it is checked every second
+		timer.setInterval( "check", 1000, ( ) => {
+			if( !last_hit || isGone( last_hit ) ) {
+				last_hit = null;
+				closeTT( );
+			}
+		} );
 	} );
 }
 
 function closeTT( ) {
 	tooltip.show( false );
 	timer.clearTimeout( "update" );
+	timer.clearInterval( "check" );
+}
+
+/**
+ * the element of the tooltip, not shown any more: removed from the page, or hidden
+ */
+
+function isGone( el: HTMLElement ) {
+	return !el.isConnected || el.getClientRects( ).length==0;
 }
 
 /**
@@ -114,6 +144,7 @@ function closeTT( ) {
  * --tooltip-color
  * --tooltip-border
  * --tooltip-image-background
+ * --tooltip-max-width
  * ```
  */
 

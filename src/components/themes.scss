@@ -19,8 +19,9 @@
 $color--base: #569cd6;
 $color--interval: 8.4%;
 
-// the blues of the dark theme, from their own base
-$color--dark-base: #5796ca;
+// the blues of the dark theme, from their own base, with the intervals of the light one: its accent
+// (a60, the base less one interval) #245883
+$color--dark-base: #2d6fa5;
 
 :root {
 	--color-primary-a0: #ffffff;
@@ -93,6 +94,9 @@ $color--dark-base: #5796ca;
 	--border-hover: color-mix(in srgb, var(--color-primary-a100) 23.9%, var(--color-primary-a0));		// #c2c2c2
 	--border-focus: var(--accent-background);
 
+	// the shadow of what floats over the page (%shadow-xl: a dialog, a list, a notification, a tooltip)
+	--shadow-color: rgb(0 0 0 / 0.1);
+
 	// the red, orange and green do not follow the scale: their text stays white
 	--alert-background: var(--color-danger-a50);
 	--alert-background-active: var(--color-danger-a60);
@@ -123,14 +127,14 @@ html.x4theme-dark {
 	--color-primary-a20: #37373d;		// list.inactiveSelectionBackground
 	--color-primary-a30: #3c3c3c;		// input.border
 
-	// the blues: from $color--dark-base (chosen); where VS Code has list.activeSelectionBackground,
-	// button.background and focusBorder, button.hoverBackground
-	--color-primary-a40: #{color.adjust($color--dark-base, $lightness: -35%)};		// a selection
-	--color-primary-a50: #{$color--dark-base};										// a button, the focus
-	--color-primary-a55: #{color.adjust($color--dark-base, $lightness: -5%)};		// a button hovered
-	--color-primary-a60: #{$color--dark-base};
-	--color-primary-a70: #{color.adjust($color--dark-base, $lightness: -5%)};
-	--color-primary-a80: #{color.adjust($color--dark-base, $lightness: -35%)};
+	// the blues: from $color--dark-base (chosen), as the light theme makes them; a40, a selection,
+	// where VS Code has list.activeSelectionBackground
+	--color-primary-a40: #{color.adjust($color--dark-base, $lightness: -19.4%)};						// a selection
+	--color-primary-a50: #{$color--dark-base};
+	--color-primary-a55: #{color.adjust($color--dark-base, $lightness: -5%)};							// the accent hovered
+	--color-primary-a60: #{color.adjust($color--dark-base, $lightness: -$color--interval)};				// the accent
+	--color-primary-a70: #{color.adjust($color--dark-base, $lightness: -$color--interval * 2)};			// focused
+	--color-primary-a80: #{color.adjust($color--dark-base, $lightness: -$color--interval * 3)};			// active
 
 	--color-primary-a90: #cccccc;
 	--color-primary-a100: #cccccc;		// foreground
@@ -162,6 +166,10 @@ html.x4theme-dark {
 	--color-dialog-caption: #181818;			// titleBar.activeBackground
 	--color-dialog-caption-text: #cccccc;		// titleBar.activeForeground
 	--color-dialog-background: #202020;			// editorWidget.background
+	--color-dialog-border: #313131;				// widget.border: its edge on the dark background
+
+	// a shadow seen on a dark background: darker
+	--shadow-color: rgb(0 0 0 / 0.5);
 
 	// the tiles of a MapView are light: turned dark, their colours kept
 	--mapview-tile-filter: invert( 1 ) hue-rotate( 180deg ) brightness( 0.95 ) contrast( 0.9 );

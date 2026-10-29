@@ -92,12 +92,10 @@
 			font-weight: 600;
 		}
 
-		&.popup {
-			&:after {
-				//<todo: see that
-				content: url("./caret-right-solid.svg");
-				width: 6px;
-			}
+		// the triangle of a sub menu: after the text, which takes the width, at the right
+		#sub {
+			width: 6px;
+			height: 12px;
 		}
 
 		&:hover:not(.title),

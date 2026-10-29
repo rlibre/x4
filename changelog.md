@@ -9,6 +9,29 @@ A version gets its date when it is published.
 
 - The package has its description (`description` in its package.json): the search of npm shows it.
 
+### Themes
+
+- The blues of the dark theme come from `#2d6fa5` (`$color--dark-base`), with the intervals of the light theme: the accent (a60) `#245883`, hovered `#286291`, focused `#1b4262`, active `#112b40`, a selection `#183b57`.
+- The shadow of a Dialog, of the list of a Combobox, of a Notification and of a tooltip takes its colour from `--shadow-color`: black at 10%, at 50% in the dark theme.
+- Dialog: a border, `--color-dialog-border`; none in the light theme, `#313131` in the dark one (the `widget.border` of VS Code), where its edge is lost on the background.
+
+### Popup
+
+- While a popup that closes by itself is shown (`autoClose`: a menu, the list of a combobox), a wheel outside it is ignored: the page under it does not scroll and leave it where it was. In the popup, the wheel scrolls as usual.
+
+### Menu
+
+- The triangle of an item that opens a sub menu is an icon (`caret`, in the icons of x4): in the colour of the text of the item, hovered too, in the dark theme too; at the right of the menu, under the others.
+
+### Tooltips
+
+- A long text goes on several lines: a tooltip is 30% of the window wide at most, `--tooltip-max-width`. A tooltip that must keep the width of its content (a tour of the application, an image): `--tooltip-max-width: none`.
+
+```css
+:root { --tooltip-max-width: none; }		/* the tooltips as wide as their text */
+```
+- A tooltip goes when its element is removed from the page or hidden (it is checked every second while the tooltip is shown), and at a click.
+
 ## 2.3.29 (2026-10-29)
 
 ### Components with an entry of their own
