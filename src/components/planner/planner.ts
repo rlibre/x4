@@ -338,6 +338,7 @@ function isCopyKey( ev: MouseEvent ) {
  * --planner-edge-background
  * --planner-edge-color
  * --planner-edge-shadow
+ * --planner-edge-opacity
  * --planner-now-color
  * --planner-now-tag
  * --planner-now-text
@@ -632,6 +633,7 @@ export class Planner extends Component<PlannerProps, PlannerEvents> {
 	private _render( ) {
 		this._items = this._events.filter( event => !!event.start ).map( measure );
 		this.setClass( "month", this._view=="month" );
+		this.setClass( "day-view", this._view=="day" );
 
 		if( this._view=="month" ) {
 			this._renderMonth( );

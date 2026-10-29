@@ -238,7 +238,7 @@
 		z-index: 0;
 	}
 
-	// behind the tasks: the week-ends, a line by column, now. Its paths are in a height of 1
+	// behind the tasks: the week-ends, the lines of the rows, a line by column, now over them. Its paths are in a height of 1
 	// stretched to the one of the chart: their lines keep their width (non-scaling-stroke)
 	.grid {
 		position: absolute;
@@ -259,6 +259,7 @@
 			fill: var( --gantt-weekend-background );
 		}
 
+		.row,
 		.col {
 			stroke: var( --gantt-line-color );
 		}
@@ -278,11 +279,11 @@
 		z-index: 1;
 	}
 
+	// its line under it: in the grid (.row), under the line of now
 	.lane {
 		position: relative;
 		box-sizing: border-box;
 		height: var( --gantt-row-height );
-		border-bottom: 1px solid var( --gantt-line-color );
 
 		&.selected {
 			background-color: var( --gantt-lane-background-sel );

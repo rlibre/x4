@@ -19,6 +19,9 @@
 $color--base: #569cd6;
 $color--interval: 8.4%;
 
+// the blues of the dark theme, from their own base
+$color--dark-base: #5796ca;
+
 :root {
 	--color-primary-a0: #ffffff;
 	--color-primary-a5: #{color.adjust($color--base, $lightness: 35%)};
@@ -119,12 +122,16 @@ html.x4theme-dark {
 	--color-primary-a10: #2a2d2e;		// list.hoverBackground
 	--color-primary-a20: #37373d;		// list.inactiveSelectionBackground
 	--color-primary-a30: #3c3c3c;		// input.border
-	--color-primary-a40: #04395e;		// list.activeSelectionBackground
-	--color-primary-a50: #0078d4;		// button.background, focusBorder
-	--color-primary-a55: #026ec1;		// button.hoverBackground
-	--color-primary-a60: #0078d4;
-	--color-primary-a70: #026ec1;
-	--color-primary-a80: #04395e;
+
+	// the blues: from $color--dark-base (chosen); where VS Code has list.activeSelectionBackground,
+	// button.background and focusBorder, button.hoverBackground
+	--color-primary-a40: #{color.adjust($color--dark-base, $lightness: -35%)};		// a selection
+	--color-primary-a50: #{$color--dark-base};										// a button, the focus
+	--color-primary-a55: #{color.adjust($color--dark-base, $lightness: -5%)};		// a button hovered
+	--color-primary-a60: #{$color--dark-base};
+	--color-primary-a70: #{color.adjust($color--dark-base, $lightness: -5%)};
+	--color-primary-a80: #{color.adjust($color--dark-base, $lightness: -35%)};
+
 	--color-primary-a90: #cccccc;
 	--color-primary-a100: #cccccc;		// foreground
 
@@ -158,6 +165,9 @@ html.x4theme-dark {
 
 	// the tiles of a MapView are light: turned dark, their colours kept
 	--mapview-tile-filter: invert( 1 ) hue-rotate( 180deg ) brightness( 0.95 ) contrast( 0.9 );
+
+	// the marks of the events out of the view of a Planner: the darkest blue (a90 is the text here)
+	--planner-edge-background: var( --accent-background-active );
 
 	color-scheme: dark;		// the native parts: select, scroll bars, number spinners
 }

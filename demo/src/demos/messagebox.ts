@@ -36,7 +36,7 @@ export function noWait( ) {
 	] } );
 }
 
-/** @demo Formatted text — unsafe`…` gives html to the message; the values in it are escaped. */
+/** @demo Formatted text — The tag `unsafe`, before a template string, gives html to the message; the values in it are escaped. */
 export function formatted( ) {
 	return new HBox( { content: [
 		new Button( { label: "Show the summary", click: ( ) => {

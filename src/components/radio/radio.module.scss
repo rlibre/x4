@@ -60,6 +60,7 @@
 	cursor: pointer;
 
 	.inner {
+		align-self: center;		// a Box stretches: the round in the middle of the line
 		position: relative;
 		height: 1rem;
 		width: 1rem;

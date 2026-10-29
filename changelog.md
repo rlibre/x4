@@ -32,6 +32,16 @@ planner.addShortcut( "Delete", ( ) => remove( planner.getSelection( ) ) );
 ### Radio
 
 - A radio has the room of a checkbox around it (`margin: 5px`, `padding: 4px`): a row of radios is 34px high, as a row of checkboxes. `button` keeps its own.
+- Its round is in the middle of its line, whatever the size of `<html>`.
+
+### Calendar
+
+- The days out of `minDate..maxDate` have a background on their cell (`--calendar-disabled-background`), their text as the other days; the days out of the month are as big as the others.
+- Its menu of the months gives the months of the year shown that have days between `minDate` and `maxDate`, as its menu of the years gives their years.
+
+### Themes
+
+- The blues of the dark theme come from `#5796ca` (`$color--dark-base` in themes.scss): the accent `#5796ca`, hovered `#448ac4`, a selection `#1b3a54`. Its greys stay those of VS Code Dark Modern.
 
 ### Formats, dates
 
@@ -62,6 +72,21 @@ new Form( { cls: "label-top", content: [
 	new TextArea( { label: "Comment" } ),
 ] } );
 ```
+
+### Switch
+
+- Its sizes come from one height, `1.125rem` rounded to an even number of pixels (18px when `<html>` has 16px): the track twice as wide less 2px, the thumb at 1px of its edges. All in whole pixels, it is drawn the same wherever it falls in the page, and it follows the size of `<html>`. Without the CSS `round()` (browsers before 2024), its sizes of 16px.
+- Its input has `role="switch"`: a screen reader says "switch".
+- The class `square` gives its track and its thumb corners barely rounded; the class `danger` the colour of an alert when it is on (`--switch-danger`).
+
+```ts
+new Switch( { label: "Delete the files too", cls: "danger" } );
+new Switch( { label: "Wi-Fi", cls: "square" } );
+```
+
+### Slider
+
+- Its sizes are all in `rem`, its focus too: its thumb, its track and its box keep their proportions when the size of `<html>` changes (the same pixels at 16px).
 
 ### Tag
 

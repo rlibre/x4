@@ -66,6 +66,7 @@ interface CalendarProps extends ComponentProps {
  * --calendar-today-border
  * --calendar-header-color
  * --calendar-out-color
+ * --calendar-disabled-background
  * --calendar-day-color
  * ```
  */
@@ -282,7 +283,17 @@ export class Calendar extends VBox<CalendarProps, CalendarEventMap>
 		let items: MenuItem[] = [];
 
 		if (type == 'month') {
+			// the months of the year shown that have days between minDate and maxDate (as year * 12 + month)
+			const year = this.m_date.getFullYear( );
+			const { minDate, maxDate } = this.props;
+			const first = minDate ? minDate.getFullYear( ) * 12 + minDate.getMonth( ) : -Infinity;
+			const last = maxDate ? maxDate.getFullYear( ) * 12 + maxDate.getMonth( ) : Infinity;
+
 			for (let m = 0; m < 12; m++) {
+				if( year * 12 + m < first || year * 12 + m > last ) {
+					continue;
+				}
+
 				items.push(({
 					text: _tr.global.month_long[m],
 					click: () => { this._goto( this.m_date.getFullYear( ), m ); }

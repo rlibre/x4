@@ -31,13 +31,16 @@ interface SwitchProps extends ComponentProps {
 }
 
 /**
- * 
+ * cls "square": the track and the thumb with corners barely rounded; "danger": the colour of an
+ * alert when on.
+ *
  * @cssvar
  * ```
  * --switch-border
  * --switch-background
  * --switch-background-disabled
  * --switch-checked
+ * --switch-danger
  * --switch-thumb
  * ```
  */
@@ -51,12 +54,12 @@ export class Switch extends HBox<SwitchProps> {
 		const inputId = makeUniqueComponentId( );
 
 		this.setContent( [
+			// the track, its thumb in it; the input over them (role switch: a screen reader says "switch, on")
 			new Component( {
 				cls: "switch",
 				content: [
 					// value: sent by a <form> of the browser when checked; a Form of x4 reads a boolean
-					new Input( { type: "checkbox", id: inputId, name: props.name, value: props.value, checked: props.checked } ),
-					new Component( { cls: "track" } ),
+					new Input( { type: "checkbox", id: inputId, name: props.name, value: props.value, checked: props.checked, attrs: { role: "switch" } } ),
 					new Component( { cls: "thumb" } ),
 				]
 	 		} ),

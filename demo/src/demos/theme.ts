@@ -2,7 +2,7 @@
  * Theme: the page of the gallery
  */
 
-import { Application, Button, Checkbox, ColorInput, HBox, Radio, Slider, Switch, VBox } from 'x4js';
+import { Application, Button, Checkbox, ColorInput, HBox, Label, Radio, Slider, Switch, VBox } from 'x4js';
 import { DemoComponent } from '../types';
 
 import "./theme.scss";
@@ -75,12 +75,37 @@ export function liveAccent( ) {
 	] } );
 }
 
+/** @demo The size of the text — `--font-size` is the size of the text of `body`: 14px in x4, 12px in this gallery (its `:root`). To change the size of the text, set `--font-size`, not the `font-size` of `<html>`: the components follow `--font-size`, while the `font-size` of `<html>` is only the `rem` of a few inner sizes (the box of a checkbox, the round of a radio). This gallery sets its `<html>` to `--font-size`, so that its `rem` follow too. The slider writes it on `<html>`, Reset gives the one of the style back. */
+export function fontSize( ) {
+	const html = document.documentElement;
+	const size = ( ) => parseFloat( getComputedStyle( html ).getPropertyValue( "--font-size" ) );
+	const value = new Label( { text: `${size( )}px` } );
+
+	const slider = new Slider( { min: 10, max: 18, step: 1, value: size( ), width: 200, change: ( ev ) => {
+		html.style.setProperty( "--font-size", `${ev.value}px` );
+		value.setText( `${ev.value}px` );
+	} } );
+
+	return new VBox( { content: [
+		new HBox( { content: [
+			slider,
+			value,
+			new Button( { label: "Reset", cls: "outline", click: ( ) => {
+				html.style.removeProperty( "--font-size" );
+				slider.setValue( size( ) );
+				value.setText( `${size( )}px` );
+			} } ),
+		] } ),
+		sample( "theme-font" ),
+	] } );
+}
+
 const page: DemoComponent = {
 	name: "Theme",
 	category: "Extras",
 	description: "The colours of x4 are CSS variables: a theme only changes them. Application.setTheme gives the dark theme of x4, or one of the application (html.x4theme-<name>); a variable can also be written by the code.",
 	imports: [ "Application" ],
-	demos: [ lightDark, ownTheme, liveAccent ],
+	demos: [ lightDark, ownTheme, liveAccent, fontSize ],
 };
 
 export default page;

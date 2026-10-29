@@ -21,3 +21,6 @@
 
 export * from "./x4.js"
 export * from "./components/monaco/monaco.js"
+export * from "./components/gantt/gantt.js"
+export * from "./components/planner/planner.js"
+export * from "./components/mapview/mapview.js"

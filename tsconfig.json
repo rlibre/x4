@@ -7,6 +7,7 @@
 		"target": "ES2022",
 		"experimentalDecorators": true,
 		"lib": [ "es2022", "DOM" ],
+		"types": [],
 		"rootDir": "."
 	},
 	"include": [ "src/**/*" ],

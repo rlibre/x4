@@ -5,7 +5,7 @@
 import { Application, BoxProps, Button, Checkbox, HBox, Label, StateProxy, TextEdit, VBox } from 'x4js';
 import { DemoComponent } from '../types';
 
-/** @demo A value — setStorage writes a string (or a number) under a name, getStorage reads it: null when there is none. Type a name, then open the page again: it is still there. */
+/** @demo A value — `setStorage` writes a string (or a number) under a name, `getStorage` reads it: `null` when there is none. Type a name, then open the page again: it is still there. */
 export function value( ) {
 	const app = Application.instance( );
 
@@ -14,7 +14,7 @@ export function value( ) {
 	} );
 }
 
-/** @demo An object — setStorageJSON writes an object as JSON, getStorageJSON reads it back: null when there is none, undefined when it cannot be read. Here a few settings. */
+/** @demo An object — `setStorageJSON` writes an object as JSON, `getStorageJSON` reads it back: `null` when there is none, `undefined` when it cannot be read. Here a few settings. */
 export function json( ) {
 	const app = Application.instance( );
 	const settings = app.getStorageJSON( "gallery:settings" ) ?? { compact: false, sound: true };
@@ -26,7 +26,15 @@ export function json( ) {
 	] } );
 }
 
-/** @demo The state of a component — What for: a component that finds again, when the page is opened again, what the user did with it (a panel closed, a tab chosen, a width, a count). How: in the constructor of your class, this.loadPState( name, defaults ) gives a state (makeState), read and changed as an object; the first time it holds the defaults, then what was saved. Each change is written by itself in the storage under "x4@persist:<name>", 500 ms after the last one: there is no save to call. The name is the key: two components with the same name write over each other. loadPState is protected: the class calls it, not the code that uses the class. Here: +1, then reload the page. */
+/** @demo The state of a component — What for: a component that finds again, when the page is opened again, what the user did with it (a panel closed, a tab chosen, a width, a count).
+ *
+ * How: in the constructor of your class, `this.loadPState( name, defaults )` gives a state (`makeState`), read and changed as an object. The first time it holds the defaults, then what was saved.
+ *
+ * - each change is written by itself in the storage under `"x4@persist:<name>"`, 500 ms after the last one: there is no save to call
+ * - the name is the key: two components with the same name write over each other
+ * - `loadPState` is protected: the class calls it, not the code that uses the class
+ *
+ * Here: +1, then reload the page. */
 export function component( ) {
 	class Counter extends HBox {
 		constructor( props: BoxProps ) {

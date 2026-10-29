@@ -21,15 +21,17 @@
 	--slider-thumb-border-focus: var( --border-focus );
 }
 
+// all in rem: the thumb, its focus, the track and the box keep their proportions whatever the
+// size of <html>
 .x4slider {
 	outline: none;
 	touch-action: none;
 	overflow: hidden;
 
 	&:not(.vertical) {
-		padding: 10px 12px;
-		margin: 5px 0;
-		height: 28px;
+		padding: 0.625rem 0.75rem;
+		margin: 0.3125rem 0;
+		height: 1.75rem;
 		
 		.track {
 			background-color: var( --slider-track );
@@ -37,13 +39,13 @@
 
 			position: relative;
 			top: 50%;
-			height: 3px;
+			height: 0.1875rem;
 		}
 
 		.bar {
 			position: absolute;
 			width: 61%;
-			height: 3px;
+			height: 0.1875rem;
 			//padding: 4px 0;
 			//background-color: var( --color-60 );
 		}
@@ -54,12 +56,12 @@
 			outline: none;
 			
 			background-color: var( --slider-thumb-background );
-			border: 3px solid var( --slider-thumb-border );
-			border-radius: 8px;
+			border: 0.1875rem solid var( --slider-thumb-border );
+			border-radius: 50%;
 
 			top: 50%;
-			width: 16px;
-			height: 16px;
+			width: 1rem;
+			height: 1rem;
 
 			transform: translate(-50%,-50%);
 			cursor: pointer;
@@ -67,9 +69,9 @@
 	}
 
 	&.vertical {
-		padding: 12px 10px;
-		margin: 0 5px;
-		width: 28px;
+		padding: 0.75rem 0.625rem;
+		margin: 0 0.3125rem;
+		width: 1.75rem;
 
 		.track {
 			background-color: var( --slider-track );
@@ -77,12 +79,12 @@
 	
 			position: relative;
 			left: 50%;
-			width: 3px;
+			width: 0.1875rem;
 		}
 	
 		.bar {
 			position: absolute;
-			width: 3px;
+			width: 0.1875rem;
 			height: 61%;
 			//padding: 4px 0;
 			//background-color: var( --color-60 );
@@ -94,12 +96,12 @@
 			outline: none;
 			
 			background-color: var( --slider-thumb-background );
-			border: 3px solid var( --slider-thumb-border );
-			border-radius: 8px;
+			border: 0.1875rem solid var( --slider-thumb-border );
+			border-radius: 50%;
 	
 			top: 61%;
-			width: 16px;
-			height: 16px;
+			width: 1rem;
+			height: 1rem;
 	
 			transform: translate(-50%,-50%);
 			cursor: pointer;
@@ -110,9 +112,9 @@
 
 	
 	&:focus .thumb {
-		outline-offset: 3px;
+		outline-offset: 0.1875rem;
     	outline-color: var(--slider-thumb-border-focus);
 		outline-style: solid;
-    	outline-width: 1px;
+    	outline-width: 0.0625rem;
 	}
 }

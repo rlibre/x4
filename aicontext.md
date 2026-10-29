@@ -919,6 +919,9 @@ class Radio extends Component {
 interface SwitchProps extends ComponentProps { label: string; checked?: boolean; value?: string; name?: string }
 // with a name, a Form reads and writes it: a boolean, or with a value, the value when checked and null when not
 class Switch extends HBox {}
+// cls "square": the track and the thumb with corners barely rounded; "danger": the colour of an alert when on
+// its input has role="switch"; its sizes follow the size of <html> (rem), rounded to whole pixels
+// CSS vars: --switch-border --switch-background --switch-background-disabled --switch-checked --switch-danger --switch-thumb
 ```
 
 ### `Slider`
@@ -1838,8 +1841,12 @@ by the browser, in its own locale, whatever this one.
 // Each component reads its own variables (the @cssvar of its class), which point to these globals:
 //   a theme redefines the globals, or one variable of a component.
 // Themes: Application.setTheme(name) puts the class x4theme-<name> on <html>. "" is the light theme (by default),
-//   "dark" the dark theme of x4 (the colours of VS Code Dark Modern). An application adds its own theme in its css,
+//   "dark" the dark theme of x4 (the greys of VS Code Dark Modern, its blues from #5796ca). An application adds its own theme in its css,
 //   html.x4theme-pink { --color-primary-a0: ...; ... }, then Application.setTheme("pink").
+// The font: --font-name and --font-size (14px), on :root (normalize.scss); body takes them. To change the size
+//   of the text, set --font-size ( :root { --font-size: 13px } ), not the font-size of <html>: the components
+//   follow --font-size; the font-size of <html> is only the rem of a few inner sizes (the box of a Checkbox, the
+//   round of a Radio, a Switch, a Slider), not the text.
 
 ---
 
@@ -2015,7 +2022,7 @@ import it from it, not from `x4js` (`import { Gantt } from "x4js"` fails: "has n
 
 | Component | Import | More |
 |---|---|---|
-| `MonacoEditor` | `import { MonacoEditor } from "x4js/monaco"` | copy its files to the output, then `MonacoEditor.start()` (below) |
+| `MonacoEditor` | `import { MonacoEditor } from "x4js/monaco"` | copy its files to the folder `monaco` of the output (below) |
 | `Gantt` | `import { Gantt } from "x4js/gantt"` | |
 | `Planner` | `import { Planner } from "x4js/planner"` | |
 | `MapView` | `import { MapView } from "x4js/mapview"` | `LatLng`, `MapMarker`, `MapShape` from it too |
@@ -2026,19 +2033,25 @@ import it from it, not from `x4js` (`import { Gantt } from "x4js"` fails: "has n
 
 Monaco-based code editor component. Monaco is part of the framework surface, so exclude it from `tsc` compilation (see Default project notes).
 
+```jsonc
+// x4.config.json: its files (14 MB) in the folder monaco of the output, where the editor loads them
+"copy": [ { "from": "./node_modules/x4js/src/components/monaco/bin", "to": "monaco" } ]
+```
+
 ```ts
+import { MonacoEditor } from "x4js/monaco"           // not in x4js
 interface MonacoEditorProps extends ComponentProps {
-  language: "typescript" | "javascript" | "json" | "css" | "html"
-  theme?: string
-  content?: string
+  language: "typescript" | "javascript" | "json" | "css" | "html" | string
+  theme?: string                                      // a theme of Monaco: "vs", "vs-dark", "hc-black", "hc-light"
+  content?: string                                    // the text at the start
   options?: Monaco.editor.IEditorOptions & Monaco.editor.IGlobalEditorOptions
 }
 class MonacoEditor extends Component<MonacoEditorProps> {
-  constructor(props: MonacoEditorProps)
-  static start(): Promise<void>                       // load/initialize Monaco
-  static addTypelib(name: string, code: string): void // register a .d.ts for IntelliSense
-  static basePath: string
-  static monaco: typeof Monaco
+  constructor(props: MonacoEditorProps)               // the first one loads Monaco: monaco/monaco.js beside the bundle, its workers, its css
+  static addTypelib(name: string, code: string): void // a .d.ts for the completion of typescript; before the first editor too
+  static monaco(): Promise<typeof Monaco>             // the module of Monaco, loaded
+  getText(): string; setText(text: string): void
+  setTheme(name: string): void
 }
 ```
 
@@ -2174,7 +2187,7 @@ class Planner extends Component<PlannerProps, PlannerEvents> {
 //           --planner-off-color --planner-today-background --planner-today-color --planner-today-column
 //           --planner-off-background --planner-line-color --planner-step-color --planner-hour-line-color
 //           --planner-hour-color --planner-hour-color-work --planner-edge-background --planner-edge-color
-//           --planner-edge-shadow --planner-now-color --planner-now-tag --planner-now-text
+//           --planner-edge-shadow --planner-edge-opacity --planner-now-color --planner-now-tag --planner-now-text
 //           --planner-event-background --planner-event-color --planner-event-tint --planner-event-radius
 //           --planner-event-title --planner-event-text --planner-event-selected --planner-range-background
 //           --planner-range-border --planner-out-color --planner-more-color
@@ -2453,7 +2466,7 @@ Optional keys: `external`, `define`, `esbuild`, `dev` (`host`, `port`, `https`, 
 - The default language is `fr`. Call `selectLanguage('en')` to switch to English.
 - `Gridview` is backed by a `DataStore`; `Spreadsheet` is backed by a `Store` (different, cell-based).
 - `DataRecordID` is currently typed `any`; `strictNullChecks` is intentionally off in the recommended `tsconfig.json`.
-- `MonacoEditor` requires `MonacoEditor.start()` (async) before use; register extra typings with `MonacoEditor.addTypelib(name, code)`.
+- `MonacoEditor` loads Monaco by itself (the first editor), from the folder `monaco` of the output where its files are copied; register extra typings with `MonacoEditor.addTypelib(name, code)`.
 - `x4_react.create_element` is the JSX pragma (the setup: JSX factory & helpers).
 - A DOM handler of an ancestor is called for the events of its descendants, as in the browser. Not for the events that do not bubble: `focus`, `blur`, `mouseenter`, `mouseleave` (use `focusin` / `focusout`, `mouseover` / `mouseout`), nor for those of x4: `created`, `removed`, `resized`.
 - Several handlers of one event on one node are called in the order they were added. One that returns `true` stops those that follow it.

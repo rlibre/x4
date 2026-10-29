@@ -40,11 +40,21 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
+      # the notes of the release: the section of its version in the changelog ("## 2.3.29 (2026-10-29)"),
+      # up to the next version
+      - name: Release notes from the changelog
+        run: |
+            awk -v v="${{ github.ref_name }}" '
+                { sub( /\r$/, "" ) }
+                /^## / { if( found ) exit; found = ( $0 == "## " v || index( $0, "## " v " " ) == 1 ); next }
+                found
+            ' changelog.md > release-notes.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ github.ref_name }}
-          generate_release_notes: true
+          body_path: release-notes.md
           prerelease: ${{ contains(github.ref_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

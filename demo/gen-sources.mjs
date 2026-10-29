@@ -2,8 +2,10 @@
  * Writes src/demos/sources.gen.ts, the code the gallery shows.
  *
  * In src/demos/<component>.ts (or .tsx), each variation is a function at column 0 preceded by
- * a doc comment on one line:
+ * a doc comment:
  *     /** @demo Icons — The icon alone, the icon and the text. *\/
+ * The comment may go on over several lines, up to "*\/": each one is a line of the text, without
+ * its " * "; an empty one is a gap between two paragraphs. The card shows these lines.
  * Its code is the text of the function, from the line after the comment to the
  * first "}" at column 0. Its style is the block of src/demos/<component>.scss that
  * starts with the comment "/* @demo <function> *\/", up to the next marker or the end.
@@ -46,9 +48,22 @@ for( const file of readdirSync( dir ) ) {
 	const styles = existsSync( scssFile ) ? readStyles( readFileSync( scssFile, "utf8" ).replace( /\r\n/g, "\n" ) ) : {};
 
 	for( let i = 0; i < lines.length; i++ ) {
-		const doc = /^\/\*\*\s*@demo\s+(.+?)\s+—\s+(.+?)\s*\*\/\s*$/.exec( lines[i] );
-		if( !doc ) {
+		if( !/^\/\*\*\s*@demo\s/.test( lines[i] ) ) {
 			continue;
+		}
+
+		// the comment up to "*/", its lines after the first one without their " * "
+		const first = i;
+		let comment = lines[i];
+		while( !comment.includes( "*/" ) && i + 1 < lines.length ) {
+			i++;
+			comment += "\n" + lines[i].replace( /^\s*\*( |$)/, "" );
+		}
+
+		const doc = /^\/\*\*\s*@demo\s+(.+?)\s+—\s+([\s\S]+?)\s*\*\/\s*$/.exec( comment );
+		if( !doc ) {
+			console.error( `${file}:${first + 1}: a @demo comment is "/** @demo <title> — <text> */" (spaces around the dash)` );
+			process.exit( 1 );
 		}
 
 		const start = i + 1;

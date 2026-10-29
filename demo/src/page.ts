@@ -3,13 +3,21 @@
  * per variation.
  */
 
-import { BoxProps, Button, Component, Flex, HBox, Label, Link, PropertyGrid, SimpleText, VBox, unsafeHtml } from 'x4js';
+import { BoxProps, Button, Component, Flex, HBox, Label, Link, PropertyGrid, SimpleText, VBox, sanitizeHtml, unsafeHtml } from 'x4js';
 import { CodeView, highlight, makeCode, setProps } from './code';
 import { icon_collapse, icon_expand } from './icons';
 import { sources } from './demos/sources.gen';
 import { DemoComponent } from './types';
 import { texts } from './texts';
 import { descriptionText } from './descriptions';
+
+/**
+ * the text of a variation: escaped, what is between backquotes in <code> ("`loadPState`")
+ */
+
+function cardText( text: string ) {
+	return unsafeHtml( sanitizeHtml( text ).replace( /`([^`]+)`/g, "<code>$1</code>" ) );
+}
 
 /**
  * a variation: its title (a link to it), its sentence, the demo, then its code behind "Show code"
@@ -37,7 +45,7 @@ class DemoCard extends VBox<DemoCardProps> {
 				new Flex( ),
 				props.expand ? this.refs.expand = new Button( { cls: "expand outline", icon: icon_expand, tooltip: texts( ).expand, click: ( ) => this.expand( !this.hasClass( "expanded" ) ) } ) : null,
 			] } ),
-			new SimpleText( { cls: "text", text: source.text } ),
+			new SimpleText( { cls: "text", text: cardText( source.text ) } ),
 			new VBox( { cls: "demo", content: props.demo( ) } ),
 			this.refs.toggle = new Button( { cls: "toggle outline", label: texts( ).show_code, click: ( ) => this.toggleCode( ) } ),
 			this.refs.code = new CodeView( { ts: source.ts, scss: source.scss, hidden: true } ),

@@ -37,20 +37,35 @@ export function inForm( ) {
 	] } );
 }
 
+/** @demo Square, danger — The class `square` gives the track and the thumb corners barely rounded; the class `danger` gives the colour of an alert when on (`--switch-danger`). */
+export function square( ) {
+	return new VBox( { content: [
+		new Switch( { label: "Wi-Fi", cls: "square", checked: true } ),
+		new Switch( { label: "Bluetooth", cls: "square" } ),
+		new Switch( { label: "Delete the files too", cls: "danger", checked: true } ),
+		new Switch( { label: "Both", cls: "square danger", checked: true } ),
+	] } );
+}
+
 const page: DemoComponent = {
 	name: "Switch",
 	category: "Input components",
 	description: "An on/off switch with its label: a checkbox drawn as a switch. In a Form, with a name, it is read and written as a boolean.",
 	usage: {
 		create: ( props ) => new Switch( props ),
-		props: { label: "Notifications", checked: true, disabled: false },
+		props: { label: "Notifications", checked: true, disabled: false, cls: "" },
 		controls: [
 			{ name: "label", type: "string" },
 			{ name: "checked", type: "boolean" },
 			{ name: "disabled", type: "boolean" },
+			{ name: "cls", type: "options", options: [
+				{ id: "", text: "default" },
+				{ id: "square", text: "square" },
+				{ id: "danger", text: "danger" },
+			] },
 		],
 	},
-	demos: [ several, inForm ],
+	demos: [ several, square, inForm ],
 };
 
 export default page;

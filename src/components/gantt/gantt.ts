@@ -708,13 +708,15 @@ export class Gantt extends Component<GanttProps, GanttEvents> {
 	}
 
 	/**
-	 * behind the tasks, a path for each: the week-ends, a line by column, a line by unit of the
-	 * first line, now. Drawn in a height of 1, that the svg stretches to the one of the chart
+	 * behind the tasks, a path for each: the week-ends, the lines of the rows, a line by column,
+	 * a line by unit of the first line, now over them. Drawn in a height of 1, that the svg
+	 * stretches to the one of the chart
 	 */
 
 	private _renderGrid( top: GanttCell[], bottom: GanttCell[] ) {
 		const svg = new SvgBuilder( );
 		const weekends = svg.path( ).addClass( "weekend" );
+		svg.path( ).addClass( "row" );			// placed by _placeRows
 		const cols = svg.path( ).addClass( "col" );
 		const majors = svg.path( ).addClass( "major" );
 
@@ -741,6 +743,24 @@ export class Gantt extends Component<GanttProps, GanttEvents> {
 
 		this._grid.setAttribute( "viewBox", `0 0 ${this._x( this._end )} 1` );
 		this._grid.setSvg( svg );
+		this._placeRows( );
+	}
+
+	/**
+	 * the lines under the rows, in the height of 1 of the grid: on the last pixel of each row, from
+	 * the height of the chart, which can be more than the rows (again when it changes)
+	 */
+
+	private _placeRows( ) {
+		const height = this._chart.dom.clientHeight;
+		const path = this._grid.dom.querySelector( ".row" );
+		if( !height || !path ) {
+			return;		// not shown yet: the resize will come
+		}
+
+		const width = this._x( this._end );
+		const d = this._rows.map( ( row, i ) => `M0 ${( ( i + 1 ) * this._rowHeight - 0.5 ) / height} H${width}` );
+		path.setAttribute( "d", d.join( " " ) );
 	}
 
 	// the lane of a task in the chart, with its bar
@@ -902,6 +922,9 @@ export class Gantt extends Component<GanttProps, GanttEvents> {
 	private _onResize( ) {
 		if( !this._drag && this._calcRange( this._view( ) ).end!=this._end ) {
 			this._render( );
+		}
+		else {
+			this._placeRows( );		// the height of the chart: the lines of the rows in the grid
 		}
 	}
 

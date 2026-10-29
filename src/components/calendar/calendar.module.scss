@@ -36,6 +36,7 @@
 
 	--calendar-header-color: var( --text-primary );
 	--calendar-out-color: var( --disabled-color-dark );
+	--calendar-disabled-background: var( --background-ternary );
 	--calendar-day-color: var( --text-primary );
 }
 
@@ -142,7 +143,6 @@
 
 		.out {
 			color: var( --calendar-out-color );
-			font-size: 80%;
 		}
 
 		.day:hover {
@@ -152,16 +152,17 @@
 			}
 		}
 
-		// out of minDate..maxDate: cannot be chosen
+		// out of minDate..maxDate: cannot be chosen; a background on all their cell (a band over the
+		// days closed), their text as the other days
 		.disabled {
-			color: var( --calendar-out-color );
-			text-decoration: line-through;
+			background-color: var( --calendar-disabled-background );
 			cursor: default;
 		}
 
+		// the hover of a day: none on them
 		.disabled:hover .text {
 			background-color: transparent;
-			color: var( --calendar-out-color );
+			color: inherit;
 		}
 	}
 

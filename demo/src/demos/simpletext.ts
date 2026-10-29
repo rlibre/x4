@@ -12,7 +12,7 @@ export function paragraph( ) {
 	return new SimpleText( { width: 420, text: "x4 builds the interface with objects: each component is a TypeScript object that owns a real element of the page. Changing it is calling its methods; nothing is drawn again behind your back." } );
 }
 
-/** @demo Html — A string is escaped; unsafe`...` writes html, its values still escaped. */
+/** @demo Html — A string is escaped; the tag `unsafe`, before a template string, writes html, its values still escaped. */
 export function html( ) {
 	const name = "<script>";
 

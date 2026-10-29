@@ -114,6 +114,7 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 ## Gallery
 
 - The presentation page (demo/src/home.ts): maybe, later, two or three components shown live (Planner, Gantt, Chart).
+- The translations of the gallery (demo/src/texts.ts, demo/src/descriptions.ts): a file per language, loaded on demand when the language is chosen (asked on 2026-10-29). Today all the languages are in the bundle.
 - The page "getting started" of x4js.org (https://x4js.org/doc/en/getting-started/, the link of the presentation page): to check that what it says is still true. The sources of the site: C:\dev\rlibre\x4-site.
 - The templates of `x4js create` (the folder templates of the repository, and C:\dev\rlibre\x4-templates): to check, that they still build and follow the x4 of today.
 

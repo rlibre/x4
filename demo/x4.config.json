@@ -2,7 +2,10 @@
 	"entryPoints": ["src/main.ts"],
 	"outdir": "./bin",
 	"copy": [
-		{ "from": "./src/index.html", "to": "index.html" }
+		{ "from": "./src/index.html", "to": "index.html" },
+		{ "from": "./src/monaco-cdn.js", "to": "monaco/monaco.js" },
+		{ "from": "./node_modules/x4js/src/components/monaco/bin/monaco.css", "to": "monaco/monaco.css" },
+		{ "from": "./node_modules/x4js/src/components/monaco/bin/codicon-LN6W7LCM.ttf", "to": "monaco/codicon-LN6W7LCM.ttf" }
 	],
 	"define": {
 		"X4_SOURCES": "false"

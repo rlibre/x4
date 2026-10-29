@@ -1,0 +1,17 @@
+{
+	// the gallery checked on the sources of x4, as x4.local.json builds it (npm run lint at the root)
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"resolveJsonModule": true,
+		"paths": {
+			"x4js": [ "../src/x4.ts" ],
+			"x4js/mapview": [ "../src/components/mapview/mapview.ts" ],
+			"x4js/gantt": [ "../src/components/gantt/gantt.ts" ],
+			"x4js/planner": [ "../src/components/planner/planner.ts" ],
+			"x4js/monaco": [ "../src/components/monaco/monaco.ts" ],
+			"x4js-package": [ "../package.json" ]
+		}
+	},
+	// the JSX types of x4, from its sources
+	"files": [ "../src/x4tsx.d.ts" ]
+}

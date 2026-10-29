@@ -1,16 +1,16 @@
-/** 
+/**
  *  ___  ___ __
  *  \  \/  /  / _
  *   \    /  /_| |_
- *   /    \____   _|  
+ *   /    \____   _|
  *  /__/\__\   |_|
- * 
+ *
  * @file switch.module.scss
- * @author Etienne Cochard 
- * 
+ * @author Etienne Cochard
+ *
  * @copyright (c) 2026 R-libre ingenierie
  *
- * Use of this source code is governed by an MIT-style license 
+ * Use of this source code is governed by an MIT-style license
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
@@ -21,15 +21,21 @@
 	--switch-background: var( --background-hover );
 	--switch-background-disabled: var( --disabled-background );
 	--switch-checked: var( --accent-background );
+	--switch-danger: var( --alert-background );
 	--switch-thumb: var( --background-primary );
 }
+
+// The sizes come from H, the height of the track: 1.125rem rounded to an even number of pixels
+// (18px when <html> has 16px). The width is 2H - 2, the thumb H - 2 at 1px of the edges (inside
+// the border): all in whole pixels, the switch is drawn the same wherever it falls in the page.
+// The px values first: a browser without round() keeps them.
 
 .x4switch {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	position: relative;
-    
+
 	gap: 4px;
 	margin-left: 5px;
 	padding: 4px;
@@ -47,62 +53,79 @@
 		}
 	}
 
+	// the track; the input over it takes the click, the focus, and the value for a Form
 	.switch {
-		width: 2.2rem;
-		height: 18px;
 		position: relative;
+		flex: none;
+
+		width: 34px;
+		width: calc( round( 1.125rem, 2px ) * 2 - 2px );
+		height: 18px;
+		height: round( 1.125rem, 2px );
+
+		border: 1px solid var( --switch-border );
+		border-radius: 9px;
+		border-radius: calc( round( 1.125rem, 2px ) / 2 );
+		background-color: var( --switch-background );
+
+		transition: background-color ease 0.2s, border-color ease 0.2s;
 
 		input {
 			position: absolute;
+			left: 0;
+			top: 0;
 			width: 100%;
 			height: 100%;
-			appearance: none;
-			padding: 0;
 			margin: 0;
-			left: 0;
-			top: 0;
+			padding: 0;
+			appearance: none;
+			opacity: 0;			// none of the look of a field (its background): the track is under it
 			cursor: pointer;
-		}
-			
-		.track {
-			position: absolute;
-			pointer-events: none;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			border: 1px solid var( --switch-border );
-
-			background-color: var( --switch-background );
-			border-radius: 9px;
-
-			transition: background-color ease 0.2s;
 		}
 
 		.thumb {
 			position: absolute;
 			pointer-events: none;
-			left: 0.05rem;
-			top: 1px;
+			left: 0;
+			top: 0;
 
-			width: 1rem;
-			height: 1rem;
+			width: 16px;
+			width: calc( round( 1.125rem, 2px ) - 2px );
+			height: 16px;
+			height: calc( round( 1.125rem, 2px ) - 2px );
 
-			border-radius: 8px;
+			border-radius: 50%;
 			background-color: var( --switch-thumb );
 			box-shadow: 0 0 2px rgba(0,0,0,0.5);
 
-			transition: left ease 0.2s;
+			transition: transform ease 0.2s;
 		}
 	}
 
-	&:has(input:checked) {
-		.switch .thumb {
-			left: 1.15rem;
+	// on: the colour on all the track, its border too; the thumb at the other end (H - 2 further)
+	&:has(input:checked) .switch {
+		background-color: var( --switch-checked );
+		border-color: var( --switch-checked );
+
+		.thumb {
+			transform: translateX( 16px );
+			transform: translateX( calc( round( 1.125rem, 2px ) - 2px ) );
 		}
-		.switch .track {
-			background-color: var( --switch-checked );
-			//border-color: var( --color-70 );
+	}
+
+	// danger: the colour of an alert when on
+	&.danger {
+		--switch-checked: var( --switch-danger );
+	}
+
+	// square: the corners of the track and of the thumb barely rounded
+	&.square .switch {
+		border-radius: 3px;
+		border-radius: round( 0.1875rem, 1px );
+
+		.thumb {
+			border-radius: 2px;
+			border-radius: round( 0.125rem, 1px );
 		}
 	}
 
@@ -110,7 +133,7 @@
 		&, * {
 			cursor: not-allowed;
 		}
-		
+
 		input {
 			pointer-events: none;
 		}
@@ -120,9 +143,10 @@
 			color: var( --checkbox-color-disabled );
 		}
 
-		.switch .track,
-		&.x4switch:has(input:checked) .switch .track {
+		.switch,
+		&.x4switch:has(input:checked) .switch {
 			background-color: var( --switch-background-disabled );
+			border-color: var( --switch-border );
 		}
 	}
 }

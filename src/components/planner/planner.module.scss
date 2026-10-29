@@ -33,9 +33,10 @@
 	--planner-hour-color: var( --text-secondary );
 	--planner-hour-color-work: var( --text-ternary );
 
-	--planner-edge-background: var( --accent-background );	// the marks of the events out of the view
+	--planner-edge-background: var( --color-primary-a90 );	// the marks of the events out of the view: the darkest blue, seen through (themes.scss: the dark theme has its own)
 	--planner-edge-color: var( --accent-color );
 	--planner-edge-shadow: 0 1px 2px rgba( 0, 0, 0, 0.25 );
+	--planner-edge-opacity: 0.6;		// the events under them show through; 1 under the pointer
 
 	--planner-now-color: var( --accent-background );		// the line of now
 	--planner-now-tag: var( --accent-background );			// its time, in the hours
@@ -254,6 +255,22 @@
 		}
 	}
 
+	// the view of a day: its column is the view, no tint behind today
+	&.day-view {
+		> .head .day.today::before {
+			display: none;
+		}
+
+		> .band > .day.today {
+			background-color: transparent;
+			opacity: 1;
+		}
+
+		.grid .today {
+			fill: none;
+		}
+	}
+
 	// now: a line across the days, over the events; paler across today
 	.now {
 		position: absolute;
@@ -283,13 +300,24 @@
 		color: var( --planner-edge-color );
 		background-color: var( --planner-edge-background );
 		box-shadow: var( --planner-edge-shadow );
+		opacity: var( --planner-edge-opacity );
 
-		&.up {
-			margin-top: 4px;
+		&:hover {
+			opacity: 1;
 		}
 
+		// a tab on the edge of the view: its corners against it square
+		&.up {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+
+		// 2px less under its text: against the bottom of the view
 		&.down {
-			margin-top: -22px;
+			height: 16px;
+			margin-top: -16px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
 		}
 	}
 
