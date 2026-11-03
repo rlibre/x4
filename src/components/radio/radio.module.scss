@@ -22,9 +22,10 @@
 
 	--radio-button-border: var( --border );
 	--radio-button-color: var( --text-ternary );
-	--radio-button-color-checked: var( --accent-background-active );
+	--radio-button-color-checked: var( --accent-text );
 	--radio-button-background-checked: var( --background-secondary );
 	--radio-button-border-checked: var( --accent-background );
+	--radio-button-icon-size: 24px;		// set by a class of the application on a radio: it wins over :root
 
 	--radio-danger-color: var( --alert-background );
 	--radio-danger-background: var( --alert-background-light );
@@ -132,8 +133,6 @@
 // square: its former name, kept for the code that has it (not documented)
 .x4radio.button,
 .x4radio.square {
-	--size: 24px;
-
 	&.outline {
 		border-radius: 22px;;
 	}
@@ -159,8 +158,8 @@
 		#icon {
 			fill: var( --radio-button-color );
 			color: var( --radio-button-color );
-			width: var( --size );
-			height: var( --size );
+			width: var( --radio-button-icon-size );
+			height: var( --radio-button-icon-size );
 		}
 	}
 

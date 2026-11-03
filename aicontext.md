@@ -42,7 +42,7 @@ CoreElement<E>                 named timers + event surface (no DOM)
   │     ├── SvgComponent → Chart
   │     ├── CSizer → HSizer / VSizer
   │     ├── FileDialog, ScrollView, Viewport, DockingView, Carousel, Flex, Space
-  │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, TextEdit → AutoComplete, Breadcrumbs
+  │     ├── HBox-based: ColorInput, Rating, Switch, Tag, Keyboard, MenuBar, TextEdit → AutoComplete, Breadcrumbs
   │     └── VBox-based: Calendar, ColorPicker, FileDrop, Panel, PropertyGrid, TextArea, SettingsView, SettingItem
   └── Application<E>           singleton, no DOM of its own
 
@@ -832,7 +832,10 @@ type TextEditProps = (TextInputProps | NumberProps | DateProps | TimeProps) & {
   labelWidth?: number; inputWidth?: number; inputId?: string
   inputGadgets?: Component[]; inputAttrs?: any
 }
-// style, tooltip, hidden, flex, stretch, height: on the box (label + field); dom_events: on the input
+// style, tooltip, hidden, flex, stretch, height: on the box (label + field); dom_events: on the input,
+//   set when it is made, before the handlers of Input and of the class (the keys of an AutoComplete): they run
+//   first, and see the state before the class reacts (Enter before the suggestion is chosen). To run after them:
+//   textEdit.getInput( ).addDOMEvent( "keydown", ... ) once the component is made
 class TextEdit extends HBox {
   getValue(): string; setValue(value: string): void; getInput(): Input
 }
@@ -886,6 +889,7 @@ interface CheckboxProps extends ComponentProps {
 // button: "button danger"); without the box, the input is still reached by Tab (--checkbox-button-*, -danger-*)
 // A toggle button is a Checkbox with cls "button": getCheck() tells whether it is pressed, change when it changes
 //   new Checkbox( { cls: "button", icon: icon_bold, tooltip: "Bold", change: ( ev ) => this.setBold( ev.value ) } )
+// its icon 24px: --checkbox-button-icon-size, set by a class of the application ( .small { --checkbox-button-icon-size: 16px } )
 // in a Form: without value (or a boolean one), a boolean; with one, the value when checked, null when not
 class Checkbox extends Component {
   getCheck(): boolean; setCheck(ck: boolean): void
@@ -911,6 +915,7 @@ class Radio extends Component {
 }
 // cls: "button" (a button; "button outline" rounded), "danger" (checked in red, its round or its button: "button
 // danger"). Without the round, the input is still reached by Tab.
+// its icon 24px: --radio-button-icon-size, set by a class of the application ( .small { --radio-button-icon-size: 16px } )
 ```
 
 ### `Switch`
@@ -1162,6 +1167,7 @@ interface TreeviewProps extends Omit<ComponentProps,"content"> {
   click?: EventCallback<EvClick>
   dblClick?: EventCallback<EvDblClick>
   selectionChange?: EventCallback<EvSelectionChange>
+  contextMenu?: EventCallback<EvContextMenu>  // as a Listbox: the item under the mouse selected, ev.context its id (null out of the items), no menu of the browser
 }
 // emptyMsg: as for a Listbox. Without it the text is _tr.global.empty_list ("Empty list").
 // There is no `renderer`: an item is drawn from its `text`, `iconId`, `cls` and `sub_cols`.
@@ -1194,6 +1200,7 @@ interface SpreadsheetColumn {               // GridColumn +
 interface EvCellChange { row; col /* index */; colId /* store key */; value /* writable */; oldValue }
 class Spreadsheet extends Component {
   getSelection(): /* cell */; navigate(sens: kbNav): boolean; lock(lock): void
+  clearSelection(notify = true): void               // no cell selected; notify: selectionChange, its selection empty
   editCell(row, col, clear = false): boolean         // cell must be visible
   stopEdit(commit = true): void;  isEditing(): boolean
 }
@@ -1266,11 +1273,31 @@ class PropertyGrid extends VBox {
 interface MenuItem {
   text: string | UnsafeHtml
   cls?: string; icon?: string; menu?: Menu; disabled?: boolean
+  checked?: boolean | (() => boolean)                // a check as icon when there is no icon
   click?: DOMEventHandler
+  shortcut?: string                                  // "Mod+S": shown at the right (shortcutText), not added: see addShortcut
 }
 type MenuElement = MenuItem | Component | string    // string "-" = title/separator
 interface MenuProps extends Omit<PopupProps,"content"> { items: MenuElement[] }
 class Menu extends Popup {}                          // displayAt/displayNear/displayCenter/close
+```
+
+### `MenuBar`
+
+```ts
+interface MenuBarItem {
+  text: string; icon?: string; disabled?: boolean
+  items: MenuElement[] | (() => MenuElement[])       // its Menu, built at each opening; a function is called then
+}
+interface MenuBarProps extends Omit<BoxProps,"content"> { items: MenuBarItem[] }
+class MenuBar extends HBox {}
+// a click on a title opens its menu under it, a second one closes it; while a menu is open, the mouse
+// on another title opens that one. No keyboard. For a web application: a desktop application
+// (Electron...) should use the menu of the system, not a MenuBar
+new MenuBar({ items: [
+  { text: "File", items: [{ text: "Open…", shortcut: "Mod+O", click: open }, "-", { text: "Quit", click: quit }] },
+  { text: "Edit", items: () => [{ text: "Undo", disabled: !canUndo(), click: undo }] },
+] })
 ```
 
 ### `BtnGroup`
@@ -1336,7 +1363,8 @@ class Tabs extends Box {
 ```ts
 interface PopupProps extends ComponentProps {
   autoClose?: boolean | string             // true, or a group name: closed by a press outside; while it is shown,
-                                           //   a wheel outside every popup is ignored (the page does not scroll)
+                                           //   a wheel outside every popup is ignored (the page does not scroll);
+                                           //   a press in a popup closes the other groups opened after it, not its own
   sizable?: boolean; movable?: boolean
 }
 class Popup extends Box {
@@ -1344,7 +1372,8 @@ class Popup extends Box {
   displayNear(rc: Rect, dst?: string, src?: string, offset?: {x,y}): void
   displayCenter(center?: boolean): void
   close(): void
-  dismiss(after?: boolean): void
+  dismiss(after?: boolean): void           // closes the popups of its autoClose group; after: only those opened
+                                           //   after it (none when it is no longer open)
   isOpen(): boolean
   // show()/hide() inherited from Component; show() routes to displayCenter()
 }
@@ -1386,6 +1415,10 @@ class MessageBox extends Dialog {
   static showAsync(msg: string|UnsafeHtml, buttons?: BtnGroupItem[], title?: string,
                    icon_type?: "error"|"question"): Promise<string>
 }
+// no icon_type: an error (its icon, the title _tr.global.error, the class "error"); its title bar and its buttons
+//   in the colours of the alerts: a filled button in --alert-*, an outline one with a red border when focused.
+//   The "!" of an error, the "?" of a question: white in the disc of the icon (--msgbox-icon-mark-color,
+//   --msgbox-question-icon-mark-color)
 class InputBox extends Dialog {
   getValue(): string
   // static showAsync(msg, value, title?, options?: {password?, trim?}): Promise<string>  (null if cancelled or closed)
@@ -1760,6 +1793,7 @@ new Button({ label: 'Paste', click: async () => {
 - The events go to the component that has the focus: give it a `tabindex`.
 - Out of an event, the browser may refuse, and there is no system clipboard on a page that is not served in https. What the application set last is then what `getClipboard` gives: copy and paste still work inside the application.
 - An image is written as a PNG; another format is converted. Files can be read in a `paste` event only, and cannot be written.
+- An image offered in several formats (Inkscape: a SVG, then a PNG) is read as the PNG, by `getClipboard` and `getEventClipboard`; else the first image.
 
 ---
 
@@ -1835,7 +1869,8 @@ by the browser, in its own locale, whatever this one.
 --color-primary-a0 … --color-primary-a100     /* the scale: a0 the background, a100 the text, the accent between */
 /* the globals the components use: --background-primary / -secondary / -ternary / -hover / -active / -input,
    --text-primary / -secondary / -ternary, --border / -light / -hover / -focus, --accent-background / -hover /
-   -focus / -active / -light, --accent-color (the text on the accent), --disabled-*, --icon-color / -active,
+   -focus / -active / -light, --accent-color (the text on the accent), --accent-text (the accent as a text on the
+   background: a button checked or focused; light in the dark theme), --disabled-*, --icon-color / -active,
    --alert-*, --warning-*, --success-*, --shadow-color (the shadow of what floats: dialog, list, notification, tooltip) */
 ```
 // The greys are mixes of a0 and a100: a theme that reverses the scale gets them light on dark.

@@ -388,22 +388,29 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			}
 		})
 
+		// the cell of the data under the mouse; undefined out of them
 		const targetCell = (e: MouseEvent) => {
 			let el = e.target as Element;
 			while (el && !el.classList.contains("cell")) {
 				el = el.parentElement;
 			}
 
-			if (el) {
-				const cel = componentFromDOM(el);
-				return {
-					ref: cel.getIntData("ref"),
-					row: cel.getInternalData("row"),
-					col: cel.getInternalData("col"),
-				}
+			if (!el) {
+				return undefined;
 			}
 
-			return undefined;
+			// a cell of the header or of the footer (a title, the sizer of a column): no row
+			const cel = componentFromDOM(el);
+			const row = cel.getInternalData("row");
+			if (row === undefined) {
+				return undefined;
+			}
+
+			return {
+				ref: cel.getIntData("ref"),
+				row,
+				col: cel.getInternalData("col"),
+			}
 		}
 
 
@@ -416,11 +423,11 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			// click on another cell while editing:
 			// validate now, rows may be rebuilt before the click event (and the click lost)
 			const ref = targetCell(e);
-			if( ref && ref.row!==undefined ) {
+			if( ref ) {
 				this._endEdit( true, true );
 
 				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
+					this.clearSelection( false );
 					this._addSelection(ref.ref,true);
 				}
 
@@ -438,7 +445,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			if (ref) {
 				//TODO: multiselection
 				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
+					this.clearSelection( false );
 					this._addSelection(ref.ref,true);
 				}
 			}
@@ -454,7 +461,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			if (ref) {
 				//TODO: multiselection
 				if (!this._selection.has(ref.ref)) {
-					this._clearSelection(false);
+					this.clearSelection(false);
 					this._addSelection(ref.ref,true);
 				}
 
@@ -479,7 +486,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			if (ref) {
 				//TODO: multiselection
 				if (!this._selection.has(ref.ref)) {
-					this._clearSelection( false );
+					this.clearSelection( false );
 					this._addSelection(ref.ref, true );
 				}
 
@@ -638,7 +645,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 		if (sens == kbNav.first || sens == kbNav.last) {
 			let nline = sens == kbNav.first ? 0 : this._store.getRowCount() - 1;
-			this._clearSelection(false);
+			this.clearSelection(false);
 			this._addSelection(mkid(nline,0), true);
 			this._scrollToIndex(nline);
 			return true;
@@ -649,7 +656,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			let nline = sens == kbNav.next ? fline + 1 : fline - 1;
 			if (nline >= 0 && nline < this._store.getRowCount()) {
-				this._clearSelection(false);
+				this.clearSelection(false);
 				this._addSelection( mkid(nline,col), true);
 				this._scrollToIndex( nline );
 				return true;
@@ -670,7 +677,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 			}
 
 			if (nline != fline) {
-				this._clearSelection( false );
+				this.clearSelection( false );
 				this._addSelection(mkid(nline,col), true);
 
 				if (this._store.getRowCount() < SCROLL_LIMIT) {
@@ -686,7 +693,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 			let ncol = sens == kbNav.right ? col+1 : col-1;
 			if (ncol >= 0 && ncol < this._columns.length ) {
-				this._clearSelection(false);
+				this.clearSelection(false);
 				this._addSelection( mkid(fline,ncol), true);
 
 				// fixed columns are always visible
@@ -1374,10 +1381,10 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 	}
 	/**
-	 * 
+	 * no cell selected; notify: selectionChange is fired, its selection empty
 	 */
 
-	private _clearSelection(notify = true) {
+	clearSelection(notify = true) {
 		for (const ref of this._selection.keys()) {
 			const els = this.queryAll(`.cell[data-ref="${ref}"]`)
 			els.forEach(el => {
@@ -1433,7 +1440,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 
 	selectItem(row: number, col: number, append = false) {
 		if (!append) {
-			this._clearSelection(false);
+			this.clearSelection(false);
 		}
 
 		this._addSelection(mkid(row, col), true);
@@ -1745,7 +1752,7 @@ export class Spreadsheet<P extends SpreadsheetProps = SpreadsheetProps, E extend
 		}
 
 		if( this._selection.size!=1 || !this._selection.has(ref) ) {
-			this._clearSelection( false );
+			this.clearSelection( false );
 			this._addSelection( ref, true );
 		}
 

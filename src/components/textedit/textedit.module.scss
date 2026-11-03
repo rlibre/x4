@@ -59,6 +59,7 @@
 			@extend %flex;
 			outline: none;
 			margin: 0;
+			align-self: stretch;		// the height of the zone: its ground down to its line
 		}
 
 		.x4button {

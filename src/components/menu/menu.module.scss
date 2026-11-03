@@ -25,6 +25,15 @@
 	--menuitem-color-active: var( --accent-color-active );
 	--menuitem-background-hover: var( --accent-background-hover );
 	--menuitem-color-hover: var( --accent-color-hover );
+	--menuitem-shortcut-color: var( --text-secondary );
+
+	--menubar-background: var( --background-primary );
+	--menubar-border: var( --border );
+
+	--menubaritem-color: var( --text-primary );
+	--menubaritem-background-hover: var( --accent-background-hover );
+	--menubaritem-color-hover: var( --accent-color-hover );
+	--menubaritem-color-disabled: var( --disabled-color-dark );
 }
 
 .x4menu {
@@ -84,6 +93,20 @@
 			@extend %flex;
 		}
 
+		// the keys of the command: after the text, which takes the width, at the right
+		#shortcut {
+			color: var(--menuitem-shortcut-color);
+			padding-left: 16px;
+			white-space: nowrap;
+		}
+
+		// hovered, active, disabled: in the colour of the text
+		&:hover, &.opened, &:active, &[disabled] {
+			#shortcut {
+				color: inherit;
+			}
+		}
+
 		&.title {
 			color: var( --text-primary );
 			cursor: auto;
@@ -123,5 +146,41 @@
 		padding-top: 4px;
 		border-bottom: 1px solid var(--border);
 		margin-bottom: 4px;
+	}
+}
+
+.x4menubar {
+	padding: 0 4px;
+
+	background-color: var(--menubar-background);
+	border-bottom: 1px solid var(--menubar-border);
+
+	.x4cmenubaritem {
+		@extend %hbox;
+
+		gap: 6px;
+		padding: 4px 10px;
+		color: var(--menubaritem-color);
+		cursor: pointer;
+		user-select: none;
+
+		transition: background-color 0.1s;
+
+		#icon {
+			width: 16px;
+			height: 16px;
+		}
+
+		// hovered, or its menu open: as an item of the menu
+		&:hover:not([disabled]),
+		&.opened {
+			background-color: var(--menubaritem-background-hover);
+			color: var(--menubaritem-color-hover);
+		}
+
+		&[disabled] {
+			color: var(--menubaritem-color-disabled);
+			cursor: auto;
+		}
 	}
 }

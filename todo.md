@@ -49,7 +49,6 @@ Found by a review of the sources on 2026-10-13. Each one is a real defect, but a
 
 Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means reproduced in the browser (projets/x4test), "read" means followed in the code only.
 
-- A click on a column header selects the cell (0,0), with a `selectionChange`, and nothing is drawn as selected (seen: `npm run sheetsel`). `targetCell` stops on the first element of class `cell`, and the cells of the header and of the footer have that class too; it returns `{ ref: undefined }`, which the `click`, `dblclick` and `contextmenu` handlers take for a cell (`mousedown` tests `ref.row!==undefined`). The end of a column resize, whose `click` comes from the sizer in the header, does the same.
 - `Store.setData` keeps a row index as the count of rows: `if( row > _maxrows ) _maxrows = row`. Filled by `setData` alone, a store has one row less than it holds, and its last row is never shown nor editable (read). `setMaxRowCount` that reduces keeps the row of index `rows` in the map (`row <= rows`), which comes back if the count grows again.
 - After a change of the store, the selection keeps only the cells that hold data (`hasData`): a selected empty cell leaves it without `selectionChange`. When the `cellChange` handler of an application writes another cell, Enter after an edit sends the selection to the row 0 (read).
 - A column of type `date` whose value is a string makes `Intl.DateTimeFormat.format` throw, and no row is drawn; the editor of such a cell starts empty (read). The `Gridview` turns such a string into a `Date`.
@@ -106,6 +105,11 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 - A range of hours is selected on one day only; Timex selects the same hours on several days.
 - An event cannot go from the band to the hours, or back.
 - The month shows an event of several days on each of its days, not as one bar across them.
+- An event with hours across two days (22:00 → 02:00), asked on 2026-11-03. Given so, it is shown in two parts, one in each day (`PlannerSegment`, first / last). The user cannot make one (read): a range is selected on one day; an event of one day, moved, stays in the hours shown of its day (`_place`, clamp); an end dragged stays in the day where the drag began (`atMinutes( drag.day, ... )`). To let the move go over midnight, and an end go into the next day.
+
+## MenuBar
+
+- No keyboard (Alt or F10, ←/→ between the titles, ↑/↓/Enter/Escape in the menu): the Menu has no keyboard yet, it needs it first.
 
 ## Formulas
 
@@ -156,6 +160,15 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 
 - The steps of an `AssistBox` (1 ✓ — 2 ● — 3 ○) are a horizontal `Timeline` (`vertical: false`): `done` fills the mark, the line to the next step is in the accent when it is done and dashed after a step not done, `click` gives the item (back to a step: `assist.select`). Decided on 2026-10-26: no component of its own. The link to the `AssistBox` is code of the application (`pageChange` → `setItems`, `click` → `select`).
 - Missing in `Timeline` for that: the step in progress, `current?: boolean` on `TimelineItem` (the mark outlined in the accent; today an item is done or not), and maybe the number of the step in the mark when it has no `icon` (today the mark is empty). To try first in the sandbox: an `AssistBox` with a horizontal `Timeline`, nothing changed, to see what is really missing.
+
+## A list of tags that can be edited
+
+- Asked on 2026-11-03 (for ubom, which has its own TagsField): `Tag` shows a tag only, `AutoComplete` suggests; nothing combines them. Wanted: each tag a `Tag` with a small cross, a click on it removes it; after the tags a field that suggests the tags of the application containing the text typed (case ignored, the tags present left out); Enter or Space adds the text typed as a tag, a suggestion chosen too; Backspace in the empty field removes the last tag; `change` at each tag added or removed, with the list. Its API to propose.
+- The way of ubom: the tags in the zone of the field of an `AutoComplete`, by `inputGadgets` (any component, in `#edit` after the input; `order: -1` puts it before): one field, one line under it, no height to compute.
+
+## Showing a PDF
+
+- Asked on 2026-11-03: a component that shows a PDF (x4 makes one, `core_pdf`, but cannot show it). Two ways to discuss: the viewer of the browser in an iframe (simple; seen blocked by Adblock Plus in the gallery, as a blob address) or pdf.js (a dependency).
 
 
 

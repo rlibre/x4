@@ -22,6 +22,10 @@
 	--msgbox-icon-color:  var( --alert-background );
 	--msgbox-question-icon-color: var( --accent-background );		// a question, an InputBox, a PromptBox
 
+	// the "!" and the "?" in the disc of the icon: as the text on the red, on the accent
+	--msgbox-icon-mark-color: var( --alert-color );
+	--msgbox-question-icon-mark-color: var( --accent-color );
+
 	--msgbox-log-background: var( --background-ternary );		// the lines of a ProgressionBox
 	--msgbox-log-border: var( --border );
 	--msgbox-log-border-focus: var( --border-focus );
@@ -44,6 +48,22 @@
 		}
 	}
 
+	// the buttons of an error in the red of its title bar: a filled one, the focus of an outline
+	// one (its text stays the one of the text: a red text is not read on a dark background)
+	&.error {
+		--button-background: var( --alert-background );
+		--button-background-hover: var( --alert-background-active );
+		--button-background-focus: var( --alert-background-active );
+		--button-background-active: var( --alert-background-active );
+		--button-color: var( --alert-color );
+		--button-color-hover: var( --alert-color );
+		--button-color-focus: var( --alert-color );
+		--button-color-active: var( --alert-color );
+
+		--ol-button-border-focus: var( --alert-background );
+		--ol-button-color-focus: var( --ol-button-color );
+	}
+
 	& .x4form {
 		min-width: 400px;
 
@@ -51,6 +71,10 @@
 		> .x4hbox > .x4icon {
 			color: var( --msgbox-icon-color );
 			height: 96px;
+
+			.mark {
+				fill: var( --msgbox-icon-mark-color );
+			}
 		}
 
 		.x4label {
@@ -61,6 +85,10 @@
 
 	&.question .x4form > .x4hbox > .x4icon {
 		color: var( --msgbox-question-icon-color );
+
+		.mark {
+			fill: var( --msgbox-question-icon-mark-color );
+		}
 	}
 }
 

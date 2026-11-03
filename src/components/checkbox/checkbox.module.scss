@@ -29,9 +29,10 @@
 
 	--checkbox-button-border: var( --border );
 	--checkbox-button-color: var( --text-ternary );
-	--checkbox-button-color-checked: var( --accent-background-active );
+	--checkbox-button-color-checked: var( --accent-text );
 	--checkbox-button-background-checked: var( --background-secondary );
 	--checkbox-button-border-checked: var( --accent-background );
+	--checkbox-button-icon-size: 24px;		// set by a class of the application on a checkbox: it wins over :root
 
 	--checkbox-danger-color: var( --alert-background );
 	--checkbox-danger-background: var( --alert-background-light );
@@ -187,8 +188,8 @@
 		#icon {
 			color: var( --checkbox-ink );
 			fill: var( --checkbox-ink );
-			width: 24px;
-			height: 24px;
+			width: var( --checkbox-button-icon-size );
+			height: var( --checkbox-button-icon-size );
 		}
 	}
 

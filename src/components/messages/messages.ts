@@ -37,6 +37,8 @@ export interface MessageBoxProps extends DialogProps {
  * --msgbox-caption-color
  * --msgbox-icon-color
  * --msgbox-question-icon-color
+ * --msgbox-icon-mark-color
+ * --msgbox-question-icon-mark-color
  * --msgbox-log-background
  * --msgbox-log-border
  * --msgbox-log-border-focus
@@ -47,7 +49,11 @@ export interface MessageBoxProps extends DialogProps {
  * --msgbox-log-scrollbar
  * ```
  * --msgbox-caption-* and --msgbox-icon-color are the ones of an error; a question, an InputBox
- * and a PromptBox have the title bar of a Dialog and their icon in --msgbox-question-icon-color
+ * and a PromptBox have the title bar of a Dialog and their icon in --msgbox-question-icon-color.
+ * The "!" of an error and the "?" of a question are drawn in the disc of their icon, in
+ * --msgbox-icon-mark-color and --msgbox-question-icon-mark-color.
+ * The buttons of an error are in the colours of the alerts (--alert-*): a filled one, the border
+ * of an outline one that has the focus
  */
 
 export class MessageBox extends Dialog<DialogProps>

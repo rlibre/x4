@@ -88,7 +88,10 @@ export class TextEdit<E extends ComponentEvents = ComponentEvents> extends HBox<
 
 	constructor( props: TextEditProps ) {
 		// dom_events are for the input (focus, blur, keydown...): not on the box too,
-		// where keydown would run a second time, and focus never (it does not bubble)
+		// where keydown would run a second time, and focus never (it does not bubble).
+		// They are set when the input is made, before the handlers of Input and of the class
+		// (the keys of an AutoComplete): they run first. To run after them, add a handler to
+		// getInput( ) once the component is made.
 		super( { ...props, dom_events: undefined } );
 
 		if( !props.inputId ) {

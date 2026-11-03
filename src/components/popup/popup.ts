@@ -49,17 +49,31 @@ function getRoot( ) {
 /**
  * on the document while the event goes down (capture): a press outside
  * every popup closes the group opened last, the others at the next presses.
+ * A press in a popup closes the groups opened after it, over it (a context
+ * menu, the picker of a ColorInput), not its own.
  * The event is left as it is, what is pressed handles it as usual.
  * One function for all the popups: it is removed by the one that empties the list.
  */
 
 function dismissLast( e: UIEvent ) {
-	if( autoclose_list.some( x => x.contains( e.target as Node ) ) ) {
+	const target = e.target as Node;
+
+	// the newest popup the press is in
+	let idx = autoclose_list.length-1;
+	while( idx>=0 && !autoclose_list[idx].contains( target ) ) {
+		idx--;
+	}
+
+	// outside every popup: the newest one; dismiss( ) closes its whole group (a menu and its sub-menus)
+	if( idx<0 ) {
+		autoclose_list[autoclose_list.length-1].dismiss( );
 		return;
 	}
 
-	// the newest popup: dismiss( ) closes its whole group (a menu and its sub-menus)
-	autoclose_list[autoclose_list.length-1].dismiss( );
+	// in a popup: the groups opened after it, not its own (a menu and its sub-menus)
+	const group = autoclose_list[idx].getData( "close" );
+	const over = autoclose_list.slice( idx+1 ).filter( x => x.getData( "close" )!==group );
+	over.reverse( ).forEach( x => x.dismiss( ) );
 }
 
 /**
@@ -395,6 +409,11 @@ export class Popup<P extends PopupProps = PopupProps, E extends PopupEvents = Po
 		let aidx = -1;
 		if( after ) {
 			aidx = autoclose_list.indexOf( this );
+
+			// no longer open: none was opened after it
+			if( aidx<0 ) {
+				return;
+			}
 		}
 
 		autoclose_list.forEach( (x,idx) => {

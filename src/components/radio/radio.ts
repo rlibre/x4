@@ -62,6 +62,7 @@ interface RadioProps extends ComponentProps {
  * --radio-button-color-checked
  * --radio-button-background-checked
  * --radio-button-border-checked
+ * --radio-button-icon-size
  * --radio-danger-color
  * --radio-danger-background
  * ```

@@ -47,6 +47,19 @@ export interface ClipboardRead extends ClipboardContent {
 /** what the application set last */
 let kept: ClipboardContent = null;
 
+/**
+ * The image to read among the types of the clipboard: the PNG when there is one, every
+ * program reads it; else the first image (a program puts its own format first: a SVG).
+ */
+
+function imageTypeOf( types: readonly string[] ): string {
+	if( types.includes( "image/png" ) ) {
+		return "image/png";
+	}
+
+	return types.find( type => type.startsWith( "image/" ) );
+}
+
 function toPng( image: Blob ): Promise<Blob> {
 	return new Promise( ( resolve, reject ) => {
 		const url = URL.createObjectURL( image );
@@ -119,8 +132,9 @@ export async function setClipboard( data: ClipboardContent ): Promise<boolean> {
 /**
  * Read the clipboard, from a menu or a button.
  *
- * @returns what the system holds. When it refuses or cannot be asked, what
- * the application set last. Never files: see getEventClipboard.
+ * @returns what the system holds, its image as a PNG when it has one. When it
+ * refuses or cannot be asked, what the application set last. Never files: see
+ * getEventClipboard.
  *
  * @example
  * const data = await getClipboard( );
@@ -143,12 +157,14 @@ export async function getClipboard( ): Promise<ClipboardRead> {
 			const data: ClipboardRead = { files: [] };
 
 			for( const item of await system.read( ) ) {
+				const imageType = imageTypeOf( item.types );
+
 				for( const type of item.types ) {
 					if( type==="text/plain" && !data.text ) {
 						const blob = await item.getType( type );
 						data.text = ( await blob.text( ) ) || undefined;
 					}
-					else if( type.startsWith( "image/" ) && !data.image ) {
+					else if( type===imageType && !data.image ) {
 						data.image = await item.getType( type );
 					}
 				}
@@ -212,8 +228,9 @@ export function setEventClipboard( ev: ClipboardEvent, data: ClipboardContent ):
 }
 
 /**
- * Read the clipboard in a "paste" event. The default of the event is left
- * as it is: prevent it when what was read is used.
+ * Read the clipboard in a "paste" event, its image the PNG file when there is
+ * one. The default of the event is left as it is: prevent it when what was
+ * read is used.
  *
  * @example
  * this.addDOMEvent( "paste", ev => {
@@ -232,7 +249,9 @@ export function getEventClipboard( ev: ClipboardEvent ): ClipboardRead {
 	if( transfer ) {
 		data.text = transfer.getData( "text/plain" ) || undefined;
 		data.files = Array.from( transfer.files );
-		data.image = data.files.find( file => file.type.startsWith( "image/" ) );
+
+		const imageType = imageTypeOf( data.files.map( file => file.type ) );
+		data.image = data.files.find( file => file.type===imageType );
 	}
 
 	return data;

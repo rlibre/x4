@@ -3,6 +3,90 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.31
+
+### Themes
+
+- Dark theme: the icon of a tooltip in the colour of the descriptions (`--tooltip-icon-color: var( --text-secondary )`), seen on its background.
+- `--accent-text`: the accent as the colour of a text on the background. In the light theme `--accent-background-active`; in the dark theme a light blue (`#78aeda`), where the blues of the accent are lost on the background. The text of a checkbox or a radio `button` checked and of an `outline` button focused take it (`--checkbox-button-color-checked`, `--radio-button-color-checked`, `--ol-button-color-focus`): read in the dark theme. In the light theme, an outline button focused has its text in the darkest blue of the accent.
+- Dark theme: the edge of a checkbox or a radio `button` checked and of an `outline` button focused in `--accent-text` too (`--checkbox-button-border-checked`, `--radio-button-border-checked`, `--ol-button-border-focus`), seen on the background.
+
+### Popup
+
+- `dismiss( true )` closes the popups of its group opened after it; on a popup that is no longer open, it closes none. To close a whole group: `dismiss( )`.
+- A press in a popup that closes by itself (`autoClose`) closes the popups of the other groups opened after it, over it: a context menu, the picker of a ColorInput. Its own group stays open (a menu and its sub-menus). Two popups that must stay open together, one used while the other is shown: give them the same group.
+
+```ts
+const palette = new Popup( { autoClose: "tools", content: colors } );
+const brushes = new Popup( { autoClose: "tools", content: sizes } );	// a press in palette keeps brushes
+```
+
+### Menu
+
+- A menu opened less than 400 ms after the mouse was on an item of another menu (a context menu, for instance) stays open: the delay of that item, when its menu has closed meanwhile, closes nothing.
+- An item can show the keys of its command at its right: `shortcut`, written by `shortcutText` ("Mod+S" is "Ctrl+S", "⌘S" on a Mac). It is shown only: the shortcut itself is still added by `Application.addShortcut` or `Component.addShortcut`. Its colour: `--menuitem-shortcut-color`; hovered, in the colour of the text.
+
+```ts
+new Menu( { items: [
+	{ text: "Save", shortcut: "Mod+S", click: save },
+	{ text: "Save as…", shortcut: "Shift+Mod+S", click: saveAs },
+] } );
+```
+
+### MenuBar
+
+- New, in menu.ts: a row of titles, each one opens its menu under it. A click on a title opens its menu, a second one closes it; while a menu is open, the mouse on another title opens the menu of that one. The items of a title are those of a `Menu`, or a function called at each opening (as the `menu` of a `Button`). No keyboard yet. For a web application: a desktop application (Electron...) should use the menu of the system. Its colours: `--menubar-*`, `--menubaritem-*`.
+
+```ts
+new MenuBar( { items: [
+	{ text: "File", items: [ { text: "Open…", shortcut: "Mod+O", click: open }, "-", { text: "Quit", click: quit } ] },
+	{ text: "Edit", items: ( ) => [ { text: "Undo", disabled: !canUndo( ), click: undo } ] },
+] } );
+```
+
+### MessageBox
+
+- An error (the kind without `icon_type`) has its buttons in the colours of its title bar, the ones of the alerts (`--alert-*`): a filled button in red, an outline one with a red border when it has the focus, its text in the colour of the text.
+- The "!" of an error and the "?" of a question are drawn in the disc of their icon, white in both themes: `--msgbox-icon-mark-color` (`--alert-color`), `--msgbox-question-icon-mark-color` (`--accent-color`).
+
+### Notification
+
+- A long text goes on several lines in its frame (30% of the window wide at most), a long word or an address cut at its edge; its close button stays in it.
+
+### TextEdit
+
+- Stretched in a row higher than it, its field goes down to its line.
+
+### Checkbox
+
+- The icon of a checkbox `button` is `--checkbox-button-icon-size` wide and high (24px). A class of the application sets it:
+
+```css
+.small-toggle { --checkbox-button-icon-size: 16px; }
+```
+
+### Radio
+
+- The icon of a radio `button` is `--radio-button-icon-size` wide and high (24px), set by a class of the application as for a checkbox.
+- Migration: `--size` is no longer read. An application that set `--size` on its radio buttons sets `--radio-button-icon-size`.
+
+### Spreadsheet
+
+- `clearSelection( notify = true )`: no cell selected; with `notify`, `selectionChange` is fired, its selection empty.
+- A click, a double click or a right click on the header or on the footer (a title, the sizer of a column) selects no cell; a right click there fires `contextMenu` with a null context, as out of the cells.
+
+### Treeview
+
+- `contextMenu`, as for a Listbox: a right click selects the item under the mouse, then fires `contextMenu`, its `context` the id of the item (null out of the items); the menu of the browser is not shown.
+
+```ts
+new Treeview( { items, contextMenu: ( ev ) => showMenu( ev.context, ev.uievent.clientX, ev.uievent.clientY ) } );
+```
+
+### Clipboard
+
+- An image offered in several formats is read as the PNG, by `getClipboard` and by `getEventClipboard`: a copy from Inkscape gives a SVG first, then a PNG. Without a PNG, the first image.
+
 ## 2.3.30 (2026-10-29)
 
 ### Package

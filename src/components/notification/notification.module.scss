@@ -54,7 +54,10 @@
 		color: var( --notification-icon-default );
 	}
 	
+	// a box does not shrink (.x4box): this one does, down to the frame, its close button kept in it
 	.body {
+		flex-shrink: 1;
+
 		.title {
 			font-weight: bold;
 			padding: 6px 6px 3px 6px;
@@ -64,6 +67,7 @@
 		.text {
 			padding: 3px 6px 6px 6px;
 			color: var( --notification-text-color );
+			overflow-wrap: anywhere;		// a long word, an address: cut at the edge
 		}
 	}
 

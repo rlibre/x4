@@ -16,7 +16,7 @@
 
 import { asap } from '../../core/core_tools';
 import { EventCallback } from '../../core/core_events';
-import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvDblClick, EvSelectionChange } from '../../core/component';
+import { Component, ComponentEvent, ComponentEvents, ComponentProps, EvClick, EvContextMenu, EvDblClick, EvSelectionChange } from '../../core/component';
 
 import { ScrollView, Viewport } from '../viewport/viewport';
 import { Label, SimpleText } from '../label/label';
@@ -59,12 +59,14 @@ export interface TreeviewProps extends Omit<ComponentProps,"content"> {
 	selectionChange?: EventCallback<EvSelectionChange>;
 	dblClick?: EventCallback<EvDblClick>;
 	click?: EventCallback<EvClick>;
+	contextMenu?: EventCallback<EvContextMenu>;
 }
 
 export interface TreeviewEvents extends ComponentEvents {
 	selectionChange?: EvSelectionChange;
 	dblClick?: EvDblClick;
 	click?: EvClick;
+	contextMenu?: EvContextMenu;
 }
 
 /**
@@ -185,7 +187,15 @@ class CTreeViewItem extends Box {
 
 
 /**
- * 
+ * A tree of items, folders that open and close.
+ *
+ * A right click selects the item under the mouse, then fires contextMenu, its context the
+ * id of the item (null out of the items); the menu of the browser is not shown.
+ *
+ * @example
+ * new Treeview( { items, contextMenu: ( ev ) => {
+ *     new Menu( { items: [ { text: "Rename", click: ( ) => rename( ev.context ) } ] } ).displayAt( ev.uievent.clientX, ev.uievent.clientY );
+ * } } );
  */
 
 export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
@@ -199,7 +209,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 	constructor( props: TreeviewProps ) {
 		super( props );
 
-		this.mapPropEvents( props, "selectionChange", "dblClick", "click" );
+		this.mapPropEvents( props, "selectionChange", "dblClick", "click", "contextMenu" );
 
 		const scroller = new ScrollView( { cls: "body" } );
 		this._view = scroller.getViewport( );
@@ -218,6 +228,7 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		this.setDOMEvents( {
 			click: ( ev ) => this._on_click( ev ),
 			dblclick: (e) => this._on_click(e),
+			contextmenu: ( ev ) => this._on_ctx_menu( ev ),
 			keydown: ( ev ) => this._onkey( ev ),
 		});
 
@@ -244,10 +255,18 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 	}
 
+	/**
+	 * the item of this tree an element is in, not one of a component around it; null when none
+	 */
+
+	private _itemOf( target: EventTarget ): Component {
+		const c = Component.closest( target as Element, ".item" );
+		return c && this.contains( c ) ? c : null;
+	}
+
 	private _on_click( ev: UIEvent ) {
-		// an item of this tree, not of a component around it
-		const c = Component.closest( ev.target as Element, ".item" );
-		if( c && this.contains( c ) ) {
+		const c = this._itemOf( ev.target );
+		if( c ) {
 			const id = c.getInternalData( "id" );
 
 			const fev: ComponentEvent = { context:id };
@@ -266,6 +285,25 @@ export class Treeview extends Component<TreeviewProps,TreeviewEvents> {
 		}
 
 		this.clearSelection( );
+	}
+
+	/**
+	 * a right click: the item under the mouse selected, then contextMenu
+	 */
+
+	private _on_ctx_menu( ev: MouseEvent ) {
+		ev.preventDefault( );
+
+		const c = this._itemOf( ev.target );
+		if( c ) {
+			const id = c.getInternalData( "id" );
+
+			this._selectItem( id, c );
+			this.fire( "contextMenu", { uievent: ev, context: id } );
+			return;
+		}
+
+		this.fire( "contextMenu", { uievent: ev, context: null } );
 	}
 
 	private _onkey( ev: KeyboardEvent ) {

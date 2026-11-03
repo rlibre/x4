@@ -88,6 +88,9 @@ $color--dark-base: #2d6fa5;
 	--accent-color-focus: var(--color-primary-a0);
 	--accent-color-active: var(--color-primary-a0);
 
+	// the accent as the colour of a text, on the background: a button checked, focused
+	--accent-text: var(--accent-background-active);
+
 	// Borders
 	--border: color-mix(in srgb, var(--color-primary-a100) 11.8%, var(--color-primary-a0));			// #e1e1e1
 	--border-light: color-mix(in srgb, var(--color-primary-a100) 8.2%, var(--color-primary-a0));		// #eaeaea
@@ -162,6 +165,14 @@ html.x4theme-dark {
 	--accent-color-focus: #ffffff;
 	--accent-color-active: #ffffff;
 
+	// the accent as a text: the blues of the scale are dark, lost on the background; a light one (chosen)
+	--accent-text: #{color.adjust($color--dark-base, $lightness: 25%)};
+
+	// the edge of a button checked or focused, in that blue: the dark ones are lost on the background
+	--checkbox-button-border-checked: var( --accent-text );
+	--radio-button-border-checked: var( --accent-text );
+	--ol-button-border-focus: var( --accent-text );
+
 	// the title bar of a Dialog: the one of the window of VS Code
 	--color-dialog-caption: #181818;			// titleBar.activeBackground
 	--color-dialog-caption-text: #cccccc;		// titleBar.activeForeground
@@ -176,6 +187,9 @@ html.x4theme-dark {
 
 	// the marks of the events out of the view of a Planner: the darkest blue (a90 is the text here)
 	--planner-edge-background: var( --accent-background-active );
+
+	// the icon of a tooltip: the dark blues are lost on its background; the colour of the descriptions
+	--tooltip-icon-color: var( --text-secondary );
 
 	color-scheme: dark;		// the native parts: select, scroll bars, number spinners
 }
