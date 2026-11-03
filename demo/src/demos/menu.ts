@@ -8,15 +8,15 @@ import { DemoComponent } from '../types';
 
 import "./menu.scss";
 
-/** @demo A menu — A Menu is a popup: built at the click, shown under the button with displayNear; an item calls its click. */
+/** @demo A menu — A Menu is a popup: built at the click, shown under the button with displayNear; an item calls its click. shortcut shows the keys of a command at its right ("Mod+S": Ctrl+S, ⌘S on a Mac); it does not add them: addShortcut does. */
 export function basic( ) {
 	const label = new Label( { text: "" } );
 	const button = new Button( { label: "Open the menu", click: ( ) => {
 		const menu = new Menu( { items: [
-			{ text: "New file", icon: icon_file, click: ( ) => label.setText( "New file" ) },
-			{ text: "Save", icon: icon_save, click: ( ) => label.setText( "Save" ) },
+			{ text: "New file", icon: icon_file, shortcut: "Mod+N", click: ( ) => label.setText( "New file" ) },
+			{ text: "Save", icon: icon_save, shortcut: "Mod+S", click: ( ) => label.setText( "Save" ) },
 			"-",
-			{ text: "Delete", icon: icon_trash, click: ( ) => label.setText( "Delete" ) },
+			{ text: "Delete", icon: icon_trash, shortcut: "Delete", click: ( ) => label.setText( "Delete" ) },
 		] } );
 		menu.displayNear( button.getBoundingRect( ), "top left", "bottom left" );
 	} } );

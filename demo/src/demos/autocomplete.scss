@@ -1,0 +1,10 @@
+/* @demo tags */
+// the tags before the input, in the zone of the field
+.ac-tags {
+	order: -1;
+	gap: 4px;
+
+	.x4tag {
+		cursor: pointer;
+	}
+}

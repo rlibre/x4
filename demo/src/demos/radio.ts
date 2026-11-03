@@ -59,7 +59,7 @@ export function inForm( ) {
 	] } );
 }
 
-/** @demo Icons — A radio may show an icon before its label; with cls: "button" it is a button, the one checked marked (Tab and the arrows still go from one to the other). */
+/** @demo Icons — A radio may show an icon before its label; with cls: "button" it is a button, the one checked marked (Tab and the arrows still go from one to the other). The icon of a button is 24px: a class of the page sets --radio-button-icon-size (the last line, 16px). */
 export function icons( ) {
 	return new VBox( { cls: "radio-icons", content: [
 		new HBox( { content: [
@@ -71,6 +71,11 @@ export function icons( ) {
 			new Radio( { cls: "button", label: "Files", icon: icon_file, name: "view2", value: "files", checked: true } ),
 			new Radio( { cls: "button", label: "Folders", icon: icon_folder, name: "view2", value: "folders" } ),
 			new Radio( { cls: "button", label: "Images", icon: icon_image, name: "view2", value: "images" } ),
+		] } ),
+		new HBox( { content: [
+			new Radio( { cls: "button small-icon", label: "Files", icon: icon_file, name: "view3", value: "files", checked: true } ),
+			new Radio( { cls: "button small-icon", label: "Folders", icon: icon_folder, name: "view3", value: "folders" } ),
+			new Radio( { cls: "button small-icon", label: "Images", icon: icon_image, name: "view3", value: "images" } ),
 		] } ),
 	] } );
 }

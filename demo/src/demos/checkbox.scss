@@ -5,4 +5,9 @@
 	> .x4hbox {
 		gap: 12px;
 	}
+
+	// the size of the icon of a toggle button: its variable, set by a class of the page
+	.small-icon {
+		--checkbox-button-icon-size: 16px;
+	}
 }

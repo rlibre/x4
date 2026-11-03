@@ -65,7 +65,7 @@ export function inForm( ) {
 	] } );
 }
 
-/** @demo Toggle buttons — A toggle button is a Checkbox with cls: "button". icon puts an icon before the label; without a label, the icon alone (with a tooltip), as in a toolbar; with danger, checked in red. */
+/** @demo Toggle buttons — A toggle button is a Checkbox with cls: "button". icon puts an icon before the label; without a label, the icon alone (with a tooltip), as in a toolbar; with danger, checked in red. Its icon is 24px: a class of the page sets --checkbox-button-icon-size (the last line, 16px). */
 export function icons( ) {
 	return new VBox( { cls: "checkbox-icons", content: [
 		new HBox( { content: [
@@ -78,6 +78,11 @@ export function icons( ) {
 			new Checkbox( { cls: "button", icon: icon_star, label: "Favourite", checked: true } ),
 			new Checkbox( { cls: "button", icon: icon_heart, label: "Like" } ),
 			new Checkbox( { cls: "button", icon: icon_mail, label: "Notify me" } ),
+		] } ),
+		new HBox( { content: [
+			new Checkbox( { cls: "button small-icon", icon: icon_star, label: "Favourite", checked: true } ),
+			new Checkbox( { cls: "button small-icon", icon: icon_heart, label: "Like" } ),
+			new Checkbox( { cls: "button small-icon", icon: icon_mail, label: "Notify me" } ),
 		] } ),
 	] } );
 }

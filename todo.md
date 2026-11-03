@@ -11,8 +11,6 @@ Things noted for later, about the library and its command line. Nothing here is 
 Left from the colours that did not follow the scale `--color-primary-*` (reported on 2026-10-21, Timex):
 
 - Popup is transparent, without border: it keeps the look it had (its variables did not exist). A plain Popup probably wants `--popup-background: var( --background-primary )` and a border: to decide.
-- Not a colour, found with them: `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
-
 
 ## Dialog: the cursor of its title bar
 
@@ -83,11 +81,7 @@ Found by the review of 2026-10-13, put on hold on 2026-10-14. "Seen" means repro
 
 ## Visual inconsistencies
 
-- No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size`, read by Gridview and Spreadsheet, is defined nowhere (see Theme).
-
-## Components with an entry of their own
-
-- Decided on 2026-10-29: a big component, or one seldom used, is not in the entry `x4js`: it has an entry of its own in the `exports` of package.json, `x4js/<name>` (`"./gantt": "./src/components/gantt/gantt.ts"`, one by one, no pattern). It stays in `src/components/<name>`. An application that does not import it does not carry its code nor its CSS. Done for the Gantt, the Planner and MapView (`x4js/gantt`, `x4js/planner`, `x4js/mapview`); the rule and its list are in aicontext. Monaco: nothing changes, `x4js/monaco`. The gallery, built from src (x4.local.json), needs an alias for each one (`"x4js/mapview": "../src/components/mapview/mapview.ts"`): the alias `x4js` alone turns `x4js/mapview` into `../src/x4.ts/mapview`.
+- No style of scroll bar: to align a header on the columns of a `Treeview`, the width of the bar must be known. x4 has `getScrollbarSize( )` (core_tools, used by Header); `--scrollbar-size` is read by Gridview and Spreadsheet (`right`, `bottom`, gridview.module.scss and spreadsheet.module.scss) and defined nowhere.
 
 ## Gantt
 
@@ -146,7 +140,7 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 - **Breadcrumbs**: the hover is on `#text`; a `margin-bottom` of 2em; `BreadcrumbElement` is not exported.
 - **TextEdit**: the icons of its gadgets cannot be seen.
 - **Types not exported**: `ComboboxProps`, `VideoProps`, `HeaderProps`.
-- **aicontext**: missing `MenuItem.checked`, `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Dialog.show`.
+- **aicontext**: missing `MessageBox.show`, `PromptBox.show`, `PropertyGrid.enableGroup` and `loadProperties`, `Dialog.show`.
 
 ## Image
 
@@ -169,28 +163,3 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 ## Showing a PDF
 
 - Asked on 2026-11-03: a component that shows a PDF (x4 makes one, `core_pdf`, but cannot show it). Two ways to discuss: the viewer of the browser in an iframe (simple; seen blocked by Adblock Plus in the gallery, as a blob address) or pdf.js (a dependency).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

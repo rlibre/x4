@@ -2,8 +2,10 @@
  * AutoComplete: the page of the gallery
  */
 
-import { AutoComplete, EvSearch, HBox, Label, ListItem, VBox } from 'x4js';
+import { AutoComplete, EvSearch, HBox, Label, ListItem, Tag, VBox } from 'x4js';
 import { DemoComponent } from '../types';
+
+import "./autocomplete.scss";
 
 // the search of the configurator: the cities whose name holds the text
 const cities: ListItem[] = [
@@ -59,6 +61,28 @@ export function byId( ) {
 	return new AutoComplete( { label: "Zip code", labelWidth: 80, width: 320, itemValue: "id", strict: true, placeholder: "type a city", search: ( ev ) => {
 		ev.setItems( towns.filter( t => ( t.text as string ).toLowerCase( ).includes( ev.text.toLowerCase( ) ) ) );
 	} } );
+}
+
+/** @demo Tags in the field — inputGadgets takes any component, not only buttons: it is in the zone of the field, over its line and in its state of focus, after the input; order: -1 in CSS puts it before. Here the cities picked, as tags: a click on a tag removes it. */
+export function tags( ) {
+	const chosen = new HBox( { cls: "ac-tags" } );
+
+	const addTag = ( text: string ) => {
+		const tag = new Tag( { label: text, tooltip: "Click to remove", dom_events: {
+			click: ( ) => chosen.removeChild( tag ),
+		} } );
+		chosen.appendContent( tag );
+	};
+
+	const field: AutoComplete = new AutoComplete( { label: "Cities", labelWidth: 80, width: 460, placeholder: "type a city", inputGadgets: [ chosen ], search: searchCities, change: ( ev ) => {
+		// a city picked: a tag, the field empty for the next one
+		if( ev.item ) {
+			addTag( ev.item.text as string );
+			field.setValue( "" );
+		}
+	} } );
+
+	return field;
 }
 
 /** @demo From a server — setItems may be called later: an answer that comes after a newer search is ignored. */

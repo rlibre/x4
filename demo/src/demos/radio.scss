@@ -10,4 +10,9 @@
 	.x4radio:not(.button) {
 		gap: 6px;
 	}
+
+	// the size of the icon of a button: its variable, set by a class of the page
+	.small-icon {
+		--radio-button-icon-size: 16px;
+	}
 }

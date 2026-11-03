@@ -35,7 +35,7 @@ export function labelTop( ) {
 	] } );
 }
 
-/** @demo Gadgets — inputGadgets puts buttons in the field, after the input: here a search and a clear button. */
+/** @demo Gadgets — inputGadgets puts components in the field, after the input: here a search and a clear button. Any component, not only buttons: it is in the zone of the field, over its line and in its state of focus; order: -1 in CSS puts it before the input (the tags of the page AutoComplete). */
 export function gadgets( ) {
 	const result = new Label( { text: "" } );
 
