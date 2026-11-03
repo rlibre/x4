@@ -3,6 +3,12 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
+## 2.3.32
+
+### Package
+
+- The package holds this changelog (`changelog.md`, in its `files`): what changes from one version to another, in `node_modules/x4js` too.
+
 ## 2.3.31 (2026-11-03)
 
 ### Themes
