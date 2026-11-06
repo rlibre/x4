@@ -3,7 +3,7 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
-## 2.3.32
+## 2.3.32 (2026-11-06)
 
 ### Package
 
