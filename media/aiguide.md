@@ -5,6 +5,8 @@ This is not a suggestion but an imperative rule.
 
 For exact classes, properties and method signatures, always use `aicontext.md` or inspect the current x4 TypeScript sources.
 
+**At each update of x4, read its `changelog.md`** (in `node_modules/x4js`): the sections from the version the project used to the new one, before writing code. It says what changed and the migrations to make (a variable renamed, a behaviour changed, a fix an application may have worked around).
+
 **Do not invent x4 APIs.**
 
 ## 1. General rule
