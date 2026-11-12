@@ -16,6 +16,8 @@ Notes for assistants writing x4js code:
 - [AI context](https://raw.githubusercontent.com/rlibre/x4/main/aicontext.md): compact API reference of every class, with exact signatures, the class hierarchy and the default project files
 - [AI guide](https://raw.githubusercontent.com/rlibre/x4/main/aiguide.md): rules for writing idiomatic x4js code, with the mistakes to avoid
 - [Command line](https://raw.githubusercontent.com/rlibre/x4/main/aicli.md): the `x4js` commands (`create`, `templates`, `dev`, `build`), the `x4.config.json` keys and troubleshooting
+- [Full text](https://x4js.org/llms-full.txt): this file, then the AI context, the AI guide and the command line in full, in one file (about 150 KB)
+- [Gallery](https://x4js.org/doc/gallery/): every component on its own page, each variation with a live demo and its TypeScript code
 
 ## API
 

@@ -1580,9 +1580,13 @@ class VSizer extends CSizer {              // vertical splitter, between two chi
 class ScrollView extends Component { getViewport(): Component }
 class Viewport extends Component
 class Canvas<P extends CanvasProps = CanvasProps, E extends CanvasEventMap = CanvasEventMap> extends Component<P, E> {
+  // class x4canvas; props: paint_cb? (ctx: CanvasEx) => void, paint? (event "paint" EvPaint { ctx }, not fired when paint_cb is given), clear? (clears the canvas before each paint)
   getContext(): CanvasRenderingContext2D; redraw(wait?: number): void
+  scale(scale: number): void; get canvas(): Component   // the <canvas> inside
   protected paint(ctx: CanvasEx): void     // a derived class draws here, in px of the page (the ratio of the screen is set)
 }
+// new Canvas( { height: 80, clear: true, paint_cb: ctx => ctx.strokeRect( 1, 1, ctx.width - 1, ctx.height - 1 ) } )
+// The <canvas> fills the box of the Canvas: its size comes from the Canvas (width, height, flex), not from its drawing.
 class Video extends Box {                   // class x4video; props: src? (a file, url), stream? (wins over src), autoplay?, muted?, playsInline?
   play(): Promise<boolean>                 // false: could not start (a click of the user wanted, a source not playable); no source: waits for one
   pause(); mute(set: boolean)

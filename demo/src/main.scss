@@ -46,6 +46,18 @@ body {
 	color: var( --text-primary );
 }
 
+// the text of a static page (static-pages.mjs), for the crawlers: hidden as soon as main.js
+// runs (main.ts), shown without scripts
+html.js #static {
+	display: none;
+}
+
+#static {
+	max-width: 60rem;
+	margin: 0 auto;
+	padding: 1rem 2rem;
+}
+
 .gallery {
 	height: 100vh;
 }

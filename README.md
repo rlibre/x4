@@ -4,114 +4,171 @@
 </picture>
 
 # x4js
-**A full TypeScript framework for web and desktop applications.**
 
-## Home page
-see [X4 home page](https://x4js.org)
+**Build applications. Not markup.**
 
-## API Documentation
-see [GitHib](https://rlibre.github.io/x4/index.html)
+A TypeScript framework for dense, professional interfaces. Persistent objects, real DOM, typed events — and JSX when it makes the tree easier to read.
 
-## Using x4js with an AI assistant
-Three files written for AI assistants ship with the package (in `node_modules/x4js/`). Give them to your assistant before asking it to write x4js code:
+TypeScript · Web + Desktop · MIT
 
-- [aicontext.md](./aicontext.md): compact API reference, with exact signatures
-- [aiguide.md](./aiguide.md): how to write idiomatic x4js code
-- [aicli.md](./aicli.md): the `x4js` command line and `x4.config.json`
+[Home page](https://x4js.org) · [Getting started](https://x4js.org/doc/en/getting-started/) · [Documentation](https://x4js.org/doc/en/) · [Gallery](https://x4js.org/doc/gallery/) · [API reference](https://rlibre.github.io/x4/index.html) · [llms.txt](https://x4js.org/llms.txt)
+
+## Try x4
+
+```sh
+npx x4js create my-app
+cd my-app
+npm run dev
+```
+
+`x4js create` installs the dependencies; `npm run dev` serves the application (`http://127.0.0.1:8000`, or the next free port) and rebuilds it on every change. In an existing project: `npm install x4js`.
+
+---
+
+Most UI frameworks start with `<div>`. x4 starts with what the application is.
+
+## A small mental model
+
+Use the language and the browser when they already solve the problem. Add framework concepts only where they earn their place.
+
+- **Component** — a persistent TypeScript object associated with its real DOM. Lifecycle, events and content stay where you expect them.
+- **State** — observable application state through `Proxy`. Read and mutate ordinary JavaScript-shaped data: `state.count++`.
+- **Events** — local communication between components and objects. Typed, explicit, unsurprising: `button.on( "click", ... )`.
+- **Global messages** — application-wide messages (`Application.fireGlobal`). Transport can be local or remote without leaking into the views.
+
+## Objects that stay objects
+
+Components are persistent instances. Create them, keep references, call methods, listen to events. No render loop to appease.
+
+- Real DOM, updated directly
+- Classes when identity and lifecycle are useful
+- Modules and imports instead of a container
+- CSS and CSS variables for styling
+
+```ts
+import { BoxProps, Button, Gauge, Label, VBox } from "x4js";
+
+interface DevicePanelProps extends BoxProps {
+	name: string;
+}
+
+class DevicePanel extends VBox<DevicePanelProps> {
+	constructor( props: DevicePanelProps ) {
+		super( props );
+
+		this.setContent( [
+			new Label( { text: props.name } ),
+			new Gauge( { min: 0, max: 100 } ),
+			new Button( { label: "Restart" } ),
+		] );
+	}
+}
+```
+
+## A complete UI toolkit. Not just primitives.
+
+x4 ships with more than 50 components, the CSS foundation they use, and a theme system based on CSS variables. Start with the defaults, create your own controls, or integrate third-party UI components when they fit the job.
+
+- `HBox` `VBox` `Tabs` `Form` `Dialog`
+- `Button` `TextEdit` `Combobox` `ColorPicker` `Calendar`
+- `Gridview` `Spreadsheet` `Treeview` `PropertyGrid`
+- `Chart` `Gauge` `DockingView` `Timeline`
+- Drag & drop, PDF generation
+
+Try them all, with their code, in the [gallery](https://x4js.org/doc/gallery/).
+
+**Easy to extend.** Your own controls use exactly the same Component model as the built-ins. A custom component is just a TypeScript class with the lifecycle and DOM you need.
+
+```ts
+import { Component, ComponentProps } from "x4js";
+
+interface StatusBadgeProps extends ComponentProps {
+	text: string;
+}
+
+class StatusBadge extends Component<StatusBadgeProps> {
+	constructor( props: StatusBadgeProps ) {
+		super( props );
+		this.setContent( props.text );
+	}
+}
+```
+
+**Bring other components too.** x4 does not require every control to come from x4. Third-party UI libraries can live alongside x4 components when they fit the job: one browser DOM.
+
+**The visual system comes with it.** Component styles, layouts, visual states and theming are part of x4. The default theme is usable as-is, CSS variables keep product customization direct, and `Application.setTheme( "dark" )` switches to the dark theme.
+
+## The difficult UI is not an afterthought
+
+x4's natural habitat is software people work in: data-heavy screens, industrial tools, dashboards, business applications and desktop-like interfaces.
+
+- **Gridview + Spreadsheet** — tabular data is a first-class use case, backed by specialized `DataStore` structures.
+- **Treeview** — hierarchies and navigation for serious application shells.
+- **Forms + Dialogs** — structured editing without rebuilding basic application controls yourself.
+- **Gauge + Chart** — live operational data fits naturally beside the rest of the interface.
+
+## JSX when it helps. Same runtime.
+
+JSX is optional syntax, not an application architecture. Use object construction for directness, JSX for readable trees — both create x4 Components and real DOM.
+
+```ts
+// objects
+this.setContent( [
+	new Label( { text: "Temperature" } ),
+	new Gauge( { min: 0, max: 100 } ),
+] );
+```
+
+```tsx
+// JSX
+this.setContent(
+	<VBox>
+		<Label text="Temperature" />
+		<Gauge min={0} max={100} />
+	</VBox>
+);
+```
+
+For JSX, in `tsconfig.json`: `"jsx": "react"` and `"jsxFactory": "x4_react.create_element"`, then `import { x4_react } from "x4js"` in the `.tsx` file.
+
+## Ship only what you use
+
+The npm package ships TypeScript sources. Your bundler sees x4 and your application in the same module graph, so ordinary tree-shaking can remove components you never import. No virtual DOM runtime.
+
+Measured with x4js 2.3.32: an application that only shows a `Button`, built with `x4js build`, has 65 KB of JavaScript, 23 KB gzipped. Its stylesheet holds the styles of every component: 123 KB, 22 KB gzipped.
+
+## Fast feedback. No ceremony.
+
+- **Live reload** — `npm run dev` rebuilds on every change and reloads the page; a style change applies without a reload.
+- **TypeScript end to end** — your application and x4 stay in the same module graph.
+- **Simple tooling** — `x4js create`, `x4js dev` and `x4js build`: create, run and build without adding another framework layer ([aicli.md](https://github.com/rlibre/x4/blob/main/aicli.md)).
+- **i18n ready** — build multilingual interfaces without changing the component model (`addTranslation`, `selectLanguage`).
+
+## Readable by humans. Predictable for machines.
+
+Three files written for AI assistants ship with the package, in `node_modules/x4js/`. Give them to your assistant before asking it to write x4js code:
+
+- [aicontext.md](https://github.com/rlibre/x4/blob/main/aicontext.md): compact API reference, with exact signatures
+- [aiguide.md](https://github.com/rlibre/x4/blob/main/aiguide.md): how to write idiomatic x4js code
+- [aicli.md](https://github.com/rlibre/x4/blob/main/aicli.md): the `x4js` command line and `x4.config.json`
 
 With Claude Code, install the x4js plugin instead: its skill reads these files from your project by itself.
 
-```
+```sh
 claude plugin marketplace add rlibre/x4
 claude plugin install x4js@rlibre
 ```
 
----
+For an assistant that reads the web: [llms.txt](https://x4js.org/llms.txt), and [llms-full.txt](https://x4js.org/llms-full.txt) with the three files in full.
 
-## The translation you never signed up for
+## z4js: the same idea, server side
 
-Modern web frameworks share a hidden assumption: that your job is to describe the DOM. Whether through JSX, templates, or reactive object trees, they all keep you close to the metal — writing `<div>`s, wiring class names, juggling attributes. You spend your days translating what you *mean* into how the browser *renders it*, then debugging the translation.
+*In development.* z4js is the backend counterpart of x4js: plain TypeScript classes, very few dependencies, secure by default. Routes, sessions, access rights, migrations, Postgres or SQLite, workers and logs come in one package, written together.
 
-x4js removes that layer entirely.
+[z4js.org](https://z4js.org) · [z4js on GitHub](https://github.com/rlibre/z4js)
 
-You don't assemble elements. You compose high-level objects — `Button`, `DataGrid`, `Dialog`, `Form` — that model your application, not the page. A button has a `text`, not a `textContent`. A grid has columns, not a `<table><thead><tr>`. You describe intent; the framework handles the rest.
+## License
 
----
+MIT — see [LICENSE](https://github.com/rlibre/x4/blob/main/LICENSE).
 
-## The paradox nobody talks about
-
-Millions of developers building with reactive frameworks — React, Vue, Svelte, and the rest — spend their day inside VS Code, Slack, Figma, Discord. Applications they hold up as benchmarks of speed and polish.
-
-Not one of them is built the way those same developers build their own work.
-
-VS Code is written in TypeScript, around high-level object components, with direct, surgical DOM manipulation — **no virtual DOM**. That isn't an accident. Routing every keystroke through a virtual-tree reconciliation pass would make a code editor unusable. So the tool you use to write your reactive app could never have been written in that same reactive framework and stayed fast.
-
-This isn't an isolated curiosity. It's a pattern. The applications that must be genuinely fast — editors, IDEs, terminals, design tools, spreadsheets — converge on the same architecture again and again: object components, direct DOM updates, fine-grained and intentional reactivity. Exactly the philosophy x4js is built on.
-
-The virtual DOM is a comfortable abstraction that trades performance for ease of reasoning. It's a fair trade for a landing page, a dashboard, a form. But the moment an interface becomes dense, dynamic, and latency-sensitive, the teams building the industry's reference tools quietly abandon that trade. They don't choose it for their own product — they only recommend it for everyone else's.
-
-> When performance actually matters, the industry votes with its code.
-> x4js brings to *your* applications the architecture your tools already use for theirs.
-
-A fair caveat: VS Code doesn't run on x4js, and reactive frameworks aren't "bad." React, Vue, and Svelte optimize for a different problem — productivity on interfaces of moderate complexity — and they do it well. The point is architectural family, not brand. x4js belongs to the same lineage as the dense, demanding tools you already trust: object-first, direct-DOM, precisely reactive.
-
----
-
-## Why the object-first approach wins
-
-### No virtual DOM, no diffing
-
-x4js builds and updates the real DOM directly. There's no reconciliation pass, no shadow tree to compare against, no per-render overhead. Updates are direct — which makes them fast and, just as importantly, predictable.
-
-### Code that runs when you call it — and only then
-
-In a reactive framework, your component is a function the framework re-executes whenever it decides to. Every variable is recreated on each pass; every closure can silently capture a stale value. Entire categories of bugs — stale closures, dependency arrays, effects firing twice, memoization tuning — exist *only* because the execution model is inverted: the framework calls you.
-
-An x4js component is an object. Its state lives in fields that persist for its whole lifetime. Its methods run when you call them, once, in the order you wrote. There is nothing to memoize, no dependency list to maintain, no rule about where you're allowed to declare things. The mental model is the one you already have from every other kind of software you've written.
-
-### State you can simply assign
-
-In reactive frameworks, changing a value is a discipline in itself. State is immutable, so a one-field update becomes a pyramid of spreads: `setUser({ ...user, address: { ...user.address, city: "Paris" } })` — and entire libraries exist just to make that bearable. State setters are asynchronous and batched, so the line after `setCount(count + 1)` still reads the old value; you must remember updater functions (`setCount(c => c + 1)`) or debug why your counter skips. And the primitives themselves come with a rulebook — hooks only at the top level, never in a condition or a loop, always in the same order — rules the language cannot enforce, so a linter has to police your code where the compiler should have.
-
-None of this is your application. All of it is ceremony imposed by the framework's model of change.
-
-In x4js, state is an object and change is assignment: `state.count++`, `state.user.address.city = "Paris"`. The value is updated on the next line, because of course it is. Deep mutation works, because objects are objects. There are no placement rules, because a property assignment is not a framework primitive — it's JavaScript. Years of accumulated workarounds — updater callbacks, spread pyramids, immutability helpers, exhaustive-deps lint rules — simply have nothing left to fix.
-
-### Debugging your code, not the framework's
-
-Set a breakpoint in an x4js method and the call stack reads like your application: your event handler, your component, your logic. In virtual-DOM frameworks, the same breakpoint lands you in a scheduler — fiber trees, hook lists, reconciliation frames — with your actual code buried somewhere inside the machinery. Dedicated browser devtools extensions exist for those frameworks precisely because the native debugger stopped being enough. x4js needs none: what you wrote is what executes, and the standard debugger tells the whole story.
-
-### No re-render tax on memory
-
-A virtual-DOM render allocates a full tree of description objects — on every update, for every component involved — and immediately hands it to the garbage collector once diffed. Under load (typing, scrolling, dragging), that is a constant allocation churn competing with your application for CPU and memory. x4js components are allocated once and mutated in place. A text change is a property assignment and one DOM write. Nothing to allocate, nothing to collect, nothing to diff.
-
-### Built for dense, professional interfaces
-
-Reactive ecosystems treat data grids, tree views, dockable panels, and virtual scrolling as third-party problems — an `npm install` and a licensing page away. That is because rendering ten thousand live rows through a diffing pipeline is genuinely hard, so the hard components get outsourced. In x4js, the demanding components are first-class citizens of the framework itself, built on the same direct-DOM foundation as everything else. Business applications — the ones with toolbars, grids, trees, and forms that people use eight hours a day — are the primary use case, not an afterthought.
-
-### No build step required
-
-No JSX to transpile, no template compiler, no toolchain to configure. x4js is TypeScript that runs. You get type safety and autocompletion out of the box, with nothing standing between your source and your running app — and nothing in your supply chain but the compiler you already trust.
-
-### An API that survives the churn
-
-The reactive world reinvents itself every few years: class components gave way to hooks, options API to composition API, stores to signals — each transition deprecating the patterns, tutorials, and muscle memory of the previous one. Code written against browser primitives and plain TypeScript objects doesn't churn like that. `Proxy`, `EventTarget`, classes, and the DOM are stable, standardized ground. An x4js codebase written today will compile and run unchanged years from now, because there is no framework-specific paradigm to be deprecated out from under it.
-
-### You ship what you use — nothing else
-
-Reactive frameworks make you ship their runtime before your first component renders: the scheduler, the reconciler, the hooks machinery — a fixed entry fee, paid by every user on every load, whether your page is an app or a button. x4js has no such core tax. Components are plain TypeScript classes, so standard tree-shaking keeps exactly what you import: use only `Button`, and your bundle contains `Button` — about 22 KB, core included. No runtime to amortize, no framework floor below which your app cannot shrink. Small tools stay small; big applications pay only for the components they actually use.
-
-If you come from C or C++, you already know this model: it's **static linking against a library**. The linker pulls in only the symbols you reference, dead code never makes it into the binary. A reactive framework's runtime is the opposite — a mandatory DLL shipped whole with every executable, whether you call one function from it or a thousand. x4js links; it doesn't bundle a runtime.
-
-### End-to-end TypeScript
-
-Components, properties, and events are fully typed. The compiler catches mistakes before the browser does — not only in your logic, but in the way your components fit together.
-
-### One codebase, web and desktop
-
-Because x4js produces standard DOM from plain TypeScript — no framework-specific runtime, no build-time magic — the same application runs unchanged in the browser or packaged as a desktop app through Electron, Tauri, or NW.js. Nothing to adapt, nothing to port: the wrapper provides the window, x4js provides the application.
-
----
-
-**Think differently. Escape the DOM. Focus on the concept, not the format.**
-
+**Type less framework. Build more application.**

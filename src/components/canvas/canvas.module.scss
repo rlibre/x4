@@ -14,7 +14,9 @@
  * that can be found in the LICENSE file or at https://opensource.org/licenses/MIT.
  **/
 
+ // the <canvas> is placed at its top left, and cut by it
  .x4canvas {
+	position: relative;
 	overflow: hidden;
 
 	&> canvas {

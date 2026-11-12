@@ -18,15 +18,16 @@
     "x4js": "./bin/x4js.mjs"
   },
   "scripts": {
-    "build-publish": "deno run --allow-all ./publish.ts",
+    "build-publish": "deno run --allow-all ./scripts/publish.ts",
     "build-doc": "typedoc",
-    "build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts",
+    "build-types": "npx tsc --declaration --emitDeclarationOnly --outFile types/x4.d.ts && node scripts/strip-style-imports.mjs",
     "lint": "tsc --noEmit && node demo/gen-sources.mjs && tsc --noEmit -p demo/tsconfig.local.json"
   },
   "files": [
     "src",
     "bin",
     "cli",
+    "types",
     "aicli.md",
     "aicontext.md",
     "aiguide.md",

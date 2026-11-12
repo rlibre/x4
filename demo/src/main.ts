@@ -85,8 +85,12 @@ class Gallery extends VBox {
 		this.router.get( "/:comp", ( params ) => this.showPage( params.comp, "" ) );
 		this.router.get( "/*", ( ) => this.showPage( "", "" ) );
 
-		// once in the document: a variation can be scrolled to
-		this.addDOMEvent( "created", ( ) => this.router.init( ) );
+		// once in the document: the text of a static page goes (static-pages.mjs), a variation
+		// can be scrolled to
+		this.addDOMEvent( "created", ( ) => {
+			document.getElementById( "static" )?.remove( );
+			this.router.init( );
+		} );
 
 		// the theme is changed by the menu, or by the page Theme: the "4" of the logo is light
 		// in the dark theme
@@ -279,6 +283,27 @@ class App extends Application {
 		this.addShortcut( "Mod+F", ( ) => gallery.focusSearch( ), { editable: true } );
 	}
 }
+
+/**
+ * a static page of the gallery (static-pages.mjs), for the crawlers: its address
+ * (/doc/gallery/button/) becomes the one of the component in the gallery
+ * (/doc/gallery/#/button), without loading again. Its <base> is the folder of the gallery.
+ */
+
+function routeStaticPage( ) {
+	const root = new URL( document.baseURI ).pathname;			// "/doc/gallery/"
+	const rest = location.pathname.substring( root.length );	// "button/"
+	const page = rest.replace( /\/?(index\.html)?$/, "" );		// "button"
+
+	if( page && !location.hash ) {
+		history.replaceState( null, "", root + "#/" + page );
+	}
+}
+
+// main.js runs in the <head>, before the text of a static page: "js" on <html> hides it from
+// the start (main.scss); a crawler that does not run scripts reads it
+document.documentElement.classList.add( "js" );
+routeStaticPage( );
 
 // the texts of the gallery are in English: x4 too, at the start
 selectLanguage( "en" );

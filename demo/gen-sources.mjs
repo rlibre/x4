@@ -13,13 +13,20 @@
  * The map is keyed "<component>/<function>": "button/icons".
  *
  * It also lists the pages: the default export of each file of src/demos that has one.
+ *
+ * Then it writes static/ (static-pages.mjs): the gallery as plain HTML, for the crawlers. It
+ * reads in each page "const page: DemoComponent = {" its name, category, description, module,
+ * imports and demos, each on one line, one tab in, its value written as in JSON (demos: the
+ * names of the functions).
  */
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { writeStaticPages } from "./static-pages.mjs";
 
 const dir = new URL( "./src/demos/", import.meta.url );
 const sources = {};
 const pages = [];		// the files that export a page
+const docs = [];		// the fields of these pages, for the static pages
 
 // the blocks of a scss file, by the name of their marker
 function readStyles( text ) {
@@ -29,6 +36,63 @@ function readStyles( text ) {
 		blocks[parts[i]] = parts[i + 1].trim( );
 	}
 	return blocks;
+}
+
+// a field of a page, on one line and one tab in ("\tname: \"Button\","): its value as written
+function readField( block, key ) {
+	const found = new RegExp( `^\\t${key}: (.+?),?$`, "m" ).exec( block );
+	return found ? found[1] : undefined;
+}
+
+/**
+ * the fields of the page of a file that the static pages need; module and imports have the
+ * defaults of the gallery (page.ts) when they are missing
+ */
+
+function readPage( file, text ) {
+	const start = text.search( /^const page: DemoComponent = \{$/m );
+	const end = text.indexOf( "\n};", start );
+	if( start < 0 || end < 0 ) {
+		console.error( `${file}: the page is "const page: DemoComponent = {" up to "};" at column 0` );
+		process.exit( 1 );
+	}
+
+	const block = text.substring( start, end );
+	const name = readField( block, "name" );
+	const category = readField( block, "category" );
+	const description = readField( block, "description" );
+	const demos = readField( block, "demos" );
+	if( !name || !category || !description || !demos ) {
+		console.error( `${file}: the page needs name, category, description and demos, each on one line` );
+		process.exit( 1 );
+	}
+
+	const module = readField( block, "module" );
+	const imports = readField( block, "imports" );
+
+	return {
+		name: JSON.parse( name ),
+		category: JSON.parse( category ),
+		description: JSON.parse( description ),
+		module: module ? JSON.parse( module ) : "x4js",
+		imports: imports ? JSON.parse( imports ) : [ JSON.parse( name ) ],
+		demos: demos.replace( /[[\]\s]/g, "" ).split( "," ),		// "[ icons, sizes ]"
+	};
+}
+
+/**
+ * the variations of a page, in the order of its demos, with their text and code
+ */
+
+function variationsOf( doc ) {
+	return doc.demos.map( fn => {
+		const source = sources[`${doc.file}/${fn}`];
+		if( !source ) {
+			console.error( `${doc.file}: ${fn}, in demos, has no @demo comment` );
+			process.exit( 1 );
+		}
+		return { id: fn, ...source };
+	} );
 }
 
 for( const file of readdirSync( dir ) ) {
@@ -42,6 +106,7 @@ for( const file of readdirSync( dir ) ) {
 
 	if( /^export default /m.test( text ) ) {
 		pages.push( comp );
+		docs.push( { file: comp, ...readPage( file, text ) } );
 	}
 
 	const scssFile = new URL( comp + ".scss", dir );
@@ -101,3 +166,7 @@ export const sources: Record<string, DemoSource> = ${JSON.stringify( sources, nu
 
 writeFileSync( new URL( "sources.gen.ts", dir ), out );
 console.log( `sources.gen.ts: ${pages.length} pages, ${Object.keys( sources ).length} variations` );
+
+const staticDocs = docs.map( doc => ( { ...doc, variations: variationsOf( doc ) } ) );
+writeStaticPages( staticDocs );
+console.log( `static: ${staticDocs.length + 1} pages and sitemap.xml` );

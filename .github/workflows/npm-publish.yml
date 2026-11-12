@@ -30,6 +30,14 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
 
+      # typescript, for the types; typedoc, for the docs
+      - name: Install dependencies
+        run: npm install
+
+      # types/x4.d.ts is not in git: made here, from the sources of the tag, for the package
+      - name: Build the types
+        run: npm run build-types
+
       - name: Publish to NPM
         run: |
             if [[ "${{ github.ref_name }}" == *-* ]]; then
@@ -58,9 +66,6 @@ jobs:
           prerelease: ${{ contains(github.ref_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install dependencies
-        run: npm install
 
       - name: Generate Docs
         run: npx typedoc 

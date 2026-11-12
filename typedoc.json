@@ -13,5 +13,5 @@
 	"readme": "README.md",
   	"plugin": ["typedoc-plugin-missing-exports"],
   	"entryPoints": ["src/x4doc.ts"],
-	"exclude": [ "src/components/monaco", "publish.ts" ]
+	"exclude": [ "src/components/monaco", "scripts" ]
 }
