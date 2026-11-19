@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>x4js - v2.3.32</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="index.html" class="title">x4js - v2.3.32</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>x4js - v2.3.33</title><meta name="description" content="Documentation for x4js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="index.html" class="title">x4js - v2.3.33</a>
 <div id="tsd-toolbar-links"><a href="https://github.com/rlibre/x4">GitHub</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -7,75 +7,103 @@
 <div class="container container-main">
 <div class="col-content">
 <div class="tsd-page-title">
-<h1>x4js - v2.3.32</h1></div>
+<h1>x4js - v2.3.33</h1></div>
 <div class="tsd-panel tsd-typography"><picture>
 	<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rlibre/x4/main/logox4-v3-dark.svg">
 	<img src="https://raw.githubusercontent.com/rlibre/x4/main/logox4-v3.svg" alt="x4 logo" width="96">
 </picture>
 <h1 id="x4js" class="tsd-anchor-link">x4js<a href="#x4js" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
-<p><strong>A full TypeScript framework for web and desktop applications.</strong></p>
-<h2 id="home-page" class="tsd-anchor-link">Home page<a href="#home-page" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>see <a href="https://x4js.org">X4 home page</a></p>
-<h2 id="api-documentation" class="tsd-anchor-link">API Documentation<a href="#api-documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>see <a href="https://rlibre.github.io/x4/index.html">GitHib</a></p>
-<h2 id="using-x4js-with-an-ai-assistant" class="tsd-anchor-link">Using x4js with an AI assistant<a href="#using-x4js-with-an-ai-assistant" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Three files written for AI assistants ship with the package (in <code>node_modules/x4js/</code>). Give them to your assistant before asking it to write x4js code:</p>
+<p><strong>Build applications. Not markup.</strong></p>
+<p>A TypeScript framework for dense, professional interfaces. Persistent objects, real DOM, typed events — and JSX when it makes the tree easier to read.</p>
+<p>TypeScript · Web + Desktop · MIT</p>
+<p><a href="https://x4js.org">Home page</a> · <a href="https://x4js.org/doc/en/getting-started/">Getting started</a> · <a href="https://x4js.org/doc/en/">Documentation</a> · <a href="https://x4js.org/doc/gallery/">Gallery</a> · <a href="https://rlibre.github.io/x4/index.html">API reference</a> · <a href="https://x4js.org/llms.txt">llms.txt</a></p>
+<h2 id="try-x4" class="tsd-anchor-link">Try x4<a href="#try-x4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="sh"><span class="hl-0">npx</span><span class="hl-1"> </span><span class="hl-2">x4js</span><span class="hl-1"> </span><span class="hl-2">create</span><span class="hl-1"> </span><span class="hl-2">my-app</span><br/><span class="hl-0">cd</span><span class="hl-1"> </span><span class="hl-2">my-app</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span>
+</code><button type="button">Copy</button></pre>
+
+<p><code>x4js create</code> installs the dependencies; <code>npm run dev</code> serves the application (<code>http://127.0.0.1:8000</code>, or the next free port) and rebuilds it on every change. In an existing project: <code>npm install x4js</code>.</p>
+<hr>
+<p>Most UI frameworks start with <code>&lt;div&gt;</code>. x4 starts with what the application is.</p>
+<h2 id="a-small-mental-model" class="tsd-anchor-link">A small mental model<a href="#a-small-mental-model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Use the language and the browser when they already solve the problem. Add framework concepts only where they earn their place.</p>
 <ul>
-<li><a href="media/aicontext.md">aicontext.md</a>: compact API reference, with exact signatures</li>
-<li><a href="media/aiguide.md">aiguide.md</a>: how to write idiomatic x4js code</li>
-<li><a href="media/aicli.md">aicli.md</a>: the <code>x4js</code> command line and <code>x4.config.json</code></li>
+<li><strong>Component</strong> — a persistent TypeScript object associated with its real DOM. Lifecycle, events and content stay where you expect them.</li>
+<li><strong>State</strong> — observable application state through <code>Proxy</code>. Read and mutate ordinary JavaScript-shaped data: <code>state.count++</code>.</li>
+<li><strong>Events</strong> — local communication between components and objects. Typed, explicit, unsurprising: <code>button.on( &quot;click&quot;, ... )</code>.</li>
+<li><strong>Global messages</strong> — application-wide messages (<code>Application.fireGlobal</code>). Transport can be local or remote without leaking into the views.</li>
+</ul>
+<h2 id="objects-that-stay-objects" class="tsd-anchor-link">Objects that stay objects<a href="#objects-that-stay-objects" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Components are persistent instances. Create them, keep references, call methods, listen to events. No render loop to appease.</p>
+<ul>
+<li>Real DOM, updated directly</li>
+<li>Classes when identity and lifecycle are useful</li>
+<li>Modules and imports instead of a container</li>
+<li>CSS and CSS variables for styling</li>
+</ul>
+<pre><code class="ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">BoxProps</span><span class="hl-1">, </span><span class="hl-4">Button</span><span class="hl-1">, </span><span class="hl-4">Gauge</span><span class="hl-1">, </span><span class="hl-4">Label</span><span class="hl-1">, </span><span class="hl-4">VBox</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;x4js&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-6">DevicePanelProps</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-6">BoxProps</span><span class="hl-1"> {</span><br/><span class="hl-1">	</span><span class="hl-4">name</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-6">DevicePanel</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-6">VBox</span><span class="hl-1">&lt;</span><span class="hl-6">DevicePanelProps</span><span class="hl-1">&gt; {</span><br/><span class="hl-1">	</span><span class="hl-5">constructor</span><span class="hl-1">( </span><span class="hl-4">props</span><span class="hl-1">: </span><span class="hl-6">DevicePanelProps</span><span class="hl-1"> ) {</span><br/><span class="hl-1">		</span><span class="hl-5">super</span><span class="hl-1">( </span><span class="hl-4">props</span><span class="hl-1"> );</span><br/><br/><span class="hl-1">		</span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-0">setContent</span><span class="hl-1">( [</span><br/><span class="hl-1">			</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Label</span><span class="hl-1">( { </span><span class="hl-4">text:</span><span class="hl-1"> </span><span class="hl-4">props</span><span class="hl-1">.</span><span class="hl-4">name</span><span class="hl-1"> } ),</span><br/><span class="hl-1">			</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Gauge</span><span class="hl-1">( { </span><span class="hl-4">min:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">max:</span><span class="hl-1"> </span><span class="hl-7">100</span><span class="hl-1"> } ),</span><br/><span class="hl-1">			</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Button</span><span class="hl-1">( { </span><span class="hl-4">label:</span><span class="hl-1"> </span><span class="hl-2">&quot;Restart&quot;</span><span class="hl-1"> } ),</span><br/><span class="hl-1">		] );</span><br/><span class="hl-1">	}</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="a-complete-ui-toolkit-not-just-primitives" class="tsd-anchor-link">A complete UI toolkit. Not just primitives.<a href="#a-complete-ui-toolkit-not-just-primitives" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>x4 ships with more than 50 components, the CSS foundation they use, and a theme system based on CSS variables. Start with the defaults, create your own controls, or integrate third-party UI components when they fit the job.</p>
+<ul>
+<li><code>HBox</code> <code>VBox</code> <code>Tabs</code> <code>Form</code> <code>Dialog</code></li>
+<li><code>Button</code> <code>TextEdit</code> <code>Combobox</code> <code>ColorPicker</code> <code>Calendar</code></li>
+<li><code>Gridview</code> <code>Spreadsheet</code> <code>Treeview</code> <code>PropertyGrid</code></li>
+<li><code>Chart</code> <code>Gauge</code> <code>DockingView</code> <code>Timeline</code></li>
+<li>Drag &amp; drop, PDF generation</li>
+</ul>
+<p>Try them all, with their code, in the <a href="https://x4js.org/doc/gallery/">gallery</a>.</p>
+<p><strong>Easy to extend.</strong> Your own controls use exactly the same Component model as the built-ins. A custom component is just a TypeScript class with the lifecycle and DOM you need.</p>
+<pre><code class="ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">Component</span><span class="hl-1">, </span><span class="hl-4">ComponentProps</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;x4js&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-6">StatusBadgeProps</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-6">ComponentProps</span><span class="hl-1"> {</span><br/><span class="hl-1">	</span><span class="hl-4">text</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-6">StatusBadge</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-6">Component</span><span class="hl-1">&lt;</span><span class="hl-6">StatusBadgeProps</span><span class="hl-1">&gt; {</span><br/><span class="hl-1">	</span><span class="hl-5">constructor</span><span class="hl-1">( </span><span class="hl-4">props</span><span class="hl-1">: </span><span class="hl-6">StatusBadgeProps</span><span class="hl-1"> ) {</span><br/><span class="hl-1">		</span><span class="hl-5">super</span><span class="hl-1">( </span><span class="hl-4">props</span><span class="hl-1"> );</span><br/><span class="hl-1">		</span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-0">setContent</span><span class="hl-1">( </span><span class="hl-4">props</span><span class="hl-1">.</span><span class="hl-4">text</span><span class="hl-1"> );</span><br/><span class="hl-1">	}</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Bring other components too.</strong> x4 does not require every control to come from x4. Third-party UI libraries can live alongside x4 components when they fit the job: one browser DOM.</p>
+<p><strong>The visual system comes with it.</strong> Component styles, layouts, visual states and theming are part of x4. The default theme is usable as-is, CSS variables keep product customization direct, and <code>Application.setTheme( &quot;dark&quot; )</code> switches to the dark theme.</p>
+<h2 id="the-difficult-ui-is-not-an-afterthought" class="tsd-anchor-link">The difficult UI is not an afterthought<a href="#the-difficult-ui-is-not-an-afterthought" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>x4's natural habitat is software people work in: data-heavy screens, industrial tools, dashboards, business applications and desktop-like interfaces.</p>
+<ul>
+<li><strong>Gridview + Spreadsheet</strong> — tabular data is a first-class use case, backed by specialized <code>DataStore</code> structures.</li>
+<li><strong>Treeview</strong> — hierarchies and navigation for serious application shells.</li>
+<li><strong>Forms + Dialogs</strong> — structured editing without rebuilding basic application controls yourself.</li>
+<li><strong>Gauge + Chart</strong> — live operational data fits naturally beside the rest of the interface.</li>
+</ul>
+<h2 id="jsx-when-it-helps-same-runtime" class="tsd-anchor-link">JSX when it helps. Same runtime.<a href="#jsx-when-it-helps-same-runtime" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>JSX is optional syntax, not an application architecture. Use object construction for directness, JSX for readable trees — both create x4 Components and real DOM.</p>
+<pre><code class="ts"><span class="hl-8">// objects</span><br/><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-0">setContent</span><span class="hl-1">( [</span><br/><span class="hl-1">	</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Label</span><span class="hl-1">( { </span><span class="hl-4">text:</span><span class="hl-1"> </span><span class="hl-2">&quot;Temperature&quot;</span><span class="hl-1"> } ),</span><br/><span class="hl-1">	</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Gauge</span><span class="hl-1">( { </span><span class="hl-4">min:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">max:</span><span class="hl-1"> </span><span class="hl-7">100</span><span class="hl-1"> } ),</span><br/><span class="hl-1">] );</span>
+</code><button type="button">Copy</button></pre>
+
+<pre><code class="tsx"><span class="hl-8">// JSX</span><br/><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-0">setContent</span><span class="hl-1">(</span><br/><span class="hl-1">	</span><span class="hl-9">&lt;</span><span class="hl-6">VBox</span><span class="hl-9">&gt;</span><br/><span class="hl-1">		</span><span class="hl-9">&lt;</span><span class="hl-6">Label</span><span class="hl-1"> </span><span class="hl-10">text</span><span class="hl-1">=</span><span class="hl-2">&quot;Temperature&quot;</span><span class="hl-1"> </span><span class="hl-9">/&gt;</span><br/><span class="hl-1">		</span><span class="hl-9">&lt;</span><span class="hl-6">Gauge</span><span class="hl-1"> </span><span class="hl-10">min</span><span class="hl-1">=</span><span class="hl-5">{</span><span class="hl-7">0</span><span class="hl-5">}</span><span class="hl-1"> </span><span class="hl-10">max</span><span class="hl-1">=</span><span class="hl-5">{</span><span class="hl-7">100</span><span class="hl-5">}</span><span class="hl-1"> </span><span class="hl-9">/&gt;</span><br/><span class="hl-1">	</span><span class="hl-9">&lt;/</span><span class="hl-6">VBox</span><span class="hl-9">&gt;</span><br/><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<p>For JSX, in <code>tsconfig.json</code>: <code>&quot;jsx&quot;: &quot;react&quot;</code> and <code>&quot;jsxFactory&quot;: &quot;x4_react.create_element&quot;</code>, then <code>import { x4_react } from &quot;x4js&quot;</code> in the <code>.tsx</code> file.</p>
+<h2 id="ship-only-what-you-use" class="tsd-anchor-link">Ship only what you use<a href="#ship-only-what-you-use" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The npm package ships TypeScript sources. Your bundler sees x4 and your application in the same module graph, so ordinary tree-shaking can remove components you never import. No virtual DOM runtime.</p>
+<p>Measured with x4js 2.3.32: an application that only shows a <code>Button</code>, built with <code>x4js build</code>, has 65 KB of JavaScript, 23 KB gzipped. Its stylesheet holds the styles of every component: 123 KB, 22 KB gzipped.</p>
+<h2 id="fast-feedback-no-ceremony" class="tsd-anchor-link">Fast feedback. No ceremony.<a href="#fast-feedback-no-ceremony" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><strong>Live reload</strong> — <code>npm run dev</code> rebuilds on every change and reloads the page; a style change applies without a reload.</li>
+<li><strong>TypeScript end to end</strong> — your application and x4 stay in the same module graph.</li>
+<li><strong>Simple tooling</strong> — <code>x4js create</code>, <code>x4js dev</code> and <code>x4js build</code>: create, run and build without adding another framework layer (<a href="https://github.com/rlibre/x4/blob/main/aicli.md">aicli.md</a>).</li>
+<li><strong>i18n ready</strong> — build multilingual interfaces without changing the component model (<code>addTranslation</code>, <code>selectLanguage</code>).</li>
+</ul>
+<h2 id="readable-by-humans-predictable-for-machines" class="tsd-anchor-link">Readable by humans. Predictable for machines.<a href="#readable-by-humans-predictable-for-machines" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Three files written for AI assistants ship with the package, in <code>node_modules/x4js/</code>. Give them to your assistant before asking it to write x4js code:</p>
+<ul>
+<li><a href="https://github.com/rlibre/x4/blob/main/aicontext.md">aicontext.md</a>: compact API reference, with exact signatures</li>
+<li><a href="https://github.com/rlibre/x4/blob/main/aiguide.md">aiguide.md</a>: how to write idiomatic x4js code</li>
+<li><a href="https://github.com/rlibre/x4/blob/main/aicli.md">aicli.md</a>: the <code>x4js</code> command line and <code>x4.config.json</code></li>
 </ul>
 <p>With Claude Code, install the x4js plugin instead: its skill reads these files from your project by itself.</p>
-<pre><code><span class="hl-0">claude</span><span class="hl-1"> </span><span class="hl-0">plugin</span><span class="hl-1"> </span><span class="hl-0">marketplace</span><span class="hl-1"> </span><span class="hl-0">add</span><span class="hl-1"> </span><span class="hl-0">rlibre</span><span class="hl-1">/</span><span class="hl-0">x4</span><br/><span class="hl-0">claude</span><span class="hl-1"> </span><span class="hl-0">plugin</span><span class="hl-1"> </span><span class="hl-0">install</span><span class="hl-1"> </span><span class="hl-0">x4js</span><span class="hl-1">@</span><span class="hl-0">rlibre</span>
-</code><button>Copy</button></pre>
+<pre><code class="sh"><span class="hl-0">claude</span><span class="hl-1"> </span><span class="hl-2">plugin</span><span class="hl-1"> </span><span class="hl-2">marketplace</span><span class="hl-1"> </span><span class="hl-2">add</span><span class="hl-1"> </span><span class="hl-2">rlibre/x4</span><br/><span class="hl-0">claude</span><span class="hl-1"> </span><span class="hl-2">plugin</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">x4js@rlibre</span>
+</code><button type="button">Copy</button></pre>
 
-<hr>
-<h2 id="the-translation-you-never-signed-up-for" class="tsd-anchor-link">The translation you never signed up for<a href="#the-translation-you-never-signed-up-for" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Modern web frameworks share a hidden assumption: that your job is to describe the DOM. Whether through JSX, templates, or reactive object trees, they all keep you close to the metal — writing <code>&lt;div&gt;</code>s, wiring class names, juggling attributes. You spend your days translating what you <em>mean</em> into how the browser <em>renders it</em>, then debugging the translation.</p>
-<p>x4js removes that layer entirely.</p>
-<p>You don't assemble elements. You compose high-level objects — <code>Button</code>, <code>DataGrid</code>, <code>Dialog</code>, <code>Form</code> — that model your application, not the page. A button has a <code>text</code>, not a <code>textContent</code>. A grid has columns, not a <code>&lt;table&gt;&lt;thead&gt;&lt;tr&gt;</code>. You describe intent; the framework handles the rest.</p>
-<hr>
-<h2 id="the-paradox-nobody-talks-about" class="tsd-anchor-link">The paradox nobody talks about<a href="#the-paradox-nobody-talks-about" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Millions of developers building with reactive frameworks — React, Vue, Svelte, and the rest — spend their day inside VS Code, Slack, Figma, Discord. Applications they hold up as benchmarks of speed and polish.</p>
-<p>Not one of them is built the way those same developers build their own work.</p>
-<p>VS Code is written in TypeScript, around high-level object components, with direct, surgical DOM manipulation — <strong>no virtual DOM</strong>. That isn't an accident. Routing every keystroke through a virtual-tree reconciliation pass would make a code editor unusable. So the tool you use to write your reactive app could never have been written in that same reactive framework and stayed fast.</p>
-<p>This isn't an isolated curiosity. It's a pattern. The applications that must be genuinely fast — editors, IDEs, terminals, design tools, spreadsheets — converge on the same architecture again and again: object components, direct DOM updates, fine-grained and intentional reactivity. Exactly the philosophy x4js is built on.</p>
-<p>The virtual DOM is a comfortable abstraction that trades performance for ease of reasoning. It's a fair trade for a landing page, a dashboard, a form. But the moment an interface becomes dense, dynamic, and latency-sensitive, the teams building the industry's reference tools quietly abandon that trade. They don't choose it for their own product — they only recommend it for everyone else's.</p>
-<blockquote>
-<p>When performance actually matters, the industry votes with its code.
-x4js brings to <em>your</em> applications the architecture your tools already use for theirs.</p>
-</blockquote>
-<p>A fair caveat: VS Code doesn't run on x4js, and reactive frameworks aren't &quot;bad.&quot; React, Vue, and Svelte optimize for a different problem — productivity on interfaces of moderate complexity — and they do it well. The point is architectural family, not brand. x4js belongs to the same lineage as the dense, demanding tools you already trust: object-first, direct-DOM, precisely reactive.</p>
-<hr>
-<h2 id="why-the-object-first-approach-wins" class="tsd-anchor-link">Why the object-first approach wins<a href="#why-the-object-first-approach-wins" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<h3 id="no-virtual-dom-no-diffing" class="tsd-anchor-link">No virtual DOM, no diffing<a href="#no-virtual-dom-no-diffing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>x4js builds and updates the real DOM directly. There's no reconciliation pass, no shadow tree to compare against, no per-render overhead. Updates are direct — which makes them fast and, just as importantly, predictable.</p>
-<h3 id="code-that-runs-when-you-call-it-and-only-then" class="tsd-anchor-link">Code that runs when you call it — and only then<a href="#code-that-runs-when-you-call-it-and-only-then" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>In a reactive framework, your component is a function the framework re-executes whenever it decides to. Every variable is recreated on each pass; every closure can silently capture a stale value. Entire categories of bugs — stale closures, dependency arrays, effects firing twice, memoization tuning — exist <em>only</em> because the execution model is inverted: the framework calls you.</p>
-<p>An x4js component is an object. Its state lives in fields that persist for its whole lifetime. Its methods run when you call them, once, in the order you wrote. There is nothing to memoize, no dependency list to maintain, no rule about where you're allowed to declare things. The mental model is the one you already have from every other kind of software you've written.</p>
-<h3 id="state-you-can-simply-assign" class="tsd-anchor-link">State you can simply assign<a href="#state-you-can-simply-assign" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>In reactive frameworks, changing a value is a discipline in itself. State is immutable, so a one-field update becomes a pyramid of spreads: <code>setUser({ ...user, address: { ...user.address, city: &quot;Paris&quot; } })</code> — and entire libraries exist just to make that bearable. State setters are asynchronous and batched, so the line after <code>setCount(count + 1)</code> still reads the old value; you must remember updater functions (<code>setCount(c =&gt; c + 1)</code>) or debug why your counter skips. And the primitives themselves come with a rulebook — hooks only at the top level, never in a condition or a loop, always in the same order — rules the language cannot enforce, so a linter has to police your code where the compiler should have.</p>
-<p>None of this is your application. All of it is ceremony imposed by the framework's model of change.</p>
-<p>In x4js, state is an object and change is assignment: <code>state.count++</code>, <code>state.user.address.city = &quot;Paris&quot;</code>. The value is updated on the next line, because of course it is. Deep mutation works, because objects are objects. There are no placement rules, because a property assignment is not a framework primitive — it's JavaScript. Years of accumulated workarounds — updater callbacks, spread pyramids, immutability helpers, exhaustive-deps lint rules — simply have nothing left to fix.</p>
-<h3 id="debugging-your-code-not-the-frameworks" class="tsd-anchor-link">Debugging your code, not the framework's<a href="#debugging-your-code-not-the-frameworks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>Set a breakpoint in an x4js method and the call stack reads like your application: your event handler, your component, your logic. In virtual-DOM frameworks, the same breakpoint lands you in a scheduler — fiber trees, hook lists, reconciliation frames — with your actual code buried somewhere inside the machinery. Dedicated browser devtools extensions exist for those frameworks precisely because the native debugger stopped being enough. x4js needs none: what you wrote is what executes, and the standard debugger tells the whole story.</p>
-<h3 id="no-re-render-tax-on-memory" class="tsd-anchor-link">No re-render tax on memory<a href="#no-re-render-tax-on-memory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>A virtual-DOM render allocates a full tree of description objects — on every update, for every component involved — and immediately hands it to the garbage collector once diffed. Under load (typing, scrolling, dragging), that is a constant allocation churn competing with your application for CPU and memory. x4js components are allocated once and mutated in place. A text change is a property assignment and one DOM write. Nothing to allocate, nothing to collect, nothing to diff.</p>
-<h3 id="built-for-dense-professional-interfaces" class="tsd-anchor-link">Built for dense, professional interfaces<a href="#built-for-dense-professional-interfaces" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>Reactive ecosystems treat data grids, tree views, dockable panels, and virtual scrolling as third-party problems — an <code>npm install</code> and a licensing page away. That is because rendering ten thousand live rows through a diffing pipeline is genuinely hard, so the hard components get outsourced. In x4js, the demanding components are first-class citizens of the framework itself, built on the same direct-DOM foundation as everything else. Business applications — the ones with toolbars, grids, trees, and forms that people use eight hours a day — are the primary use case, not an afterthought.</p>
-<h3 id="no-build-step-required" class="tsd-anchor-link">No build step required<a href="#no-build-step-required" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>No JSX to transpile, no template compiler, no toolchain to configure. x4js is TypeScript that runs. You get type safety and autocompletion out of the box, with nothing standing between your source and your running app — and nothing in your supply chain but the compiler you already trust.</p>
-<h3 id="an-api-that-survives-the-churn" class="tsd-anchor-link">An API that survives the churn<a href="#an-api-that-survives-the-churn" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>The reactive world reinvents itself every few years: class components gave way to hooks, options API to composition API, stores to signals — each transition deprecating the patterns, tutorials, and muscle memory of the previous one. Code written against browser primitives and plain TypeScript objects doesn't churn like that. <code>Proxy</code>, <code>EventTarget</code>, classes, and the DOM are stable, standardized ground. An x4js codebase written today will compile and run unchanged years from now, because there is no framework-specific paradigm to be deprecated out from under it.</p>
-<h3 id="you-ship-what-you-use-nothing-else" class="tsd-anchor-link">You ship what you use — nothing else<a href="#you-ship-what-you-use-nothing-else" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>Reactive frameworks make you ship their runtime before your first component renders: the scheduler, the reconciler, the hooks machinery — a fixed entry fee, paid by every user on every load, whether your page is an app or a button. x4js has no such core tax. Components are plain TypeScript classes, so standard tree-shaking keeps exactly what you import: use only <code>Button</code>, and your bundle contains <code>Button</code> — about 22 KB, core included. No runtime to amortize, no framework floor below which your app cannot shrink. Small tools stay small; big applications pay only for the components they actually use.</p>
-<p>If you come from C or C++, you already know this model: it's <strong>static linking against a library</strong>. The linker pulls in only the symbols you reference, dead code never makes it into the binary. A reactive framework's runtime is the opposite — a mandatory DLL shipped whole with every executable, whether you call one function from it or a thousand. x4js links; it doesn't bundle a runtime.</p>
-<h3 id="end-to-end-typescript" class="tsd-anchor-link">End-to-end TypeScript<a href="#end-to-end-typescript" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>Components, properties, and events are fully typed. The compiler catches mistakes before the browser does — not only in your logic, but in the way your components fit together.</p>
-<h3 id="one-codebase-web-and-desktop" class="tsd-anchor-link">One codebase, web and desktop<a href="#one-codebase-web-and-desktop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<p>Because x4js produces standard DOM from plain TypeScript — no framework-specific runtime, no build-time magic — the same application runs unchanged in the browser or packaged as a desktop app through Electron, Tauri, or NW.js. Nothing to adapt, nothing to port: the wrapper provides the window, x4js provides the application.</p>
-<hr>
-<p><strong>Think differently. Escape the DOM. Focus on the concept, not the format.</strong></p>
+<p>For an assistant that reads the web: <a href="https://x4js.org/llms.txt">llms.txt</a>, and <a href="https://x4js.org/llms-full.txt">llms-full.txt</a> with the three files in full.</p>
+<h2 id="z4js-the-same-idea-server-side" class="tsd-anchor-link">z4js: the same idea, server side<a href="#z4js-the-same-idea-server-side" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><em>In development.</em> z4js is the backend counterpart of x4js: plain TypeScript classes, very few dependencies, secure by default. Routes, sessions, access rights, migrations, Postgres or SQLite, workers and logs come in one package, written together.</p>
+<p><a href="https://z4js.org">z4js.org</a> · <a href="https://github.com/rlibre/z4js">z4js on GitHub</a></p>
+<h2 id="license" class="tsd-anchor-link">License<a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>MIT — see <a href="https://github.com/rlibre/x4/blob/main/LICENSE">LICENSE</a>.</p>
+<p><strong>Type less framework. Build more application.</strong></p>
 </div></div>
 <div class="col-sidebar">
 <div class="page-menu">
@@ -92,28 +120,20 @@ x4js brings to <em>your</em> applications the architecture your tools already us
 <h3>On This Page</h3></summary>
 <div class="tsd-accordion-details"><a href="#x4js"><span>x4js</span></a>
 <ul>
-<li><a href="#home-page"><span>Home page</span></a></li>
-<li><a href="#api-documentation"><span>API <wbr/>Documentation</span></a></li>
-<li><a href="#using-x4js-with-an-ai-assistant"><span>Using x4js with an <wbr/>AI assistant</span></a></li>
-<li><a href="#the-translation-you-never-signed-up-for"><span>The translation you never signed up for</span></a></li>
-<li><a href="#the-paradox-nobody-talks-about"><span>The paradox nobody talks about</span></a></li>
-<li><a href="#why-the-object-first-approach-wins"><span>Why the object-<wbr/>first approach wins</span></a></li>
-<li>
-<ul>
-<li><a href="#no-virtual-dom-no-diffing"><span>No virtual <wbr/>DOM, no diffing</span></a></li>
-<li><a href="#code-that-runs-when-you-call-it-and-only-then"><span>Code that runs when you call it — and only then</span></a></li>
-<li><a href="#state-you-can-simply-assign"><span>State you can simply assign</span></a></li>
-<li><a href="#debugging-your-code-not-the-frameworks"><span>Debugging your code, not the framework&#39;s</span></a></li>
-<li><a href="#no-re-render-tax-on-memory"><span>No re-<wbr/>render tax on memory</span></a></li>
-<li><a href="#built-for-dense-professional-interfaces"><span>Built for dense, professional interfaces</span></a></li>
-<li><a href="#no-build-step-required"><span>No build step required</span></a></li>
-<li><a href="#an-api-that-survives-the-churn"><span>An <wbr/>API that survives the churn</span></a></li>
-<li><a href="#you-ship-what-you-use-nothing-else"><span>You ship what you use — nothing else</span></a></li>
-<li><a href="#end-to-end-typescript"><span>End-<wbr/>to-<wbr/>end <wbr/>Type<wbr/>Script</span></a></li>
-<li><a href="#one-codebase-web-and-desktop"><span>One codebase, web and desktop</span></a></li></ul></li></ul></div></details></div>
+<li><a href="#try-x4"><span>Try x4</span></a></li>
+<li><a href="#a-small-mental-model"><span>A small mental model</span></a></li>
+<li><a href="#objects-that-stay-objects"><span>Objects that stay objects</span></a></li>
+<li><a href="#a-complete-ui-toolkit-not-just-primitives"><span>A complete <wbr/>UI toolkit. <wbr/>Not just primitives.</span></a></li>
+<li><a href="#the-difficult-ui-is-not-an-afterthought"><span>The difficult <wbr/>UI is not an afterthought</span></a></li>
+<li><a href="#jsx-when-it-helps-same-runtime"><span>JSX when it helps. <wbr/>Same runtime.</span></a></li>
+<li><a href="#ship-only-what-you-use"><span>Ship only what you use</span></a></li>
+<li><a href="#fast-feedback-no-ceremony"><span>Fast feedback. <wbr/>No ceremony.</span></a></li>
+<li><a href="#readable-by-humans-predictable-for-machines"><span>Readable by humans. <wbr/>Predictable for machines.</span></a></li>
+<li><a href="#z4js-the-same-idea-server-side"><span>z4js: the same idea, server side</span></a></li>
+<li><a href="#license"><span>License</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/rlibre/x4" class="tsd-nav-link">GitHub</a></nav>
-<nav class="tsd-navigation"><a href="modules.html">x4js - v2.3.32</a>
+<nav class="tsd-navigation"><a href="modules.html">x4js - v2.3.33</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer>
 <p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
