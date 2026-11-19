@@ -217,12 +217,13 @@
 		}
 	}
 
+	// its icon (10px) in the middle
 	.dock-close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		width: 16px;
 		height: 16px;
-		line-height: 16px;
-		text-align: center;
-		font-weight: 400;
 		cursor: pointer;
 		opacity: 0.6;
 

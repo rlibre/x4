@@ -60,8 +60,8 @@ export interface CarouselProps extends Omit<ComponentProps,"content"> {
 	change?: EventCallback<EvChange>;
 }
 
-const icon_prev = `<svg viewBox="0 0 24 24"><path d="M15.4 5.4L14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg>`;
-const icon_next = `<svg viewBox="0 0 24 24"><path d="M8.6 5.4L10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg>`;
+const icon_prev = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M11.21 2.5L5.71 8L11.21 13.5L10.5 14.21L4.29 8L10.5 1.79Z"/></svg>`;
+const icon_next = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.5 1.79L11.71 8L5.5 14.21L4.79 13.5L10.29 8L4.79 2.5Z"/></svg>`;
 
 /**
  * slides side by side, one place at a time (or perView): arrows, dots, a swipe with the finger or

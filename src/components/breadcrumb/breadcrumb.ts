@@ -22,8 +22,6 @@ import { EventCallback } from '../../core/core_events';
 
 import "./breadcrumb.scss"
 
-import icon_sep from "./chevron-right.svg"
-
 /**
  * Breadcrumb events
  */

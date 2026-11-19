@@ -21,6 +21,7 @@ import { isMac } from '../../core/core_shortcuts';
 import { SvgBuilder, SvgComponent, SvgPath } from '../../core/core_svg';
 import { clamp, date_add_days, date_clone, date_format, date_hash, date_week_start, formatIntlDate } from '../../core/core_tools';
 import { Icon } from '../icon/icon';
+import icons from '../assets/icons';
 
 import "./planner.module.scss";
 
@@ -961,7 +962,8 @@ export class Planner extends Component<PlannerProps, PlannerEvents> {
 		return new Component( {
 			cls: "edge " + dir,
 			style: { left: col.x + col.w / 2, top: y },
-			content: ( dir=="up" ? "▲ " : "▼ " ) + count,
+			// the triangle of x4, turned up or down by the stylesheet
+			content: [ new Icon( { iconId: icons.caret } ), new Component( { tag: "span", content: String( count ) } ) ],
 			dom_events: { click },
 		} );
 	}

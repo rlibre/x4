@@ -17,6 +17,8 @@
 import { Component, ComponentEvent, ComponentEvents, ComponentProps } from '../../core/component';
 import { EventCallback } from '../../core/core_events';
 import { CSizer } from '../sizers/sizer';
+import { Icon } from '../icon/icon';
+import icons from '../assets/icons';
 
 import { bandOf, dockActivate, dockBand, dockFloat, dockMove, dockRestore, dockShow, dockSides, dropZone, floatOf, isFlat, isShown, keepInside, sharesOf, shownPanel, sideRect, stackOf, stacksOf, visiblePanels } from './docklayout';
 import { DockFloat, DockKinds, DockLayout, DockNode, DockRect, DockSide, DockStack } from './docklayout';
@@ -549,7 +551,7 @@ export class DockingView extends Component<DockingViewProps, DockingViewEvents> 
 		// Preventing the default is what stops x4 from calling the handlers above.
 		const close = !this.mayClose( id ) ? null : new Component( {
 			cls: "dock-close",
-			content: "×",
+			content: new Icon( { iconId: icons.close_box } ),
 			dom_events: {
 				pointerdown: ev => { ev.stopPropagation( ); ev.preventDefault( ); },
 				click: ( ) => this.showPanel( id, false ),

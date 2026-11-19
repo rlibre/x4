@@ -3,11 +3,16 @@
 What changes in x4js, the library and its command line. The newest first.
 A version gets its date when it is published.
 
-## 2.3.33
+## 2.3.33 (2026-11-19)
 
 ### Package
 
+- The package holds `THIRD-PARTY-NOTICES.md`: the code and the font made by others that it contains, and their licenses.
 - The package holds `types/x4.d.ts`: the declarations of all of x4 in one file, made from the sources at each release, to read as a reference. Each module is a `declare module "src/…"`: the types of `import … from "x4js"` still come from the sources (`src/x4.ts`).
+
+### Icons
+
+- Icons updated.
 
 ### Canvas
 

@@ -168,6 +168,11 @@ Reported by the agent that built the gallery, in demo (2026-10-21): read, not ch
 
 - Asked on 2026-11-06: an option `closable` that gives a tab a small cross, and an event when a tab is closed. Today a tab is only removed by the code (`removeTab( name )`). To decide: the option on `Tabs` (all its tabs) or on each `TabItem`; the event before the tab goes (`preventDefault( )` keeps it, to ask to save first) or after; which tab is shown then.
 
+## Icons
+
+- The `.svg` files of the built-in icons keep the names of before (`chevron-left-sharp-light.svg`…): to rename.
+- Found on 2026-11-19: `treeview.module.scss` selects `.x-icon`, which matches nothing (the class is `x4icon`); an Icon `var:` of a variable not set gives an `<img src="">`.
+
 ## Props not exported
 
 - Asked on 2026-11-12: export the props interfaces that are not. They are declared without `export`, so `import { CheckboxProps } from "x4js"` does not compile, while aicontext describes several of them (`CheckboxProps`, `RadioProps`…). Found: in src/components `MasonryProps` (boxes), `BreadcrumbsProps`, `BtnGroupProps`, `CalendarProps`, `CheckboxProps`, `DropdownProps` and `ComboboxProps` (combobox), `FileDialogProps` and `FileDropProps` (filedrop), `HeaderProps`, `KeyboardProps`, `LinkProps`, `MonacoEditorProps` (entry point `x4js/monaco`), `NotificationProps`, `PanelProps`, `ProgressProps`, `RadioProps`, `SliderProps`, `SwitchProps`, `TablistProps` and `TabsProps` (tabs), `TextEditProps`, `VideoProps`; in src/core `AppProps`, `DataStoreProps`, `DataViewProps`.

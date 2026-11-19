@@ -285,15 +285,18 @@
 	}
 
 	// the events out of the view: a mark at the top or the bottom of the view, in the middle of their day
+	// a triangle, then the count
 	.edge {
 		position: absolute;
 		z-index: 4;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 2px;
 		width: 40px;
 		height: 18px;
-		line-height: 18px;
 		margin-left: -20px;
 		border-radius: 9px;
-		text-align: center;
 		font-size: 0.72rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -306,10 +309,21 @@
 			opacity: 1;
 		}
 
+		// the triangle about as big as the text
+		.x4icon {
+			min-width: 14px;
+			height: 14px;
+		}
+
 		// a tab on the edge of the view: its corners against it square
 		&.up {
 			border-top-left-radius: 0;
 			border-top-right-radius: 0;
+
+			// the triangle points to the right: turned up
+			.x4icon {
+				transform: rotate( -90deg );
+			}
 		}
 
 		// 2px less under its text: against the bottom of the view
@@ -318,6 +332,10 @@
 			margin-top: -16px;
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
+
+			.x4icon {
+				transform: rotate( 90deg );
+			}
 		}
 	}
 

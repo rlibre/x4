@@ -116,7 +116,7 @@ const MAX_LAT = 85.0511287798;		// web mercator: the world is a square
 const OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_CREDIT = unsafeHtml( `© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors` );
 
-const icon_pin = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32"><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0z" fill="currentColor"/><circle cx="12" cy="12" r="4.5" fill="#fff"/></svg>`;
+const icon_pin = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16"><path fill="currentColor" opacity=".4" d="M6 15.17L1.6 9.3A5.5 5.5 0 1 1 10.4 9.3Z"/><path fill="currentColor" d="M6 16L1.2 9.6A6 6 0 1 1 10.8 9.6ZM6 14.33L10 9A5 5 0 1 0 2 9ZM3.5 6A2.5 2.5 0 1 1 8.5 6A2.5 2.5 0 1 1 3.5 6ZM4.5 6A1.5 1.5 0 1 0 7.5 6A1.5 1.5 0 1 0 4.5 6Z"/><path fill="#fff" d="M4.5 6A1.5 1.5 0 1 1 7.5 6A1.5 1.5 0 1 1 4.5 6Z"/></svg>`;
 
 // web mercator: a place → its pixel in the world at the zoom z, and back
 
